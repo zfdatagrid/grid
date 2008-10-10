@@ -577,12 +577,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         foreach ( array_keys ( $this->filters ) as $value ) {
 
             if (! $this->data ['fields'] [$value] ['hide']) {
-                $help_javascript .= "filtro_" . $value . ",";
+                $help_javascript .= "filter_" . $value . ",";
             }
         }
 
         if ($options ['noFilters'] != 1) {
-            $onchange = "onchange=\"altera_filtros('$help_javascript','$url');\" id=\"filtro_{$campo}\"";
+            $onchange = "onchange=\"changeFilters('$help_javascript','$url');\" id=\"filter_{$campo}\"";
         }
 
         $opcoes = $this->filters [$campo];
@@ -616,7 +616,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             case 'enum' :
 
                 $avalor = explode ( ",", substr ( $enum, 4 ) );
-                $valor = "<select  id=\"filtro_{$campo}\" $opt $onchange name=\"\">";
+                $valor = "<select  id=\"filter_{$campo}\" $opt $onchange name=\"\">";
                 $valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
 
                 foreach ( $avalor as $value ) {
@@ -634,7 +634,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             default :
 
-                $valor = "<input type=\"text\" $onchange id=\"filtro_{$campo}\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
+                $valor = "<input type=\"text\" $onchange id=\"filter_{$campo}\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
 
                 break;
         }
@@ -672,23 +672,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		 * [PT] TEmos que saber se exite uma ordem ou um filtro para podermos apresentar
 		 * a td para dar a opção de limpar tudo de uma única vez
 		 */
-        if ($this->ctrlParams ['filtros'] != '' || $this->ctrlParams ['order'] != '') {
+        if ($this->ctrlParams ['filters'] != '' || $this->ctrlParams ['order'] != '') {
 
-            $url = $this->getUrl ( 'filtros' );
+            $url = $this->getUrl ( 'filters' );
             $url2 = $this->getUrl ( 'order' );
-            $url3 = $this->getUrl ( array ('filtros', 'order' ) );
+            $url3 = $this->getUrl ( array ('filters', 'order' ) );
 
             $this->temp->hasExtraRow = 1;
 
             //[PT] Ordem e filtros
-            if ($this->ctrlParams ['filtros'] != '' and $this->ctrlParams ['order'] != '') {
+            if ($this->ctrlParams ['filters'] != '' and $this->ctrlParams ['order'] != '') {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a> | <a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a> | <a href=\"$url3\">" . $this->__ ( 'Remove Filters &amp; Order' ) . "</a>";
                 //[PT] FIltros apenas
-            } elseif ($this->ctrlParams ['filtros'] != '' && $this->ctrlParams ['order'] == '') {
+            } elseif ($this->ctrlParams ['filters'] != '' && $this->ctrlParams ['order'] == '') {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a>";
 
                 //[PT] Ordem apenas
-            } elseif ($this->ctrlParams ['filtros'] == '' && $this->ctrlParams ['order'] != '') {
+            } elseif ($this->ctrlParams ['filters'] == '' && $this->ctrlParams ['order'] != '') {
                 $final1 = "<a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a>";
             }
 
@@ -821,7 +821,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                         //[PT]Versão em estado incial de ajax. Não e´para levar a sério por enquanto
                         if ($this->info ['ajax']) {
 
-                            $grid .= str_replace ( '{{value}}', "<a href=\"javascript:abre_ajax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp->titlesLoop () );
+                            $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp->titlesLoop () );
 
                         } else {
 
@@ -1121,7 +1121,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function buildGridTable($grids) {
 
         //Temos uma td a mais com a opção para remover-mos a ordem e filtros
-        if ($this->ctrlParams ['filtros'] != '' || $this->ctrlParams ['order'] != '') {
+        if ($this->ctrlParams ['filters'] != '' || $this->ctrlParams ['order'] != '') {
             $i ++;
         }
 
@@ -1246,7 +1246,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $actual = floor ( $actual / $ppagina ) + 1;
 
         if ($this->info ['ajax']) {
-            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:abre_ajax('grid','$url/inicio/0')\">1</a>";
+            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:openAjax('grid','$url/inicio/0')\">1</a>";
         } else {
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/inicio/0\">1</a>";
 
@@ -1257,7 +1257,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             for($i = $in + 1; $i < $fin; $i ++) {
                 if ($this->info ['ajax']) {
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=javascript:abre_ajax('grid','$url/inicio/" . (($i - 1) * $ppagina) . "')> $i </a>";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=javascript:openAjax('grid','$url/inicio/" . (($i - 1) * $ppagina) . "')> $i </a>";
                 } else {
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href='$url/inicio/" . (($i - 1) * $ppagina) . "'> $i </a>";
                 }
@@ -1269,7 +1269,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             for($i = 2; $i < $npaginas; $i ++) {
                 if ($this->info ['ajax']) {
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:abre_ajax('grid','" . $url . "/inicio/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:openAjax('grid','" . $url . "/inicio/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
                 } else {
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"" . $url . "/inicio/" . (($i - 1) * $ppagina) . "\">$i</a> ";
                 }
@@ -1278,7 +1278,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
         if ($this->info ['ajax']) {
-            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:abre_ajax('grid','$url/inicio/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
+            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:openAjax('grid','$url/inicio/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
 
         } else {
             $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"$url/inicio/" . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
@@ -1288,7 +1288,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         if ($actual != 1) {
 
             if ($this->info ['ajax']) {
-                $pag = " <a href=\"javascript:abre_ajax('grid','$url/inicio/0')\">" . $this->__ ( 'First' ) . "</a>&nbsp;&nbsp;<a href=\"javascript:abre_ajax('grid','$url/inicio/" . (($actual - 2) * $ppagina) . "')\">" . $this->__ ( 'Previous' ) . "</a>&nbsp;&nbsp;" . $pag;
+                $pag = " <a href=\"javascript:openAjax('grid','$url/inicio/0')\">" . $this->__ ( 'First' ) . "</a>&nbsp;&nbsp;<a href=\"javascript:aopenAjax'grid','$url/inicio/" . (($actual - 2) * $ppagina) . "')\">" . $this->__ ( 'Previous' ) . "</a>&nbsp;&nbsp;" . $pag;
             } else {
 
                 $pag = " <a href=\"$url/inicio/0\">" . $this->__ ( 'First' ) . "</a>&nbsp;&nbsp;<a href=\"$url/inicio/" . (($actual - 2) * $ppagina) . "\">" . $this->__ ( 'Previous' ) . "</a>&nbsp;&nbsp;" . $pag;
@@ -1299,7 +1299,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         if ($actual != $npaginas) {
             if ($this->info ['ajax']) {
 
-                $pag .= "&nbsp;&nbsp;<a href=\"javascript:abre_ajax('grid','$url/inicio/" . ($actual * $ppagina) . "')\">" . $this->__ ( 'Next' ) . "</a> <a href=\"javascript:abre_ajax('grid','$url/inicio/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__ ( 'Last' ) . "&nbsp;&nbsp;</a>";
+                $pag .= "&nbsp;&nbsp;<a href=\"javascript:openAjax('grid','$url/inicio/" . ($actual * $ppagina) . "')\">" . $this->__ ( 'Next' ) . "</a> <a href=\"javascript:openAjax('grid','$url/inicio/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__ ( 'Last' ) . "&nbsp;&nbsp;</a>";
             } else {
 
                 $pag .= "&nbsp;&nbsp;<a href=\"$url/inicio/" . ($actual * $ppagina) . "\">" . $this->__ ( 'Next' ) . "</a>&nbsp;&nbsp;<a href=\"$url/inicio/" . (($npaginas - 1) * $ppagina) . "\">" . $this->__ ( 'Last' ) . "</a>";
@@ -1311,7 +1311,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             //[PT] Construir o select
             //[EN] Buil the select form element
             if ($this->info ['ajax']) {
-                $f = "<select id=\"idf\" onchange=\"javascript:abre_ajax('grid','{$url}/inicio/'+this.value)\">";
+                $f = "<select id=\"idf\" onchange=\"javascript:openAjax('grid','{$url}/inicio/'+this.value)\">";
             } else {
                 $f = "<select id=\"idf\" onchange=\"window.location='{$url}/inicio/'+this.value\">";
             }
@@ -1505,7 +1505,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $this->extra_fields = array ();
             }
 
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirma('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}};user:" . $this->info ['user'] . "');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}};user:" . $this->info ['user'] . "');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
         }
 
         parent::deploy ();

@@ -6,20 +6,19 @@
  *
  * LICENSE
  *
- * This source file is subject to the Attribution-No Derivative Works license
+ * This source file is subject to the GNU General Public License 2.0
  * It is  available through the world-wide-web at this URL:
- * http://creativecommons.org/licenses/by-nd/3.0/us/
+ * http://www.opensource.org/licenses/gpl-2.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Mascker_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com.com)
- * @license    http://creativecommons.org/licenses/by-nd/3.0/us/    Attribution-No Derivative Works license
+ * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
-
 
 final class Bvb 
 {
@@ -111,37 +110,6 @@ final class Bvb
 
         return true;
     }
-
-
-    /**
-     * Enter description here...
-     *
-     * @param unknown_type $object
-     * @return unknown
-     */
-    static function object2array ($object)
-    {
-
-        $return = NULL;
-
-        if (is_array($object)) {
-            foreach ($object as $key => $value)
-            $return[$key] = self::object2array($value);
-        } else {
-            $var = get_object_vars($object);
-
-            if ($var) {
-                foreach ($var as $key => $value)
-                $return[$key] = self::object2array($value);
-            } else {
-                return strval($object);
-            }
-        }
-
-        return $return;
-
-    }
-
 
 
 }

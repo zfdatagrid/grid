@@ -110,6 +110,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     {
 
         $this->setPagination(100);
+        
         parent::deploy();
 
         $grid .= self::buildTitltesCsv(parent::buildTitles());

@@ -20,6 +20,12 @@
 
 class Bvb_Grid_DataGrid {
 
+
+
+    static public  $_cache;
+
+
+
     /**
 	 * [Onde temos as classes]
 	 *
@@ -611,7 +617,7 @@ class Bvb_Grid_DataGrid {
 	 */
     function setPagination($number = 15) {
         $this->data ['pagination'] ['per_page'] = ( int ) $number;
-        
+
         return $this;
     }
 
@@ -760,8 +766,8 @@ class Bvb_Grid_DataGrid {
         //Vamos criar a aray para sabermos o valor dos filtro
         $valor_filters = array ();
 
-        $filters = urldecode ( $this->ctrlParams ['filtros'] );
-        $filters = str_replace ( "filtro_", "", $filters );
+        $filters = urldecode ( $this->ctrlParams ['filters'] );
+        $filters = str_replace ( "filter_", "", $filters );
         $filters = Zend_Json::decode ( $filters );
 
         $fieldsSemAsFinal = $this->removeAsFromFields ();
@@ -943,7 +949,7 @@ class Bvb_Grid_DataGrid {
             //[PT] Se estivermos a falar dos filtros, temos que fazer o urldecode por causa
             //[PT] dos caracteres especiais que tem a url ( JSON )
             //[EN] Apply the urldecode function to the filtros param, because its  JSON
-            if ($key == 'filtros') {
+            if ($key == 'filters') {
                 $url .= "/" . trim ( $key ) . "/" . trim ( urlencode ( $param ) );
             } else {
                 $url .= "/" . trim ( $key ) . "/" . trim ( $param );
@@ -1254,7 +1260,7 @@ class Bvb_Grid_DataGrid {
         }
 
         //[PT] Remover os paramteros que não queremos na url
-        $url = urlencode ( $this->getUrl ( array ('filtros', 'inicio', 'comm' ) ) );
+        $url = urlencode ( $this->getUrl ( array ('filters', 'inicio', 'comm' ) ) );
 
         //Vamos remover os AS dos indices da data global por cauda de substituirmos o campo de procura
         $fieldsSemAsFinal = $this->removeAsFromFields ();
@@ -1293,13 +1299,13 @@ class Bvb_Grid_DataGrid {
 
             if (! $this->data ['fields'] [$value] ['hide'] && $this->data ['fields'] [$value] ['hRow'] != 1) {
 
-                $help_javascript .= "filtro_" . $value . ",";
+                $help_javascript .= "filter_" . $value . ",";
             }
         }
 
         if ($options ['noFilters'] != 1) {
             $help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
-            $onchange = "onchange=\"alteraFiltros('$help_javascript','$url');\"";
+            $onchange = "onchange=\"changeFilters('$help_javascript','$url');\"";
         }
 
         $opcoes = $this->filters [$campo];
@@ -1315,7 +1321,7 @@ class Bvb_Grid_DataGrid {
             $tipo = 'invalid';
             $avalor = $opcoes ['values'];
 
-            $valor = "<select name=\"$campo\" $opt $onchange id=\"filtro_" . $this->replaceDots ( $campo ) . "\"  >";
+            $valor = "<select name=\"$campo\" $opt $onchange id=\"filter_" . $this->replaceDots ( $campo ) . "\"  >";
             $valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
 
             foreach ( $avalor as $value ) {
@@ -1334,7 +1340,7 @@ class Bvb_Grid_DataGrid {
             case 'enum' :
 
                 $avalor = explode ( ",", substr ( $enum, 4 ) );
-                $valor = "<select  id=\"filtro_" . str_replace ( ".", "bvbdot", $campo ) . "\" $opt $onchange name=\"\">";
+                $valor = "<select  id=\"filter_" . str_replace ( ".", "bvbdot", $campo ) . "\" $opt $onchange name=\"\">";
                 $valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
 
                 foreach ( $avalor as $value ) {
@@ -1351,7 +1357,7 @@ class Bvb_Grid_DataGrid {
 
             default :
 
-                $valor = "<input type=\"text\" $onchange id=\"filtro_" . str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
+                $valor = "<input type=\"text\" $onchange id=\"filter_" . str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
 
                 break;
         }
@@ -1965,7 +1971,7 @@ class Bvb_Grid_DataGrid {
         if ($this->cache ['use'] == 1) {
             $cache = $this->cache ['instance'];
 
-            if (! Bvb::$cache [md5 ( $query )] != $cache->load ( md5 ( $query ) )) {
+            if (! Bvb_Grid_DataGrid::$_cache [md5 ( $query )] != $cache->load ( md5 ( $query ) )) {
                 $result = $this->_db->fetchAll ( $query );
                 $resultCount = $this->_db->fetchOne ( $query_count );
 

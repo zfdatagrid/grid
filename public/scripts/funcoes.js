@@ -1,9 +1,5 @@
 
-var URL_HOST = 'http://mascker.local/grid/';
-
-
-
-function confirma(msg, url)
+function confirmDel(msg, url)
 {
 
     if(confirm(msg))
@@ -15,7 +11,7 @@ function confirma(msg, url)
 }
 
 
-function extraiScript(texto){
+function extractScript(texto){
     var ini = 0;
     while (ini!=-1){
         ini = texto.indexOf('<script', ini);
@@ -33,7 +29,7 @@ function extraiScript(texto){
 /**
 
 */
-function abre_ajax(ponto,url) {
+function openAjax(ponto,url) {
 
     var xmlhttp;
     try
@@ -54,7 +50,7 @@ function abre_ajax(ponto,url) {
             }
             catch (e)
             {
-                alert("O seu browser não suporta AJAX!");
+                alert("Your browser does not suppor AJAX!");
                 return false;
             }
         }
@@ -66,7 +62,7 @@ function abre_ajax(ponto,url) {
         if (xmlhttp.readyState==4) {
             texto=xmlhttp.responseText;
             document.getElementById(ponto).innerHTML=texto;
-            extraiScript(texto);
+            extractScript(texto);
         }else{
 
         }
@@ -77,19 +73,7 @@ function abre_ajax(ponto,url) {
 
 
 
-
-function verificaForm(location,message)
-{
-    var inputId = document.getElementById('inputId').value;
-
-    if(inputId ==0)
-    alert(message);
-    else
-    window.location=URL_HOST+location+inputId;
-
-}
-
-function alteraFiltros(fields,url,usaAjax)
+function changeFilters(fields,url,usaAjax)
 {
     var usaAjax = "2";
     var fieldsArray = fields.split(",");
@@ -104,9 +88,9 @@ function alteraFiltros(fields,url,usaAjax)
 
     if(usaAjax=="1")
     {
-        abre_ajax('grid',url+'/filtros/'+filtro);
+        openAjax('grid',url+'/filters/'+filtro);
     }else{
-        window.location=url+'/filtros/'+filtro;
+        window.location=url+'/filters/'+filtro;
     }
 
 }
@@ -198,7 +182,7 @@ function setpointer(theRow,id, theMarkColor)
 
 
 
-function selecionaCheckbox(iNum) {
+function checkCheckbox(iNum) {
     var oEl = document.getElementById(iNum);
     oEl.checked = true;
     document.getElementById('inputId').value=oEl.value;
