@@ -80,7 +80,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         foreach ($titles as $titulos)
         {
 
-            if(($titulos['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='') || $this->info['hRow']['title'] =='')
+            if((@$titulos['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
             {
                 $larg[$i] = strlen($titulos['value']);
                 $i++;
@@ -113,7 +113,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         /////////////////
         /////////////////
         /////////////////
-        if($this->info['hRow']['title']!='')
+        if(@$this->info['hRow']['title']!='')
         {
             $bar = $grid;
 
@@ -151,12 +151,12 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
                 $value['value'] = strip_tags($value['value']);
 
-                if($remove===true && $a==1)
+                if(@$remove===true && $a==1)
                 {
 
                 } else{
-                    if(($value['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='')
-                    || $this->info['hRow']['title'] =='')
+                    if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                    || @$this->info['hRow']['title'] =='')
                     {
 
                         if($larg[$i]<strlen($value['value']))
@@ -183,6 +183,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $this->data['pagination']['per_page'] = 10000000000;
         parent::deploy();
 
+        $la = '';
 
         $this->addTemplateDir('Bvb/Grid/Template/Pdf','Bvb_Grid_Template_Pdf','pdf');
         $this->setTemplate('pdf','pdf');
@@ -301,7 +302,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
 
         $page->drawText($this->pdfInfo['footer'],40,40);
-        if($this->pdfInfo['noPagination']!=1)
+        if(@$this->pdfInfo['noPagination']!=1)
         {
             $page->drawText($this->pdfInfo['page'].' '.$pagina.'/'.$totalPaginas,$page->getWidth()-(strlen($this->pdfInfo['page'])*$cellFontSize)-50,40);
         }
@@ -331,7 +332,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         }
 
         $total_celulas = count($titulos);
-        if($this->info['hRow']['title'] !='')
+        if(@$this->info['hRow']['title'] !='')
         {
             $total_celulas--;
         }
@@ -346,7 +347,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
 
 
-            if(($value['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='') || $this->info['hRow']['title'] =='')
+            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
             {
 
                 if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
@@ -379,7 +380,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
             /////////////////
             /////////////////
             /////////////////
-            if($this->info['hRow']['title']!='')
+            if(@$this->info['hRow']['title']!='')
             {
                 $bar = $grid;
 
@@ -404,6 +405,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
             $ia=0;
 
+            $aa = 0;
             foreach ($grid as $value)
             {
 
@@ -494,19 +496,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 ////////////
                 ////////////
                 //A linha horizontal
-                if($this->info['hRow']['title']!='')
+                if(@$this->info['hRow']['title']!='')
                 {
 
                     if($bar[$aa][$hRowIndex]['value'] != $bar[$aa-1][$hRowIndex]['value'])
                     {
 
                         $centrar = $page->getWidth()-80;
-                        $centrar = round($centrar/2);
+                        $centrar = round($centrar/2) + 30;
 
                         if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
 
                         $page->setStyle($hRowStyle);
-                        $page->drawRectangle($largura1,$altura -4,$page->getWidth()-39,$altura+12);
+                        $page->drawRectangle($largura1,$altura -4,$page->getWidth()-40,$altura+12);
                         $page->setStyle($styleText);
                         $page->drawText($bar[$aa][$hRowIndex]['value'], $centrar, $altura);
                         $la = 0;
@@ -523,14 +525,14 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
                     $value1['value']  = strip_tags($value1['value']);
 
-                    if($remove===true && $a==1)
+                    if(@$remove===true && $a==1)
                     {
 
                     } else{
 
 
-                        if(($value1['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='')
-                        || $this->info['hRow']['title'] =='')
+                        if(($value1['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                        || @$this->info['hRow']['title'] =='')
                         {
 
 

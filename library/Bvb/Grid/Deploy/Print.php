@@ -83,7 +83,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         }
 
 
-        $xml .= $this->temp->globalStart();
+        $xml = $this->temp->globalStart();
         $xml .= $this->temp->header();
 
 
@@ -94,12 +94,14 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         foreach ($titles as $value) {
 
-            if(($value['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='') || $this->info['hRow']['title'] =='')
+            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
             {
                 $xml .= str_replace("{{value}}",$value['value'],$this->temp->titlesLoop());
 
             }
         }
+        
+        
         $xml .= $this->temp->titlesEnd();
 
 
@@ -108,7 +110,12 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         if(is_array($wsData))
         {
 
-            if($this->info['hRow']['title']!='')
+
+
+            /////////////////
+            /////////////////
+            /////////////////
+            if(@$this->info['hRow']['title']!='')
             {
                 $bar = $wsData;
 
@@ -127,22 +134,31 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
                 $aa = 0;
             }
 
+            //////////////
+            //////////////
+            //////////////
 
 
             $i=1;
+            $aa=0;
             foreach ($wsData as $row) {
 
+
+                ////////////
+                ////////////
                 //A linha horizontal
-                if($this->info['hRow']['title']!='')
+                if(@$this->info['hRow']['title']!='')
                 {
 
-                    if($bar[$aa][$hRowIndex]['value'] != $bar[$aa-1][$hRowIndex]['value'])
+                    if(@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa-1][$hRowIndex]['value'])
                     {
-                        $i++;
-
-                        $xml .= str_replace("{{value}}",$bar[$aa][$hRowIndex]['value'] ,$this->temp->hRowLoop());
+                        $xml .= str_replace("{{value}}",@$bar[$aa][$hRowIndex]['value'] ,$this->temp->hRowLoop());
                     }
                 }
+
+                ////////////
+                ////////////
+
 
                 $i++;
 
@@ -154,11 +170,11 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
                     $value['value']  = strip_tags($value['value']);
 
-                    if(($value['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='')
-                    || $this->info['hRow']['title'] =='')
+                    if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                    || @$this->info['hRow']['title'] =='')
                     {
 
-                        if($remove===true && $a==1)
+                        if(@$remove===true && $a==1)
                         {
 
                         } else{
@@ -173,6 +189,9 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
             }
         }
 
+
+
+        //////////////////SQL EXPRESSIONS
 
         if(is_array($sql))
         {

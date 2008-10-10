@@ -26,8 +26,8 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
 
 
     protected  $output = 'word';
-    
-    
+
+
     function __construct ($db,$title,$dir)
     {
         if(!in_array('word',$this->export))
@@ -232,35 +232,97 @@ EOH;
 
         $xml .= "<tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>";
         foreach ($titles as $value) {
-            $xml .=" <td style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
+            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
+            {
+                $xml .=" <td style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
   background:black;mso-shading:white;mso-pattern:solid black;padding:0cm 0cm 0cm 0cm'>
   <p class=MsoNormal align=center style='text-align:center'><b
   style='mso-bidi-font-weight:normal'><span style='font-size:8.0pt;mso-bidi-font-size:
   10.0pt;mso-fareast-theme-font:minor-fareast'>".$value['value']."<o:p></o:p></span></b></p>
   </td>";
+            }
         }
         $xml .= '</tr>';
 
+
+
+
+
+
         if(is_array($wsData))
         {
+
+
+            /////////////////
+            /////////////////
+            /////////////////
+            if(@$this->info['hRow']['title']!='')
+            {
+                $bar = $wsData;
+
+                $hbar = trim($this->info['hRow']['field']);
+
+                $p=0;
+                foreach ($wsData[0] as $value)
+                {
+                    if($value['field'] == $hbar)
+                    {
+                        $hRowIndex = $p;
+                    }
+
+                    $p++;
+                }
+                $aa = 0;
+            }
+
+            //////////////
+            //////////////
+            //////////////
+
+
             $i=1;
+            $aa = 0;
             foreach ($wsData as $row) {
+
+                ////////////
+                ////////////
+                //A linha horizontal
+                if(@$this->info['hRow']['title']!='')
+                {
+
+                    if(@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa-1][$hRowIndex]['value'])
+                    {
+                        $xml .="<tr><td colspan=\"".$this->_colspan."\" style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;   border-right:solid black 1.0pt;mso-border-top-alt:solid black .75pt;  mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt; background:#333333;padding:0cm 0cm 0cm 0cm'> <p class=MsoNormal><span><span style='font-size:8.0pt;font-family:Helvetica;mso-fareast-theme-font:minor-fareast'>".$bar[$aa][$hRowIndex]['value']."<o:p></o:p></span></p> </td></tr>";
+                    }
+                }
+
+                ////////////
+                ////////////
+
+
 
                 $xml .= '<tr>';
                 $a=1;
                 foreach ($row as $value) {
                     $value['value']  = strip_tags($value['value']);
-                    if($remove===true && $a==1)
+                    if(@$remove===true && $a==1)
                     {
 
                     } else{
-                        if($i%2)
+
+
+                        if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                        || @$this->info['hRow']['title'] =='')
                         {
-                            $xml .="<td style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;   border-right:solid black 1.0pt;mso-border-top-alt:solid black .75pt;  mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt; background:#E0E0E0;padding:0cm 0cm 0cm 0cm'> <p class=MsoNormal><span><span style='font-size:8.0pt;font-family:Helvetica;mso-fareast-theme-font:minor-fareast'>".$value['value']."<o:p></o:p></span></p> </td>";
 
-                        }else{
 
-                            $xml .="<td style='border-top:none;border-left:none;
+                            if($i%2)
+                            {
+                                $xml .="<td style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;   border-right:solid black 1.0pt;mso-border-top-alt:solid black .75pt;  mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt; background:#E0E0E0;padding:0cm 0cm 0cm 0cm'> <p class=MsoNormal><span><span style='font-size:8.0pt;font-family:Helvetica;mso-fareast-theme-font:minor-fareast'>".$value['value']."<o:p></o:p></span></p> </td>";
+
+                            }else{
+
+                                $xml .="<td style='border-top:none;border-left:none;
   border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
   solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
   padding:0cm 0cm 0cm 0cm'>
@@ -268,12 +330,13 @@ EOH;
   font-family:Helvetica;mso-fareast-theme-font:
   minor-fareast'>".$value['value']."<o:p></o:p></span></p>
   </td>";
+                            }
                         }
                     }                        $a++;
 
                 }
                 $xml .= '</tr>';
-
+                $aa++;
                 $i++;
             }
         }
@@ -300,6 +363,8 @@ EOH;
 
         $xml .= '</table></div></body></html>';
 
+        echo $xml;
+        die();
 
         if(file_exists($this->dir.$this->title.'.doc'))
         {

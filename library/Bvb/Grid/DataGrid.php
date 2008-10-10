@@ -392,7 +392,7 @@ class Bvb_Grid_DataGrid {
 	 */
     function getDiscribeTable($table) {
 
-        if (! is_array ( $this->_describeTables [$table] )) {
+        if (! @is_array ( $this->_describeTables [$table] )) {
             $describe = $this->_db->describeTable ( $table );
             $this->_describeTables [$table] = $describe;
         }
@@ -411,12 +411,12 @@ class Bvb_Grid_DataGrid {
 
 
 
-        if (is_array ( $this->data ['fields'] )) {
+        if (@is_array ( $this->data ['fields'] )) {
 
             if (! array_key_exists ( $field, $this->data ['fields'] )) {
                 $this->data ['fields'] [$field] = $options;
 
-                if ($options ['hRow'] == 1) {
+                if (@$options ['hRow'] == 1) {
                     $this->fieldHorizontalRow = $field;
                     $this->info ['hRow'] = array ('field' => $field, 'title' => $options ['title'] );
                 }
@@ -630,7 +630,7 @@ class Bvb_Grid_DataGrid {
     function colspan() {
         $i = 0;
         foreach ( $this->data ['fields'] as $value ) {
-            if ($value ['hide'] == 1 || $value ['hRow'] == 1) {
+            if (@$value ['hide'] == 1 || @$value ['hRow'] == 1) {
                 $i ++;
             }
         }
@@ -652,7 +652,7 @@ class Bvb_Grid_DataGrid {
 
         foreach ( $values as $value ) {
 
-            if ($this->data ['fields'] [$value] ['sqlexp'] != '') {
+            if (@$this->data ['fields'] [$value] ['sqlexp'] != '') {
 
                 $sqlExp = $this->data ['fields'] [$value] ['sqlexp'];
 
@@ -704,11 +704,11 @@ class Bvb_Grid_DataGrid {
     function buildSearchType($filtro, $key) {
         $fieldsSemAsFinal = $this->removeAsFromFields ();
 
-        if ($fieldsSemAsFinal [$key] ['searchType'] != "") {
-            $op = $fieldsSemAsFinal [$key] ['searchType'];
+        if (@$fieldsSemAsFinal [$key] ['searchType'] != "") {
+            $op = @$fieldsSemAsFinal [$key] ['searchType'];
         }
 
-        $op = strtolower ( $op );
+        $op = @strtolower ( $op );
 
         switch ($op) {
             case 'equal' :
@@ -762,18 +762,24 @@ class Bvb_Grid_DataGrid {
             $query_where = " WHERE " . $this->_where . "  ";
             $tem_where_1 = true;
         }
+        
+        $query_final = '';
+        $query_where = '';
+        $new_where = '';
+        $tem_where = false;
+        $tem_where_1 = false;
 
         //Vamos criar a aray para sabermos o valor dos filtro
         $valor_filters = array ();
 
-        $filters = urldecode ( $this->ctrlParams ['filters'] );
+        $filters = @urldecode ( $this->ctrlParams ['filters'] );
         $filters = str_replace ( "filter_", "", $filters );
         $filters = Zend_Json::decode ( $filters );
 
         $fieldsSemAsFinal = $this->removeAsFromFields ();
 
         if (is_array ( $filters )) {
-
+            
             foreach ( $filters as $key => $filtro ) {
 
                 $key = str_replace ( "bvbdot", ".", $key );
@@ -785,13 +791,14 @@ class Bvb_Grid_DataGrid {
 
                     $oldKey = $key;
 
-                    if ($fieldsSemAsFinal [$key] ['searchField'] != "") {
+                    if (@$fieldsSemAsFinal [$key] ['searchField'] != "") {
                         $key = $this->replaceAsString ( $fieldsSemAsFinal [$key] ['searchField'] );
                     }
 
                     $new_where .= " AND $key " . $this->buildSearchType ( $filtro, $oldKey ) . "  ";
                     $tem_where = true;
                     $valor_filters [$key] = $filtro;
+                  
                 }
             }
         }
@@ -815,6 +822,9 @@ class Bvb_Grid_DataGrid {
             $query_final = $query_where;
         }
 
+        
+        
+
         $this->_queryWhere = $query_final;
 
         return $this->_queryWhere;
@@ -828,10 +838,10 @@ class Bvb_Grid_DataGrid {
 	 * @return string
 	 */
     function buildQuery() {
+        
+        @$inicio = ( int ) $this->ctrlParams ['start'];
 
-        $inicio = ( int ) $this->ctrlParams ['inicio'];
-
-        $order = $this->ctrlParams ['order'];
+        $order = @$this->ctrlParams ['order'];
 
         $order1 = explode ( "_", $order );
 
@@ -856,8 +866,9 @@ class Bvb_Grid_DataGrid {
 
         if (! in_array ( $order_field, $this->map_array ( $this->_fields, 'replace_AS' ) )) {
             unset ( $query_order );
+            $query_order = '';
 
-            if (strlen ( $this->data ['order'] ) > 0) {
+            if (@strlen ( $this->data ['order'] ) > 0) {
                 $query_order = " ORDER BY  " . $this->data ['order'];
             }
 
@@ -876,15 +887,15 @@ class Bvb_Grid_DataGrid {
             }
         }
 
-        if (strlen ( $this->info ['groupby'] ) > 0) {
+        
+        $groupBy = '';
+        if (strlen ( @$this->info ['groupby'] ) > 0) {
             $group = $this->_db->quoteIdentifier ( trim ( $this->info ['groupby'] ) );
 
             $groupBy = " GROUP BY  " . $this->_db->quoteIdentifier ( $this->info ['groupby'] );
-        } else {
-            unset ( $groupBy );
         }
 
-        if (strlen ( $this->info ['limit'] ) > 0 || is_array ( $this->info ['limit'] )) {
+        if (@strlen ( $this->info ['limit'] ) > 0 || @is_array ( $this->info ['limit'] )) {
 
             if (is_array ( $this->info ['limit'] )) {
                 $limit = $this->info ['limit'] [0] . ',' . $this->info ['limit'] [1];
@@ -911,6 +922,8 @@ class Bvb_Grid_DataGrid {
 	 */
     function getUrl($situation = '') {
 
+        $url = '';
+        
         $params = $this->ctrlParams;
 
         if (is_array ( $situation )) {
@@ -964,7 +977,7 @@ class Bvb_Grid_DataGrid {
         //[EN] Remove the action e controller keys, they are not necessary (in fact they aren't part ot url)
 
 
-        if ($this->info ['ajax']) {
+        if (array_key_exists('ajax',$this->info)) {
             return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/modo/ajax";
         } else {
             return $this->_baseUrl . "/" . $params ['module'] . "/" . $params ['controller'] . $action . $url;
@@ -984,7 +997,7 @@ class Bvb_Grid_DataGrid {
     function buildFilters() {
         $return = array ();
 
-        if ($this->info ['noFilters']) {
+        if (@$this->info ['noFilters']) {
             return false;
         }
 
@@ -1000,7 +1013,7 @@ class Bvb_Grid_DataGrid {
 
         for($i = 0; $i < $tcampos; $i ++) {
 
-            if (! $this->data ['fields'] [$this->_fields [$i]] ['hide']) {
+            if (! @$this->data ['fields'] [$this->_fields [$i]] ['hide']) {
 
                 if (array_key_exists ( $data [$i], $this->filters )) {
 
@@ -1122,7 +1135,7 @@ class Bvb_Grid_DataGrid {
 
         $return = array ();
 
-        $url = $this->getUrl ( array ('order', 'inicio', 'comm' ) );
+        $url = $this->getUrl ( array ('order', 'start', 'comm' ) );
 
         $tcampos = count ( $this->_fields );
 
@@ -1150,7 +1163,7 @@ class Bvb_Grid_DataGrid {
 
             $order = $titles [$i] == key ( $this->order ) ? $this->order [$titles [$i]] : 'ASC';
 
-            if (! $novaData [$titles [$i]] ['hide']) {
+            if (! @$novaData [$titles [$i]] ['hide']) {
 
                 if ($titles [$i] == key ( $this->order )) {
                     if ($order == 'ASC') {
@@ -1163,7 +1176,7 @@ class Bvb_Grid_DataGrid {
                     $img = "";
                 }
 
-                if ($this->info ['noOrder'] == 1) {
+                if (@$this->info ['noOrder'] == 1) {
 
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
 
@@ -1260,12 +1273,12 @@ class Bvb_Grid_DataGrid {
         }
 
         //[PT] Remover os paramteros que não queremos na url
-        $url = urlencode ( $this->getUrl ( array ('filters', 'inicio', 'comm' ) ) );
+        $url = urlencode ( $this->getUrl ( array ('filters', 'start', 'comm' ) ) );
 
         //Vamos remover os AS dos indices da data global por cauda de substituirmos o campo de procura
         $fieldsSemAsFinal = $this->removeAsFromFields ();
 
-        if ($fieldsSemAsFinal [$campo] ['searchField'] != "") {
+        if (@$fieldsSemAsFinal [$campo] ['searchField'] != "") {
 
             $nkey = $this->replaceAsString ( $fieldsSemAsFinal [$campo] ['searchField'] );
 
@@ -1281,10 +1294,12 @@ class Bvb_Grid_DataGrid {
 
         $campo_simples = substr ( $campo, strpos ( $campo, "." ) + 1 );
 
-        $tipo = $table [$campo_simples];
+        @$tipo = $table [$campo_simples];
 
         $tipo = $tipo ['DATA_TYPE'];
 
+        
+        $help_javascript = '';
         if (substr ( $tipo, 0, 4 ) == 'enum') {
             $enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
             $tipo = 'enum';
@@ -1297,13 +1312,13 @@ class Bvb_Grid_DataGrid {
             //[PT] Temos que saber se tem um content próprio
 
 
-            if (! $this->data ['fields'] [$value] ['hide'] && $this->data ['fields'] [$value] ['hRow'] != 1) {
-
+            if (!@$this->data ['fields'] [$value] ['hide'] && @$this->data ['fields'] [$value] ['hRow'] != 1) 
+            {
                 $help_javascript .= "filter_" . $value . ",";
             }
         }
 
-        if ($options ['noFilters'] != 1) {
+        if (@$options ['noFilters'] != 1) {
             $help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
             $onchange = "onchange=\"changeFilters('$help_javascript','$url');\"";
         }
@@ -1347,7 +1362,7 @@ class Bvb_Grid_DataGrid {
 
                     $value = substr ( $value, 1 );
                     $value = substr ( $value, 0, - 1 );
-                    $selected = $this->_filtersValues [$campo] == $value ? "selected" : "";
+                    $selected = @$this->_filtersValues [$campo] == $value ? "selected" : "";
                     $valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
                 }
 
@@ -1357,7 +1372,7 @@ class Bvb_Grid_DataGrid {
 
             default :
 
-                $valor = "<input type=\"text\" $onchange id=\"filter_" . str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
+                $valor = "<input type=\"text\" $onchange id=\"filter_" . @str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . @$this->_filtersValues [$campo] . "\" $opt>";
 
                 break;
         }
@@ -1457,14 +1472,14 @@ class Bvb_Grid_DataGrid {
                 $campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
                 $campos = trim ( $campos );
 
-                if (strlen ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ) > 0) {
+                if (@strlen ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ) > 0) {
                     $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 
                 } else {
                     $new_value = htmlspecialchars ( $dados->$campos );
                 }
 
-                if (strlen ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ) > 0) {
+                if (@strlen ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ) > 0) {
 
                     $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
 
@@ -1473,15 +1488,15 @@ class Bvb_Grid_DataGrid {
                 }
 
                 //[PT]Aplicar o formato da célula
-                if (strlen ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ) > 0) {
+                if (@strlen ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ) > 0) {
 
                     $new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
 
                 }
 
-                if (! $this->data ['fields'] [$fields_duble [$is]] ['hide']) {
+                if (! @$this->data ['fields'] [$fields_duble [$is]] ['hide']) {
 
-                    $return [$i] [] = array ('class' => $class . " " . $this->data ['fields'] [$fields_duble [$is]] ['class'], 'value' => stripslashes ( $new_value ), 'field' => $integralFields [$is] );
+                    $return [$i] [] = @array ('class' => $class . " " . $this->data ['fields'] [$fields_duble [$is]] ['class'], 'value' => stripslashes ( $new_value ), 'field' => $integralFields [$is] );
 
                 }
 
@@ -1543,7 +1558,7 @@ class Bvb_Grid_DataGrid {
 	 */
     function buildSqlExp() {
 
-        $exp = $this->info ['sqlexp'];
+        $exp = @$this->info ['sqlexp'];
         if (! is_array ( $exp )) {
             return false;
         }
@@ -1589,19 +1604,19 @@ class Bvb_Grid_DataGrid {
             $i = 0;
             foreach ( $fields as $key => $value ) {
 
-                if (strlen ( $value ['title'] ) > 0) {
+                if (strlen ( @$value ['title'] ) > 0) {
                     $titulos [$key] = $value ['title'];
                 } else {
                     $titulos [$key] = ucfirst ( $key );
                 }
 
-                if ($value ['order'] > - 1) {
+                if (@$value ['order'] > - 1) {
                     $fields_final [( int ) $value ['order']] = $key;
                 } else {
                     $fields_final [$i] = $key;
                 }
 
-                if ($value ['hide'] == 1) {
+                if (@$value ['hide'] == 1) {
                     $hide ++;
                 }
 
@@ -1678,7 +1693,7 @@ class Bvb_Grid_DataGrid {
 
     function validateFilters($filters) {
 
-        if ($this->info ['noFilters']) {
+        if (@$this->info ['noFilters']) {
             return false;
         }
 
@@ -1710,7 +1725,7 @@ class Bvb_Grid_DataGrid {
 
         }
 
-        if (is_array ( $this->data ['hide'] )) {
+        if (@is_array ( $this->data ['hide'] )) {
             foreach ( $this->data ['hide'] as $value ) {
                 if (! in_array ( $value, $titulos )) {
                     unset ( $titulos [$value] );
@@ -1749,11 +1764,11 @@ class Bvb_Grid_DataGrid {
             return false;
         }
 
-        if ($this->_getPrimaryKey [$this->data ['table']]) {
+        if (@$this->_getPrimaryKey [$this->data ['table']]) {
             return $this->_getPrimaryKey [$this->data ['table']];
         }
 
-        if ($this->data ['primaryKey'] != '') {
+        if (@$this->data ['primaryKey'] != '') {
             $this->_getPrimaryKey [$this->data ['table']] = $this->data ['primaryKey'];
 
             return $this->_getPrimaryKey [$this->data ['table']];
@@ -1770,7 +1785,7 @@ class Bvb_Grid_DataGrid {
 
         }
 
-        if (count ( $primary_key ) != 1 || ! $this->info ['user']) {
+        if (count ( $primary_key ) != 1 || ! @$this->info ['user']) {
             return false;
             #throw new Exception('Incaple to get the table primary key. The system can only perform adicional actions on tables with ONE primary key');
         }
@@ -1793,7 +1808,7 @@ class Bvb_Grid_DataGrid {
 
         $this->consolidated = 1;
 
-        $cFields = $this->data ['fields'];
+        $cFields = @$this->data ['fields'];
 
         if (! is_array ( $cFields )) {
 
@@ -1804,7 +1819,7 @@ class Bvb_Grid_DataGrid {
             }
 
         }
-        if (! is_array ( $this->filters ) && is_array ( $this->data ['filters'] )) {
+        if (! @is_array ( $this->filters ) && @is_array ( $this->data ['filters'] )) {
             $this->filters = $this->data ['filters'];
         }
 
@@ -1814,7 +1829,7 @@ class Bvb_Grid_DataGrid {
         if (is_array ( $cFields )) {
             foreach ( $cFields as $value ) {
 
-                if ($value ['searchField'] != "") {
+                if (@$value ['searchField'] != "") {
                     if (! in_array ( $value ['searchField'], $this->data ['fields'] )) {
                         $this->addColumn ( $value ['searchField'], array ('title' => 'Barcelos', 'hide' => 1 ) );
                     }
@@ -1853,7 +1868,7 @@ class Bvb_Grid_DataGrid {
         //[EN] Usefull for adding links (a least for me :D )
 
 
-        if (is_array ( $this->info ['extra_fields'] )) {
+        if (@is_array ( $this->info ['extra_fields'] )) {
 
             if (! is_array ( $this->extra_fields )) {
                 $this->extra_fields = $this->info ['extra_fields'];
@@ -1891,7 +1906,7 @@ class Bvb_Grid_DataGrid {
         }
         //[PT] O where que é sempre aplicado
         //[EN] Get the WHERE condition and apply from now on...
-        $this->_where = $this->data ['where'];
+        $this->_where = @$this->data ['where'];
 
         $select_fields = $this->buildSelectFields ( $this->_fields );
 
@@ -1913,7 +1928,7 @@ class Bvb_Grid_DataGrid {
         }
         //[PT] O where que é sempre aplicado
         //[EN] Get the WHERE condition and apply from now on...
-        $this->_where = $this->data ['where'];
+        $this->_where = @$this->data ['where'];
 
         $select_fields = $this->buildSelectFields ( $this->_fields );
 

@@ -103,7 +103,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
                     $value['value']  = strip_tags($value['value']);
                     
                     
-                    if($remove===true && $a==1)
+                    if(@$remove===true && $a==1)
                     {
 
                     } else{
@@ -138,6 +138,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
         $xml .= '</Workbook>';
 
 
+        
         if(file_exists($this->dir.$this->title.'.xls'))
         {
             $data = date('d-m-Y H\:i\:s');
