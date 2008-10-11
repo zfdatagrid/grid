@@ -286,7 +286,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 if ($mode == 'add' && is_array ( $final_values )) {
                     $this->_db->insert ( $this->data ['table'], $final_values );
                     $this->message = $this->__ ( 'Record saved' );
-
+                    $this->messageOk = true;
                 }
 
                 //[PT] Processar dados
@@ -517,10 +517,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         foreach ( $param as $value ) {
             $dec = explode ( ":", $value );
-            $final [$dec [0]] = $dec [1];
+            @$final [$dec [0]] = $dec [1];
         }
 
-        if ($final ['mode'] != 'delete') {
+        if (@$final ['mode'] != 'delete') {
             return 0;
         }
 
@@ -532,6 +532,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         if (isset($this->info ['delete'] ['where'] )) {
             $where = " AND " . $this->info ['delete'] ['where'];
+        }else{
+            $where = '';
         }
 
         $this->_db->delete ( $this->data ['table'], "  $id =" . $this->_db->quote ( $final ['id'] ) . " $where " );
@@ -1129,8 +1131,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $fieldValue = isset($this->_formValues[$value])?$this->_formValues[$value]:'';
             $fieldDescription =  isset($this->info[$mod]['fields'][$value]['description'])?$this->info[$mod]['fields'][$value]['description']:'';
 
+            $fieldTitle = isset($this->info[$mod]['fields'][$value]['title'])?$this->info[$mod]['fields'][$value]['title']:'';
 
-            $grid .= str_replace ( "{{value}}", $this->__($this->info[$mod]['fields'][$value]['title']).'<br><em>'.$this->__($fieldDescription).'</em>', $this->temp['table']->formLeft () );
+            $grid .= str_replace ( "{{value}}", $this->__($fieldTitle).'<br><em>'.$this->__($fieldDescription).'</em>', $this->temp['table']->formLeft () );
             $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod ,$fieldValue) . $finalV, $this->temp['table']->formRight () );
 
             $grid .= $this->temp['table']->formEnd ();
@@ -1517,6 +1520,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     function deploy() {
 
+        $url = parent::getUrl ( 'comm' );
+
+        self::processForm ();
         parent::deploy ();
 
 
@@ -1526,9 +1532,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
 
-        $url = parent::getUrl ( 'comm' );
-
-        self::processForm ();
 
         //[PT] As classes em CSS para aplicar as diferentes zonas
         //[EN] The CSS classes to apply
@@ -1626,6 +1629,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         $form = $this->object2array($form);
 
+
+
         $fieldsGet = $form['fields'];
         $fields = array();
 
@@ -1648,21 +1653,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             {
                 $this->delete = array('allow'=>1);
 
-                if(strlen($options['where'])>0)
+                if(isset($options['onDeleteAddWhere']))
                 {
-                    $this->delete['where'] = $options['where'];
+                    $this->delete['where'] = $options['onDeleteAddWhere'];
                 }
             }
         }
 
         if($options['add']==1)
         {
-            $this->add = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['force']);
+            $this->add = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onAddForce']);
         }
 
+        if(isset($options['ecit']))
+        {
         if($options['edit']==1)
         {
-            $this->edit = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['force']);
+            $this->edit = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onEditForce']);
+        }
         }
 
 

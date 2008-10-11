@@ -647,7 +647,7 @@ class Bvb_Grid_DataGrid {
             }
         }
 
-        $colspan = count ( $this->_fields ) + count ( $this->extra_fields );
+        $colspan = count ( $this->_fields ) + count ( $this->extra_fields ) + $i;
         $this->temp[$this->output]->colSpan = $colspan;
 
         return $colspan;

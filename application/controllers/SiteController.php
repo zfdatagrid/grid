@@ -58,8 +58,8 @@ class siteController extends Zend_Controller_Action {
         $this->view->pages = $grid->deploy();
         $this->render ('index') ;
     }
-    
-    
+
+
 
     function groupAction()
     {
@@ -214,20 +214,26 @@ class siteController extends Zend_Controller_Action {
 
         $form = new Bvb_Grid_Form();
         $form->add(1)
-        ->edit(1)
         ->button(1)
+        ->delete(1)
         ->user(1)
-        ->force(array('date_added'=>date('Y-m-d H:i:s')));
+        ->onDeleteAddWhere("user_id='1'")
+        ->onAddForce(array('date_added'=>date('Y-m-d H:i:s')))
+        ->onEditForce(array('date_added'=>date('Y-m-d H:i:s')));
 
 
         $fAdd = new Bvb_Grid_Form_Column('firstname');
         $fAdd->title('First name')
-        ->validators(array('EmailAddress','Int'))
+        ->validators(array('EmailAddress'))
         ->description('Insert you email address')
         ->filters(array('StripTags'));
 
         $lastName = new Bvb_Grid_Form_Column('lastname');
-        $lastName->title('Last name')
+        $lastName->title('Last name');
+
+        $country = new Bvb_Grid_Form_Column('country');
+        $country->title('País')
+        ->description('O seu país')
         ->values($paises);
 
 
@@ -236,7 +242,7 @@ class siteController extends Zend_Controller_Action {
         ->description('Your language')
         ->values($language);
 
-        $form->addColumns($fAdd,$lastName,$lang);
+        $form->addColumns($fAdd,$lastName,$lang,$country);
 
         $grid->addForm($form);
 
@@ -296,7 +302,7 @@ class siteController extends Zend_Controller_Action {
 
 
         $grid->setTemplate('print','print',$pdf);
-        
+
         $grid->setTemplate('pdf','pdf',$pdf);
 
 

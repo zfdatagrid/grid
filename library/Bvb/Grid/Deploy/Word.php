@@ -311,8 +311,8 @@ EOH;
                     } else{
 
 
-                        if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
-                        || @$this->info['hRow']['title'] =='')
+                        if(($value['field']!=@$this->info['hRow']['field'] && isset($this->info['hRow']['title'] ))
+                        || isset($this->info['hRow']['title']))
                         {
 
 

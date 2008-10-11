@@ -18,7 +18,7 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
-class Bvb_Grid_Form 
+class Bvb_Grid_Form
 {
     public  $options;
 
@@ -47,6 +47,7 @@ class Bvb_Grid_Form
         }
 
         $this->fields = $final;
+        
 
         return $this;
 
