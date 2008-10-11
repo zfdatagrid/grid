@@ -7,6 +7,40 @@ class siteController extends Zend_Controller_Action {
         $this->_redirect('default/site/basic',array('exit'=>1));
     }
 
+    function grid()
+    {
+        $export = $this->getRequest()->getParam('export');
+
+        $db = Zend_Registry::get('db');
+
+        switch ($export) {
+            case 'excel':
+                $grid = new Bvb_Grid_Deploy_Excel($db,'Grid Example','media/files');
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            case 'word':
+                $grid = new Bvb_Grid_Deploy_Word($db,'Grid Example','media/files');
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            case 'pdf':
+                $grid =  new Bvb_Grid_Deploy_Pdf($db,'Grid Example','media/files');
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            case 'print':
+                $grid =  new Bvb_Grid_Deploy_Print($db,'Grid Example');
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            default:
+                $grid = new Bvb_Grid_Deploy_Table($db);
+                $grid->imagesUrl  = $this->getRequest()->getBaseUrl() . '/public/images/';
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+
+                break;
+        }
+
+        return $grid;
+    }
+
 
     /**
      * TEST FUNCTION
@@ -18,16 +52,18 @@ class siteController extends Zend_Controller_Action {
         include "models/Grid.php";
 
         $t = new Grid();
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->selectFromDbTable($t);
         $grid->setTemplate('select');
         $this->view->pages = $grid->deploy();
         $this->render ('index') ;
     }
+    
+    
 
     function groupAction()
     {
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from('crud')
         ->addColumn('id')
         ->addColumn('firstname')
@@ -50,7 +86,7 @@ class siteController extends Zend_Controller_Action {
 
     function init()
     {
-        $conf = Bvb::get('config');
+        $conf = Zend_Registry::get('config');
         $this->view->url = $conf->site->url;
     }
 
@@ -61,12 +97,13 @@ class siteController extends Zend_Controller_Action {
 
     function filtersAction () {
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
+
+        $grid->setPagination(5);
 
         $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ')
         ->table (array('c'=>'Country','ct'=>'City'))
-        ->setPagination(15)
-        ->addColumn('c.name',array('title'=>'Country (Capital)','class'=>'hideInput','decorator'=>'{{c.name}} <em>({{ct.Name}})</em>'))
+        ->addColumn('c.Name',array('title'=>'Country (Capital)','class'=>'hideInput','decorator'=>'{{c.Name}} <em>({{ct.Name}})</em>'))
         ->addColumn('ct.Name',array('title'=>'Capital','hide'=>1))
         ->addColumn('c.continent',array('title'=>'Continent'))
         ->addColumn('c.Population',array('title'=>'Population','class'=>'width_80','eval'=>"number_format('{{c.Population}}');"))
@@ -78,8 +115,7 @@ class siteController extends Zend_Controller_Action {
 
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('firstname')
-        ->addFilter('c.name', array('distinct'=>array('field'=>'c.name','name'=>'c.name')))
+        $filters->addFilter('c.Name', array('distinct'=>array('field'=>'c.Name','name'=>'c.Name')))
         ->addFilter('ct.Name' , array('distinct'=>array('field'=>'ct.Name','name'=>'ct.Name')))
         ->addFilter('c.continent', array('distinct'=>array('field'=>'c.continent','name'=>'c.continent')))
         ->addFilter('c.LifeExpectancy', array('distinct'=>array('field'=>'c.LifeExpectancy','name'=>'c.LifeExpectancy')))
@@ -94,48 +130,14 @@ class siteController extends Zend_Controller_Action {
         $this->render ('index') ;
     }
 
-    /*
-    function exportAction () {
-
-
-    $grid = Bvb::Grid('table');
-    $grid->from = 'Country c INNER JOIN City ct ON c.Capital=ct.ID ';
-    $grid->table = array('c'=>'Country','ct'=>'City');
-    $grid->data['pagination']['per_page'] = 15;
-
-    $grid->addColumn('c.name',array('title'=>'Country (Capital)','class'=>'hideInput','decorator'=>'{{c.name}} <em>({{ct.Name}})</em>'));
-    $grid->addColumn('ct.Name',array('title'=>'Capital','hide'=>1));
-    $grid->addColumn('c.continent',array('title'=>'Continent'));
-    $grid->addColumn('c.Population',array('title'=>'Population','class'=>'width_80','eval'=>"number_format('{{c.Population}}');"));
-    $grid->addColumn('c.LifeExpectancy',array('title'=>'Life E.','class'=>'width_50'));
-    $grid->addColumn('c.GovernmentForm',array('title'=>'Government Form' ));
-
-    $grid->sqlexp = array('c.LifeExpectancy'=>'AVG','c.Population'=>'SUM');
-
-    $grid->filters  =array(
-    'c.name' => array('distinct'=>array('field'=>'c.name','name'=>'c.name')),
-    'ct.Name' => array('distinct'=>array('field'=>'ct.Name','name'=>'ct.Name')),
-    'c.continent' => array('distinct'=>array('field'=>'c.continent','name'=>'c.continent')),
-    'c.LifeExpectancy' => array('distinct'=>array('field'=>'c.LifeExpectancy','name'=>'c.LifeExpectancy')),
-    'c.GovernmentForm' => array('distinct'=>array('field'=>'c.GovernmentForm','name'=>'c.GovernmentForm')),
-    'c.Population'=>array(),
-    );
-
-    $grid->export = array('print','excel','pdf','word');
-
-    $this->view->pages = $grid->deploy();
-    $this->view->action = 'export';
-    $this->render ('index') ;
-    }
-    */
     function joinsAction () {
 
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from  ('Country c INNER JOIN City ct ON c.Capital=ct.ID ')
         ->table ( array('c'=>'Country','ct'=>'City'))
         ->order('c.Continent')
-        ->limit(50);
+        ->limit(10);
 
         $grid->addColumn('c.Name',array('title'=>'Country (Capital)','class'=>'hideInput','decorator'=>'{{c.Name}} <em>({{ct.Name}})</em>'))
         ->addColumn('ct.Name',array('title'=>'Capital','hide'=>1))
@@ -153,7 +155,7 @@ class siteController extends Zend_Controller_Action {
     function extraAction () {
 
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from ('Country c INNER JOIN City ct ON c.Capital=ct.ID ')
         ->table (array('c'=>'Country','ct'=>'City'))
         ->noFilters(1);
@@ -166,7 +168,7 @@ class siteController extends Zend_Controller_Action {
         $grid->addColumn('c.GovernmentForm',array('title'=>'Government Form' ));
         $grid->addColumn('c.HeadOfState',array('title'=>'Head Of State', 'hide'=>1));
 
-       
+
 
         $extra = new Bvb_Grid_ExtraColumns();
         $extra->position('right')
@@ -189,10 +191,10 @@ class siteController extends Zend_Controller_Action {
 
 
     function crudAction () {
-        $db = Bvb::get('db');
+        $db = Zend_Registry::get('db');
 
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from('crud')
         ->order('id DESC ');
 
@@ -260,9 +262,9 @@ class siteController extends Zend_Controller_Action {
      *
      */
     function selectAction () {
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
 
-        $db = Bvb::get('db');
+        $db = Zend_Registry::get('db');
 
         $select = $db->select()
         ->from(array('p' => 'products'),
@@ -279,15 +281,32 @@ class siteController extends Zend_Controller_Action {
 
     function basicAction () {
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from ('City');
+
+        $pdf = array(
+        'logo'=>'public/images/logo.png',
+        'baseUrl'=>'/grid/',
+        'title'=>'DataGrid Zend Framework',
+        'subtitle'=>'Easy and powerfull - (Demo document)',
+        'footer'=>'Downloaded from: http://www.petala-azul.com ',
+        'size'=>'a4', #letter || a4
+        'orientation'=>'', #landscape || ''
+        'page'=>'Page N.');
+
+
+        $grid->setTemplate('print','print',$pdf);
+        
+        $grid->setTemplate('pdf','pdf',$pdf);
+
+
         $this->view->pages = $grid->deploy();
         $this->render ('index') ;
     }
 
     function templateAction () {
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->noFilters(1)
         ->from('City')
         ->setTemplate('select','table');
@@ -299,7 +318,7 @@ class siteController extends Zend_Controller_Action {
 
     function hrowAction () {
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from ('Country c INNER JOIN City ct ON c.Capital=ct.ID ')
         ->table(array('c'=>'Country','ct'=>'City'))
         ->order (' c.Continent, c.Name');
@@ -323,7 +342,7 @@ class siteController extends Zend_Controller_Action {
 
     function columnAction () {
 
-        $grid = Bvb::Grid('table');
+        $grid = $this->grid('table');
         $grid->from ('Country c INNER JOIN City ct ON c.Capital=ct.ID ')
         ->table(array('c'=>'Country','ct'=>'City'))
         ->order (' c.Continent, c.Name')
@@ -331,7 +350,7 @@ class siteController extends Zend_Controller_Action {
         #->noFilters(1);
         #->noOrder(1);
 
-        
+
 
         $cap = new Bvb_Grid_Column('c.Name AS cap');
         $cap->title('Country (Capital)')
@@ -360,7 +379,7 @@ class siteController extends Zend_Controller_Action {
 
         $grid->addColumns($cap,$name,$continent,$population,$lifeExpectation,$governmentForm,$headState);
 
-        
+
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('c.Name',array('distinct'=>array('field'=>'c.Name AS cap','name'=>'c.Name AS cap')))
         ->addFilter('ct.Name' , array('distinct'=>array('field'=>'ct.Name','name'=>'ct.Name')))
@@ -371,7 +390,7 @@ class siteController extends Zend_Controller_Action {
         ->addFilter('c.Population');
 
         $grid->addFilters($filters);
-        
+
         $this->view->pages = $grid->deploy();
         $this->render ('index') ;
     }

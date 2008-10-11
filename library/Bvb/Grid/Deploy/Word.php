@@ -363,8 +363,7 @@ EOH;
 
         $xml .= '</table></div></body></html>';
 
-        echo $xml;
-        die();
+    
 
         if(file_exists($this->dir.$this->title.'.doc'))
         {

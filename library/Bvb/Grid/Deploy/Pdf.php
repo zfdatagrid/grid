@@ -180,18 +180,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
     function deploy()
     {
-        $this->data['pagination']['per_page'] = 10000000000;
+        $this->setPagination(100000);
         parent::deploy();
 
         $la = '';
 
-        $this->addTemplateDir('Bvb/Grid/Template/Pdf','Bvb_Grid_Template_Pdf','pdf');
-        $this->setTemplate('pdf','pdf');
+        if(!$this->temp['pdf'] instanceof Bvb_Grid_Template_Pdf_Pdf )
+        {
+           $this->setTemplate('pdf','pdf');
+        }
 
-
-
-        $this->pdfInfo = $this->temp->info();
-        $this->style = $this->temp->style();
+     
+        $this->pdfInfo = $this->temp['pdf']->info();
+        $this->style = $this->temp['pdf']->style();
 
 
         $larg = self::calculateCellSize();

@@ -23,8 +23,14 @@ class Bvb_Grid_Template_Print_Print
 
     public $i;
 
-
     public $colSpan;
+    
+    public $printOptions ;
+    
+    function __construct($options = array())
+    {     
+        $this->printOptions = $options;
+    }
 
     function globalStart ()
     {
@@ -38,7 +44,15 @@ class Bvb_Grid_Template_Print_Print
 
     function header()
     {
-        return  " <tr><td colspan=\"$this->colSpan\" style='border:solid black 1.0pt;background-color:#FFFFFF;color:#000000;padding:5px'>  <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'><o:p>DataGrid Zend Framework</o:p></span></b></p>
+        
+        if(file_exists(@$this->printOptions['logo']))
+        {
+            $img = "<img align=\"left\" src=\"".$this->printOptions['baseUrl'].$this->printOptions['logo']."\" border=\"0\">";
+        }else{
+            $img  ='';
+        }
+        
+        return  " <tr><td colspan=\"$this->colSpan\" style='border:solid black 1.0pt;background-color:#FFFFFF;color:#000000;padding:5px'> $img <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'><o:p>".@$this->printOptions['title']."</o:p></span></b><span style='font-size:9.0pt;'><o:p><br>".@$this->printOptions['subtitle']."</o:p></span></p>
   </td></tr>";
     }
 

@@ -21,6 +21,13 @@
 class Bvb_Grid_Template_Pdf_Pdf
 {
 
+    public  $pdfOptions;
+
+    function __construct($options = array())
+    {
+        $this->pdfOptions = $options;
+    }
+
 
     function info()
     {
@@ -33,27 +40,29 @@ class Bvb_Grid_Template_Pdf_Pdf
         'orientation'=>'', #landscape
         'page'=>'Page N.');
 
+        $pdf = array_merge($pdf,$this->pdfOptions);
+
         return $pdf;
     }
 
-    
+
     function style()
     {
-        
+
         $style = array(
-            'title'=>'#000000',
-            'subtitle'=>'#111111',
-            'footer'=>'#111111',
-            'header'=>'#AAAAAA',
-            'row1'=>'#EEEEEE',
-            'row2'=>'#FFFFFF',
-            'sqlexp'=>'#BBBBBB',
-            'lines'=>'#111111',
-            'hrow'=>'#E4E4F6',
-            'text'=>'#000000'
+        'title'=>'#000000',
+        'subtitle'=>'#111111',
+        'footer'=>'#111111',
+        'header'=>'#AAAAAA',
+        'row1'=>'#EEEEEE',
+        'row2'=>'#FFFFFF',
+        'sqlexp'=>'#BBBBBB',
+        'lines'=>'#111111',
+        'hrow'=>'#E4E4F6',
+        'text'=>'#000000'
         );
-        
-        
+
+
         return $style;
     }
 

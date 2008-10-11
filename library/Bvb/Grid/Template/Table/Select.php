@@ -21,6 +21,7 @@
 class Bvb_Grid_Template_Table_Select extends Bvb_Grid_Template_Table_Table
 {
 
+    public  $ic;
 
     public $insideLoop;
 
@@ -70,6 +71,7 @@ class Bvb_Grid_Template_Table_Select extends Bvb_Grid_Template_Table_Table
             $this->insideLoop = 2;
         }else{
             $input = "{{value}}";
+            $input2 = '';
         }
 
         $class =  $this->i % 2 ? "alt" : "";

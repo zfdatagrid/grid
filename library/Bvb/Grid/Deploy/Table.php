@@ -20,6 +20,9 @@
 
 class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
+    protected $messageOk;
+
+
 
     /**
      * [PT] Se o formulário foi submetido com sucesso
@@ -149,13 +152,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @param array $data
 	 */
     function __construct($db) {
-        $url = Bvb::get ( 'config' )->site->url . "public/images/";
+
 
         parent::__construct ( $db );
 
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
         $this->setTemplate ( 'table', 'table' );
-        #$this->temp = new Bvb_Grid_Template_Table_Table();
+        #$this->temp['table'] = new Bvb_Grid_Template_Table_Table();
 
 
     }
@@ -204,7 +206,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         //[EN] IF a user can edit or delete data we must instanciate the crypt classe.
         //[EN] This is an extra-security step.
         if ($this->allowEdit == 1 || $this->allowDelete) {
-            $dec = $this->ctrlParams ['comm'];
+            $dec = isset($this->ctrlParams ['comm'])?$this->ctrlParams ['comm']:'';
             $this->_comm = $dec;
         }
 
@@ -220,12 +222,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         if (Zend_Controller_Front::getInstance ()->getRequest ()->isPost ()) {
 
             $param = Zend_Controller_Front::getInstance ()->getRequest ();
-            $op_query = self::convertComm ( $this->ctrlParams ['comm'] );
-            #$op_query =  $this->convertComm($this->crypt->decrypt($this->ctrlParams['comm']));
+
+            $opComm = isset( $this->ctrlParams ['comm'])? $this->ctrlParams ['comm']:'';
+            $op_query = self::convertComm ( $opComm );
 
 
-            $get_mode = $op_query ['mode'];
-
+            $get_mode = isset($op_query['mode'])?$op_query ['mode']:'';
             $mode = $get_mode == 'edit' ? 'edit' : 'add';
 
             //[PT] Temos que saber quais os campos que vamos buscar ao Post. Só vamos buscar os nomes
@@ -318,6 +320,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $this->formSuccess  = 0;
                 $this->formPost  = 1;
 
+                $final_values = null;
+
             }
 
             //[PT] Agone unset todos os campso, para aurl não ficar comprida. $this->getUrl
@@ -341,9 +345,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @param string $mode
 	 * @return string
 	 */
-    function applyFilters($value, $field, $mode) {
+    function applyFilters($value, $field, $mode,$options=array()) {
 
-        $filters = $this->info [$mode] ['fields'] [$field] ['filters'];
+        $filters = isset($this->info [$mode] ['fields'] [$field] ['filters'])?$this->info [$mode] ['fields'] [$field] ['filters']:'';
 
         if (is_array ( $filters )) {
 
@@ -393,10 +397,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $format = array_reverse ( $this->_elements ['validator'] );
 
         //[PT] Array de valores possiveis
-        $values = $this->info [$mode] ['fields'] [$field] ['values'];
+        $values = isset($this->info [$mode] ['fields'] [$field] ['values'])?$this->info [$mode] ['fields'] [$field] ['values']:'';
 
         //[PT]A Lista de possiveis "validadores"
-        $validators = $this->info [$mode] ['fields'] [$field] ['validators'];
+        $validators = isset($this->info [$mode] ['fields'] [$field] ['validators'])?$this->info [$mode] ['fields'] [$field] ['validators']:'';
 
         //[PT] Podemos validar logo se o valor estiver na array de valores permitidos
         if (is_array ( $values ) && $mode == 'edit') {
@@ -489,7 +493,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     }
 
     $colspan = count ( $this->_fields ) + count ( $this->extra_fields ) - $i;
-    $this->temp->colSpan = $colspan;
+    $this->temp['table']->colSpan = $colspan;
 
     return $colspan;
     }
@@ -526,7 +530,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         $id = $this->_db->quoteIdentifier ( parent::getPrimaryKey () );
 
-        if ($this->info ['delete'] ['where'] != '') {
+        if (isset($this->info ['delete'] ['where'] )) {
             $where = " AND " . $this->info ['delete'] ['where'];
         }
 
@@ -652,7 +656,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function buildHeader() {
 
         $url = parent::getUrl ( array ('comm', 'edit', 'filters', 'order' ) );
-        
+
         $final = '';
 
         if ((@$this->info ['double_tables'] == 0
@@ -668,35 +672,35 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
         //[PT] O início do template
-        $final .= $this->temp->globalStart ();
+        $final .= $this->temp['table']->globalStart ();
 
         /**
 		 * [PT] TEmos que saber se exite uma ordem ou um filtro para podermos apresentar
 		 * a td para dar a opção de limpar tudo de uma única vez
 		 */
-        if (@$this->ctrlParams ['filters'] != '' || @$this->ctrlParams ['order'] != '') {
+        if (isset($this->ctrlParams ['filters']) || isset($this->ctrlParams ['order'] )) {
 
             $url = $this->getUrl ( 'filters' );
             $url2 = $this->getUrl ( 'order' );
             $url3 = $this->getUrl ( array ('filters', 'order' ) );
 
-            $this->temp->hasExtraRow = 1;
+            $this->temp['table']->hasExtraRow = 1;
 
             //[PT] Ordem e filtros
-            if (@$this->ctrlParams ['filters'] != '' and @$this->ctrlParams ['order'] != '') {
+            if (isset($this->ctrlParams ['filters'] ) and isset($this->ctrlParams ['order'] )) {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a> | <a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a> | <a href=\"$url3\">" . $this->__ ( 'Remove Filters &amp; Order' ) . "</a>";
                 //[PT] FIltros apenas
-            } elseif (@$this->ctrlParams ['filters'] != '' && @$this->ctrlParams ['order'] == '') {
+            } elseif (isset($this->ctrlParams ['filters']) && !isset($this->ctrlParams ['order'])) {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a>";
 
                 //[PT] Ordem apenas
-            } elseif (@$this->ctrlParams ['filters'] == '' && @$this->ctrlParams ['order'] != '') {
+            } elseif (!isset($this->ctrlParams ['filters']) && isset($this->ctrlParams ['order'])) {
                 $final1 = "<a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a>";
             }
 
             //[PT]Substituir os valores no loop (na realidade é apenas uma ocorrencia)
             //[PT]Não sendo por isso loop :D
-            $final .= str_replace ( "{{value}}", $final1, $this->temp->extra () );
+            $final .= str_replace ( "{{value}}", $final1, $this->temp['table']->extra () );
 
             //[PT] Fechar o ciclo
 
@@ -717,12 +721,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         //[PT]Não existem filtros, vamos embora
         if (! is_array ( $filters )) {
-            $this->temp->hasFilters = 0;
+            $this->temp['table']->hasFilters = 0;
             return '';
         }
 
         //[PT]Iniciar o template
-        $grid = $this->temp->filtersStart ();
+        $grid = $this->temp['table']->filtersStart ();
 
         //[PT]Vamos percorrer os filtros todos a colocá-los no campo respectivo
         foreach ( $filters as $filter ) {
@@ -732,20 +736,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             if ($filter ['type'] == 'extraField' && $filter ['position'] == 'left') {
 
                 //[PT]Substituir o valor no template
-                $grid .= str_replace ( '{{value}}', $filter ['value'] . '&nbsp;', $this->temp->filtersLoop () );
+                $filterValue = isset($filter ['value'] )?$filter ['value'] :'';
+
+                $grid .= str_replace ( '{{value}}',$filterValue . '&nbsp;', $this->temp['table']->filtersLoop () );
             }
 
             //[PT]Aqui estamos a verificar se não temos a situação da linha horizontal hRow
-            if (($filter ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
+            if ((@$filter ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
 
                 if ($filter ['type'] == 'field') {
 
+                    $filterValue = isset($filter ['value'] )?$filter ['value'] :'';
+
                     //[PT]Para podemrmos trabalhar nas urls senão depois no JS dá erro
                     //[PT]Se o valor for nulo, mete-mos um espaço para  a tabela não ficar com falha
-                    $newValue = strlen ( urldecode ( $filter ['value'] ) ) > 0 ? urldecode ( $filter ['value'] ) : "&nbsp;";
+                    $newValue = strlen ( urldecode ( $filterValue ) ) > 0 ? urldecode ( $filter ['value'] ) : "&nbsp;";
 
                     //[PT]Substituir o valor no template
-                    $grid .= str_replace ( '{{value}}', $newValue, $this->temp->filtersLoop () );
+                    $grid .= str_replace ( '{{value}}', $newValue, $this->temp['table']->filtersLoop () );
 
                 }
             }
@@ -753,13 +761,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             //[PT]Temos que percorrer todos os exra_fields para saber-mos se pertencem à direita
             //[PT]e adicioná.los à lista de campos
             if ($filter ['type'] == 'extraField' && $filter ['position'] == 'right') {
-                $grid .= str_replace ( '{{value}}', $filter ['value'], $this->temp->filtersLoop () );
+                $grid .= str_replace ( '{{value}}', $filter ['value'], $this->temp['table']->filtersLoop () );
             }
 
         }
 
         //[PT]Fechar o template dos Filtros
-        $grid .= $this->temp->filtersEnd ();
+        $grid .= $this->temp['table']->filtersEnd ();
 
         return $grid;
     }
@@ -786,28 +794,34 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         //[PT]Vamos buscar as "imagens" da ordenação.
         //[PT]quem diz imagens, diz outra coisa qualquer já que vamos buscar texto
-        $images = $this->temp->images ( $this->imagesUrl );
+        $images = $this->temp['table']->images ( $this->imagesUrl );
 
         //[PT]O inicio do template para os titulos
-        $grid = $this->temp->titlesStart ();
+        $grid = $this->temp['table']->titlesStart ();
 
         //[PT]O ciclo por entre os títulos
         foreach ( $titles as $title ) {
 
             //[PT]Veiricamos aqui se o campo que esta a ser ordenado é o mesmo que estamos a
             //[PT]passar no ciclo. Se for definimos a imagem.
-            if ($title ['field'] == $orderField) {
-                $imgFinal = $images [$order];
+
+
+            if(isset($title ['field'])){
+                if ($title ['field'] == $orderField) {
+                    $imgFinal = $images [$order];
+                }else{
+                    $imgFinal = '';
+                }
             } else {
                 $imgFinal = '';
             }
 
             //[PT]Tratar dos campos extra (extra_fields) e aplicar o template
             if ($title ['type'] == 'extraField' && $title ['position'] == 'left') {
-                $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp->titlesLoop () );
+                $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp['table']->titlesLoop () );
             }
 
-            if (($title ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
+            if ((@$title ['field'] != @$this->info ['hRow'] ['field'] && isset($this->info ['hRow'] ['title'] )) || !isset($this->info ['hRow'] ['title'])) {
 
                 if ($title ['type'] == 'field') {
 
@@ -816,19 +830,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                         //[PT]Defieniu expressamente que não quer ordem, por isso mesmo
                         //[PT]nãohá ordem para ninguém
                         //[PT]Além disso fazemos o replace no template
-                        $grid .= str_replace ( '{{value}}', Bvb::trans ( $title ['value'] ), $this->temp->titlesLoop () );
+                        $grid .= str_replace ( '{{value}}', $this->__ ( $title ['value'] ), $this->temp['table']->titlesLoop () );
 
                     } else {
 
                         //[PT]Versão em estado incial de ajax. Não e´para levar a sério por enquanto
                         if (array_key_exists('ajax',$this->info)) {
 
-                            $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp->titlesLoop () );
+                            $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp['table']->titlesLoop () );
 
                         } else {
 
                             //[PT]Substituir os valores no template
-                            $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp->titlesLoop () );
+                            $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp['table']->titlesLoop () );
 
                         }
 
@@ -839,13 +853,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             //[PT]Tratar dos campos extra (extra_fields) e aplicar o template
             if ($title ['type'] == 'extraField' && $title ['position'] == 'right') {
-                $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp->titlesLoop () );
+                $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp['table']->titlesLoop () );
             }
 
         }
 
         //[PT]Finalizaro template nos títulos
-        $grid .= $this->temp->titlesEnd ();
+        $grid .= $this->temp['table']->titlesEnd ();
 
         return $grid;
 
@@ -864,7 +878,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         foreach ( $t as $value ) {
             $value = explode ( ":", $value );
-            $final [$value [0]] = $value [1];
+            @$final [$value [0]] = $value [1];
         }
 
         return $final;
@@ -913,7 +927,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         //[PT]Se nas ipções do campo tiveram sido definidos styles, apli´ca-los
         //[PT]Caso contrário fazer um wdth de 95% para ficar mais vistoso
-        if ($opcoes ['style']) {
+        if (isset($opcoes ['style'])) {
             $opt = " style=\"{$opcoes['style']}\"  ";
         } else {
             $opt = " style=\"width:95%\"  ";
@@ -921,24 +935,29 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         //[PT]Significa que alguém que especificar os valoes que pode ser mostrados através
         //[PT] de um menu select (dropdown?)
-        if (is_array ( $opcoes ['values'] )) {
-            //[PT]Apesar de não ser invalido, declaramos assim para depois podermos
-            //[PT]passar despercebidos no switch que vem aí
-            $tipo = 'invalid';
-            $avalor = $opcoes ['values'];
+        if(isset($opcoes['values']))
+        {
+            if (is_array ( $opcoes ['values'] )) {
+                //[PT]Apesar de não ser invalido, declaramos assim para depois podermos
+                //[PT]passar despercebidos no switch que vem aí
+                $tipo = 'invalid';
+                $avalor = $opcoes ['values'];
 
-            $valor = "<select name=\"$field\" $opt  >";
+                $valor = "<select name=\"$field\" $opt  >";
 
-            foreach ( $avalor as $value ) {
+                foreach ( $avalor as $value ) {
 
-                //[PT]Se o modo for de edição vefiicar se não é o valor que vem da base de dados
-                if ($mod == 'edit') {
-                    $selected = $inicial_value == $value ? "selected" : "";
+                    //[PT]Se o modo for de edição vefiicar se não é o valor que vem da base de dados
+                    if ($mod == 'edit') {
+                        $selected = $inicial_value == $value ? "selected" : "";
+                    }else{
+                        $selected = null;
+                    }
+                    $valor .= "<option value=\"{$value}\" $selected >" . ucfirst ( $value ) . "</option>";
                 }
-                $valor .= "<option value=\"{$value}\" $selected >" . ucfirst ( $value ) . "</option>";
-            }
 
-            $valor .= "</select>";
+                $valor .= "</select>";
+            }
         }
 
         switch ($tipo) {
@@ -1039,19 +1058,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             throw new Exception ( 'Upsss. It seams there was an error while intersecting your fields with the table fields. Please make sure you allow the fields you are defining...' );
         }
 
-        $grid = $this->temp->formStart ();
+        $grid = $this->temp['table']->formStart ();
 
-        if ($final ['mode'] == 'edit' && ! $this->_editNoForm) {
-            $fields = $this->_db->fetchRow ( " SELECT $select_fields FROM " . $this->_db->quoteIdentifier ( $this->data ['table'] ) . " WHERE $pk = " . $this->_db->quote ( $final ['id'] ) . " " );
 
-            $button_name = $this->__ ( 'Edit' );
+        if(isset($final['mode']))
+        {
+            if ($final ['mode'] == 'edit' && ! $this->_editNoForm) {
+                $fields = $this->_db->fetchRow ( " SELECT $select_fields FROM " . $this->_db->quoteIdentifier ( $this->data ['table'] ) . " WHERE $pk = " . $this->_db->quote ( $final ['id'] ) . " " );
 
-            $mod = 'edit';
+                $button_name = $this->__ ( 'Edit' );
 
-            $form_hidden = " <input type=\"button\"  onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
+                $mod = 'edit';
 
-            $fields = self::removeAutoIncrement ( $fields, $this->data ['table'] );
+                $form_hidden = " <input type=\"button\"  onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
 
+                $fields = self::removeAutoIncrement ( $fields, $this->data ['table'] );
+
+            }
         }
 
         $titles = $this->_fields;
@@ -1079,42 +1102,45 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         $titles = parent::consolidateFields ( $titles, $this->data ['table'] );
 
-        $grid .= $this->temp->formHeader ();
+        $grid .= $this->temp['table']->formHeader ();
 
         $i = 0;
 
         foreach ( $fields as $key => $value ) {
 
-            $grid .= $this->temp->formStart ();
+            $grid .= $this->temp['table']->formStart ();
 
-            if (is_array ( $this->_formMessages [$value] )) {
 
-                foreach ($this->_formMessages [$value]  as $key=>$formS) {
-                    $finalV .= '<br>' . implode ( '<br>', $formS);
+            $finalV = '';
+            if(isset($this->_formMessages [$value]))
+            {
+
+                if (is_array ( $this->_formMessages [$value] )) {
+
+                    foreach ($this->_formMessages [$value]  as $key=>$formS) {
+                        $finalV .= '<br>' . implode ( '<br>', $formS);
+                    }
                 }
 
             } else {
                 $finalV = '';
             }
 
-            if($this->_formValues[$value]!="")
-            {
-                $fieldValue = $this->_formValues[$value];
-            }
+            $fieldValue = isset($this->_formValues[$value])?$this->_formValues[$value]:'';
+            $fieldDescription =  isset($this->info[$mod]['fields'][$value]['description'])?$this->info[$mod]['fields'][$value]['description']:'';
 
 
+            $grid .= str_replace ( "{{value}}", $this->__($this->info[$mod]['fields'][$value]['title']).'<br><em>'.$this->__($fieldDescription).'</em>', $this->temp['table']->formLeft () );
+            $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod ,$fieldValue) . $finalV, $this->temp['table']->formRight () );
 
-            $grid .= str_replace ( "{{value}}", $this->__($this->info[$mod]['fields'][$value]['title']).'<br><em>'.$this->__($this->info[$mod]['fields'][$value]['description']).'</em>', $this->temp->formLeft () );
-            $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod ,$fieldValue) . $finalV, $this->temp->formRight () );
-
-            $grid .= $this->temp->formEnd ();
+            $grid .= $this->temp['table']->formEnd ();
 
             $i ++;
         }
 
-        $grid .= $this->temp->formStart ();
-        $grid .= str_replace ( "{{value}}", "<input type=\"submit\"  value=\"" . $button_name . "\"> " . $form_hidden . "", $this->temp->formButtons () );
-        $grid .= $this->temp->formEnd ();
+        $grid .= $this->temp['table']->formStart ();
+        $grid .= str_replace ( "{{value}}", "<input type=\"submit\"  value=\"" . $button_name . "\"> " . $form_hidden . "", $this->temp['table']->formButtons () );
+        $grid .= $this->temp['table']->formEnd ();
 
         return $grid;
 
@@ -1124,13 +1150,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         $i=0;
         $grid  ='';
-        
+
         //Temos uma td a mais com a opção para remover-mos a ordem e filtros
-        if (@$this->ctrlParams ['filters'] != '' || @$this->ctrlParams ['order'] != '') {
+        if (isset($this->ctrlParams ['filters']) || isset($this->ctrlParams ['order'])) {
             $i ++;
         }
 
-        if (@$this->info ['hRow'] ['title'] != '') {
+        if (isset($this->info ['hRow'] ['title'])) {
 
             $bar = $grids;
 
@@ -1154,7 +1180,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             unset ( $fi );
             foreach ( $value as $tia ) {
 
-                if (strlen ( $tia ['field'] ) > 0) {
+                if (isset ( $tia ['field'] ) ) {
                     $fi [] = $tia ['value'];
                 }
             }
@@ -1171,41 +1197,41 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $finalFields = @array_combine ( $search, $fi );
 
             //A linha horizontal
-            if (@$this->info ['hRow'] ['title'] != '') {
+            if (isset($this->info ['hRow'] ['title'])) {
 
                 if ($bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value']) {
                     $i ++;
 
-                    $grid .= str_replace ( array ("{{value}}", "{{class}}" ), array ($bar [$aa] [$hRowIndex] ['value'], @$value ['class'] ), $this->temp->hRow ( $finalFields ) );
+                    $grid .= str_replace ( array ("{{value}}", "{{class}}" ), array ($bar [$aa] [$hRowIndex] ['value'], @$value ['class'] ), $this->temp['table']->hRow ( $finalFields ) );
                 }
             }
 
             $i ++;
 
             //A TR do ciclo
-            $grid .= $this->temp->loopStart ( $finalFields );
+            $grid .= $this->temp['table']->loopStart ( $finalFields );
 
             $set =0;
             $aa =0;
             foreach ( $value as $final ) {
 
-                if ((@$final ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
+                if ((@$final ['field'] != @$this->info ['hRow'] ['field'] && isset($this->info ['hRow'] ['title'] )) || !isset($this->info ['hRow'] ['title'])) {
 
                     $set ++;
 
-                    $grid .= str_replace ( array ("{{value}}", "{{class}}" ), array ($final ['value'], $final ['class'] ), $this->temp->loopLoop ( $finalFields ) );
+                    $grid .= str_replace ( array ("{{value}}", "{{class}}" ), array ($final ['value'], $final ['class'] ), $this->temp['table']->loopLoop ( $finalFields ) );
 
                 }
             }
 
             $set = null;
-            $grid .= $this->temp->loopEnd ( $finalFields );
+            $grid .= $this->temp['table']->loopEnd ( $finalFields );
 
             $aa ++;
         }
 
         if ($this->_totalRecords == 0) {
-            $grid = str_replace ( "{{value}}", $this->__ ( 'No records found' ), $this->temp->noResults () );
+            $grid = str_replace ( "{{value}}", $this->__ ( 'No records found' ), $this->temp['table']->noResults () );
         }
 
         return $grid;
@@ -1214,18 +1240,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     function buildSqlexpTable($sql) {
 
+        $grid = '';
         if (is_array ( $sql )) {
-            $grid .= $this->temp->sqlExpStart ();
+            $grid .= $this->temp['table']->sqlExpStart ();
 
             foreach ( $sql as $exp ) {
-                if ($exp ['field'] != $this->info ['hRow'] ['field']) {
-                    $grid .= str_replace ( "{{value}}", $exp ['value'], $this->temp->sqlExpLoop () );
+                if ($exp ['field'] != @$this->info ['hRow'] ['field']) {
+                    $grid .= str_replace ( "{{value}}", $exp ['value'], $this->temp['table']->sqlExpLoop () );
                 }
             }
-            $grid .= $this->temp->sqlExpEnd ();
+            $grid .= $this->temp['table']->sqlExpEnd ();
 
         }else {
-        	return false;
+            return false;
         }
 
         return $grid;
@@ -1278,14 +1305,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         } else {
 
             for($i = 2; $i < $npaginas; $i ++) {
-                 if (array_key_exists('ajax',$this->info)){
-                    
-                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:openAjax('grid','" . $url . "/start/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
-                    
+                if (array_key_exists('ajax',$this->info)){
+
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:openAjax('grid','" . $url . "/start/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
+
                 } else {
-                    
+
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"" . $url . "/start/" . (($i - 1) * $ppagina) . "\">$i</a> ";
-                    
+
                 }
 
             }
@@ -1312,7 +1339,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
         if ($actual != $npaginas) {
-           if (array_key_exists('ajax',$this->info)){
+            if (array_key_exists('ajax',$this->info)){
 
                 $pag .= "&nbsp;&nbsp;<a href=\"javascript:openAjax('grid','$url/start/" . ($actual * $ppagina) . "')\">" . $this->__ ( 'Next' ) . "</a> <a href=\"javascript:openAjax('grid','$url/start/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__ ( 'Last' ) . "&nbsp;&nbsp;</a>";
             } else {
@@ -1323,7 +1350,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
         if ($npaginas > 1) {
-            
+
             //[PT] Construir o select
             //[EN] Buil the select form element
             if (array_key_exists('ajax',$this->info)){
@@ -1344,28 +1371,28 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
 
         if ($npaginas > 1 || count ( $this->export ) > 0) {
-            
-            
-            
-            //Vamos calcular o registo actual
-           if($actual<=1)
-           {
-               $registoActual = 1;
-               $registoFinal = $this->_totalRecords>$ppagina?$ppagina:$this->_totalRecords;
-           }else{
-               $registoActual = $actual * $ppagina - $ppagina;
-               
-               if($actual*$ppagina>$this->_totalRecords)
-               {
-                   $registoFinal = $this->_totalRecords;
-               }else{
-                   $registoFinal = $actual*$ppagina;
-               }
-                   
-           }
-            
 
-            $images = $this->temp->images ( $this->imagesUrl );
+
+
+            //Vamos calcular o registo actual
+            if($actual<=1)
+            {
+                $registoActual = 1;
+                $registoFinal = $this->_totalRecords>$ppagina?$ppagina:$this->_totalRecords;
+            }else{
+                $registoActual = $actual * $ppagina - $ppagina;
+
+                if($actual*$ppagina>$this->_totalRecords)
+                {
+                    $registoFinal = $this->_totalRecords;
+                }else{
+                    $registoFinal = $actual*$ppagina;
+                }
+
+            }
+
+
+            $images = $this->temp['table']->images ( $this->imagesUrl );
 
             $exp = '';
             foreach ( $this->export as $export ) {
@@ -1373,11 +1400,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
 
             if ($npaginas > 1 && count ( $this->export ) > 0) {
-                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}','{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual.' to '.$registoFinal.' of '.$this->_totalRecords ), $this->temp->pagination () );
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}','{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual.' to '.$registoFinal.' of '.$this->_totalRecords ), $this->temp['table']->pagination () );
 
             } elseif ($npaginas < 2 && count ( $this->export ) > 0) {
 
-                $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}','{{numberRecords}}'  ), array ($exp, '', '' ,$this->_totalRecords), $this->temp->pagination () );
+                $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}','{{numberRecords}}'  ), array ($exp, '', '' ,$this->_totalRecords), $this->temp['table']->pagination () );
 
             }
 
@@ -1490,6 +1517,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     function deploy() {
 
+        parent::deploy ();
+
+
+        if(!$this->temp['table'] instanceof Bvb_Grid_Template_Table_Table  )
+        {
+            $this->setTemplate('table','table');
+        }
+
+
         $url = parent::getUrl ( 'comm' );
 
         self::processForm ();
@@ -1507,7 +1543,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         $grid = '';
 
-        $images = $this->temp->images ( $this->imagesUrl );
+        $images = $this->temp['table']->images ( $this->imagesUrl );
 
         if ($this->allowEdit == 1) {
             if (! is_array ( $this->extra_fields )) {
@@ -1526,10 +1562,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}};user:" . $this->info ['user'] . "');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
         }
 
-        parent::deploy ();
 
         if (strlen ( $this->message ) > 0) {
-            $grid = str_replace ( "{{value}}", $this->message, $this->temp->formMessage ( $this->messageOk ) );
+            $grid = str_replace ( "{{value}}", $this->message, $this->temp['table']->formMessage ( $this->messageOk ) );
         }
 
 
@@ -1540,7 +1575,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
                 $url = parent::getUrl ( array ('filters', 'add' ) );
 
-                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp->formGlobal () . self::gridForm () . "</table></form><br><br>";
+                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal () . self::gridForm () . "</table></form><br><br>";
 
             }
         }
@@ -1561,8 +1596,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 return false;
                 }
                 */
-                
-                
+
+
                 $grid .= self::buildHeader ();
                 $grid .= self::buildTitltesTable ( parent::buildTitles () );
                 $grid .= self::buildFiltersTable ( parent::buildFilters () );
@@ -1572,7 +1607,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             }
         }
-        $grid .= $this->temp->globalEnd ();
+        $grid .= $this->temp['table']->globalEnd ();
 
         return $grid;
 
@@ -1605,15 +1640,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $options = $form['options'];
 
         $this->user = $options['user'];
-        $this->info['double_tables'] = $options['double_tables'];
+        $this->info['double_tables'] = isset($options['double_tables'])?$options['double_tables']:'';
 
-        if($options['delete']==1)
+        if(isset($options['delete']))
         {
-            $this->delete = array('allow'=>1);
-
-            if(strlen($options['where'])>0)
+            if($options['delete']==1)
             {
-                $this->delete['where'] = $options['where'];
+                $this->delete = array('allow'=>1);
+
+                if(strlen($options['where'])>0)
+                {
+                    $this->delete['where'] = $options['where'];
+                }
             }
         }
 
@@ -1632,38 +1670,5 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     }
 
 
-    /**
- * [PT]Definir o template para a grid
- * [PT] por defeito ele tenta bvb/grid/template/table/table
- *
- * @param unknown_type $template
- * @return unknown
-    
-
-    function setTemplate($template)
-    {
-        $temp = array_reverse($this->_templates['table']);
-
-        foreach ($temp  as $find) {
-
-            $file = $find['dir'].ucfirst($template).'.php';
-            $class = $find['prefix'].'_'.ucfirst($template);
-
-            require_once($file);
-
-            if(class_exists($class))
-            {
-                $this->temp = new $class();
-            }
-
-            return true;
-
-        }
-
-        throw new Exception('No templates found');
-
-    }
-    
- */
 }
 

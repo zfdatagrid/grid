@@ -23,12 +23,6 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
     public $title;
 
 
-    /**
-     * [PT] o template
-     *
-     * @var object
-     */
-    public $temp ;
 
     protected  $output = 'print';
 
@@ -41,12 +35,13 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         }
 
         $this->title = $title;
+
         parent::__construct($db);
 
-
-        $this->addTemplateDir('Bvb/Grid/Template/Print','Bvb_Grid_Template_Print','print');
-        $this->setTemplate('print','print');
-
+        if(!is_object($this->temp['print']))
+        {
+            $this->setTemplate('print','print',array('title'=>$title));
+        }
     }
 
     /**
@@ -64,9 +59,16 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
     function deploy()
     {
-        $this->data['pagination'][ 'per_page' ] = 10000000;
+        $this->setPagination(10000000);
 
         parent::deploy();
+
+
+        if(!$this->temp['print'] instanceof Bvb_Grid_Template_Print_Print   )
+        {
+            $this->setTemplate('print','print');
+        }
+
 
         $titles = parent::buildTitles();
 
@@ -83,26 +85,26 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         }
 
 
-        $xml = $this->temp->globalStart();
-        $xml .= $this->temp->header();
+        $xml = $this->temp['print']->globalStart();
+        $xml .= $this->temp['print']->header();
 
 
 
         //[PT] Títulos
 
-        $xml .= $this->temp->titlesStart();
+        $xml .= $this->temp['print']->titlesStart();
 
         foreach ($titles as $value) {
 
             if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
             {
-                $xml .= str_replace("{{value}}",$value['value'],$this->temp->titlesLoop());
+                $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->titlesLoop());
 
             }
         }
-        
-        
-        $xml .= $this->temp->titlesEnd();
+
+
+        $xml .= $this->temp['print']->titlesEnd();
 
 
         //[PT] O Loop
@@ -152,7 +154,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
                     if(@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa-1][$hRowIndex]['value'])
                     {
-                        $xml .= str_replace("{{value}}",@$bar[$aa][$hRowIndex]['value'] ,$this->temp->hRowLoop());
+                        $xml .= str_replace("{{value}}",@$bar[$aa][$hRowIndex]['value'] ,$this->temp['print']->hRowLoop());
                     }
                 }
 
@@ -164,7 +166,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
 
 
-                $xml .= $this->temp->loopStart();
+                $xml .= $this->temp['print']->loopStart();
                 $a=1;
                 foreach ($row as $value) {
 
@@ -178,12 +180,12 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
                         {
 
                         } else{
-                            $xml .= str_replace("{{value}}",$value['value'],$this->temp->loopLoop());
+                            $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->loopLoop());
                         }
                     }
                 }
 
-                $xml .= $this->temp->loopEnd();
+                $xml .= $this->temp['print']->loopEnd();
                 $aa++;
                 $i++;
             }
@@ -195,14 +197,14 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         if(is_array($sql))
         {
-            $xml .= $this->temp->sqlExpStart ();
+            $xml .= $this->temp['print']->sqlExpStart ();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}",$value['value'],$this->temp->sqlExpLoop());
+                $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->sqlExpLoop());
             }
-            $xml .= $this->temp->sqlExpEnd();
+            $xml .= $this->temp['print']->sqlExpEnd();
         }
 
-        $xml .= $this->temp->globalEnd ();
+        $xml .= $this->temp['print']->globalEnd ();
 
         echo $xml;
         die();
@@ -210,39 +212,6 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
 
 
-    /**
-     * [PT]Definir o template para a grid
-     * [PT] por defeito ele tenta bvb/grid/template/table/table
-     *
-     * @param unknown_type $template
-     * @return unknown
-   
-
-    function setTemplate($template)
-    {
-        $temp = array_reverse($this->_templates['print']);
-
-
-        foreach ($temp  as $find) {
-
-            $file = $find['dir'].ucfirst($template).'.php';
-            $class = $find['prefix'].'_'.ucfirst($template);
-
-            require_once($file);
-
-            if(class_exists($class))
-            {
-                $this->temp = new $class();
-            }
-
-            return true;
-
-        }
-
-        throw new Exception('No templates found');
-
-    }
-*/
 }
 
 
