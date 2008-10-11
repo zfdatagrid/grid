@@ -12,11 +12,12 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Mascker_Grid
- * @copyright  Copyright (c) Mascker (http://www.petala-azul.com.com)
+ * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
+
 class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
 {
 

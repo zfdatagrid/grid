@@ -12,7 +12,7 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Mascker_Grid
- * @copyright  Copyright (c) Mascker (http://www.petala-azul.com.com)
+ * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
@@ -1424,30 +1424,30 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * 
 	 * [EN] Remeve the auto-increment field from the array. If a field is auto-increment,
 	 * [EN] we won't let the user insert data on the field
-	 *
-	 * @param array $fields
-	 * @param string $table
-	 * @return array
-	 */
-    function removeAutoIncrement($fields, $table) {
+            *
+            * @param array $fields
+            * @param string $table
+            * @return array
+            */
+            function removeAutoIncrement($fields, $table) {
 
-        $table = $this->_db->fetchAll ( "SHOW COLUMNS FROM $table" );
+                $table = $this->_db->fetchAll ( "SHOW COLUMNS FROM $table" );
 
-        foreach ( $table as $value ) {
+                foreach ( $table as $value ) {
 
-            if ($value->Extra == 'auto_increment') {
-                $table_fields = $value->Field;
+                    if ($value->Extra == 'auto_increment') {
+                        $table_fields = $value->Field;
+                    }
+                }
+
+                if (array_key_exists ( $table_fields, $fields )) {
+                    unset ( $fields->$table_fields );
+                }
+
+                return $fields;
             }
-        }
 
-        if (array_key_exists ( $table_fields, $fields )) {
-            unset ( $fields->$table_fields );
-        }
-
-        return $fields;
-    }
-
-    /**
+            /**
 	 * [PT] Verificar que os campos especificados no array existem mesmo
 	 * [PT] Se não existirem removemos
 	 * [PT] Se no final tivermos uma array vazia, criamos uma nova com todos os campos
@@ -1461,222 +1461,227 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @param string $filters
 	 */
 
-    function validateFilters($filters) {
+            function validateFilters($filters) {
 
-        if ($this->info ['noFilters']) {
-            return false;
-        }
+                if ($this->info ['noFilters']) {
+                    return false;
+                }
 
-        if (is_array ( $filters )) {
+                if (is_array ( $filters )) {
 
-            return $filters;
+                    return $filters;
 
-        } else {
+                } else {
 
-            //Não forneceu dados, temos que ir buscá-los todos às tabelas
-            if (is_array ( $this->data ['table'] )) {
+                    //Não forneceu dados, temos que ir buscá-los todos às tabelas
+                    if (is_array ( $this->data ['table'] )) {
 
-                foreach ( $this->data ['table'] as $key => $value ) {
+                        foreach ( $this->data ['table'] as $key => $value ) {
 
-                    $tab = parent::getDiscribeTable ( $value );
+                            $tab = parent::getDiscribeTable ( $value );
 
-                    foreach ( $tab as $list ) {
-                        $titulos [$key . "." . $list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
+                            foreach ( $tab as $list ) {
+                                $titulos [$key . "." . $list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
+                            }
+                        }
+
+                    } else {
+
+                        $tab = parent::getDiscribeTable ( $this->data ['table'] );
+
+                        foreach ( $tab as $list ) {
+                            $titulos [$list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
+                        }
+                    }
+
+                }
+
+                if (is_array ( $this->data ['hide'] )) {
+                    foreach ( $this->data ['hide'] as $value ) {
+                        if (! in_array ( $value, $titulos )) {
+                            unset ( $titulos [$value] );
+                        }
+                    }
+                } else {
+
+                    foreach ( $titulos as $key => $value ) {
+
+                        if (! in_array ( $key, $this->_fields )) {
+                            unset ( $titulos [$key] );
+                        }
+
+                    }
+
+                }
+
+                return $titulos;
+
+            }
+
+            function deploy() {
+
+                $url = parent::getUrl ( 'comm' );
+
+                self::processForm ();
+                parent::deploy ();
+
+
+                if(!$this->temp['table'] instanceof Bvb_Grid_Template_Table_Table  )
+                {
+                    $this->setTemplate('table','table');
+                }
+
+
+
+                //[PT] As classes em CSS para aplicar as diferentes zonas
+                //[EN] The CSS classes to apply
+
+
+                //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
+                //[EN] The extra fields, they are not part of database table.
+                //[EN] Usefull for adding links (a least for me :D )
+
+
+                #$this->extra_fields =  $this->info[ 'extra_fields' ];
+
+                $grid = '';
+
+                $images = $this->temp['table']->images ( $this->imagesUrl );
+
+                if ($this->allowEdit == 1) {
+                    if (! is_array ( $this->extra_fields )) {
+                        $this->extra_fields = array ();
+                    }
+
+                    array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{id}};user:" . $this->info ['user'] . "\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
+
+                }
+
+                if ($this->allowDelete) {
+                    if (! is_array ( $this->extra_fields )) {
+                        $this->extra_fields = array ();
+                    }
+
+                    array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}};user:" . $this->info ['user'] . "');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
+                }
+
+
+                if (strlen ( $this->message ) > 0) {
+                    $grid = str_replace ( "{{value}}", $this->message, $this->temp['table']->formMessage ( $this->messageOk ) );
+                }
+
+
+                if ((@$this->ctrlParams ['edit'] == 1 || @$this->ctrlParams ['add'] == 1 || @$this->info ['double_tables'] == 1) || ($this->formPost==1 && $this->formSuccess==0) ) {
+
+
+                    if (($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen ( $this->_comm ) > 1)) {
+
+                        $url = parent::getUrl ( array ('filters', 'add' ) );
+
+                        $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal () . self::gridForm () . "</table></form><br><br>";
+
                     }
                 }
 
-            } else {
+                $grid .= "<input type=\"hidden\" name=\"inputId\" id=\"inputId\">";
 
-                $tab = parent::getDiscribeTable ( $this->data ['table'] );
+                if (@$this->info ['double_tables'] == 1 || (@$this->ctrlParams ['edit'] != 1 && @$this->ctrlParams ['add'] != 1)   ) {
 
-                foreach ( $tab as $list ) {
-                    $titulos [$list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
+
+                    if(($this->formPost==1 && $this->formSuccess==1) || $this->formPost==0)
+                    {
+                        /*
+
+                        $totalRegistos = parent::buildGrid ();
+                        if( count($totalRegistos)==0 )
+                        {
+                        Bvb_View_Message::addInfo('Não existem registos a mostrar');
+                        return false;
+                        }
+                        */
+
+
+                        $grid .= self::buildHeader ();
+                        $grid .= self::buildTitltesTable ( parent::buildTitles () );
+                        $grid .= self::buildFiltersTable ( parent::buildFilters () );
+                        $grid .= self::buildGridTable ( parent::buildGrid () );
+                        $grid .= self::buildSqlexpTable ( parent::buildSqlExp () );
+                        $grid .= self::pagination ();
+
+                    }
                 }
-            }
+                $grid .= $this->temp['table']->globalEnd ();
 
-        }
-
-        if (is_array ( $this->data ['hide'] )) {
-            foreach ( $this->data ['hide'] as $value ) {
-                if (! in_array ( $value, $titulos )) {
-                    unset ( $titulos [$value] );
-                }
-            }
-        } else {
-
-            foreach ( $titulos as $key => $value ) {
-
-                if (! in_array ( $key, $this->_fields )) {
-                    unset ( $titulos [$key] );
-                }
+                return $grid;
 
             }
 
-        }
 
-        return $titulos;
-
-    }
-
-    function deploy() {
-
-        $url = parent::getUrl ( 'comm' );
-
-        self::processForm ();
-        parent::deploy ();
-
-
-        if(!$this->temp['table'] instanceof Bvb_Grid_Template_Table_Table  )
-        {
-            $this->setTemplate('table','table');
-        }
-
-
-
-        //[PT] As classes em CSS para aplicar as diferentes zonas
-        //[EN] The CSS classes to apply
-
-
-        //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
-        //[EN] The extra fields, they are not part of database table.
-        //[EN] Usefull for adding links (a least for me :D )
-
-
-        #$this->extra_fields =  $this->info[ 'extra_fields' ];
-
-        $grid = '';
-
-        $images = $this->temp['table']->images ( $this->imagesUrl );
-
-        if ($this->allowEdit == 1) {
-            if (! is_array ( $this->extra_fields )) {
-                $this->extra_fields = array ();
-            }
-
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{id}};user:" . $this->info ['user'] . "\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
-
-        }
-
-        if ($this->allowDelete) {
-            if (! is_array ( $this->extra_fields )) {
-                $this->extra_fields = array ();
-            }
-
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}};user:" . $this->info ['user'] . "');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
-        }
-
-
-        if (strlen ( $this->message ) > 0) {
-            $grid = str_replace ( "{{value}}", $this->message, $this->temp['table']->formMessage ( $this->messageOk ) );
-        }
-
-
-        if ((@$this->ctrlParams ['edit'] == 1 || @$this->ctrlParams ['add'] == 1 || @$this->info ['double_tables'] == 1) || ($this->formPost==1 && $this->formSuccess==0) ) {
-
-
-            if (($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen ( $this->_comm ) > 1)) {
-
-                $url = parent::getUrl ( array ('filters', 'add' ) );
-
-                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal () . self::gridForm () . "</table></form><br><br>";
-
-            }
-        }
-
-        $grid .= "<input type=\"hidden\" name=\"inputId\" id=\"inputId\">";
-
-        if (@$this->info ['double_tables'] == 1 || (@$this->ctrlParams ['edit'] != 1 && @$this->ctrlParams ['add'] != 1)   ) {
-
-
-            if(($this->formPost==1 && $this->formSuccess==1) || $this->formPost==0)
-            {
-                /*
-
-                $totalRegistos = parent::buildGrid ();
-                if( count($totalRegistos)==0 )
-                {
-                Bvb_View_Message::addInfo('Não existem registos a mostrar');
-                return false;
-                }
-                */
-
-
-                $grid .= self::buildHeader ();
-                $grid .= self::buildTitltesTable ( parent::buildTitles () );
-                $grid .= self::buildFiltersTable ( parent::buildFilters () );
-                $grid .= self::buildGridTable ( parent::buildGrid () );
-                $grid .= self::buildSqlexpTable ( parent::buildSqlExp () );
-                $grid .= self::pagination ();
-
-            }
-        }
-        $grid .= $this->temp['table']->globalEnd ();
-
-        return $grid;
-
-    }
-
-
-    /**
+            /**
      * [PT]Método alternativo para adicionar novas colunas
      *
      * @return unknown
      */
-    function addForm($form)
-    {
-
-        //Va,os primeiros construir os campos
-
-        $form = $this->object2array($form);
-
-
-
-        $fieldsGet = $form['fields'];
-        $fields = array();
-
-        if(is_array($fieldsGet))
-        {
-            foreach ($fieldsGet as $value) {
-                $fields[$value['options']['field']] = $value['options'];
-            }
-        }
-
-
-        $options = $form['options'];
-
-        $this->user = $options['user'];
-        $this->info['double_tables'] = isset($options['double_tables'])?$options['double_tables']:'';
-
-        if(isset($options['delete']))
-        {
-            if($options['delete']==1)
+            function addForm($form)
             {
-                $this->delete = array('allow'=>1);
 
-                if(isset($options['onDeleteAddWhere']))
+                //Va,os primeiros construir os campos
+
+                $form = $this->object2array($form);
+
+
+
+                $fieldsGet = $form['fields'];
+                $fields = array();
+
+                if(is_array($fieldsGet))
                 {
-                    $this->delete['where'] = $options['onDeleteAddWhere'];
+                    foreach ($fieldsGet as $value) {
+                        $fields[$value['options']['field']] = $value['options'];
+                    }
                 }
+
+
+                $options = $form['options'];
+
+                if(isset($options['user']))
+                {
+                    $this->user = $options['user'];
+                }
+
+
+                $this->info['double_tables'] = isset($options['double_tables'])?$options['double_tables']:'';
+
+                if(isset($options['delete']))
+                {
+                    if($options['delete']==1)
+                    {
+                        $this->delete = array('allow'=>1);
+
+                        if(isset($options['onDeleteAddWhere']))
+                        {
+                            $this->delete['where'] = $options['onDeleteAddWhere'];
+                        }
+                    }
+                }
+
+                if($options['add']==1)
+                {
+                    $this->add = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onAddForce']);
+                }
+
+                if(isset($options['ecit']))
+                {
+                    if($options['edit']==1)
+                    {
+                        $this->edit = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onEditForce']);
+                    }
+                }
+
+
+                return $this;
             }
+
+
         }
-
-        if($options['add']==1)
-        {
-            $this->add = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onAddForce']);
-        }
-
-        if(isset($options['ecit']))
-        {
-        if($options['edit']==1)
-        {
-            $this->edit = array('allow'=>1,'button'=>$options['button'],'fields'=>$fields,'force'=>$options['onEditForce']);
-        }
-        }
-
-
-        return $this;
-    }
-
-
-}
 
