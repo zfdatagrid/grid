@@ -304,6 +304,7 @@ class siteController extends Zend_Controller_Action {
         $grid->setTemplate('print','print',$pdf);
 
         $grid->setTemplate('pdf','pdf',$pdf);
+        $grid->setTemplate('word','word',$pdf);
 
 
         $this->view->pages = $grid->deploy();

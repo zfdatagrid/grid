@@ -17,259 +17,333 @@
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
-class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
-{
+class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid {
+
+
     public $title;
 
-    public $dir ;
+    public $wordInfo;
 
+    public $style;
 
-    protected  $output = 'word';
+    public $dir;
 
+    protected $templateDir;
 
-    function __construct ($db,$title,$dir)
-    {
-        if(!in_array('word',$this->export))
-        {
-            die('Sem permissões de exportação da grelha');
+    protected $output = 'word';
+
+    function __construct($db, $title, $dir) {
+        if (! in_array ( 'word', $this->export )) {
+            die ( 'Sem permissões de exportação da grelha' );
         }
 
         $this->title = $title;
 
-        $this->dir = rtrim($dir,"/")."/";
-        parent::__construct($db);
+        $this->dir = rtrim ( $dir, "/" ) . "/";
+        parent::__construct ( $db );
+
+        $this->setTemplate ( 'word', 'word' );
     }
 
     /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
+	 * [Para podemros utiliza]
+	 *
+	 * @param string $var
+	 * @param string $value
+	 */
 
-    function __set($var,$value)
-    {
-        parent::__set($var,$value);
+    function __set($var, $value) {
+        parent::__set ( $var, $value );
     }
 
 
-    function deploy()
+
+    /**
+     * [PT] Fazer o scan recursivo dos dir
+     *
+     * @param string $directory
+     * @param unknown_type $filter
+     * @return unknown
+     */
+    function scan_directory_recursively($directory, $filter=FALSE)
     {
-        $this->data['pagination'][ 'per_page' ] = 10000000;
+        // if the path has a slash at the end we remove it here
+        $directory = rtrim($directory,'/');
 
-        parent::deploy();
 
-        $titles = parent::buildTitles();
-
-        $nome = reset($titles);
-        $wsData = parent::buildGrid();
-        $sql = parent::buildSqlExp();
-
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')  )
+        // if the path is not valid or is not a directory ...
+        if(!file_exists($directory) || !is_dir($directory))
         {
-            @array_shift($titles);
-            @array_shift($sql);
+            // ... we return false and exit the function
+            return FALSE;
+
+            // ... else if the path is readable
+        }elseif(is_readable($directory))
+        {
+            // we open the directory
+            $directory_list = opendir($directory);
+
+            // and scan through the items inside
+            while (FALSE !== ($file = readdir($directory_list)))
+            {
+                // if the filepointer is not the current directory
+                // or the parent directory
+                if($file != '.' && $file != '..' && $file != '.DS_Store')
+                {
+                    // we build the new path to scan
+                    $path = $directory.'/'.$file;
+
+                    // if the path is readable
+                    if(is_readable($path))
+                    {
+                        // we split the new path by directories
+                        $subdirectories = explode('/',$path);
+
+                        // if the new path is a directory
+                        if(is_dir($path))
+                        {
+                            // add the directory details to the file list
+                            $directory_tree[] = array(
+                            'path'    => $path.'|',
+
+                            // we scan the new path by calling this function
+                            'content' => $this->scan_directory_recursively($path, $filter));
+
+                            // if the new path is a file
+                        }elseif(is_file($path))
+                        {
+                            // get the file extension by taking everything after the last dot
+                            $extension = end(explode('.',end($subdirectories)));
+
+                            // if there is no filter set or the filter is set and matches
+                            if($filter === FALSE || $filter == $extension)
+                            {
+                                // add the file details to the file list
+                                $directory_tree[] = array(
+                                'path'      => $path.'|',
+                                'name'      => end($subdirectories));
+                            }
+                        }
+                    }
+                }
+            }
+            // close the directory
+            closedir($directory_list);
+
+            // return file list
+            return $directory_tree;
+
+            // if the path is not readable ...
+        }else{
+            // ... we return false
+            return FALSE;
+        }
+    }
+    // ------------------------------------------------------------
+
+    /**
+     * [PT] Remove direcotiros e subdirectorios
+     *
+     * @param string $dir
+     */
+
+    function deldir($dir){
+        $current_dir = @opendir($dir);
+        while($entryname = @readdir($current_dir)){
+            if(is_dir($dir.'/'.$entryname) and ($entryname != "." and $entryname!="..")){
+                $this->deldir($dir.'/'.$entryname);
+            }elseif($entryname != "." and $entryname!=".."){
+                @unlink($dir.'/'.$entryname);
+            }
+        }
+        @closedir($current_dir);
+        @rmdir($dir);
+    }
+
+
+
+    /**
+     * [PT] Ir buscar os caminhos para depois zipar
+     *
+     * @param unknown_type $dirs
+     * @return unknown
+     */
+    function zipPaths($dirs)
+    {
+        foreach ($dirs as $key=>$value)
+        {
+            if(!is_array(@$value['content']))
+            {
+                @$file .= $value['path'];
+            }else{
+                @$file .= $this->zipPaths($value['content']);
+            }
+        }
+        return $file;
+    }
+
+
+    /**
+     * [PT] TEMOS que copiar os directórtio para a  loalização final
+     *
+     * @param unknown_type $source
+     * @param unknown_type $dest
+     * @return unknown
+     */
+    function copyDir($source, $dest) {
+
+        // Se for ficheiro
+        if (is_file ( $source )) {
+            $c = copy ( $source, $dest );
+            chmod ( $dest, 0777 );
+            return $c;
+        }
+
+        // criar directorio de destino
+        if (! is_dir ( $dest )) {
+            mkdir ( $dest, 0777, 1 );
+        }
+
+        // Loop
+        $dir = dir ( $source );
+        while ( false !== $entry = $dir->read () ) {
+
+            if ($entry == '.' || $entry == '..' || $entry == '.svn') {
+                continue;
+            }
+
+            // copiar directorios
+            if ($dest !== "$source/$entry") {
+                $this->copyDir ( "$source/$entry", "$dest/$entry" );
+            }
+        }
+
+        // sair
+        $dir->close ();
+        return true;
+
+    }
+
+    function deploy() {
+
+        $this->setPagination ( 10000000 );
+
+        parent::deploy ();
+
+        if (! $this->temp ['word'] instanceof Bvb_Grid_Template_Word_Word ) {
+            $this->setTemplate ( 'word', 'word' );
+        }
+
+        $this->templateDir = ucfirst(end(explode('_',get_class($this->temp['word']))));
+
+        $this->wordInfo = $this->temp ['word']->info ();
+
+        $this->dir = rtrim ( $this->dir, '/' ) . '/'.$this->templateDir.'/';
+
+
+        $this->deldir($this->dir);
+        $this->copyDir (realpath('./').'/library/Bvb/Grid/Template/Word/'.$this->templateDir.'/', $this->dir );
+
+        $xml = $this->temp['word']->globalStart();
+
+
+        $titles = parent::buildTitles ();
+
+        $nome = reset ( $titles );
+        $wsData = parent::buildGrid ();
+        $sql = parent::buildSqlExp ();
+
+
+
+        /////////////////////////
+        /////////////////////////
+
+
+        #O HEADER
+
+        if(file_exists($this->wordInfo['logo']))
+        {
+
+            copy($this->wordInfo['logo'],$this->dir.'word/media/'.end(explode("/",$this->wordInfo['logo'])));
+
+
+            $logo = $this->temp['word']->logo();
+
+
+            file_put_contents ( $this->dir . "word/_rels/header1.xml.rels", $logo );
+
+
+            $header = str_replace(array('{{title}}','{{subtitle}}'),array($this->wordInfo['title'] , $this->wordInfo['subtitle'] ), $this->temp['word']->header());
+
+
+        }else{
+
+            $header = str_replace(array('{{title}}','{{subtitle}}'),array($this->wordInfo['title'] , $this->wordInfo['subtitle'] ), $this->temp['word']->header());
+
+        }
+
+        file_put_contents ( $this->dir . "word/header1.xml", $header );
+
+
+        /////////////////////////
+        /////////////////////////
+
+        #END HEADER
+
+
+
+
+        #BEGIN FOOTER
+        $footer = str_replace("{{value}}", $this->wordInfo['footer'],$this->temp['word']->footer());
+
+
+
+        file_put_contents ( $this->dir . "word/footer2.xml", $footer );
+
+        #END footer
+
+
+        #START DOCUMENT.XML
+
+        if ($nome ['field'] == 'id' || strpos ( $nome ['field'], '_id' ) || strpos ( $nome ['field'], 'id_' ) || strpos ( $nome ['field'], '.id' )) {
+            @array_shift ( $titles );
+            @array_shift ( $sql );
 
             $remove = true;
         }
 
-        $xml  = <<<EOH
-			<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
-xmlns:css="http://macVmlSchemaUri" xmlns="http://www.w3.org/TR/REC-html40">
+        $xml = $this->temp['word']->globalStart();
 
-<head>
-<meta name=Title content="Listagem de Associações">
-<meta name=Keywords content="">
-<meta http-equiv=Content-Type content="text/html; charset=utf-8">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 2008">
-<meta name=Originator content="Microsoft Word 2008">
-<title>{$this->title}</title>
-<!--[if gte mso 9]><xml> 
- <o:OfficeDocumentSettings>
-  <o:AllowPNG/>
- </o:OfficeDocumentSettings>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:WordDocument>
-  <w:View>Print</w:View>
-  <w:Zoom>BestFit</w:Zoom>
-  <w:SpellingState>Clean</w:SpellingState>
-  <w:GrammarState>Clean</w:GrammarState>
-  <w:TrackMoves>false</w:TrackMoves>
-  <w:TrackFormatting/>
-  <w:DoNotHyphenateCaps/>
-  <w:PunctuationKerning/>
-  <w:DrawingGridHorizontalSpacing>9,35 pt</w:DrawingGridHorizontalSpacing>
-  <w:DrawingGridVerticalSpacing>9,35 pt</w:DrawingGridVerticalSpacing>
-  <w:ValidateAgainstSchemas/>
-  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
-  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
-  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
-  <w:Compatibility>
-   <w:SplitPgBreakAndParaMark/>
-   <w:DontVertAlignCellWithSp/>
-   <w:DontBreakConstrainedForcedTables/>
-   <w:DontVertAlignInTxbx/>
-   <w:Word11KerningPairs/>
-   <w:CachedColBalance/>
-   <w:UseFELayout/>
-  </w:Compatibility>
- </w:WordDocument>
-</xml><![endif]--><!--[if gte mso 9]><xml>
- <w:LatentStyles DefLockedState="false" LatentStyleCount="276">
- </w:LatentStyles>
-</xml><![endif]-->
-<style>
-<!--p.MSONORMAL
-	{mso-bidi-font-size:8pt;}
-li.MSONORMAL
-	{mso-bidi-font-size:8pt;}
-div.MSONORMAL
-	{mso-bidi-font-size:8pt;}
-p.SMALL
-	{mso-bidi-font-size:1pt;}
+        $xml .= $this->temp['word']->titlesStart();
 
- /* Font Definitions */
-@font-face
-	{font-family:Times;
-	panose-1:2 0 5 0 0 0 0 0 0 0;
-	mso-font-charset:0;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
-@font-face
-	{font-family:Verdana;
-	panose-1:2 11 6 4 3 5 4 4 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
-@font-face
-	{font-family:Cambria;
-	panose-1:2 4 5 3 5 4 6 3 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
- /* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:7.5pt;
-	font-family:Verdana;
-	mso-fareast-font-family:Verdana;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;}
-p.small, li.small, div.small
-	{mso-style-name:small;
-	mso-style-parent:"";
-	margin:0cm;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:1.0pt;
-	font-family:Verdana;
-	mso-fareast-font-family:Verdana;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;}
-span.SpellE
-	{mso-style-name:"";
-	mso-spl-e:yes;}
-@page Section1
-	{size:612.0pt 792.0pt;
-	margin:72.0pt 90.0pt 72.0pt 90.0pt;
-	mso-header-margin:35.4pt;
-	mso-footer-margin:35.4pt;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
--->
-</style>
-<!--[if gte mso 10]>
-<style>
- /* Style Definitions */
-table.MsoNormalTable
-	{mso-style-name:"Table Normal";
-	mso-tstyle-rowband-size:0;
-	mso-tstyle-colband-size:0;
-	mso-style-noshow:yes;
-	mso-style-parent:"";
-	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
-	mso-para-margin:0cm;
-	mso-para-margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:Cambria;
-	mso-ascii-font-family:Cambria;
-	mso-ascii-theme-font:minor-latin;
-	mso-hansi-font-family:Cambria;
-	mso-hansi-theme-font:minor-latin;}
-</style>
-<![endif]--><!--[if gte mso 9]><xml>
- <o:shapedefaults v:ext="edit" spidmax="1027">
-  <o:colormenu v:ext="edit" strokecolor="none"/>
- </o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
- <o:shapelayout v:ext="edit">
-  <o:idmap v:ext="edit" data="1"/>
- </o:shapelayout></xml><![endif]-->
-</head>
+        foreach ( $titles as $value ) {
 
-<body lang=PT style='tab-interval:36.0pt'>
-
-<div class=Section1>
-EOH;
+            if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
 
 
-        $xml .= "<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width='100%'
- style='width:93.8%;margin-left:-.35pt;border-collapse:collapse;border:none;
- mso-border-alt:solid black .75pt;mso-yfti-tbllook:191;mso-padding-alt:0cm 0cm 0cm 0cm;
- mso-border-insideh:.75pt solid black;mso-border-insidev:.75pt solid black'>";
+                $xml .= str_replace("{{value}}",$value['value'],$this->temp['word']->titlesLoop());
 
-        $xml .= "<tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>";
-        foreach ($titles as $value) {
-            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
-            {
-                $xml .=" <td style='border:solid black 1.0pt;mso-border-alt:solid black .75pt;
-  background:black;mso-shading:white;mso-pattern:solid black;padding:0cm 0cm 0cm 0cm'>
-  <p class=MsoNormal align=center style='text-align:center'><b
-  style='mso-bidi-font-weight:normal'><span style='font-size:8.0pt;mso-bidi-font-size:
-  10.0pt;mso-fareast-theme-font:minor-fareast'>".$value['value']."<o:p></o:p></span></b></p>
-  </td>";
             }
         }
-        $xml .= '</tr>';
+        $xml .= $this->temp['word']->titlesEnd();
 
-
-
-
-
-
-        if(is_array($wsData))
-        {
-
+        if (is_array ( $wsData )) {
 
             /////////////////
             /////////////////
             /////////////////
-            if(@$this->info['hRow']['title']!='')
-            {
+            if (@$this->info ['hRow'] ['title'] != '') {
                 $bar = $wsData;
 
-                $hbar = trim($this->info['hRow']['field']);
+                $hbar = trim ( $this->info ['hRow'] ['field'] );
 
-                $p=0;
-                foreach ($wsData[0] as $value)
-                {
-                    if($value['field'] == $hbar)
-                    {
+                $p = 0;
+                foreach ( $wsData [0] as $value ) {
+                    if ($value ['field'] == $hbar) {
                         $hRowIndex = $p;
                     }
 
-                    $p++;
+                    $p ++;
                 }
                 $aa = 0;
             }
@@ -279,106 +353,110 @@ EOH;
             //////////////
 
 
-            $i=1;
+            $i = 1;
             $aa = 0;
-            foreach ($wsData as $row) {
+            foreach ( $wsData as $row ) {
 
                 ////////////
                 ////////////
                 //A linha horizontal
-                if(@$this->info['hRow']['title']!='')
-                {
+                if (@$this->info ['hRow'] ['title'] != '') {
 
-                    if(@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa-1][$hRowIndex]['value'])
-                    {
-                        $xml .="<tr><td colspan=\"".$this->_colspan."\" style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;   border-right:solid black 1.0pt;mso-border-top-alt:solid black .75pt;  mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt; background:#333333;padding:0cm 0cm 0cm 0cm'> <p class=MsoNormal><span><span style='font-size:8.0pt;font-family:Helvetica;mso-fareast-theme-font:minor-fareast'>".$bar[$aa][$hRowIndex]['value']."<o:p></o:p></span></p> </td></tr>";
+                    if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value']) {
+
+                        $xml .= str_replace("{{value}}",@$bar[$aa][$hRowIndex]['value'] ,$this->temp['word']->hRow());
+
                     }
                 }
 
                 ////////////
                 ////////////
 
+                $xml .= $this->temp['word']->loopStart();
 
+                $a = 1;
 
-                $xml .= '<tr>';
-                $a=1;
-                foreach ($row as $value) {
-                    $value['value']  = strip_tags($value['value']);
-                    if(@$remove===true && $a==1)
+                foreach ( $row as $value ) {
+
+                    $value ['value'] = strip_tags ( $value ['value'] );
+
+                    if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                    || @$this->info['hRow']['title'] =='')
                     {
 
-                    } else{
+                        $xml .= str_replace("{{value}}",$value['value'],$this->temp['word']->loopLoop());
 
-
-                        if(($value['field']!=@$this->info['hRow']['field'] && isset($this->info['hRow']['title'] ))
-                        || isset($this->info['hRow']['title']))
-                        {
-
-
-                            if($i%2)
-                            {
-                                $xml .="<td style='border-top:none;border-left:none;border-bottom:solid black 1.0pt;   border-right:solid black 1.0pt;mso-border-top-alt:solid black .75pt;  mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt; background:#E0E0E0;padding:0cm 0cm 0cm 0cm'> <p class=MsoNormal><span><span style='font-size:8.0pt;font-family:Helvetica;mso-fareast-theme-font:minor-fareast'>".$value['value']."<o:p></o:p></span></p> </td>";
-
-                            }else{
-
-                                $xml .="<td style='border-top:none;border-left:none;
-  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
-  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
-  padding:0cm 0cm 0cm 0cm'>
-  <p class=MsoNormal><span style='font-size:8.0pt;mso-bidi-font-size:10.0pt;
-  font-family:Helvetica;mso-fareast-theme-font:
-  minor-fareast'>".$value['value']."<o:p></o:p></span></p>
-  </td>";
-                            }
-                        }
-                    }                        $a++;
+                    }
+                    $a ++;
 
                 }
-                $xml .= '</tr>';
-                $aa++;
-                $i++;
+                $xml .= $this->temp['word']->loopEnd();
+                $aa ++;
+                $i ++;
             }
         }
 
 
-        if(is_array($sql))
-        {
-            $xml .= '<tr>';
-            foreach ($sql as $value) {
 
 
-                $xml .="<td  style='border-top:none;border-left:none;
-  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;mso-border-top-alt:
-  solid black .75pt;mso-border-left-alt:solid black .75pt;mso-border-alt:solid black .75pt;
-  padding:0cm 0cm 0cm 0cm'>
-  <p class=MsoNormal><span style='font-size:8.0pt;mso-bidi-font-size:10.0pt;
-  font-family:Helvetica;mso-fareast-theme-font:
-  minor-fareast'>".$value['value']."<o:p></o:p></span></p>
-  </td>";
+
+
+
+
+
+        if (is_array ( $sql )) {
+            $xml .= $this->temp['word']->sqlExpStart ();
+            foreach ( $sql as $value ) {
+                $xml .= str_replace("{{value}}",$value['value'],$this->temp['word']->sqlExpLoop());
             }
-            $xml .= '</tr>';
+            $xml .= $this->temp['word']->sqlExpEnd ();
         }
 
+        $xml .= $this->temp['word']->globalEnd ();
 
-        $xml .= '</table></div></body></html>';
 
-    
 
-        if(file_exists($this->dir.$this->title.'.doc'))
+        /*
+        if (file_exists ( $this->dir . $this->title . '.xml' )) {
+        $data = date ( 'd-m-Y H\:i\:s' );
+        rename ( $this->dir . $this->title . '.xml', $this->dir . $this->title . '-' . $data . '.xml' );
+        }
+        */
+        file_put_contents ( $this->dir . "word/document.xml", $xml );
+
+
+
+        $final = $this->scan_directory_recursively($this->dir);
+        $f = explode('|',$this->zipPaths($final));
+        array_pop($f);
+
+
+        $this->title = strlen($this->title)>0?$this->title:'Word Document';
+
+        $zip = new ZipArchive();
+        $filename = $this->dir.$this->title.".zip";
+
+        if ($zip->open($filename, ZIPARCHIVE::CREATE)!==TRUE) {
+            exit("cannot open <$filename>\n");
+        }
+
+        foreach ($f as $value)
         {
-            $data = date('d-m-Y H\:i\:s');
-            rename($this->dir.$this->title.'.doc',$this->dir.$this->title.'-'.$data.'.doc');
+            $zip->addFile($value, str_replace($this->dir,'',$value));
         }
 
-        file_put_contents($this->dir.$this->title.".doc",$xml);
+        $zip->close();
 
-        header('Content-type: application/word');
 
-        // It will be called downloaded.pdf
-        header('Content-Disposition: attachment; filename="'.$this->title.'.doc"');
-        readfile($this->dir.$this->title.'.doc');
-        unlink($this->dir.$this->title.'.doc');
-        die();
+        #rename($filename,'media/'.$this->title.".docx");
+
+
+        header ( 'Content-type: application/word' );
+        header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
+        readfile ($filename );
+
+
+        die ();
     }
 
 }

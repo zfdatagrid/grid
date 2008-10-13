@@ -640,15 +640,34 @@ class Bvb_Grid_DataGrid {
 	 * @return int
 	 */
     function colspan() {
+
+        $totalFields = count ( $this->_fields );
+
+
+        $a = 0;
         $i = 0;
         foreach ( $this->data ['fields'] as $value ) {
-            if (@$value ['hide'] == 1 || @$value ['hRow'] == 1) {
-                $i ++;
+            if (@$value ['hide'] == 1 ) {
+                $i++;
+            } if (@$value ['hRow'] == 1 ) {
+                $totalFields--;
             }
         }
 
-        $colspan = count ( $this->_fields ) + count ( $this->extra_fields ) + $i;
+
+        $totalFields = $totalFields - $i;
+
+
+        if(@$this->info['delete']['allow']==1){$a++;}
+        if(@$this->info['edit']['allow']==1){$a++;}
+
+        $totalFields = $totalFields + $a;
+
+
+        $colspan = $totalFields + count ( $this->extra_fields );
         $this->temp[$this->output]->colSpan = $colspan;
+
+
 
         return $colspan;
         #return count ( $this->_fields ) - $this->totalHiddenFields + count($this->extra_fields);
@@ -1527,12 +1546,17 @@ class Bvb_Grid_DataGrid {
 
                         $new_value = str_replace ( $search, $fi, $value ['decorator'] );
 
-                        if (strlen ( $value ['eval'] ) > 0) {
+                        if (isset ( $value ['eval'] ) ) {
                             $evalf = str_replace ( $search, $fi, $value ['eval'] );
 
                             $new_value = eval ( 'return ' . $evalf );
                         }
-                        $return [$i] [] = array ('class' => $class . ' ' . $value ['class'], 'value' => $new_value );
+
+                        $finalClass = isset($value ['class'])?$value ['class']:'';
+
+                        $class = isset($class)?$class:'';
+
+                        $return [$i] [] = array ('class' => $class . ' ' .$finalClass , 'value' => $new_value );
                     }
 
                 }
@@ -2085,7 +2109,7 @@ class Bvb_Grid_DataGrid {
 	 * [PT]Definir o template para a grid
 	 * [PT] por defeito ele tenta bvb/grid/template/table/table
 	 *
-	 * @param unknown_type $template
+	 * @param string $template
 	 * @return unknown
 	 */
 
@@ -2103,11 +2127,11 @@ class Bvb_Grid_DataGrid {
 
             if (class_exists ( $class )) {
 
-
                 $this->temp[$output] = new $class ( $options);
                 $this->activeTemplates[] = $output;
             }
 
+            
             return $this->temp[$output];
         }
 
