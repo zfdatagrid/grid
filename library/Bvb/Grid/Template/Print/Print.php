@@ -118,6 +118,12 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_Interface
         return "<tr><td colspan=\"".$this->colSpan."\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}<o:p></o:p></span></p>
   </td></tr>";
     }
+    
+    function noResults()
+    {
+        return "<tr><td colspan=\"".$this->colSpan."\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}<o:p></o:p></span></p>
+  </td></tr>";
+    }
 
     function sqlExpStart ()
     {
