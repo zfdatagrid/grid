@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:ftr xmlns:mv="urn:schemas-microsoft-com:mac:vml"
+	xmlns:mo="http://schemas.microsoft.com/office/mac/office/2008/main"
+	xmlns:ve="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+	xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+	xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w10="urn:schemas-microsoft-com:office:word"
+	xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+	xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
+	xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+	<w:p w:rsidR="006C2FDC" w:rsidRPr="006C2FDC" w:rsidRDefault="00042D27"
+		w:rsidP="0033680A">
+		<w:pPr>
+			<w:pStyle w:val="Footer" />
+			<w:framePr w:wrap="around" w:vAnchor="text" w:hAnchor="margin"
+				w:xAlign="right" w:y="1" />
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+			</w:rPr>
+		</w:pPr>
+		<w:r w:rsidRPr="006C2FDC">
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:fldChar w:fldCharType="begin" />
+		</w:r>
+		<w:r w:rsidR="006C2FDC" w:rsidRPr="006C2FDC">
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:instrText xml:space="preserve">PAGE  </w:instrText>
+		</w:r>
+		<w:r w:rsidRPr="006C2FDC">
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:fldChar w:fldCharType="separate" />
+		</w:r>
+		<w:r w:rsidR="0034373E">
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:noProof />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:t>1</w:t>
+		</w:r>
+		<w:r w:rsidRPr="006C2FDC">
+			<w:rPr>
+				<w:rStyle w:val="PageNumber" />
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:fldChar w:fldCharType="end" />
+		</w:r>
+	</w:p>
+	<w:p w:rsidR="006C2FDC" w:rsidRPr="006C2FDC" w:rsidRDefault="006C2FDC"
+		w:rsidP="006C2FDC">
+		<w:pPr>
+			<w:pStyle w:val="Footer" />
+			<w:ind w:right="360" />
+			<w:rPr>
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+		</w:pPr>
+		<w:r w:rsidRPr="006C2FDC">
+			<w:rPr>
+				<w:rFonts w:ascii="Helvetica" w:hAnsi="Helvetica" />
+				<w:color w:val="000000" w:themeColor="text2" />
+				<w:sz w:val="18" />
+			</w:rPr>
+			<w:t><![CDATA[Downloaded from: http://www.petala-azul.com ]]> </w:t>
+		</w:r>
+	</w:p>
+</w:ftr>

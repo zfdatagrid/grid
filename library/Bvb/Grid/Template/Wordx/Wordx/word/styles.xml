@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles
+	xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+	xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+	<w:docDefaults>
+		<w:rPrDefault>
+			<w:rPr>
+				<w:rFonts w:asciiTheme="minorHAnsi" w:eastAsiaTheme="minorHAnsi"
+					w:hAnsiTheme="minorHAnsi" w:cstheme="minorBidi" />
+				<w:sz w:val="24" />
+				<w:szCs w:val="24" />
+				<w:lang w:val="pt-PT" w:eastAsia="en-US" w:bidi="ar-SA" />
+			</w:rPr>
+		</w:rPrDefault>
+		<w:pPrDefault>
+			<w:pPr>
+				<w:spacing w:after="200" />
+			</w:pPr>
+		</w:pPrDefault>
+	</w:docDefaults>
+	<w:latentStyles w:defLockedState="0" w:defUIPriority="0"
+		w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="276" />
+	<w:style w:type="paragraph" w:default="1" w:styleId="Normal">
+		<w:name w:val="Normal" />
+		<w:qFormat />
+		<w:rsid w:val="006C2FDC" />
+	</w:style>
+	<w:style w:type="character" w:default="1" w:styleId="DefaultParagraphFont">
+		<w:name w:val="Default Paragraph Font" />
+		<w:semiHidden />
+		<w:unhideWhenUsed />
+	</w:style>
+	<w:style w:type="table" w:default="1" w:styleId="TableNormal">
+		<w:name w:val="Normal Table" />
+		<w:semiHidden />
+		<w:unhideWhenUsed />
+		<w:qFormat />
+		<w:tblPr>
+			<w:tblInd w:w="0" w:type="dxa" />
+			<w:tblCellMar>
+				<w:top w:w="0" w:type="dxa" />
+				<w:left w:w="108" w:type="dxa" />
+				<w:bottom w:w="0" w:type="dxa" />
+				<w:right w:w="108" w:type="dxa" />
+			</w:tblCellMar>
+		</w:tblPr>
+	</w:style>
+	<w:style w:type="numbering" w:default="1" w:styleId="NoList">
+		<w:name w:val="No List" />
+		<w:semiHidden />
+		<w:unhideWhenUsed />
+	</w:style>
+	<w:style w:type="table" w:styleId="ColorfulGrid-Accent1">
+		<w:name w:val="Colorful Grid Accent 1" />
+		<w:basedOn w:val="TableNormal" />
+		<w:uiPriority w:val="73" />
+		<w:rsid w:val="006C2FDC" />
+		<w:pPr>
+			<w:spacing w:after="0" />
+		</w:pPr>
+		<w:rPr>
+			<w:color w:val="000000" w:themeColor="text1" />
+			<w:sz w:val="22" />
+			<w:szCs w:val="22" />
+			<w:lang w:val="en-US" />
+		</w:rPr>
+		<w:tblPr>
+			<w:tblStyleRowBandSize w:val="1" />
+			<w:tblStyleColBandSize w:val="1" />
+			<w:tblInd w:w="0" w:type="dxa" />
+			<w:tblBorders>
+				<w:insideH w:val="single" w:sz="4" w:space="0" w:color="FFFFFF"
+					w:themeColor="background1" />
+			</w:tblBorders>
+			<w:tblCellMar>
+				<w:top w:w="0" w:type="dxa" />
+				<w:left w:w="108" w:type="dxa" />
+				<w:bottom w:w="0" w:type="dxa" />
+				<w:right w:w="108" w:type="dxa" />
+			</w:tblCellMar>
+		</w:tblPr>
+		<w:tcPr>
+			<w:shd w:val="clear" w:color="auto" w:fill="F8F8F8"
+				w:themeFill="accent1" w:themeFillTint="33" />
+		</w:tcPr>
+		<w:tblStylePr w:type="firstRow">
+			<w:rPr>
+				<w:b />
+				<w:bCs />
+			</w:rPr>
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="F1F1F1"
+					w:themeFill="accent1" w:themeFillTint="66" />
+			</w:tcPr>
+		</w:tblStylePr>
+		<w:tblStylePr w:type="lastRow">
+			<w:rPr>
+				<w:b />
+				<w:bCs />
+				<w:color w:val="000000" w:themeColor="text1" />
+			</w:rPr>
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="F1F1F1"
+					w:themeFill="accent1" w:themeFillTint="66" />
+			</w:tcPr>
+		</w:tblStylePr>
+		<w:tblStylePr w:type="firstCol">
+			<w:rPr>
+				<w:color w:val="FFFFFF" w:themeColor="background1" />
+			</w:rPr>
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="A5A5A5"
+					w:themeFill="accent1" w:themeFillShade="BF" />
+			</w:tcPr>
+		</w:tblStylePr>
+		<w:tblStylePr w:type="lastCol">
+			<w:rPr>
+				<w:color w:val="FFFFFF" w:themeColor="background1" />
+			</w:rPr>
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="A5A5A5"
+					w:themeFill="accent1" w:themeFillShade="BF" />
+			</w:tcPr>
+		</w:tblStylePr>
+		<w:tblStylePr w:type="band1Vert">
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="EEEEEE"
+					w:themeFill="accent1" w:themeFillTint="7F" />
+			</w:tcPr>
+		</w:tblStylePr>
+		<w:tblStylePr w:type="band1Horz">
+			<w:tblPr />
+			<w:tcPr>
+				<w:shd w:val="clear" w:color="auto" w:fill="EEEEEE"
+					w:themeFill="accent1" w:themeFillTint="7F" />
+			</w:tcPr>
+		</w:tblStylePr>
+	</w:style>
+	<w:style w:type="paragraph" w:styleId="Header">
+		<w:name w:val="header" />
+		<w:basedOn w:val="Normal" />
+		<w:link w:val="HeaderChar" />
+		<w:uiPriority w:val="99" />
+		<w:semiHidden />
+		<w:unhideWhenUsed />
+		<w:rsid w:val="006C2FDC" />
+		<w:pPr>
+			<w:tabs>
+				<w:tab w:val="center" w:pos="4320" />
+				<w:tab w:val="right" w:pos="8640" />
+			</w:tabs>
+			<w:spacing w:after="0" />
+		</w:pPr>
+	</w:style>
+	<w:style w:type="character" w:customStyle="1" w:styleId="HeaderChar">
+		<w:name w:val="Header Char" />
+		<w:basedOn w:val="DefaultParagraphFont" />
+		<w:link w:val="Header" />
+		<w:uiPriority w:val="99" />
+		<w:semiHidden />
+		<w:rsid w:val="006C2FDC" />
+	</w:style>
+	<w:style w:type="paragraph" w:styleId="Footer">
+		<w:name w:val="footer" />
+		<w:basedOn w:val="Normal" />
+		<w:link w:val="FooterChar" />
+		<w:uiPriority w:val="99" />
+		<w:semiHidden />
+		<w:unhideWhenUsed />
+		<w:rsid w:val="006C2FDC" />
+		<w:pPr>
+			<w:tabs>
+				<w:tab w:val="center" w:pos="4320" />
+				<w:tab w:val="right" w:pos="8640" />
+			</w:tabs>
+			<w:spacing w:after="0" />
+		</w:pPr>
+	</w:style>
+	<w:style w:type="character" w:customStyle="1" w:styleId="FooterChar">
+		<w:name w:val="Footer Char" />
+		<w:basedOn w:val="DefaultParagraphFont" />
+		<w:link w:val="Footer" />
+		<w:uiPriority w:val="99" />
+		<w:semiHidden />
+		<w:rsid w:val="006C2FDC" />
+	</w:style>
+	<w:style w:type="character" w:styleId="PageNumber">
+		<w:name w:val="page number" />
+		<w:basedOn w:val="DefaultParagraphFont" />
+		<w:rsid w:val="006C2FDC" />
+	</w:style>
+</w:styles>
