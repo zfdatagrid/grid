@@ -790,13 +790,15 @@ class Bvb_Grid_DataGrid {
 		if (strlen ( trim ( $this->_where ) ) > 1) {
 			$query_where = " WHERE " . $this->_where . "  ";
 			$tem_where_1 = true;
+		} else {
+			
+			$query_where = '';
+			$tem_where_1 = false;
 		}
 		
 		$query_final = '';
-		$query_where = '';
 		$new_where = '';
 		$tem_where = false;
-		$tem_where_1 = false;
 		
 		//Vamos criar a aray para sabermos o valor dos filtro
 		$valor_filters = array ();
@@ -853,6 +855,8 @@ class Bvb_Grid_DataGrid {
 		
 		$this->_queryWhere = $query_final;
 		
+		echo $this->_queryWhere;
+		die ();
 		return $this->_queryWhere;
 	
 	}
