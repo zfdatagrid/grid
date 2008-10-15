@@ -855,8 +855,7 @@ class Bvb_Grid_DataGrid {
 		
 		$this->_queryWhere = $query_final;
 		
-		echo $this->_queryWhere;
-		die ();
+	
 		return $this->_queryWhere;
 	
 	}
