@@ -393,9 +393,35 @@ class Bvb_Grid_DataGrid
 
         if (! @is_array ( $this->_describeTables [$table] ))
         {
-            $describe = $this->_db->describeTable ( $table );
+            
+
+            if ($this->cache ['use'] == 1)
+            {
+                
+                $cache = $this->cache ['instance'];
+                
+
+                if (! $describe = $cache->load ( md5 ( 'describe' . $table ) ))
+                {
+                    $describe = $this->_db->describeTable ( $table );
+                    $cache->save ( $describe, md5 ( 'describe' . $table ), array ($this->cache ['tag'] ) );
+                
+                } else  {
+                    $describe = $cache->load ( md5 ( 'describe' . $table ) );
+                }
+            
+
+            } else {
+                $describe = $this->_db->describeTable ( $table );
+            }
+            
+
             $this->_describeTables [$table] = $describe;
         }
+        
+        
+        
+        
         return $this->_describeTables [$table];
     }
 
@@ -1922,7 +1948,6 @@ class Bvb_Grid_DataGrid
         //[PT] O where que é sempre aplicado
         //[EN] Get the WHERE condition and apply from now on...
         $this->_where = @$this->data ['where'];
-        $select_fields = $this->buildSelectFields ( $this->_fields );
         $query_where = $this->buildQueryWhere ();
         $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $this->data ['from'] . " $query_where ";
         return $query_count;
@@ -1971,28 +1996,35 @@ class Bvb_Grid_DataGrid
         }
         $query = $this->getQuery ();
         $query_count = $this->getQueryCount ();
-        $result = $this->_db->fetchAll ( $query );
-        if (is_array ( $this->_result ) && $this->_totalRecords >= 0)
-            return true;
+        #$result = $this->_db->fetchAll ( $query ); 
+        
+
         if ($this->cache ['use'] == 1)
         {
+            
             $cache = $this->cache ['instance'];
-            if (! Bvb_Grid_DataGrid::$_cache [md5 ( $query )] != $cache->load ( md5 ( $query ) ))
+            
+
+            if (! $result = $cache->load ( md5 ( $query ) ))
             {
                 $result = $this->_db->fetchAll ( $query );
                 $resultCount = $this->_db->fetchOne ( $query_count );
                 $cache->save ( $result, md5 ( $query ), array ($this->cache ['tag'] ) );
                 $cache->save ( $resultCount, md5 ( $query_count ), array ($this->cache ['tag'] ) );
+            
             } else
             {
                 $result = $cache->load ( md5 ( $query ) );
                 $resultCount = $cache->load ( md5 ( $query_count ) );
             }
+        
+
         } else
         {
             $result = $this->_db->fetchAll ( $query );
             $resultCount = $this->_db->fetchOne ( $query_count );
         }
+        
         //[PT] O total de registos encontrados na query sem aplicar os limites
         $this->_totalRecords = $resultCount;
         //[PT]Os registos dentro dos limites

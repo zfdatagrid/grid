@@ -37,7 +37,7 @@ class siteController extends Zend_Controller_Action {
             default:
                 $grid = new Bvb_Grid_Deploy_Table($db);
                 $grid->imagesUrl  = $this->getRequest()->getBaseUrl() . '/public/images/';
-                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                $grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
 
                 break;
         }

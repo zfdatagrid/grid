@@ -465,31 +465,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	/*
 
-    /**
-    * [PT] Calcular o colspan para a paginação e topo
-    * [EN] Calculate colspan for pagination and top
-    *
-    * @return int
 
-    function colspan()
-    {
-
-    $i = 0;
-    foreach ( $this->data['fields'] as $value )
-    {
-    if ($value [ 'hide' ] == 1 || $value['hRow']==1)
-    {
-    $i ++;
-    }
-    }
-
-    $colspan = count ( $this->_fields ) + count ( $this->extra_fields ) - $i;
-    $this->temp['table']->colSpan = $colspan;
-
-    return $colspan;
-    }
-
-    */
 	
 	/**
 	 * [PT] Remover da base de dados
@@ -1507,7 +1483,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		$url = parent::getUrl ( 'comm' );
 		
+		
+		//[PT] Precisamos de processar os forimulário, se necessário,
+		//[PT] Antes de fazer-mos a query
 		self::processForm ();
+		
+		
+		
 		parent::deploy ();
 		
 		if (! $this->temp ['table'] instanceof Bvb_Grid_Template_Table_Table) {
@@ -1599,7 +1581,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function addForm($form) {
 		
-		//Va,os primeiros construir os campos
+		//Vamos primeiros construir os campos
 		
 
 		$form = $this->object2array ( $form );

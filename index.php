@@ -16,25 +16,26 @@ $view->setScriptPath('app/skins/bvb/views/');
 $view->doctype('XHTML1_TRANSITIONAL');
 $view->setEncoding('UTF-8');
 
-// Carregar a configuração
+// Load Config
 $config = new Zend_Config_Ini ( './application/config.ini', 'general' );
 Zend_Registry::set ( 'config', $config );
 
-// base de dados
+// Database
 $db = Zend_Db::factory ( $config->db->adapter, $config->db->config->toArray () );
 Zend_Db_Table::setDefaultAdapter ( $db );
 $db->getConnection ()->exec ( "SET NAMES utf8" );
 $db->setFetchMode ( Zend_Db::FETCH_OBJ );
+$db->setProfiler(true);
 Zend_Registry::set ( 'db', $db );
 
-//Opções cache
+//Cache Options
 $frontendOptions = array('lifetime' => 7200,'automatic_serialization' => true);
 $backendOptions = array('cache_dir' => './data/cache/');
 $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
 Zend_Registry::set('cache',$cache);
 
 
-//Iniciar definições regionais
+//Locale
 $locale = new Zend_Locale ( 'en_US' );
 Zend_Registry::set ( 'locale', $locale );
 
@@ -43,5 +44,6 @@ $frontController = Zend_Controller_Front::getInstance();
 $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');
 $frontController->setDefaultControllerName('site');
+$frontController->registerPlugin(new Bvb_Controller_Plugin_Profiler());
 
 $frontController->dispatch ();
