@@ -283,20 +283,30 @@ class Bvb_Grid_DataGrid
         //[PT] Iniciar o adapter da base de dados
         $this->_db = $db;
         $this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
+        
+
         $this->ctrlParams = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
         $this->_baseUrl = Zend_Controller_Front::getInstance ()->getBaseUrl ();
+        
+
         //[EN] Add Zend_Validate and Zend_Filter to the form element
         //[PT] Vamos adicionar os elementos da Zend
         $this->addElementDir ( 'Zend/Filter', 'Zend_Filter', 'filter' );
         $this->addElementDir ( 'Zend/Validate', 'Zend_Validate', 'validator' );
+        
+
         //[EN] Add the frormatter fir for fields content
         $this->addFormatterDir ( 'Bvb/Grid/Formatter', 'Bvb_Grid_Formatter' );
+        
+
         //[EN] Add the templates dir's
         $this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Pdf', 'Bvb_Grid_Template_Pdf', 'pdf' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
+    
+
     }
 
 
@@ -406,12 +416,14 @@ class Bvb_Grid_DataGrid
                     $describe = $this->_db->describeTable ( $table );
                     $cache->save ( $describe, md5 ( 'describe' . $table ), array ($this->cache ['tag'] ) );
                 
-                } else  {
+                } else
+                {
                     $describe = $cache->load ( md5 ( 'describe' . $table ) );
                 }
             
 
-            } else {
+            } else
+            {
                 $describe = $this->_db->describeTable ( $table );
             }
             
@@ -419,9 +431,7 @@ class Bvb_Grid_DataGrid
             $this->_describeTables [$table] = $describe;
         }
         
-        
-        
-        
+
         return $this->_describeTables [$table];
     }
 
@@ -1829,14 +1839,39 @@ class Bvb_Grid_DataGrid
 
         $this->consolidated = 1;
         $cFields = @$this->data ['fields'];
+        
         if (! is_array ( $cFields ))
         {
-            $table = array_keys ( $this->getDiscribeTable ( $this->data ['table'] ) );
+            
+            if (is_array ( $this->data ['table'] ))
+            {
+                
+
+                foreach ( $this->data ['table'] as $key => $table )
+                {
+                    
+                    $tableFinal = array_keys ( $this->getDiscribeTable ( $table ) );
+                    
+                    foreach ( $tableFinal as $field )
+                    {
+                        $this->addColumn ( $key.'.'.$field );
+                    }
+                }
+            
+
+            } else
+            {
+                
+                $table = array_keys ( $this->getDiscribeTable ( $this->data ['table'] ) );
+            }
+            
             foreach ( $table as $field )
             {
                 $this->addColumn ( $field );
             }
         }
+        
+
         if (! @is_array ( $this->filters ) && @is_array ( $this->data ['filters'] ))
         {
             $this->filters = $this->data ['filters'];
@@ -1899,11 +1934,15 @@ class Bvb_Grid_DataGrid
         //[PT] Temos que validar os campos da tabela.
         //[EN] Validate table fields, make sure they exist...
         $this->validateFields ( $this->data ['fields'] );
+        
+
         //[PT] Os filtros, não é obrigatório filtrar todos os resultados
         //[PT] Temos também que os comparar com os campos da base de dados
         //[EN] Filters. Not required that every field as filter.
         //[EN] Make sute they exists on the table
         $this->filters = self::validateFilters ( $this->filters );
+        
+
         //[PT]O colspan a ser aplicado em tabelas
         $this->_colspan = $this->colspan ();
         return true;
@@ -1994,10 +2033,13 @@ class Bvb_Grid_DataGrid
         {
             $this->consolidateQuery ();
         }
+        
+
         $query = $this->getQuery ();
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
+
 
         if ($this->cache ['use'] == 1)
         {

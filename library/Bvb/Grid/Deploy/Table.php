@@ -1486,10 +1486,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		//[PT] Precisamos de processar os forimulário, se necessário,
 		//[PT] Antes de fazer-mos a query
-		self::processForm ();
+		#self::processForm ();
 		
 		
-		
+
 		parent::deploy ();
 		
 		if (! $this->temp ['table'] instanceof Bvb_Grid_Template_Table_Table) {
