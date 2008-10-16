@@ -1007,10 +1007,11 @@ class Bvb_Grid_DataGrid
             {
                 unset ( $params [$value] );
             }
-        } else
-        {
+        } else {
             unset ( $params [$situation] );
         }
+        
+        
         if (count ( $this->params ) > 0)
         {
             //User as defined its own params (probably using routes)
@@ -1025,6 +1026,9 @@ class Bvb_Grid_DataGrid
             }
             $params = $newParams;
         }
+        
+        
+        
         $params_clean = $params;
         unset ( $params_clean ['controller'] );
         unset ( $params_clean ['module'] );
@@ -1816,7 +1820,7 @@ class Bvb_Grid_DataGrid
                 $field = $value ['COLUMN_NAME'];
             }
         }
-        if (count ( $primary_key ) != 1 || ! @$this->info ['user'])
+        if (count ( $primary_key ) != 1)
         {
             return false;
             #throw new Exception('Incaple to get the table primary key. The system can only perform adicional actions on tables with ONE primary key');
@@ -2069,12 +2073,15 @@ class Bvb_Grid_DataGrid
         
         //[PT] O total de registos encontrados na query sem aplicar os limites
         $this->_totalRecords = $resultCount;
+        
+        
         //[PT]Os registos dentro dos limites
         $this->_result = $result;
+        
+        
         //[PT]Alguma coisa correu mal. Não adicionaram opção
         if (! is_array ( $this->data ))
         {
-            $this->noData = true;
             throw new Exception ( 'Database options not found. ' );
         }
     }

@@ -14,7 +14,7 @@
  * @package    Mascker_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.1  mascker $
+ * @version    0.1  mascker 
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
@@ -306,14 +306,14 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 
 
         #START DOCUMENT.XML
-
+/*
         if ($nome ['field'] == 'id' || strpos ( $nome ['field'], '_id' ) || strpos ( $nome ['field'], 'id_' ) || strpos ( $nome ['field'], '.id' )) {
             @array_shift ( $titles );
             @array_shift ( $sql );
 
             $remove = true;
         }
-
+*/
         $xml = $this->temp['wordx']->globalStart();
 
         $xml .= $this->temp['wordx']->titlesStart();
