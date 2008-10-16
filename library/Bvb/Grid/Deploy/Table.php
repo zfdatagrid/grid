@@ -1635,7 +1635,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			$this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onAddForce'] );
 		}
 		
-		if (isset ( $options ['ecit'] )) {
+		if (isset ( $options ['edit'] )) {
 			if ($options ['edit'] == 1) {
 				$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onEditForce'] );
 			}
