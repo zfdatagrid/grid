@@ -219,7 +219,6 @@ class siteController extends Zend_Controller_Action {
         $form->add(1)
         ->button(1)
         ->delete(1)
-        ->onUpdateAddWhere("user_id='11'")
         ->onAddForce(array('date_added'=>date('Y-m-d H:i:s')))
         ->onEditForce(array('date_added'=>date('Y-m-d H:i:s')));
 

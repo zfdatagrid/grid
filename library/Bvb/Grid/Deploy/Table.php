@@ -258,7 +258,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $fields [$key] = $key;
                 }
             
-            } else  {
+            } else
+            {
                 $fields = parent::getFields ( $mode, $this->data ['table'] );
             }
             
@@ -333,8 +334,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $this->cache ['instance']->clean ( Zend_Cache::CLEANING_MODE_MATCHING_TAG, array ($this->cache ['tag'] ) );
                 }
                 $this->formSuccess = 1;
-                
-            } else {
+            
+            } else
+            {
                 
                 $this->message = $this->__ ( 'Validation failed' );
                 $this->messageOk = false;
@@ -912,7 +914,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                         //[PT]Além disso fazemos o replace no template
                         $grid .= str_replace ( '{{value}}', $this->__ ( $title ['value'] ), $this->temp ['table']->titlesLoop () );
                     
-                    } else  {
+                    } else
+                    {
                         
                         //[PT]Versão em estado incial de ajax. Não e´para levar a sério por enquanto
                         if (array_key_exists ( 'ajax', $this->info ))
@@ -920,7 +923,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                             
                             $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
-                        } else {
+                        } else
+                        {
                             
                             //[PT]Substituir os valores no template
                             $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
@@ -1131,7 +1135,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             $select_fields = parent::buildSelectFields ( $fields_to );
         
-        } else  {
+        } else
+        {
             $select_fields = " * ";
         }
         
@@ -1205,13 +1210,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $grid .= $this->temp ['table']->formStart ();
             
             $finalV = '';
-            if (isset ( $this->_formMessages [$titles[$i]] ))
+            if (isset ( $this->_formMessages [$titles [$i]] ))
             {
                 
-                if (is_array ( $this->_formMessages [$titles[$i]] ))
+                if (is_array ( $this->_formMessages [$titles [$i]] ))
                 {
                     
-                    foreach ( $this->_formMessages [$titles[$i]] as $key => $formS )
+                    foreach ( $this->_formMessages [$titles [$i]] as $key => $formS )
                     {
                         $finalV .= '<br>' . implode ( '<br>', $formS );
                     }
@@ -1222,11 +1227,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $finalV = '';
             }
             
-        
+
             $fieldValue = isset ( $this->_formValues [$value] ) ? $this->_formValues [$value] : '';
-            $fieldDescription = isset ( $this->info ['add'] ['fields'] [$titles[$i]] ['description'] ) ? $this->info ['add'] ['fields']  [$titles[$i]]['description'] : '';
+            $fieldDescription = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['description'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['description'] : '';
             
-            $fieldTitle = isset ( $this->info ['add'] ['fields'] [$titles[$i]] ['title'] ) ? $this->info ['add'] ['fields'] [$titles[$i]] ['title'] : '';
+            $fieldTitle = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['title'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['title'] : '';
             
             $grid .= str_replace ( "{{value}}", $this->__ ( $fieldTitle ) . '<br><em>' . $this->__ ( $fieldDescription ) . '</em>', $this->temp ['table']->formLeft () );
             $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod, $fieldValue ) . $finalV, $this->temp ['table']->formRight () );
@@ -1843,9 +1848,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             }
         }
         
+
         if ($options ['add'] == 1)
         {
-            $this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onAddForce'], 'where' => $options ['onUpdateAddWhere'] );
+            $this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onAddForce'] );
         }
         
         if (isset ( $options ['edit'] ))
@@ -1855,7 +1861,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onEditForce'] );
             }
         }
-        
+        if (isset ( $options ['onUpdateAddWhere'] ))
+        {
+            $this->info ['edit'] ['where'] = $options ['onUpdateAddWhere'];
+        }
         return $this;
     }
 
