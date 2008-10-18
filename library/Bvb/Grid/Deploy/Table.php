@@ -25,7 +25,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 {
 
     public $templateInfo;
-    
+
     
     protected $messageOk;
 
@@ -379,6 +379,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 
         $filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
         
+ 
         if (is_array ( $filters ))
         {
             
@@ -395,19 +396,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $file = $find ['dir'] . ucfirst ( $func ) . '.php';
                     $class = $find ['prefix'] . '_' . ucfirst ( $func );
                     
-                    if (file_exists ( $file ))
+                    if (file_exists ( $this->libraryDir . '/' . $file ))
                     {
-                        require_once ($file);
-                    }
-                    
-                    if (@class_exists ( $class ))
-                    {
-                        $t = new $class ( $options );
-                        return $t->filter ( $value );
-                    
+                        require_once ($this->libraryDir . '/' . $file);
+                        
+                        if (class_exists ( $class ))
+                        {
+                            $t = new $class ( $options );
+                            return $t->filter ( $value );
+                        
+                        }
                     }
                 }
-            
             }
         } else
         {
@@ -453,6 +453,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         } elseif (is_array ( $validators ))
         {
             
+
             foreach ( $validators as $key => $func )
             {
                 
@@ -467,52 +468,53 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $file = $find ['dir'] . ucfirst ( $func ) . '.php';
                     $class = $find ['prefix'] . '_' . ucfirst ( $func );
                     
-                    if (file_exists ( $file ))
+
+                    if (file_exists ( $this->libraryDir . '/' . $file ))
                     {
                         
-                        @require_once ($file);
-                    }
-                    
-                    if (@class_exists ( $class ))
-                    {
+                        @require_once ($this->libraryDir . '/' . $file);
                         
-                        //[PT] Se for array, significa que o Zend_Validate recebe argumentos
-                        //[EN] If an array, means the Validator receives arguments
-                        if (is_array ( $validators [$key] ))
+
+                        if (class_exists ( $class ))
                         {
                             
-                            $t = new $class ( implode ( ',', $validators [$key] ) );
-                            $return = $t->isValid ( $value );
-                            
-                            if ($return === false)
+                            //[PT] Se for array, significa que o Zend_Validate recebe argumentos
+                            //[EN] If an array, means the Validator receives arguments
+                            if (is_array ( $validators [$key] ))
                             {
-                                $this->_failedValidation = true;
-                                foreach ( $t->getMessages () as $messageId => $message )
+                                
+                                $t = new $class ( implode ( ',', $validators [$key] ) );
+                                $return = $t->isValid ( $value );
+                                
+                                if ($return === false)
                                 {
-                                    $this->_formMessages [$field] [] = array ($messageId => $message );
+                                    $this->_failedValidation = true;
+                                    foreach ( $t->getMessages () as $messageId => $message )
+                                    {
+                                        $this->_formMessages [$field] [] = array ($messageId => $message );
+                                    }
+                                    return false;
                                 }
-                                return false;
-                            }
-                        
-                        } else
-                        {
                             
-                            $t = new $class ( );
-                            $return = $t->isValid ( $value );
-                            
-                            if ($return === false)
+                            } else
                             {
-                                $this->_failedValidation = true;
                                 
-                                foreach ( $t->getMessages () as $messageId => $message )
+                                $t = new $class ( );
+                                $return = $t->isValid ( $value );
+                                
+                                if ($return === false)
                                 {
-                                    $this->_formMessages [$field] [] = array ($messageId => $message );
+                                    $this->_failedValidation = true;
+                                    
+                                    foreach ( $t->getMessages () as $messageId => $message )
+                                    {
+                                        $this->_formMessages [$field] [] = array ($messageId => $message );
+                                    }
+                                    
+                                    return false;
                                 }
-                                
-                                return false;
                             }
                         }
-                    
                     }
                 }
             
@@ -1129,7 +1131,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $pk = $this->_db->quoteIdentifier ( parent::getPrimaryKey () );
         
-        if (is_array ( $this->info ['edit'] ['fields'] ))
+        if (@is_array ( $this->info ['edit'] ['fields'] ))
         {
             foreach ( $this->info ['edit'] ['fields'] as $value )
             {

@@ -19,13 +19,14 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
-class Bvb_Grid_Formatter_Date
-{
 
+class My_Formatter_Currency 
+{
+    
     function format($value)
     {
-        $date = new Zend_Date ( $value );
-        return $date->toString ( "dd MMMM YYYY','  HH:mm (EEE)" );
+        $currency = new Zend_Currency(Zend_Registry::get('locale'));
+        return $currency->toCurrency($value);
     }
-
+    
 }

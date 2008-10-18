@@ -19,13 +19,14 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
-class Bvb_Grid_Formatter_Date
+class My_Filter_Test implements Zend_Filter_Interface
 {
 
-    function format($value)
+    public function filter($value)
     {
-        $date = new Zend_Date ( $value );
-        return $date->toString ( "dd MMMM YYYY','  HH:mm (EEE)" );
+        $value = trim ( strtolower ( $value ) );
+        $value = preg_replace ( "/[^a-zA-Z0-9\-_ ]/", "", $value );
+        
+        return $value;
     }
-
 }

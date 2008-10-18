@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Mascker
  *
@@ -19,13 +21,21 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
-class Bvb_Grid_Formatter_Date
+class My_Validate_Test extends Zend_Validate_Abstract
 {
 
-    function format($value)
+    const FLOAT = 'float';
+
+    protected $_messageTemplates = array (self::FLOAT => "Error. This will always fail..." );
+
+
+    public function isValid($value)
     {
-        $date = new Zend_Date ( $value );
-        return $date->toString ( "dd MMMM YYYY','  HH:mm (EEE)" );
+
+        $this->_error ();
+        return false;
+    
     }
+
 
 }

@@ -558,19 +558,23 @@ class Bvb_Grid_DataGrid
         //[Vamos meter isto por ordem reversa para os ultimos serem os primeiros
         //Faz sentido e acho que é uq eo que é mais utilizado
         $format = array_reverse ( $this->_formatter );
+        
+
         foreach ( $format as $find )
         {
             
-            
             $file = $find ['dir'] . ucfirst ( $result ) . '.php';
             $class = $find ['prefix'] . '_' . ucfirst ( $result );
-
-            require_once ($file);
-            if (class_exists ( $class ))
+            
+            if (file_exists ( $this->libraryDir . '/' . $file ))
             {
-                $t = new $class ( $options );
-                $return = $t->format ( $value );
-                $apply = 1;
+                require_once ($this->libraryDir . '/' . $file);
+                if (class_exists ( $class ))
+                {
+                    $t = new $class ( $options );
+                    $return = $t->format ( $value );
+                    $apply = 1;
+                }
             }
         }
         if ($apply !== 1)
@@ -2156,7 +2160,7 @@ class Bvb_Grid_DataGrid
 
         foreach ( $temp as $find )
         {
-
+            
             $file = $find ['dir'] . ucfirst ( $template ) . '.php';
             $class = $find ['prefix'] . '_' . ucfirst ( $template );
             
@@ -2179,7 +2183,7 @@ class Bvb_Grid_DataGrid
         
 
         }
-  
+        
         throw new Exception ( 'No templates found' );
     }
 

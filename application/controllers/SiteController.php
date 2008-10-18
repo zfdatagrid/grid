@@ -37,6 +37,9 @@ class siteController extends Zend_Controller_Action {
             default:
                 $grid = new Bvb_Grid_Deploy_Table($db);
                 $grid->addTemplateDir('My/Template/Table','My_Template_Table','table');
+                $grid->addElementDir('My/Validate','My_Validate','validator');
+                $grid->addElementDir('My/Filter','My_Filter','filter');
+                $grid->addFormatterDir('My/Formatter','My_Formatter');
                 $grid->imagesUrl  = $this->getRequest()->getBaseUrl() . '/public/images/';
                 $grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
 
@@ -73,7 +76,7 @@ class siteController extends Zend_Controller_Action {
         ->addColumn('id')
         ->addColumn('firstname')
         ->addColumn('lastname',array('title'=>'Last name (Grouped)'))
-        ->addColumn('age',array('sqlexp'=>'avg','title'=>'Age Average','format'=>'number','class'=>'center'))
+        ->addColumn('age',array('sqlexp'=>'avg','title'=>'Age Average','format'=>'currency','class'=>'center'))
         ->groupby('lastname')
         ->noFilters(1)
         ->setTemplate('select');
@@ -226,9 +229,8 @@ class siteController extends Zend_Controller_Action {
 
         $fAdd = new Bvb_Grid_Form_Column('firstname');
         $fAdd->title('First name')
-        ->validators(array('EmailAddress'))
-        ->description('Insert you email address')
-        ->filters(array('StripTags'));
+        ->filters(array('Test'))
+        ->description('Insert you email address');
 
         $lastName = new Bvb_Grid_Form_Column('lastname');
         $lastName->title('Last name');
