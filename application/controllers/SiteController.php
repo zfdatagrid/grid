@@ -224,8 +224,10 @@ class siteController extends Zend_Controller_Action {
         ->button(1)
         ->delete(1)
         ->onAddForce(array('date_added'=>date('Y-m-d H:i:s')))
-        ->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op'))
         ->onEditForce(array('date_added'=>date('Y-m-d H:i:s')));
+        
+        
+        #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
 
 
         $fAdd = new Bvb_Grid_Form_Column('firstname');
