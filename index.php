@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL ^E_NOTICE);
+error_reporting(E_ALL);
 ini_set('max_execution_time',0);
 
 date_default_timezone_set ( 'Europe/Lisbon' );

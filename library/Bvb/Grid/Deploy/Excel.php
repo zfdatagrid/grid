@@ -1,4 +1,7 @@
 <?php
+
+
+
 /**
  * Mascker
  *
@@ -21,25 +24,30 @@
 class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
 {
 
+    
+    protected $output = 'excel';
 
-    protected  $output = 'excel';
     public $title;
 
-    public $dir ;
+    public $dir;
 
-    function __construct ($db,$title,$dir)
+
+    function __construct($db, $title, $dir)
     {
 
-        if(!in_array('excel',$this->export))
+        
+        if (! in_array ( 'excel', $this->export ))
         {
-            die('Sem permissões de exportação da grelha');
+            echo $this->__( "You dont' have permission to export the results to this format" );
+            die();
         }
-
-        $this->dir = rtrim($dir,"/")."/";
-
+        
+        $this->dir = rtrim ( $dir, "/" ) . "/";
+        
         $this->title = $title;
-        parent::__construct($db);
+        parent::__construct ( $db );
     }
+
 
     /**
      * [Para podemros utiliza]
@@ -47,112 +55,115 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-
-    function __set($var,$value)
+    
+    function __set($var, $value)
     {
-        parent::__set($var,$value);
+
+        parent::__set ( $var, $value );
     }
 
 
     function deploy()
     {
-        $this->data['pagination'][ 'per_page' ] = 10000000;
 
-        parent::deploy();
-
-        $titles = parent::buildTitles();
-        $wsData = parent::buildGrid();
-        $sql = parent::buildSqlExp();
-
-
-        $nome = reset($titles);
-
+        $this->setPagination(10000000);
+        
+        parent::deploy ();
+        
+        $titles = parent::buildTitles ();
+        $wsData = parent::buildGrid ();
+        $sql = parent::buildSqlExp ();
+        
+        /*
+        $nome = reset ( $titles );
+        
+        
         if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_')  || strpos($nome['field'],'.id')  )
         {
             @array_shift($titles);
             @array_shift($sql);
             $remove = true;
         }
-        $xml = '<'.'?xml version="1.0"?'.'><'.'?mso-application progid="Excel.Sheet"?'.'>
+        
+        */
+        $xml = '<' . '?xml version="1.0"?' . '><' . '?mso-application progid="Excel.Sheet"?' . '>
 <Workbook xmlns:x="urn:schemas-microsoft-com:office:excel"
   xmlns="urn:schemas-microsoft-com:office:spreadsheet"
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
+        
 
-
-
-
-        $xml .= '<Worksheet ss:Name="Barcelos" ss:Description="Sempre contigo"><ss:Table>';
-
+        $xml .= '<Worksheet ss:Name="<![CDATA[' . $this->title. ']]>" ss:Description="<![CDATA[' . $this->title . ']]>"><ss:Table>';
+        
         $xml .= '<ss:Row>';
-        foreach ($titles as $value) {
-
-            $type = !is_numeric($value['value'])?'String':'Number';
-
-            $xml .= '<ss:Cell><Data ss:Type="'.$type.'">'.$value['value'].'</Data></ss:Cell>';
+        foreach ( $titles as $value )
+        {
+            
+            $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
+            
+            $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
         }
         $xml .= '</ss:Row>';
+        
 
-
-        if(is_array($wsData))
+        if (is_array ( $wsData ))
         {
-            foreach ($wsData as $row) {
-
+            foreach ( $wsData as $row )
+            {
+                
                 $xml .= '<ss:Row>';
-                $a=1;
-                foreach ($row as $value) {
+                $a = 1;
+                foreach ( $row as $value )
+                {
+                    
+                    $value ['value'] = strip_tags ( $value ['value'] );
+                    
 
-                    $value['value']  = strip_tags($value['value']);
-
-
-                    if(@$remove!==true && $a!=1)
-                    {
-
-                        $type = !is_numeric($value['value'])?'String':'Number';
-                        $xml .= '<ss:Cell><Data ss:Type="'.$type.'">'.$value['value'].'</Data></ss:Cell>';
-                    }
-                    $a++;
+                    $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
+                    $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
+                    
+                    $a ++;
                 }
                 $xml .= '</ss:Row>';
             }
-
+        
         }
+        
 
-
-        if(is_array($sql))
+        if (is_array ( $sql ))
         {
             $xml .= '<ss:Row>';
-            foreach ($sql as $value) {
-
-                $type = !is_numeric($value['value'])?'String':'Number';
-
-                $xml .= '<ss:Cell><Data ss:Type="'.$type.'">'.$value['value'].'</Data></ss:Cell>';
+            foreach ( $sql as $value )
+            {
+                
+                $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
+                
+                $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
             }
             $xml .= '</ss:Row>';
         }
-
+        
 
         $xml .= '</ss:Table></Worksheet>';
-
+        
 
         $xml .= '</Workbook>';
+        
 
-
-
-        if(file_exists($this->dir.$this->title.'.xls'))
+        if (file_exists ( $this->dir . $this->title . '.xls' ))
         {
-            $data = date('d-m-Y H\:i\:s');
-            rename($this->dir.$this->title.'.xls',$this->dir.$this->title.'-'.$data.'.xls');
+            $data = date ( 'd-m-Y H\:i\:s' );
+            rename ( $this->dir . $this->title . '.xls', $this->dir . $this->title . '-' . $data . '.xls' );
         }
-
-        file_put_contents($this->dir.$this->title.".xls",$xml);
-
-        header('Content-type: application/excel');
-
+        
+        file_put_contents ( $this->dir . $this->title . ".xls", $xml );
+        
+        header ( 'Content-type: application/excel' );
+        
         // It will be called downloaded.pdf
-        header('Content-Disposition: attachment; filename="'.$this->title.'.xls"');
-        readfile($this->dir.$this->title.'.xls');
-        unlink($this->dir.$this->title.'.xls');
-        die();
+        header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xls"' );
+        readfile ( $this->dir . $this->title . '.xls' );
+        unlink ( $this->dir . $this->title . '.xls' );
+        die ();
     }
 
 }

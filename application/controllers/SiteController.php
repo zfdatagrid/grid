@@ -15,19 +15,19 @@ class siteController extends Zend_Controller_Action {
 
         switch ($export) {
             case 'excel':
-                $grid = new Bvb_Grid_Deploy_Excel($db,'Grid Example','media/files');
+                $grid = new Bvb_Grid_Deploy_Excel($db,'Grid Example','media/temp');
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'word':
-                $grid = new Bvb_Grid_Deploy_Word($db,'Grid Example','media/files');
+                $grid = new Bvb_Grid_Deploy_Word($db,'Grid Example','media/temp');
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'wordx':
-                $grid = new Bvb_Grid_Deploy_Wordx($db,'Grid Example','media/files');
+                $grid = new Bvb_Grid_Deploy_Wordx($db,'Grid Example','media/temp');
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'pdf':
-                $grid =  new Bvb_Grid_Deploy_Pdf($db,'Grid Example','media/files');
+                $grid =  new Bvb_Grid_Deploy_Pdf($db,'Grid Example','media/temp');
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'print':
@@ -36,6 +36,7 @@ class siteController extends Zend_Controller_Action {
                 break;
             default:
                 $grid = new Bvb_Grid_Deploy_Table($db);
+                $grid->addTemplateDir('My/Template/Table','My_Template_Table','table');
                 $grid->imagesUrl  = $this->getRequest()->getBaseUrl() . '/public/images/';
                 $grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
 
@@ -317,7 +318,7 @@ class siteController extends Zend_Controller_Action {
         $grid = $this->grid('table');
         $grid->noFilters(1)
         ->from('City')
-        ->setTemplate('select','table');
+        ->setTemplate('outside','table');
 
         $this->view->pages = $grid->deploy();
         $this->render ('index') ;

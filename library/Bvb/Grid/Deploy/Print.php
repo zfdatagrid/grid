@@ -27,9 +27,11 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
     function __construct ($db,$title)
     {
-        if(!in_array('print',$this->export))
+     
+        if (! in_array ( 'print', $this->export ))
         {
-            die('Sem permissões de exportação da grelha');
+            echo $this->__( "You dont' have permission to export the results to this format" );
+            die();
         }
 
         $this->title = $title;

@@ -24,6 +24,9 @@
 class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 {
 
+    public $templateInfo;
+    
+    
     protected $messageOk;
 
     /**

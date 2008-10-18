@@ -20,6 +20,9 @@
 class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 
 
+    public $templateInfo;
+    
+    
     public $title;
 
     public $wordInfo;
@@ -35,8 +38,11 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
     function __construct($db, $title, $dir) {
         
         
-        if (! in_array ( 'wordx', $this->export )) {
-            die ( 'Sem permissões de exportação da grelha' );
+     
+        if (! in_array ( 'wordx', $this->export ))
+        {
+            echo $this->__( "You dont' have permission to export the results to this format" );
+            die();
         }
 
         $this->title = $title;
@@ -231,27 +237,35 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
         $this->setPagination ( 10000000 );
 
         parent::deploy ();
+        
 
         if (! $this->temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx ) {
             $this->setTemplate ( 'word', 'word' );
         }
 
-        $this->templateDir = ucfirst(end(explode('_',get_class($this->temp['wordx']))));
+        $this->templateDir = explode('/',$this->templateInfo['dir']);
+        array_pop($this->templateDir);
+  
+        $this->templateDir = ucfirst(end($this->templateDir));
 
         $this->wordInfo = $this->temp['wordx']->info ();
 
-        $this->dir = rtrim ( $this->dir, '/' ) . '/'.$this->templateDir.'/';
-
+        $this->dir = rtrim ( $this->dir, '/' ) . '/'.ucfirst($this->templateInfo['name']).'/';
+        
+        
+        $pathTemplate = rtrim($this->libraryDir,'/').'/'.$this->templateInfo['dir'].rtrim(ucfirst($this->templateInfo['name']),'/').'/';
+        
 
         $this->deldir($this->dir);
-        $this->copyDir (realpath('./').'/library/Bvb/Grid/Template/Wordx/'.$this->templateDir.'/', $this->dir );
+
+        $this->copyDir ($pathTemplate, $this->dir );
 
         $xml = $this->temp['wordx']->globalStart();
 
 
         $titles = parent::buildTitles ();
 
-        $nome = reset ( $titles );
+        #$nome = reset ( $titles );
         $wsData = parent::buildGrid ();
         $sql = parent::buildSqlExp ();
 

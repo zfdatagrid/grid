@@ -29,7 +29,7 @@ class Bvb_Grid_Template_Table_Select extends Bvb_Grid_Template_Table_Table
 
     function globalStart ()
     {
-        return "<input type=\"inputId\" style=\"display:none;\">
+        return "<input type=\"text\" id=\"inputResult\" style=\"display:none;\">
         <table id=\"newGrid\" width=\"100%\" name=\"listagem\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
     }
 

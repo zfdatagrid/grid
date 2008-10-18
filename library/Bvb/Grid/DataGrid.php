@@ -23,6 +23,9 @@
 class Bvb_Grid_DataGrid
 {
 
+    public $libraryDir = 'library';
+
+    
     public static $_cache;
 
     /**
@@ -557,8 +560,11 @@ class Bvb_Grid_DataGrid
         $format = array_reverse ( $this->_formatter );
         foreach ( $format as $find )
         {
+            
+            
             $file = $find ['dir'] . ucfirst ( $result ) . '.php';
             $class = $find ['prefix'] . '_' . ucfirst ( $result );
+
             require_once ($file);
             if (class_exists ( $class ))
             {
@@ -954,7 +960,7 @@ class Bvb_Grid_DataGrid
                 $query_order = " ORDER BY  " . $this->data ['order'];
             }
         }
-        if (( int ) $this->data ['pagination'] ['per_page'] == 0)
+        if (( int ) @$this->data ['pagination'] ['per_page'] == 0)
         {
             $this->data ['pagination'] ['per_page'] = 15;
         }
@@ -1007,11 +1013,12 @@ class Bvb_Grid_DataGrid
             {
                 unset ( $params [$value] );
             }
-        } else {
+        } else
+        {
             unset ( $params [$situation] );
         }
         
-        
+
         if (count ( $this->params ) > 0)
         {
             //User as defined its own params (probably using routes)
@@ -1027,8 +1034,7 @@ class Bvb_Grid_DataGrid
             $params = $newParams;
         }
         
-        
-        
+
         $params_clean = $params;
         unset ( $params_clean ['controller'] );
         unset ( $params_clean ['module'] );
@@ -1858,7 +1864,7 @@ class Bvb_Grid_DataGrid
                     
                     foreach ( $tableFinal as $field )
                     {
-                        $this->addColumn ( $key.'.'.$field );
+                        $this->addColumn ( $key . '.' . $field );
                     }
                 }
             
@@ -2074,11 +2080,11 @@ class Bvb_Grid_DataGrid
         //[PT] O total de registos encontrados na query sem aplicar os limites
         $this->_totalRecords = $resultCount;
         
-        
+
         //[PT]Os registos dentro dos limites
         $this->_result = $result;
         
-        
+
         //[PT]Alguma coisa correu mal. Não adicionaram opção
         if (! is_array ( $this->data ))
         {
@@ -2146,18 +2152,34 @@ class Bvb_Grid_DataGrid
     {
 
         $temp = array_reverse ( $this->_templates [$output] );
+        
+
         foreach ( $temp as $find )
         {
+
             $file = $find ['dir'] . ucfirst ( $template ) . '.php';
             $class = $find ['prefix'] . '_' . ucfirst ( $template );
-            require_once ($file);
-            if (class_exists ( $class ))
+            
+
+            if (file_exists ( $this->libraryDir . '/' . $file ))
             {
-                $this->temp [$output] = new $class ( $options );
-                $this->activeTemplates [] = $output;
+                require_once ($file);
+                
+                if (class_exists ( $class ))
+                {
+                    $this->temp [$output] = new $class ( $options );
+                    $this->activeTemplates [] = $output;
+                }
+                
+                $this->templateInfo = array ('name' => $template, 'dir' => $find ['dir'], 'prefix' => $find ['prefix'], 'options' => $options );
+                
+
+                return $this->temp [$output];
             }
-            return $this->temp [$output];
+        
+
         }
+  
         throw new Exception ( 'No templates found' );
     }
 

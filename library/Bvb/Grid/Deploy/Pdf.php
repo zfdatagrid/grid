@@ -33,9 +33,11 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
     function __construct ($db,$title,$dir='')
     {
-        if(!in_array('pdf',$this->export))
+     
+        if (! in_array ( 'pdf', $this->export ))
         {
-            die('Sem permissões de exportação da grelha');
+            echo $this->__( "You dont' have permission to export the results to this format" );
+            die();
         }
 
         $this->dir = rtrim($dir,"/")."/";

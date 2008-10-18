@@ -185,7 +185,7 @@ function setpointer(theRow,id, theMarkColor)
 function checkCheckbox(iNum) {
     var oEl = document.getElementById(iNum);
     oEl.checked = true;
-    document.getElementById('inputId').value=oEl.value;
+    document.getElementById('inputResult').value=oEl.value;
 
     alert('Select record with id '+oEl.value);
 }
