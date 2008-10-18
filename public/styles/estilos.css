@@ -51,7 +51,7 @@ border:1px solid #111;
 text-align:center;
 }
 
-.addRecord{ padding:2px; margin:4px;display:block;width:60px;border:1px solid #333;background-color:#DEDEDE; }
+.addRecord{ padding:2px; margin:4px;display:block;width:120px;text-align:center;border:1px solid #333;background-color:#DEDEDE; }
 .addRecord a {
 text-decoration:none;
 font-size:10px !important;
