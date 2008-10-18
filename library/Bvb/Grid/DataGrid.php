@@ -2054,7 +2054,6 @@ class Bvb_Grid_DataGrid
         #$result = $this->_db->fetchAll ( $query ); 
         
 
-
         if ($this->cache ['use'] == 1)
         {
             

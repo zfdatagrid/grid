@@ -1744,7 +1744,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $this->extra_fields = array ();
             }
             
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{id}}\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{".$this->getPrimaryKey()."}}\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
         
         }
         
@@ -1755,7 +1755,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $this->extra_fields = array ();
             }
             
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{id}}');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{".$this->getPrimaryKey()."}}');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
         }
         
         if (strlen ( $this->message ) > 0)
@@ -1856,7 +1856,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 
         if ($options ['add'] == 1)
         {
-            $this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onAddForce'] );
+            $this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onAddForce'] );
         }
         
         if (isset ( $options ['edit'] ))
