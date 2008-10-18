@@ -379,7 +379,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 
         $filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
         
- 
+
         if (is_array ( $filters ))
         {
             
@@ -573,12 +573,39 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 
         try
         {
+            
+            if (is_array ( $this->info ['delete'] ['cascadeDelete'] ))
+            {
+                foreach ( $this->info ['delete'] ['cascadeDelete'] as $value )
+                {
+                    
+                    $operand = isset ( $value ['operand'] ) ? $value ['operand'] : '=';
+                    $parentField = isset ( $value ['parentField'] ) ? $value ['parentField'] : $this->getPrimaryKey ();
+                    
+                    if ($parentField != $this->getPrimaryKey ())
+                    {
+                        $finalValue = $this->_db->fetchOne ( "SELECT " . $this->_db->quoteIdentifier ( $parentField ) . " FROM  " . $this->_db->quoteIdentifier ( $this->data ['table'] ) . " WHERE id=" . $this->_db->quote ( $final ['id'] ) );
+                    } else
+                    {
+                        $finalValue = $final ['id'];
+                    }
+                    
+
+                    $this->_db->delete ( $value ['table'], $this->_db->quoteIdentifier ( $value ['childField'] ) . $operand . $this->_db->quote ( $finalValue ) );
+                }
+            }
+            
+
             $this->_db->delete ( $this->data ['table'], "  $id =" . $this->_db->quote ( $final ['id'] ) . " $where " );
+        
+
         } catch ( Zend_Exception $e )
         {
             $this->messageOk = FALSE;
             $this->message = $this->__ ( 'Error deleting record' ) . $e->getMessage ();
         }
+        
+
         if ($this->cache ['use'] == 1)
         {
             $this->cache ['instance']->clean ( Zend_Cache::CLEANING_MODE_MATCHING_TAG, array ($this->cache ['tag'] ) );
@@ -1744,7 +1771,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $this->extra_fields = array ();
             }
             
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{".$this->getPrimaryKey()."}}\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{" . $this->getPrimaryKey () . "}}\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
         
         }
         
@@ -1755,7 +1782,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $this->extra_fields = array ();
             }
             
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{".$this->getPrimaryKey()."}}');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__ ( 'Are you sure?' ) . "','$url/comm/" . "mode:delete;id:{{" . $this->getPrimaryKey () . "}}');\" > " . $images ['delete'] . "</a>", 'delete' => true ) );
         }
         
         if (strlen ( $this->message ) > 0)
@@ -1847,13 +1874,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 if (isset ( $options ['onDeleteAddWhere'] ))
                 {
-                    
                     $this->info ['delete'] ['where'] = $options ['onDeleteAddWhere'];
                 }
             }
         }
         
-
+        $this->info ['delete'] ['cascadeDelete'] = $form ['cascadeDelete'];
+        
         if ($options ['add'] == 1)
         {
             $this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onAddForce'] );

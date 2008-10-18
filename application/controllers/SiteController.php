@@ -224,20 +224,21 @@ class siteController extends Zend_Controller_Action {
         ->button(1)
         ->delete(1)
         ->onAddForce(array('date_added'=>date('Y-m-d H:i:s')))
+        ->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op'))
         ->onEditForce(array('date_added'=>date('Y-m-d H:i:s')));
 
 
         $fAdd = new Bvb_Grid_Form_Column('firstname');
         $fAdd->title('First name')
-        ->filters(array('Test'))
+        ->validators(array('EmailAddress'))
         ->description('Insert you email address');
 
         $lastName = new Bvb_Grid_Form_Column('lastname');
         $lastName->title('Last name');
 
         $country = new Bvb_Grid_Form_Column('country');
-        $country->title('País')
-        ->description('O seu país')
+        $country->title('Country')
+        ->description('Choose your Country')
         ->values($paises);
 
 

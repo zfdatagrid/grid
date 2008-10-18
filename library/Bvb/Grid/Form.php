@@ -23,12 +23,21 @@ class Bvb_Grid_Form
     public  $options;
 
     public $fields;
+    
+    public $cascadeDelete;
 
 
     function __call($name,$args)
     {
         $this->options[$name] = $args[0];
         return $this;
+    }
+    
+    function onDeleteCascade($options)
+    {
+        $this->cascadeDelete[] = $options;
+        return $this;
+        
     }
 
 
