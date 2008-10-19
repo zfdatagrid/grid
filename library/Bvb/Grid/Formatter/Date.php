@@ -21,11 +21,18 @@
 
 class Bvb_Grid_Formatter_Date
 {
+    public $locale = 'en_US';
+    
+    function __construct($loc)
+    {
+        $this->locale = $loc;
+    }
 
     function format($value)
     {
         $date = new Zend_Date ( $value );
-        return $date->toString ( "dd MMMM YYYY','  HH:mm (EEE)" );
+        $date->setLocale($this->locale);
+        return $date->toString ();
     }
 
 }
