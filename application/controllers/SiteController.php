@@ -48,6 +48,21 @@ class siteController extends Zend_Controller_Action {
 
         return $grid;
     }
+    
+    
+    function imagesAction()
+    {
+
+        $grid = $this->grid('table');
+        $grid->from('images')
+        ->addColumn('url',array('decorator'=>'<a href="{{url}}"><img src="{{url}}" border="0"></a>','title'=>'Katie Melua - Image Galerie'))
+        ->noOrder(1)
+        ->setPagination(10000)
+        ->setTemplate('images');
+
+        $this->view->pages = $grid->deploy();
+        $this->render ('index') ;
+    }
 
 
     /**
@@ -94,8 +109,7 @@ class siteController extends Zend_Controller_Action {
 
     function init()
     {
-        $conf = Zend_Registry::get('config');
-        $this->view->url = $conf->site->url;
+        $this->view->url = Zend_Registry::get('config')->site->url;
     }
 
     function indexAction()
@@ -107,29 +121,26 @@ class siteController extends Zend_Controller_Action {
 
         $grid = $this->grid('table');
 
-        $grid->setPagination(5);
+        $grid->setPagination(15);
 
-        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ')
-        ->table (array('c'=>'Country','ct'=>'City'))
-        ->addColumn('c.Name',array('title'=>'Country (Capital)','class'=>'hideInput','decorator'=>'{{c.Name}} <em>({{ct.Name}})</em>'))
-        ->addColumn('ct.Name',array('title'=>'Capital','hide'=>1))
-        ->addColumn('c.continent',array('title'=>'Continent'))
-        ->addColumn('c.Population',array('title'=>'Population','class'=>'width_80','eval'=>"number_format('{{c.Population}}');"))
-        ->addColumn('c.LifeExpectancy',array('title'=>'Life E.','class'=>'width_50'))
-        ->addColumn('c.GovernmentForm',array('title'=>'Government Form' ))
-        ->addColumn('c.HeadOfState',array('title'=>'Head Of State','searchType'=>'='))
-        ->sqlexp(array('c.LifeExpectancy'=>'AVG','c.Population'=>'SUM'));
+        $grid->from ( 'Country ')
+        ->addColumn('Name',array('title'=>'Country','class'=>'width_200'))
+        ->addColumn('continent',array('title'=>'Continent'))
+        ->addColumn('Population',array('title'=>'Population','class'=>'width_80','eval'=>"number_format('{{Population}}');"))
+        ->addColumn('LifeExpectancy',array('title'=>'Life E.','class'=>'width_50'))
+        ->addColumn('GovernmentForm',array('title'=>'Government Form','searchType'=>'=' ))
+        ->addColumn('HeadOfState',array('title'=>'Head Of State','searchType'=>'='))
+        ->sqlexp(array('LifeExpectancy'=>'AVG','Population'=>'SUM'));
 
 
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('c.Name', array('distinct'=>array('field'=>'c.Name','name'=>'c.Name')))
-        ->addFilter('ct.Name' , array('distinct'=>array('field'=>'ct.Name','name'=>'ct.Name')))
-        ->addFilter('c.continent', array('distinct'=>array('field'=>'c.continent','name'=>'c.continent')))
-        ->addFilter('c.LifeExpectancy', array('distinct'=>array('field'=>'c.LifeExpectancy','name'=>'c.LifeExpectancy')))
-        ->addFilter('c.GovernmentForm', array('distinct'=>array('field'=>'c.GovernmentForm','name'=>'c.GovernmentForm')))
-        ->addFilter('c.HeadOfState')
-        ->addFilter('c.Population');
+        $filters->addFilter('Name', array('distinct'=>array('field'=>'Name','name'=>'Name')))
+        ->addFilter('continent', array('distinct'=>array('field'=>'continent','name'=>'continent')))
+        ->addFilter('LifeExpectancy', array('distinct'=>array('field'=>'LifeExpectancy','name'=>'LifeExpectancy')))
+        ->addFilter('GovernmentForm', array('distinct'=>array('field'=>'GovernmentForm','name'=>'GovernmentForm')))
+        ->addFilter('HeadOfState')
+        ->addFilter('Population');
 
         $grid->addFilters($filters);
 

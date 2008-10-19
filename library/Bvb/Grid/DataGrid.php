@@ -1053,7 +1053,7 @@ class Bvb_Grid_DataGrid
                 $url .= "/" . trim ( $key ) . "/" . trim ( urlencode ( $param ) );
             } else
             {
-                $url .= "/" . trim ( $key ) . "/" . trim ( $param );
+                @$url .= "/" . trim ( $key ) . "/" . trim ( $param );
             }
         }
         if (strlen ( $params ['action'] ) > 0)
@@ -1143,6 +1143,8 @@ class Bvb_Grid_DataGrid
     function consolidateFields($fields, $table)
     {
 
+        $table = $this->_db->quoteIdentifier ( $table );
+        
         $table = $this->_db->fetchAll ( "SHOW COLUMNS FROM $table" );
         foreach ( $table as $value )
         {
@@ -1830,7 +1832,7 @@ class Bvb_Grid_DataGrid
                 $field = $value ['COLUMN_NAME'];
             }
         }
-        if (count ( $primary_key ) != 1)
+        if (@count ( $primary_key ) != 1)
         {
             return false;
             #throw new Exception('Incaple to get the table primary key. The system can only perform adicional actions on tables with ONE primary key');
@@ -1981,7 +1983,17 @@ class Bvb_Grid_DataGrid
         $this->_where = @$this->data ['where'];
         $select_fields = $this->buildSelectFields ( $this->_fields );
         $query_where = $this->buildQueryWhere ();
-        $query = "SELECT $select_fields FROM " . $this->data ['from'] . " $query_where " . $this->buildQuery ();
+        
+
+        if (! is_array ( $this->data ['table'] ))
+        {
+            $from = $this->_db->quoteIdentifier ( $this->data ['from'] );
+        } else
+        {
+            $from = $this->data ['from'];
+        }
+        
+        $query = "SELECT $select_fields FROM " . $from . " $query_where " . $this->buildQuery ();
         return $query;
     }
 
@@ -2002,7 +2014,17 @@ class Bvb_Grid_DataGrid
         //[EN] Get the WHERE condition and apply from now on...
         $this->_where = @$this->data ['where'];
         $query_where = $this->buildQueryWhere ();
-        $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $this->data ['from'] . " $query_where ";
+        
+        if (! is_array ( $this->data ['table'] ))
+        {
+            $from = $this->_db->quoteIdentifier ( $this->data ['from'] );
+        } else
+        {
+            $from = $this->data ['from'];
+        }
+        
+
+        $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where ";
         return $query_count;
     }
 
@@ -2053,6 +2075,7 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
+
 
         if ($this->cache ['use'] == 1)
         {

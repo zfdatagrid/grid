@@ -179,6 +179,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     }
 
 
+    function getFieldType($type, $table)
+    {
+
+        $fields = $this->getDiscribeTable ( $table );
+        
+
+        return $fields [$type] ['DATA_TYPE'];
+    
+    }
+
+
     /**
      * 
      * [PT] Aqui é processada toda a informação relacionada com os formulários
@@ -266,6 +277,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $fields = parent::getFields ( $mode, $this->data ['table'] );
             }
             
+
             //[PT] APlicar os filtros e a validalção. Primeiro são aplicados os filtros
             //[EN] Apply filter and validators. Firtst we apply the filters
             foreach ( $fields as $value )
@@ -273,9 +285,36 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $this->_formValues [$value] = $param->getPost ( $value );
                 
-                $result = self::applyFilters ( $param->getPost ( $value ), $value, $mode );
+
+                $fieldType = $this->getFieldType ( $value, $this->data ['from'] );
                 
-                $result = self::Validate ( $result, $value, $mode );
+                if (substr ( $fieldType, 0, 3 ) != 'set')
+                {
+                    $result = self::applyFilters ( $param->getPost ( $value ), $value, $mode );
+                    
+                    $result = self::Validate ( $result, $value, $mode );
+                } else
+                {
+                    
+                    $possibleValuesForSetField = explode ( ",", str_replace ( array ('(', ')', '\'', 'set' ), array ('', '', '', '' ), $fieldType ) );
+                    
+                    
+                    if(is_array($param->getPost ( $value )))
+                    {
+                        
+                        $finalValue = array_intersect ( $possibleValuesForSetField, $param->getPost ( $value ) );
+                    }else {
+                        $finalValue = null;
+                    }
+                    
+                    if (count ( $finalValue ) > 0)
+                    {
+                        $result = implode ( ',', $finalValue );
+                    } else
+                    {
+                        $result = '';
+                    }
+                }
                 
                 $final [$value] = $result;
             
@@ -314,9 +353,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 //[EN] Process data
                 if ($mode == 'edit' && is_array ( $final_values ))
                 {
-                    if (strlen ( $this->info ['edit'] ['where'] ) > 1)
+                    if (isset ( $this->info ['edit'] ['where'] ))
                     {
                         $where = " AND " . $this->info ['edit'] ['where'];
+                    } else
+                    {
+                        $where = '';
                     }
                     
                     $this->_db->update ( $this->data ['table'], $final_values, " $pk=" . $this->_db->quote ( $op_query ['id'] ) . " $where " );
@@ -654,6 +696,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $tipo = 'enum';
         }
         
+
         foreach ( array_keys ( $this->filters ) as $value )
         {
             
@@ -1043,12 +1086,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $tipo = $tipo ['DATA_TYPE'];
         
+
         if (substr ( $tipo, 0, 4 ) == 'enum')
         {
             $enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
             $tipo = 'enum';
         }
         
+
+        if (substr ( $tipo, 0, 3 ) == 'set')
+        {
+            $set = str_replace ( array ('(', ')', '\'', 'set' ), array ('', '', '', '' ), $tipo );
+            $tipo = 'set';
+        }
+        
+
         $opcoes = $this->info [$mod] ['fields'] [$field];
         
         //[PT]Se nas ipções do campo tiveram sido definidos styles, apli´ca-los
@@ -1096,6 +1148,28 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         {
             
             case 'invalid' :
+                break;
+            case 'set' :
+                
+                //[PT]Vamos construir as opções consoante os valores definidos no enum na base de dados
+                //[PT]De notar que isto só é utilizado se o utilizar não definir opções manualmente
+                $avalor = explode ( ",", $set );
+                
+                $setValues = explode ( ',', $inicial_value );
+                
+                $size = count ( $avalor ) > 7 ? 7 : count ( $avalor );
+                
+                $valor = "<select multiple=\"multiple\" size=\"$size\" name=\"{$field}[]\" $opt  >";
+                foreach ( $avalor as $value )
+                {
+                    
+                    $selected = in_array ( $value, $setValues ) ? 'selected="selected"' : '';
+                    
+                    $valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
+                
+                }
+                
+                $valor .= "</select>";
                 break;
             case 'enum' :
                 
@@ -1194,6 +1268,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $fields = parent::consolidateFields ( $fields, $this->data ['table'] );
         
+
         if (count ( $fields ) == 0)
         {
             throw new Exception ( 'Upsss. It seams there was an error while intersecting your fields with the table fields. Please make sure you allow the fields you are defining...' );
@@ -1620,6 +1695,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     function removeAutoIncrement($fields, $table)
     {
 
+        $table = $this->_db->quoteIdentifier ( $table );
+        
         $table = $this->_db->fetchAll ( "SHOW COLUMNS FROM $table" );
         
         foreach ( $table as $value )
@@ -1890,7 +1967,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         {
             if ($options ['edit'] == 1)
             {
-                $this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onEditForce'] );
+                @$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onEditForce'] );
             }
         }
         if (isset ( $options ['onUpdateAddWhere'] ))
