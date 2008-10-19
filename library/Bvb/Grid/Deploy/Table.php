@@ -182,7 +182,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     function getFieldType($type, $table)
     {
 
-        $fields = $this->getDiscribeTable ( $table );
+        $fields = $this->getDescribeTable ( $table );
         
 
         return $fields [$type] ['DATA_TYPE'];
@@ -678,12 +678,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         if (! is_array ( $this->data ['table'] ))
         {
-            $table = parent::getDiscribeTable ( $this->data ['table'] );
+            $table = parent::getDescribeTable ( $this->data ['table'] );
         } else
         {
             
             $ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
-            $table = parent::getDiscribeTable ( $this->data ['table'] [$ini] );
+            $table = parent::getDescribeTable ( $this->data ['table'] [$ini] );
         }
         
         $tipo = $table [$campo];
@@ -1080,7 +1080,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         //[PT]Vamos buscar a descrição da atbela para sabermos com que tipo de campo
         //[PT]estamos a lidar
-        $table = parent::getDiscribeTable ( $this->data ['table'] );
+        $table = parent::getDescribeTable ( $this->data ['table'] );
         
         $tipo = $table [$field];
         
@@ -1754,7 +1754,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 foreach ( $this->data ['table'] as $key => $value )
                 {
                     
-                    $tab = parent::getDiscribeTable ( $value );
+                    $tab = parent::getDescribeTable ( $value );
                     
                     foreach ( $tab as $list )
                     {
@@ -1765,7 +1765,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             } else
             {
                 
-                $tab = parent::getDiscribeTable ( $this->data ['table'] );
+                $tab = parent::getDescribeTable ( $this->data ['table'] );
                 
                 foreach ( $tab as $list )
                 {

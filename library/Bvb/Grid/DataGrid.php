@@ -401,7 +401,7 @@ class Bvb_Grid_DataGrid
      * @param array|string $table
      * @return array
      */
-    function getDiscribeTable($table)
+    function getDescribeTable($table)
     {
 
         if (! @is_array ( $this->_describeTables [$table] ))
@@ -688,7 +688,7 @@ class Bvb_Grid_DataGrid
     function getTableFields($table)
     {
 
-        $table = $this->getDiscribeTable ( $table );
+        $table = $this->getDescribeTable ( $table );
         foreach ( array_keys ( $table ) as $key )
         {
             $val [$key] = $key;
@@ -1372,11 +1372,11 @@ class Bvb_Grid_DataGrid
         }
         if (! is_array ( $this->data ['table'] ))
         {
-            $table = $this->getDiscribeTable ( $this->data ['table'] );
+            $table = $this->getDescribeTable ( $this->data ['table'] );
         } else
         {
             $ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
-            $table = $this->getDiscribeTable ( $this->data ['table'] [$ini] );
+            $table = $this->getDescribeTable ( $this->data ['table'] [$ini] );
         }
         $campo_simples = substr ( $campo, strpos ( $campo, "." ) + 1 );
         @$tipo = $table [$campo_simples];
@@ -1691,7 +1691,7 @@ class Bvb_Grid_DataGrid
             {
                 foreach ( $this->data ['table'] as $key => $value )
                 {
-                    $tab = $this->getDiscribeTable ( $value );
+                    $tab = $this->getDescribeTable ( $value );
                     foreach ( $tab as $list )
                     {
                         $fl [] = $key . "." . $list ['COLUMN_NAME'];
@@ -1700,7 +1700,7 @@ class Bvb_Grid_DataGrid
                 }
             } else
             {
-                $tab = $this->getDiscribeTable ( $this->data ['table'] );
+                $tab = $this->getDescribeTable ( $this->data ['table'] );
                 foreach ( $tab as $list )
                 {
                     $fl [] = $list ['COLUMN_NAME'];
@@ -1758,7 +1758,7 @@ class Bvb_Grid_DataGrid
             {
                 foreach ( $this->data ['table'] as $key => $value )
                 {
-                    $tab = $this->getDiscribeTable ( $value );
+                    $tab = $this->getDescribeTable ( $value );
                     foreach ( $tab as $list )
                     {
                         $titulos [$key . "." . $list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
@@ -1766,7 +1766,7 @@ class Bvb_Grid_DataGrid
                 }
             } else
             {
-                $tab = $this->getDiscribeTable ( $this->data ['table'] );
+                $tab = $this->getDescribeTable ( $this->data ['table'] );
                 foreach ( $tab as $list )
                 {
                     $titulos [$list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
@@ -1823,7 +1823,7 @@ class Bvb_Grid_DataGrid
             $this->_getPrimaryKey [$this->data ['table']] = $this->data ['primaryKey'];
             return $this->_getPrimaryKey [$this->data ['table']];
         }
-        $param = $this->getDiscribeTable ( $this->data ['table'] );
+        $param = $this->getDescribeTable ( $this->data ['table'] );
         foreach ( $param as $value )
         {
             if ($value ['PRIMARY'] == 1)
@@ -1866,7 +1866,7 @@ class Bvb_Grid_DataGrid
                 foreach ( $this->data ['table'] as $key => $table )
                 {
                     
-                    $tableFinal = array_keys ( $this->getDiscribeTable ( $table ) );
+                    $tableFinal = array_keys ( $this->getDescribeTable ( $table ) );
                     
                     foreach ( $tableFinal as $field )
                     {
@@ -1878,7 +1878,7 @@ class Bvb_Grid_DataGrid
             } else
             {
                 
-                $table = array_keys ( $this->getDiscribeTable ( $this->data ['table'] ) );
+                $table = array_keys ( $this->getDescribeTable ( $this->data ['table'] ) );
             }
             
             foreach ( $table as $field )
