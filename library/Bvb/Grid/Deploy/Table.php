@@ -586,7 +586,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 	 */
     function deleteRecord($sql)
     {
-
+        
         $param = explode ( ";", $sql );
         
         foreach ( $param as $value )
@@ -644,7 +644,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         } catch ( Zend_Exception $e )
         {
             $this->messageOk = FALSE;
-            $this->message = $this->__ ( 'Error deleting record' ) . $e->getMessage ();
+            $this->message = $this->__ ( 'Error deleting record =>' ) . $e->getMessage ();
         }
         
 
@@ -1913,8 +1913,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     {
 
         //Vamos primeiros construir os campos
-        
-
+ 
 
         $form = $this->object2array ( $form );
         
@@ -1947,7 +1946,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             }
         }
         
-        @$this->info ['delete'] ['cascadeDelete'] = $form ['onDeleteCascade'];
+        @$this->info ['delete'] ['cascadeDelete'] = $form ['cascadeDelete'];
         
         if ($options ['add'] == 1)
         {
