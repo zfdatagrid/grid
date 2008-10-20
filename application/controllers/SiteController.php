@@ -146,9 +146,17 @@ class siteController extends Zend_Controller_Action
 
         
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )->table ( array ('c' => 'Country', 'ct' => 'City' ) )->order ( 'c.Continent' )->limit ( 10 );
+        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )
+        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
+        ->order ( 'c.Continent' )->limit ( 10 );
         
-        $grid->addColumn ( 'c.Name', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) )->addColumn ( 'ct.Name', array ('title' => 'Capital', 'hide' => 1 ) )->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => array ('number', array ('dias' => 1 ) ) ) )->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
+        $grid->addColumn ( 'c.Name', array ('title' => 'Country (District)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.District}})</em>' ) )
+        ->addColumn ( 'ct.District', array ('title' => 'District', 'hide' => 1 ) )
+        ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
+        ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => array ('number', array ('dias' => 1 ) ) ) )
+        ->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
+        ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
+        ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
 
         $this->view->pages = $grid->deploy ();
@@ -209,7 +217,11 @@ class siteController extends Zend_Controller_Action
         
 
         $form = new Bvb_Grid_Form ( );
-        $form->add ( 1 )->button ( 1 )->delete ( 1 )->onAddForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) )->onEditForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) );
+        $form->add ( 1 )
+        ->button ( 1 )
+        ->delete ( 1 )
+        ->onAddForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) )
+        ->onEditForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) );
         
 
         #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
@@ -234,7 +246,12 @@ class siteController extends Zend_Controller_Action
         $grid->addForm ( $form );
         
         $filters = new Bvb_Grid_Filters ( );
-        $filters->addFilter ( 'firstname' )->addFilter ( 'lastname' )->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) )->addFilter ( 'title', array ('distinct' => array ('name' => 'title', 'field' => 'title' ) ) );
+        $filters->addFilter ( 'firstname' )
+        ->addFilter ( 'lastname' )
+        ->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )
+        ->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )
+        ->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) )
+        ->addFilter ( 'title', array ('distinct' => array ('name' => 'title', 'field' => 'title' ) ) );
         
         $grid->addFilters ( $filters );
         
@@ -307,6 +324,7 @@ class siteController extends Zend_Controller_Action
         #->noFilters(1);
         #->noOrder(1);
         
+
 
         $grid->setPagination ( 12 );
         

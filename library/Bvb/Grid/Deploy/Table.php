@@ -1887,16 +1887,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             if (($this->formPost == 1 && $this->formSuccess == 1) || $this->formPost == 0)
             {
-                /*
-
-                        $totalRegistos = parent::buildGrid ();
-                        if( count($totalRegistos)==0 )
-                        {
-                        Bvb_View_Message::addInfo('Não existem registos a mostrar');
-                        return false;
-                        }
-                        */
-                
+               
                 $grid .= self::buildHeader ();
                 $grid .= self::buildTitltesTable ( parent::buildTitles () );
                 $grid .= self::buildFiltersTable ( parent::buildFilters () );
@@ -1956,7 +1947,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             }
         }
         
-        $this->info ['delete'] ['cascadeDelete'] = $form ['cascadeDelete'];
+        @$this->info ['delete'] ['cascadeDelete'] = $form ['onDeleteCascade'];
         
         if ($options ['add'] == 1)
         {

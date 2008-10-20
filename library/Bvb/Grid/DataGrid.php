@@ -49,13 +49,7 @@ class Bvb_Grid_DataGrid
      */
     protected $_formatter = array ();
 
-    /**
-     * [PT] A instancia do cache
-     *
-     * @var unknown_type
-     */
-    public $cacheInstance;
-
+    
     /**
      * Os tipode de exportação que podemos utilizar
      *
@@ -269,14 +263,9 @@ class Bvb_Grid_DataGrid
     /**
      * [PT] A função __construct recebe o adapter para se liga à base de dados
      * [PT] É também tratada toda a informação relacionada com a url e os params
-     * [PT] É também instaciada o Auth do Zend_Auth. A autenticação deve ter sido
-     * [PT] Efectuada utilizando o método store, para agora poder validar o user
      * 
      * [EN] The __construct function receives the db adapter. All information related to the
      * [EN] URL is also processed here
-     * [EN] To edit, add, or delete records, a user must be authenticated, so we instanciate 
-     * [EN] it here. Remember to uses the method write when autenticating a user, so we can know 
-     * [EN] if its logged or not
      *
      * @param array $data
      */
