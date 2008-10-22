@@ -2,7 +2,7 @@
 
 
 
-class siteController extends Zend_Controller_Action
+class SiteController extends Zend_Controller_Action
 {
 
 
@@ -95,7 +95,13 @@ class siteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )->addColumn ( 'id' )->addColumn ( 'firstname' )->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )->groupby ( 'lastname' )->noFilters ( 1 )->setTemplate ( 'select' );
+        $grid->from ( 'crud' )
+        ->addColumn ( 'id' )
+        ->addColumn ( 'firstname' )
+        ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
+        ->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )
+        ->groupby ( 'lastname' )->noFilters ( 1 )
+        ->setTemplate ( 'select' );
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
@@ -349,7 +355,9 @@ class siteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )->table ( array ('c' => 'Country', 'ct' => 'City' ) )->order ( ' c.Continent, c.Name' );
+        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )
+        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
+        ->order ( ' c.Continent, c.Name' );
         #->noFilters(1);
         #->noOrder(1);
         
