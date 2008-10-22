@@ -1,7 +1,6 @@
 <?php
 
 
-
 class SiteController extends Zend_Controller_Action
 {
 

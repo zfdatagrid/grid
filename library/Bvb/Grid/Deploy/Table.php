@@ -1327,6 +1327,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     {
                         $finalV .= '<br>' . implode ( '<br>', $formS );
                     }
+                    
+                    $finalV = '<span style="color:red;">'.$finalV.'</span>';
                 }
             
             } else
