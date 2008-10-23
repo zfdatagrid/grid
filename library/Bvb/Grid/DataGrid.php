@@ -387,13 +387,14 @@ class Bvb_Grid_DataGrid
      * @param array $var
      * @return $this
      */
-    function export(array$var)
+    function export(array $var)
     {
+
         $this->export = $var;
         return $this;
     }
-    
-    
+
+
     /**
      * [PT] Buscar a copmposição da tabela
      * [PT] Depois disso vamos meter a tabela num array. se precisar-mos mais tarde,
@@ -1361,10 +1362,10 @@ class Bvb_Grid_DataGrid
     {
 
         //[PT] Aqui vemos se no filtros nos pede os campos distinctos.
-        if (is_array ( $this->filters [$valor] ['distinct'] ))
+        if (@is_array ( $this->filters [$valor] ['distinct'] ))
         {
-            $this->filters [$valor] ['distinct'] ['field'] = $this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
-            $this->filters [$valor] ['distinct'] ['name'] = $this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
+            $this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
+            $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
             $this->filters [$valor] ['values'] = $this->_db->fetchAll ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) AS value, " . $this->filters [$valor] ['distinct'] ['name'] . " AS name FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
         }
         //[PT] Remover os paramteros que não queremos na url
@@ -1920,24 +1921,22 @@ class Bvb_Grid_DataGrid
         {
             foreach ( $this->filters as $value )
             {
-                if (is_array ( $value ))
+                
+                if (is_array ( $value ) && isset ( $value ['distinct'] ['field'] ) && isset ( $value ['distinct'] ['name'] ))
                 {
-                    if (strlen ( $value ['distinct'] ['field'] ) > 0)
+                    
+                    if (! array_key_exists ( $value ['distinct'] ['field'], $this->data ['fields'] ))
                     {
-                        if (! array_key_exists ( $value ['distinct'] ['field'], $this->data ['fields'] ))
-                        {
-                            $this->addColumn ( $value ['distinct'] ['field'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
-                        }
+                        $this->addColumn ( $value ['distinct'] ['field'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
                     }
-                    if (strlen ( $value ['distinct'] ['name'] ) > 0)
+                    
+                    if (! array_key_exists ( $value ['distinct'] ['name'], $this->data ['fields'] ))
                     {
-                        if (! array_key_exists ( $value ['distinct'] ['name'], $this->data ['fields'] ))
-                        {
-                            $this->addColumn ( $value ['distinct'] ['name'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
-                        }
-                        $this->data ['fields'] [$value ['distinct'] ['name']] ['searchField'] = $value ['distinct'] ['field'];
+                        $this->addColumn ( $value ['distinct'] ['name'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
                     }
+                    $this->data ['fields'] [$value ['distinct'] ['name']] ['searchField'] = $value ['distinct'] ['field'];
                 }
+            
             }
         }
         //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
