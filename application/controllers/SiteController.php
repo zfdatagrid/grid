@@ -99,7 +99,8 @@ class SiteController extends Zend_Controller_Action
         ->addColumn ( 'firstname' )
         ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
         ->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )
-        ->groupby ( 'lastname' )->noFilters ( 1 )
+        ->groupby ( 'lastname' )
+        ->noFilters ( 1 )
         ->setTemplate ( 'select' );
         
         $this->view->pages = $grid->deploy ();

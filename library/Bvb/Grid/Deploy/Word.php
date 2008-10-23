@@ -66,7 +66,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
 
     function deploy()
     {
-        $this->dsetPagination(10000000);
+        $this->setPagination(10000000);
 
         parent::deploy();
 

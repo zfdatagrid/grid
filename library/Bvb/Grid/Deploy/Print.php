@@ -27,7 +27,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
     function __construct ($db,$title)
     {
-     
+  
         if (! in_array ( 'print', $this->export ))
         {
             echo $this->__( "You dont' have permission to export the results to this format" );
@@ -59,7 +59,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
     function deploy()
     {
-        $this->setPagination(10000000);
+         $this->setPagination ( 10000000 );
 
         parent::deploy();
 
@@ -72,7 +72,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         $titles = parent::buildTitles();
 
-        $nome = reset($titles);
+        #$nome = reset($titles);
         $wsData = parent::buildGrid();
         $sql = parent::buildSqlExp();
 
@@ -97,7 +97,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         foreach ($titles as $value) {
 
-            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
+            if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
             {
                 $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->titlesLoop());
 
@@ -173,7 +173,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
                     $value['value']  = strip_tags($value['value']);
 
-                    if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
+                    if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
                     || @$this->info['hRow']['title'] =='')
                     {
 

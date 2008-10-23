@@ -1056,9 +1056,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      * [EN] Build the form elements for the edit or add action
      * [EN] This is different from the filters
      *
-     * @param string $field
-     * @param string $inicial_value
-     * @param srint edit|add
+     * @param string $field | The database field that we are processing
+     * @param string $inicial_value | the inicial field value
+     * @param srint $mod edit|add
+     * @param string $fieldValue | This saves the fields values in case o failed validation
      * @return string
      */
     function buildFormElement($field, $inicial_value = '', $mod = 'edit', $fieldValue = '')
@@ -1094,6 +1095,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         }
         
 
+        //Let's get the possible values for the set Type
         if (substr ( $tipo, 0, 3 ) == 'set')
         {
             $set = str_replace ( array ('(', ')', '\'', 'set' ), array ('', '', '', '' ), $tipo );
@@ -1224,10 +1226,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     {
 
         //[PT]Vamos remover os argumentos da url que não queremos
+        //[EN] Remove the unnecessary URL params
         $url = parent::getUrl ( array ('comm', 'edit', 'add' ) );
         
         $button_name = $this->__ ( 'Add' );
         
+        //[PT] Converter o modo 
+        //[EN] Get the comm param, and "decode" it
         $final = self::convertComm ();
         
         $pk = $this->_db->quoteIdentifier ( parent::getPrimaryKey () );
@@ -1359,6 +1364,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * [PT]
+     * Construir a tabela
+     *
+     * @param array $grids | db results
+     * @return unknown
+     */
     function buildGridTable($grids)
     {
 

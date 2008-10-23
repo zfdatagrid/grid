@@ -2167,35 +2167,34 @@ class Bvb_Grid_DataGrid
     {
 
         $temp = array_reverse ( $this->_templates [$output] );
-        
-
+ 
         foreach ( $temp as $find )
         {
             
             $file = $find ['dir'] . ucfirst ( $template ) . '.php';
             $class = $find ['prefix'] . '_' . ucfirst ( $template );
-            
-
-            if (file_exists ( $this->libraryDir . '/' . $file ))
+        
+            if (Zend_Loader::isReadable ( $file ))
             {
-                require_once ($file);
+                
+                include_once ($file);
                 
                 if (class_exists ( $class ))
                 {
                     $this->temp [$output] = new $class ( $options );
                     $this->activeTemplates [] = $output;
-                }
-                
-                $this->templateInfo = array ('name' => $template, 'dir' => $find ['dir'], 'prefix' => $find ['prefix'], 'options' => $options );
-                
+                    
 
-                return $this->temp [$output];
+                    $this->templateInfo = array ('name' => $template, 'dir' => $find ['dir'], 'prefix' => $find ['prefix'], 'options' => $options );
+                    
+
+                    return $this->temp [$output];
+                }
             }
-        
 
         }
         
-        throw new Exception ( 'No templates found' );
+        #throw new Exception ( 'No templates found' );
     }
 
 
