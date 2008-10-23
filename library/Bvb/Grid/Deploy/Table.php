@@ -298,12 +298,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     
                     $possibleValuesForSetField = explode ( ",", str_replace ( array ('(', ')', '\'', 'set' ), array ('', '', '', '' ), $fieldType ) );
                     
-                    
-                    if(is_array($param->getPost ( $value )))
+
+                    if (is_array ( $param->getPost ( $value ) ))
                     {
                         
                         $finalValue = array_intersect ( $possibleValuesForSetField, $param->getPost ( $value ) );
-                    }else {
+                    } else
+                    {
                         $finalValue = null;
                     }
                     
@@ -438,9 +439,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $file = $find ['dir'] . ucfirst ( $func ) . '.php';
                     $class = $find ['prefix'] . '_' . ucfirst ( $func );
                     
-                    if (file_exists ( $this->libraryDir . '/' . $file ))
+                    if (Zend_Loader::isReadable ( $file ))
                     {
-                        require_once ($this->libraryDir . '/' . $file);
+                        
+                        include_once ($file);
                         
                         if (class_exists ( $class ))
                         {
@@ -511,10 +513,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $class = $find ['prefix'] . '_' . ucfirst ( $func );
                     
 
-                    if (file_exists ( $this->libraryDir . '/' . $file ))
+                    if (Zend_Loader::isReadable ( $file ))
                     {
                         
-                        @require_once ($this->libraryDir . '/' . $file);
+                        include_once ($file);
                         
 
                         if (class_exists ( $class ))
@@ -586,7 +588,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 	 */
     function deleteRecord($sql)
     {
-        
+
         $param = explode ( ";", $sql );
         
         foreach ( $param as $value )
@@ -1333,7 +1335,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                         $finalV .= '<br>' . implode ( '<br>', $formS );
                     }
                     
-                    $finalV = '<span style="color:red;">'.$finalV.'</span>';
+                    $finalV = '<span style="color:red;">' . $finalV . '</span>';
                 }
             
             } else
@@ -1901,7 +1903,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             if (($this->formPost == 1 && $this->formSuccess == 1) || $this->formPost == 0)
             {
-               
+                
                 $grid .= self::buildHeader ();
                 $grid .= self::buildTitltesTable ( parent::buildTitles () );
                 $grid .= self::buildFiltersTable ( parent::buildFilters () );
@@ -1927,7 +1929,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     {
 
         //Vamos primeiros construir os campos
- 
+        
+
 
         $form = $this->object2array ( $form );
         
