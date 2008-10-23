@@ -73,7 +73,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
 
         $titles = parent::buildTitles();
 
-        $nome = reset($titles);
+        #$nome = reset($titles);
         $wsData = parent::buildGrid();
         $sql = parent::buildSqlExp();
 

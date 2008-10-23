@@ -279,7 +279,6 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
         $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . $this->templateInfo ['dir'] . rtrim ( ucfirst ( $this->templateInfo ['name'] ), '/' ) . '/';
         
-
         $this->deldir ( $this->dir );
         
         $this->copyDir ( $pathTemplate, $this->dir );
