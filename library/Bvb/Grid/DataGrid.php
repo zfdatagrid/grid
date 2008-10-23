@@ -381,6 +381,20 @@ class Bvb_Grid_DataGrid
 
 
     /**
+     * [PT]
+     * Define which allowed types of exportation 
+     *
+     * @param array $var
+     * @return $this
+     */
+    function export(array$var)
+    {
+        $this->export = $var;
+        return $this;
+    }
+    
+    
+    /**
      * [PT] Buscar a copmposição da tabela
      * [PT] Depois disso vamos meter a tabela num array. se precisar-mos mais tarde,
      * [PT] Ela já está lá

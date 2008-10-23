@@ -1648,6 +1648,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         if ($npaginas > 1 || count ( $this->export ) > 0)
         {
+           
             
             //Vamos calcular o registo actual
             if ($actual <= 1)
@@ -1686,6 +1687,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', $this->_totalRecords ), $this->temp ['table']->pagination () );
             
+            }elseif( count ( $this->export ) == 0)
+            {
+                $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ('', $pag, $f,$this->_totalRecords ), $this->temp ['table']->pagination () );
+                
             }
         
         } else
@@ -1832,6 +1837,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
 
         parent::deploy ();
+  
         
         if (! $this->temp ['table'] instanceof Bvb_Grid_Template_Table_Table)
         {

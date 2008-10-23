@@ -8,7 +8,6 @@ class SiteController extends Zend_Controller_Action
 
     function __call($name, $var)
     {
-
         $this->_redirect ( 'default/site/basic', array ('exit' => 1 ) );
     }
 
@@ -276,6 +275,8 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->from ( 'City' );
+        $grid->export(array());
+
         
         $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
 'orientation' => '', #landscape || ''
