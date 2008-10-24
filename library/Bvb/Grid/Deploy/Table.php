@@ -1046,7 +1046,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $tipo = $tipo ['DATA_TYPE'];
         
-
         if (substr ( $tipo, 0, 4 ) == 'enum')
         {
             $enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
@@ -1637,8 +1636,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             if (( int ) @$this->info ['limit'] > 0)
             {
-                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', ''), $this->temp ['table']->pagination () );
-                
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', '' ), $this->temp ['table']->pagination () );
+            
             } elseif ($npaginas > 1 && count ( $this->export ) > 0)
             {
                 $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' to ' . $registoFinal . ' of ' . $this->_totalRecords ), $this->temp ['table']->pagination () );

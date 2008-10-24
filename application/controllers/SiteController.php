@@ -100,8 +100,9 @@ class SiteController extends Zend_Controller_Action
         ->addColumn ( 'id' )
         ->addColumn ( 'firstname' )
         ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
-        ->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )
+        ->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'class' => 'center' ) )
         ->groupby ( 'lastname' )
+        ->having(array('field'=>'age','operand'=>'>','value'=>'200'))
         ->noFilters ( 1 )
         ->setTemplate ( 'select' );
         
