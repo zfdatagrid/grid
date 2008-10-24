@@ -27,7 +27,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     /*
     * @param array $data
     */
-    function __construct ($db)
+    function __construct ($db,$title,$dir)
     {
         parent::__construct($db);
 

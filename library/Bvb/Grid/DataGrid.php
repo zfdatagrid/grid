@@ -1426,7 +1426,7 @@ class Bvb_Grid_DataGrid
         {
             $opt = " style=\"width:95%\"  ";
         }
-        if (is_array ( $opcoes ['values'] ))
+        if (@is_array ( $opcoes ['values'] ))
         {
             $tipo = 'invalid';
             $avalor = $opcoes ['values'];

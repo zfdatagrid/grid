@@ -1577,7 +1577,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         }
         
-        if ($npaginas > 1 && ( int ) $this->info ['limit'] == 0)
+        if ($npaginas > 1 && ( int ) @$this->info ['limit'] == 0)
         {
             
             //[PT] Construir o select
