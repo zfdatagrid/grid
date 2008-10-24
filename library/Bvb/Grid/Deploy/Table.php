@@ -417,47 +417,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      * @param string $mode
      * @return string
      */
-    function applyFilters($value, $field, $mode, $options = array())
+    function applyFilters($value, $field, $mode)
     {
 
         $filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
         
-
         if (is_array ( $filters ))
         {
-            
             //[PT] OK. Tem filtros para aplicar. Vamos buscar os dirs
             foreach ( $filters as $func )
             {
-                
-                //[Vamos meter isto por ordem reversa para os ultimos serem os primeiros
-                //Faz sentido e acho que é uq eo que é mais utilizado
-                $format = array_reverse ( $this->_elements ['filter'] );
-                
-                foreach ( $format as $find )
-                {
-                    $file = $find ['dir'] . ucfirst ( $func ) . '.php';
-                    $class = $find ['prefix'] . '_' . ucfirst ( $func );
-                    
-                    if (Zend_Loader::isReadable ( $file ))
-                    {
-                        
-                        include_once ($file);
-                        
-                        if (class_exists ( $class ))
-                        {
-                            $t = new $class ( $options );
-                            return $t->filter ( $value );
-                        
-                        }
-                    }
-                }
+                $class = $this->_elements ['filter']->load ( $func );
+                $t = new $class ( );
+                $value = $t->filter ( $value );
             }
-        } else
-        {
-            return $value;
         }
-    
+        
+        return $value;
     }
 
 
@@ -474,10 +450,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     function Validate($value, $field, $mode = 'edit')
     {
 
-        //[Vamos meter isto por ordem reversa para os ultimos serem os primeiros
-        //Faz sentido e acho que é uq eo que é mais utilizado
-        $format = array_reverse ( $this->_elements ['validator'] );
-        
         //[PT] Array de valores possiveis
         $values = isset ( $this->info [$mode] ['fields'] [$field] ['values'] ) ? $this->info [$mode] ['fields'] [$field] ['values'] : '';
         
@@ -506,64 +478,49 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $func = $key;
                 }
                 
-                foreach ( $format as $find )
+
+                $class = $this->_elements ['validator']->load ( $func );
+                
+
+                //[PT] Se for array, significa que o Zend_Validate recebe argumentos
+                //[EN] If an array, means the Validator receives arguments
+                if (is_array ( $validators [$key] ))
                 {
                     
-                    $file = $find ['dir'] . ucfirst ( $func ) . '.php';
-                    $class = $find ['prefix'] . '_' . ucfirst ( $func );
+                    //[PT] Se for array, significa que o Zend_Validate recebe argumentos
+                    //[EN] If an array, means the Validator receives arguments
+                    $t = new $class ( implode ( ',', $validators [$key] ) );
+                    $return = $t->isValid ( $value );
                     
-
-                    if (Zend_Loader::isReadable ( $file ))
+                    if ($return === false)
                     {
-                        
-                        include_once ($file);
-                        
-
-                        if (class_exists ( $class ))
+                        $this->_failedValidation = true;
+                        foreach ( $t->getMessages () as $messageId => $message )
                         {
-                            
-                            //[PT] Se for array, significa que o Zend_Validate recebe argumentos
-                            //[EN] If an array, means the Validator receives arguments
-                            if (is_array ( $validators [$key] ))
-                            {
-                                
-                                $t = new $class ( implode ( ',', $validators [$key] ) );
-                                $return = $t->isValid ( $value );
-                                
-                                if ($return === false)
-                                {
-                                    $this->_failedValidation = true;
-                                    foreach ( $t->getMessages () as $messageId => $message )
-                                    {
-                                        $this->_formMessages [$field] [] = array ($messageId => $message );
-                                    }
-                                    return false;
-                                }
-                            
-                            } else
-                            {
-                                
-                                $t = new $class ( );
-                                $return = $t->isValid ( $value );
-                                
-                                if ($return === false)
-                                {
-                                    $this->_failedValidation = true;
-                                    
-                                    foreach ( $t->getMessages () as $messageId => $message )
-                                    {
-                                        $this->_formMessages [$field] [] = array ($messageId => $message );
-                                    }
-                                    
-                                    return false;
-                                }
-                            }
+                            $this->_formMessages [$field] [] = array ($messageId => $message );
                         }
+                        return false;
+                    }
+                
+                } else
+                {
+                    $t = new $class ( );
+                    $return = $t->isValid ( $value );
+                    
+                    if ($return === false)
+                    {
+                        $this->_failedValidation = true;
+                        foreach ( $t->getMessages () as $messageId => $message )
+                        {
+                            $this->_formMessages [$field] [] = array ($messageId => $message );
+                        }
+                        return false;
                     }
                 }
             
             }
         
+
         }
         
         return $value;
@@ -1620,7 +1577,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         }
         
-        if ($npaginas > 1)
+        if ($npaginas > 1 && ( int ) $this->info ['limit'] == 0)
         {
             
             //[PT] Construir o select
@@ -1648,8 +1605,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         if ($npaginas > 1 || count ( $this->export ) > 0)
         {
-           
             
+
             //Vamos calcular o registo actual
             if ($actual <= 1)
             {
@@ -1678,7 +1635,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 $exp .= "<a target='_blank' href='$url/export/{$export}'>" . $images [$export] . "</a>";
             }
             
-            if ($npaginas > 1 && count ( $this->export ) > 0)
+            if (( int ) @$this->info ['limit'] > 0)
+            {
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', ''), $this->temp ['table']->pagination () );
+                
+            } elseif ($npaginas > 1 && count ( $this->export ) > 0)
             {
                 $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' to ' . $registoFinal . ' of ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
             
@@ -1687,10 +1648,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', $this->_totalRecords ), $this->temp ['table']->pagination () );
             
-            }elseif( count ( $this->export ) == 0)
+            } elseif (count ( $this->export ) == 0)
             {
-                $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ('', $pag, $f,$this->_totalRecords ), $this->temp ['table']->pagination () );
-                
+                $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ('', $pag, $f, $this->_totalRecords ), $this->temp ['table']->pagination () );
+            
             }
         
         } else
@@ -1828,6 +1789,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
     function deploy()
     {
 
+        
         $url = parent::getUrl ( 'comm' );
         
 
@@ -1837,8 +1799,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
 
         parent::deploy ();
-  
         
+
         if (! $this->temp ['table'] instanceof Bvb_Grid_Template_Table_Table)
         {
             $this->setTemplate ( 'table', 'table' );

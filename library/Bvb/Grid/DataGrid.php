@@ -47,7 +47,7 @@ class Bvb_Grid_DataGrid
      *
      * @var unknown_type
      */
-    protected $_formatter = array ();
+    protected $_formatter;
 
     
     /**
@@ -228,7 +228,7 @@ class Bvb_Grid_DataGrid
      *
      * @var array
      */
-    protected $_elements = array (0 => array () );
+    protected $_elements = array ();
 
     /**
      * [PT] TIpos dpermitidos na aplicação aos elementos do formulários
@@ -258,6 +258,12 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     public $activeTemplates = array ();
+    
+    
+    /**
+     * [PT] Se a query tem group by
+     */
+    private $hasGroup = 0;
 
 
     /**
@@ -279,6 +285,27 @@ class Bvb_Grid_DataGrid
 
         $this->ctrlParams = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
         $this->_baseUrl = Zend_Controller_Front::getInstance ()->getBaseUrl ();
+        
+        /**
+         * [PT] OS plugins loaders
+         * 
+         */
+        $this->_formatter = new Zend_Loader_PluginLoader ( );
+        $this->_elements ['filter'] = new Zend_Loader_PluginLoader ( );
+        $this->_elements ['validator'] = new Zend_Loader_PluginLoader ( );
+        
+        $this->_templates ['table'] = new Zend_Loader_PluginLoader ( );
+        
+
+        if (is_array ( $this->export ))
+        {
+            $noTable = $this->export;
+            
+            foreach ( $noTable as $temp )
+            {
+                $this->_templates = new Zend_Loader_PluginLoader ( array (), $temp );
+            }
+        }
         
 
         //[EN] Add Zend_Validate and Zend_Filter to the form element
@@ -501,7 +528,7 @@ class Bvb_Grid_DataGrid
     function addFormatterDir($dir, $prefix)
     {
 
-        $this->_formatter [] = array ('dir' => trim ( $dir, "/" ) . '/', 'prefix' => trim ( $prefix, "_" ) );
+        $this->_formatter->addPrefixPath ( trim ( $prefix, "_" ), trim ( $dir, "/" ) . '/' );
         return $this;
     }
 
@@ -528,7 +555,9 @@ class Bvb_Grid_DataGrid
         {
             throw new Exception ( 'Type not recognized' );
         }
-        $this->_elements [$type] [] = array ('dir' => trim ( $dir, "/" ) . '/', 'prefix' => trim ( $prefix, "_" ) );
+        
+        $this->_elements [$type]->addPrefixPath ( trim ( $prefix, "_" ), trim ( $dir, "/" ) . '/' );
+        
         return $this;
     }
 
@@ -548,6 +577,7 @@ class Bvb_Grid_DataGrid
     function applyFormat($value, $formatter)
     {
 
+        
         //[PT] Para simplificar as coisas vemos se é um array.
         //[PT] Pode não ser necessários argumentos adicionais
         if (is_array ( $formatter ))
@@ -559,35 +589,13 @@ class Bvb_Grid_DataGrid
             $result = $formatter;
             $options = null;
         }
-        //[Vamos meter isto por ordem reversa para os ultimos serem os primeiros
-        //Faz sentido e acho que é uq eo que é mais utilizado
-        $format = array_reverse ( $this->_formatter );
+        
+        $class = $this->_formatter->load ( $result );
+        
+        $t = new $class ( $options );
+        $return = $t->format ( $value );
         
 
-        foreach ( $format as $find )
-        {
-            
-            $file = $find ['dir'] . ucfirst ( $result ) . '.php';
-            $class = $find ['prefix'] . '_' . ucfirst ( $result );
-            
-            if (Zend_Loader::isReadable ( $file ))
-            {
-                
-                include_once ($file);
-                
-
-                if (class_exists ( $class ))
-                {
-                    $t = new $class ( $options );
-                    $return = $t->format ( $value );
-                    $apply = 1;
-                }
-            }
-        }
-        if ($apply !== 1)
-        {
-            $return = $value;
-        }
         return $return;
     }
 
@@ -2028,8 +2036,28 @@ class Bvb_Grid_DataGrid
             $from = $this->data ['from'];
         }
         
+        
+        foreach ( $this->data ['fields'] as $total )
+        {
+           
+            if (isset ( $total ['sqlexp'] ))
+            {
+                $this->hasGroup = 1;
+            }
+        
+        }
 
-        $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where ";
+
+        if ($this->hasGroup == 1)
+        {
+            $query_count = $this->getQuery ();
+        
+        } else
+        {
+            $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where ";
+        }
+        
+
         return $query_count;
     }
 
@@ -2104,9 +2132,18 @@ class Bvb_Grid_DataGrid
 
         } else
         {
+            
             $result = $this->_db->fetchAll ( $query );
-            $resultCount = $this->_db->fetchOne ( $query_count );
+            
+            if ($this->hasGroup != 1)
+            {
+                $resultCount = $this->_db->fetchOne ( $query_count );
+            } else
+            {
+                $resultCount = count ( $this->_db->fetchAll ( $query_count ) );
+            }
         }
+        
         
         //[PT] O total de registos encontrados na query sem aplicar os limites
         $this->_totalRecords = $resultCount;
@@ -2167,7 +2204,7 @@ class Bvb_Grid_DataGrid
     function addTemplateDir($dir, $prefix, $type)
     {
 
-        $this->_templates [strtolower ( $type )] [] = array ('dir' => rtrim ( $dir, '/' ) . '/', 'prefix' => rtrim ( $prefix, '_' ) );
+        $this->_templates->addPrefixPath ( trim ( $prefix, "_" ), trim ( $dir, "/" ) . '/', $type );
         return $this;
     }
 
@@ -2182,35 +2219,15 @@ class Bvb_Grid_DataGrid
     function setTemplate($template, $output = 'table', $options = array())
     {
 
-        $temp = array_reverse ( $this->_templates [$output] );
+        $class = $this->_templates->load ( $template, $output );
         
-        foreach ( $temp as $find )
-        {
-            
-            $file = $find ['dir'] . ucfirst ( $template ) . '.php';
-            $class = $find ['prefix'] . '_' . ucfirst ( $template );
-            
-            if (Zend_Loader::isReadable ( $file ))
-            {
-                
-                include_once ($file);
-                
-                if (class_exists ( $class ))
-                {
-                    $this->temp [$output] = new $class ( $options );
-                    $this->activeTemplates [] = $output;
-                    
-
-                    $this->templateInfo = array ('name' => $template, 'dir' => $find ['dir'], 'prefix' => $find ['prefix'], 'options' => $options );
-                    
-
-                    return $this->temp [$output];
-                }
-            }
+        $this->temp [$output] = new $class ( $options );
+        $this->activeTemplates [] = $output;
         
-        }
+        @$this->templateInfo = array ('name' => $template, 'options' => $options );
         
-    #throw new Exception ( 'No templates found' );
+        return $this->temp [$output];
+    
     }
 
 

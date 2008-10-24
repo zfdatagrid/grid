@@ -96,7 +96,14 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )->addColumn ( 'id' )->addColumn ( 'firstname' )->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )->groupby ( 'lastname' )->noFilters ( 1 )->setTemplate ( 'select' );
+        $grid->from ( 'crud' )
+        ->addColumn ( 'id' )
+        ->addColumn ( 'firstname' )
+        ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
+        ->addColumn ( 'age', array ('sqlexp' => 'avg', 'title' => 'Age Average', 'format' => 'currency', 'class' => 'center' ) )
+        ->groupby ( 'lastname' )
+        ->noFilters ( 1 )
+        ->setTemplate ( 'select' );
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
@@ -131,13 +138,26 @@ class SiteController extends Zend_Controller_Action
         
         $grid->setPagination ( 15 );
         
-        $grid->from ( 'Country ' )->addColumn ( 'Name', array ('title' => 'Country', 'class' => 'width_200' ) )->addColumn ( 'continent', array ('title' => 'Continent' ) )->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80', 'eval' => "number_format('{{Population}}');" ) )->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )->addColumn ( 'GovernmentForm', array ('title' => 'Government Form', 'searchType' => '=' ) )->addColumn ( 'HeadOfState', array ('title' => 'Head Of State', 'searchType' => '=' ) )->sqlexp ( array ('LifeExpectancy' => 'AVG', 'Population' => 'SUM' ) );
+        $grid->from ( 'Country ' )
+        ->addColumn ( 'Name', array ('title' => 'Country', 'class' => 'width_200' ) )
+        ->addColumn ( 'continent', array ('title' => 'Continent' ) )
+        ->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80', 'eval' => "number_format('{{Population}}');" ) )
+        ->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
+        ->addColumn ( 'GovernmentForm', array ('title' => 'Government Form', 'searchType' => '=' ) )
+        ->addColumn ( 'HeadOfState', array ('title' => 'Head Of State', 'searchType' => '=' ) )
+        ->sqlexp ( array ('LifeExpectancy' => 'AVG', 'Population' => 'SUM' ) );
         
 
         $filters = new Bvb_Grid_Filters ( );
-        $filters->addFilter ( 'Name', array ('distinct' => array ('field' => 'Name', 'name' => 'Name' ) ) )->addFilter ( 'continent', array ('distinct' => array ('field' => 'continent', 'name' => 'continent' ) ) )->addFilter ( 'LifeExpectancy', array ('distinct' => array ('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy' ) ) )->addFilter ( 'GovernmentForm', array ('distinct' => array ('field' => 'GovernmentForm', 'name' => 'GovernmentForm' ) ) )->addFilter ( 'HeadOfState' )->addFilter ( 'Population' );
+        $filters->addFilter ( 'Name', array ('distinct' => array ('field' => 'Name', 'name' => 'Name' ) ) )
+        ->addFilter ( 'continent', array ('distinct' => array ('field' => 'continent', 'name' => 'continent' ) ) )
+        ->addFilter ( 'LifeExpectancy', array ('distinct' => array ('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy' ) ) )
+        ->addFilter ( 'GovernmentForm', array ('distinct' => array ('field' => 'GovernmentForm', 'name' => 'GovernmentForm' ) ) )
+        ->addFilter ( 'HeadOfState' )
+        ->addFilter ( 'Population' );
         
         $grid->addFilters ( $filters );
+        
         
 
         $this->view->pages = $grid->deploy ();
@@ -150,7 +170,10 @@ class SiteController extends Zend_Controller_Action
 
         
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )->table ( array ('c' => 'Country', 'ct' => 'City' ) )->order ( 'c.Continent' )->limit ( 10 );
+        $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )
+        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
+        ->order ( 'c.Continent' )
+        ->limit ( 15 );
         
         $grid->addColumn ( 'c.Name', array ('title' => 'Country (District)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.District}})</em>' ) )->addColumn ( 'ct.District', array ('title' => 'District', 'hide' => 1 ) )->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => array ('number', array ('dias' => 1 ) ) ) )->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
@@ -221,7 +244,10 @@ class SiteController extends Zend_Controller_Action
 
 
         $fAdd = new Bvb_Grid_Form_Column ( 'firstname' );
-        $fAdd->title ( 'First name' )->validators ( array ('EmailAddress' ) )->description ( 'Insert you email address' );
+        $fAdd->title ( 'First name' )
+        ->validators ( array ('EmailAddress'))
+        ->filters(array('StripTags','StringTrim','StringToLower'))
+        ->description ( 'Insert you email address' );
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
         $lastName->title ( 'Last name' );
@@ -238,7 +264,12 @@ class SiteController extends Zend_Controller_Action
         $grid->addForm ( $form );
         
         $filters = new Bvb_Grid_Filters ( );
-        $filters->addFilter ( 'firstname' )->addFilter ( 'lastname' )->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) )->addFilter ( 'title', array ('distinct' => array ('name' => 'title', 'field' => 'title' ) ) );
+        $filters->addFilter ( 'firstname' )
+        ->addFilter ( 'lastname' )
+        ->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )
+        ->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )
+        ->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) )
+        ->addFilter ( 'title', array ('distinct' => array ('name' => 'title', 'field' => 'title' ) ) );
         
         $grid->addFilters ( $filters );
         
@@ -275,7 +306,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->from ( 'City' );
-        $grid->export(array());
 
         
         $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
