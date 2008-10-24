@@ -258,7 +258,7 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     public $activeTemplates = array ();
-    
+
     
     /**
      * [PT] Se a query tem group by
@@ -997,14 +997,16 @@ class Bvb_Grid_DataGrid
             $groupBy = " GROUP BY  " . $this->_db->quoteIdentifier ( $this->info ['groupby'] );
         }
         
-        
+
         $having = '';
         
-        if (is_array( $this->info ['having'] ))
+        if (isset ( $this->info ['having'] ))
         {
-            $having = " HAVING  " . $this->_db->quoteIdentifier($this->info ['having']['field']) ."  " . $this->info ['having']['operand'] ." " . $this->_db->quote($this->info ['having']['value'])  ;
+            if (is_array ( $this->info ['having'] ))
+            {
+                $having = " HAVING  " . $this->_db->quoteIdentifier ( $this->info ['having'] ['field'] ) . "  " . $this->info ['having'] ['operand'] . " " . $this->_db->quote ( $this->info ['having'] ['value'] );
+            }
         }
-        
         
         if (@strlen ( $this->info ['limit'] ) > 0 || @is_array ( $this->info ['limit'] ))
         {
@@ -1021,8 +1023,7 @@ class Bvb_Grid_DataGrid
         }
         $final = " $groupBy $having $query_order   LIMIT " . $limit;
         
-        
-       
+
         return $final;
     }
 
@@ -1779,7 +1780,8 @@ class Bvb_Grid_DataGrid
         if (is_array ( $filters ))
         {
             return $filters;
-        } else {
+        } else
+        {
             //Não forneceu dados, temos que ir buscá-los todos às tabelas
             if (is_array ( $this->data ['table'] ))
             {
@@ -1801,8 +1803,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
-        
+
         if (@is_array ( $this->data ['hide'] ))
         {
             foreach ( $this->data ['hide'] as $value )
@@ -1812,7 +1813,8 @@ class Bvb_Grid_DataGrid
                     unset ( $titulos [$value] );
                 }
             }
-        } else  {
+        } else
+        {
             foreach ( $titulos as $key => $value )
             {
                 if (! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) ))
@@ -1890,7 +1892,7 @@ class Bvb_Grid_DataGrid
             
             if (is_array ( $this->data ['table'] ))
             {
-
+                
                 foreach ( $this->data ['table'] as $key => $table )
                 {
                     
@@ -2044,27 +2046,29 @@ class Bvb_Grid_DataGrid
         if (! is_array ( $this->data ['table'] ))
         {
             $from = $this->_db->quoteIdentifier ( $this->data ['from'] );
-        } else {
+        } else
+        {
             $from = $this->data ['from'];
         }
         
-        
+
         foreach ( $this->data ['fields'] as $total )
         {
-           
+            
             if (isset ( $total ['sqlexp'] ))
             {
                 $this->hasGroup = 1;
             }
         
         }
-
+        
 
         if ($this->hasGroup == 1)
         {
             $query_count = $this->getQuery ();
         
-        } else  {
+        } else
+        {
             $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where ";
         }
         
@@ -2119,7 +2123,7 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
-      
+
 
         if ($this->cache ['use'] == 1)
         {
@@ -2155,7 +2159,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
+
         //[PT] O total de registos encontrados na query sem aplicar os limites
         $this->_totalRecords = $resultCount;
         
