@@ -29,10 +29,10 @@ class Bvb_Grid_DataGrid
      * e por isso mesmo não podemos alterar nenhuns valores
      */
     private $noMoreDataActions = 0;
-    
+
     
     private $sourceIsExternal = 0;
-    
+
     
     public $libraryDir = 'library';
 
@@ -403,17 +403,16 @@ class Bvb_Grid_DataGrid
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data ))
         {
-            if($this->noMoreDataActions==1 && $var !='primaryKey')
+            if ($this->noMoreDataActions == 1 && $var != 'primaryKey')
             {
-                throw new Exception('When using outside sources you can not alter nothing related to the database. PE: Columsn, order, from, etc');
-                return false;
+                throw new Exception ( 'When using outside sources you can not alter nothing related to the database. PE: Columns, order, from, etc' );
             }
             
             if ($var == 'from' && ! strpos ( " ", trim ( $value ) ))
             {
                 $this->data ['from'] = trim ( $value );
                 $this->data ['table'] = trim ( $value );
-           
+            
             } else
             {
                 $this->data [$var] = $value;
@@ -509,6 +508,11 @@ class Bvb_Grid_DataGrid
     function addColumn($field, $options = array())
     {
 
+        if ($this->noMoreDataActions == 1)
+        {
+            throw new Exception ( 'When using outside sources you can not alter nothing related to the database. PE: Columns, order, from, etc' );
+        }
+        
         if (@is_array ( $this->data ['fields'] ))
         {
             if (! array_key_exists ( $field, $this->data ['fields'] ))
@@ -796,12 +800,13 @@ class Bvb_Grid_DataGrid
      */
     function buildSelectFields($values)
     {
-        if($this->sourceIsExternal==1)
+
+        if ($this->sourceIsExternal == 1)
         {
-             return implode ( ', ', $values );
+            return implode ( ', ', $values );
         }
         
-        
+
         foreach ( $values as $value )
         {
             if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
@@ -824,7 +829,8 @@ class Bvb_Grid_DataGrid
                 {
                     $fields [] = $sqlExp . '(' . $this->_db->quoteIdentifier ( $asValue ) . ') AS ' . $this->_db->quoteIdentifier ( $asValue );
                 }
-            } else  {
+            } else
+            {
                 if (strpos ( $value, "." ))
                 {
                     $ini = substr ( $value, 0, (strpos ( $value, "." )) );
@@ -1233,8 +1239,9 @@ class Bvb_Grid_DataGrid
         $ncampos = array ();
         foreach ( $campos as $value )
         {
-            $ncampos [] = stripos ( $value, ' AS ' ) ? substr ( $value, 0, stripos ( $value, ' AS ' ) ) : $value;
+            $ncampos [] = stripos ( $value, ' AS ' ) ? end ( explode ( ' ', $value ) ) : $value;
         }
+        
         $campos = $ncampos;
         unset ( $ncampos );
         $ncampos = array ();
@@ -1258,6 +1265,7 @@ class Bvb_Grid_DataGrid
             default :
                 break;
         }
+        
         return $ncampos;
     }
 
@@ -1283,7 +1291,10 @@ class Bvb_Grid_DataGrid
                 $return [$this->extra_fields [$i] ['name']] = array ('type' => 'extraField', 'value' => $this->extra_fields [$i] ['name'], 'position' => 'left' );
             }
         }
+        
         $titles = $this->map_array ( $this->_fields, 'replace_AS' );
+        
+
         $novaData = array ();
         if (is_array ( $this->data ['fields'] ))
         {
@@ -1293,7 +1304,11 @@ class Bvb_Grid_DataGrid
                 $novaData [$nkey] = $value;
             }
         }
+        
+
         $links = $this->_fields;
+        
+
         for($i = 0; $i < $tcampos; $i ++)
         {
             $order = $titles [$i] == key ( $this->order ) ? $this->order [$titles [$i]] : 'ASC';
@@ -1314,7 +1329,7 @@ class Bvb_Grid_DataGrid
                     $img = "";
                 }
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
-                if (@$noOrder == 1)
+                if ($noOrder == 1)
                 {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
                 } else
@@ -2326,65 +2341,67 @@ class Bvb_Grid_DataGrid
         return $this;
     }
 
-    function queryFromZendDbSelect(Zend_Db_Select $select,$db)
+
+    function queryFromZendDbSelect(Zend_Db_Select $select, $db)
     {
+
         $this->sourceIsExternal = 1;
         
-        unset($this->data);
+        unset ( $this->data );
         
-        $final = new Bvb_Grid_Source_Db_Select($select,$db);
+        $final = new Bvb_Grid_Source_Db_Select ( $select, $db );
         
-        $final = $this->object2array($final);
+        $final = $this->object2array ( $final );
         
-        foreach ($final['data']['columns'] AS $column)
+        foreach ( $final ['data'] ['columns'] as $column )
         {
-            $title = str_replace("_",' ',ucfirst(end(explode('.',$column))));
-            $this->addColumn($column,array('title'=>$title));
-        }
-      
-        if(strlen($final['data']['from'])>0)
-        {
-            $this->from = $final['data']['from'];
+            $title = ucwords ( str_replace ( "_", ' ', end ( explode ( '.', $column ) ) ) );
+            $this->addColumn ( $column, array ('title' => $title ) );
         }
         
-        
-        $table = array();
-        $prefix = array();
-        
-        foreach ($final['data']['table'] as $value)
+        if (strlen ( $final ['data'] ['from'] ) > 0)
         {
-            array_push($table,$value['table']);
-            array_push($prefix,$value['prefix']);
+            $this->from = $final ['data'] ['from'];
         }
         
-        $this->table = array_combine($prefix,$table);
 
-    
-        if(strlen($final['data']['groupBy'])>0)
+        $table = array ();
+        $prefix = array ();
+        
+        foreach ( $final ['data'] ['table'] as $value )
         {
-            $this->groupby = $final['data']['groupBy'];
+            array_push ( $table, $value ['table'] );
+            array_push ( $prefix, $value ['prefix'] );
         }
         
-        if(strlen($final['data']['having'])>0)
+        $this->table = array_combine ( $prefix, $table );
+        
+
+        if (strlen ( $final ['data'] ['groupBy'] ) > 0)
         {
-            $this->having = $final['data']['having'];
+            $this->groupby = $final ['data'] ['groupBy'];
         }
-    
-        if(strlen($final['data']['where'])>0)
+        
+        if (strlen ( $final ['data'] ['having'] ) > 0)
         {
-            $this->where = $final['data']['where'];
+            $this->having = $final ['data'] ['having'];
         }
-    
-        if(strlen($final['data']['order'])>0)
+        
+        if (strlen ( $final ['data'] ['where'] ) > 0)
         {
-            $this->order = $final['data']['order'];
+            $this->where = $final ['data'] ['where'];
+        }
+        
+        if (strlen ( $final ['data'] ['order'] ) > 0)
+        {
+            $this->order = $final ['data'] ['order'];
         }
         
         $this->noMoreDataActions = 1;
         
         return true;
     }
-        
+
 
     function selectFromDbTable($table)
     {
