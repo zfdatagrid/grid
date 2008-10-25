@@ -836,9 +836,9 @@ class Bvb_Grid_DataGrid
                     $asFinal = substr ( $value, stripos ( $value, ' as' ) + 4 );
                     $asValue = substr ( $value, 0, stripos ( $value, ' as' ) );
                     
-                     $fields [] = $this->_db->quoteIdentifier ( $asValue ) .' AS ' . $asFinal;
-                     
-                }elseif (strpos ( $value, "." ))
+                    $fields [] = $this->_db->quoteIdentifier ( $asValue ) . ' AS ' . $asFinal;
+                
+                } elseif (strpos ( $value, "." ))
                 {
                     $ini = substr ( $value, 0, (strpos ( $value, "." )) );
                     $fields [] = $this->_db->quoteIdentifier ( $ini ) . substr ( $value, strpos ( $value, "." ) );
@@ -849,7 +849,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
+
         return implode ( ', ', $fields );
     }
 
@@ -1275,8 +1275,7 @@ class Bvb_Grid_DataGrid
                 break;
         }
         
-        
-        
+
         return $ncampos;
     }
 
@@ -2171,7 +2170,8 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
-    
+
+
         if ($this->cache ['use'] == 1)
         {
             
@@ -2197,12 +2197,12 @@ class Bvb_Grid_DataGrid
             
             $result = $this->_db->fetchAll ( $query );
             
-            if ($this->hasGroup != 1)
+            if ($this->hasGroup != 1 && $this->sourceIsExternal!=1)
             {
                 $resultCount = $this->_db->fetchOne ( $query_count );
             } else
             {
-                $resultCount = count ( $this->_db->fetchAll ( $query_count ) );
+                $resultCount = count ( $this->_db->fetchAll ( $query ) );
             }
         }
         
@@ -2363,12 +2363,23 @@ class Bvb_Grid_DataGrid
         
         $final = $this->object2array ( $final );
         
+        
+       
         foreach ( $final ['data'] ['columns'] as $column )
         {
             $title = ucwords ( str_replace ( "_", ' ', end ( explode ( '.', $column ) ) ) );
+            
+            if (stripos ( $title, 'as' ))
+            {
+                $title = end ( explode ( ' ', $title ) );
+            }
+
+            #$column = reset ( explode ( ' ', $column ) );
+            
             $this->addColumn ( $column, array ('title' => $title ) );
         }
-        
+         
+
         if (strlen ( $final ['data'] ['from'] ) > 0)
         {
             $this->from = $final ['data'] ['from'];
@@ -2413,12 +2424,5 @@ class Bvb_Grid_DataGrid
     }
 
 
-    function selectFromDbTable($table)
-    {
-
-        $table = reset ( $table->_metadata );
-        $this->__set ( 'from', $table ['TABLE_NAME'] );
-        return true;
-    }
 }
 

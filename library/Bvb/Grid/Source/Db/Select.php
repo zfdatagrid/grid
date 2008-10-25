@@ -55,20 +55,28 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
             $this->data ['table'] [$key] = array ('prefix' => $key, 'table' => $table ['tableName'] );
         }
         
+ 
+        
+        
         //A parte dos fields
         foreach ( $parts ['columns'] as $key => $column )
         {
             
             
-            if ($column [1] != '*')
+            if (!is_object($column [1]))
             {
-                $this->data ['columns'] [] = strlen ( $column [2] ) > 0 ? $column [1] . ' AS ' . $column [2] : $column [0] . '.' . $column [1];
-            } else
+                $this->data ['columns'] [] = strlen ( $column [2] ) > 0 ? $column [0] . '.' . $column [1] . ' AS ' . $column [2] : $column [0] . '.' . $column [1];
+            
+            } elseif(is_object($column [1]))
+            {
+                 $this->data ['columns'] [] = $column [1] . ' AS ' . $column [2] ;
+            
+            } elseif($column [1] == '*' )
             {
                 $this->data ['columns'] = array_merge ( $this->data ['columns'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ) );
             }
         }
-        
+         
         $this->data ['where'] = implode ( ' ', $parts ['where'] );
         
 
@@ -123,9 +131,9 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         
     
 
-        #$query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  '. $this->data['groupBy'].'  HAVING '.$this->data['having'];
+        $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  '. $this->data['groupBy'].'  HAVING '.$this->data['having'];
+
      
-        
         #$this->_db->fetchAll($query);
         
 

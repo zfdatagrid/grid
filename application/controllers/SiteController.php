@@ -73,23 +73,6 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    /**
-     * TEST FUNCTION
-     * DO NOT USE
-     *
-     */
-    function teste2Action()
-    {
-
-        include "models/Grid.php";
-        
-        $t = new Grid ( );
-        $grid = $this->grid ( 'table' );
-        $grid->selectFromDbTable ( $t );
-        $grid->setTemplate ( 'select' );
-        $this->view->pages = $grid->deploy ();
-        $this->render ( 'index' );
-    }
 
 
     function groupAction()
@@ -172,10 +155,15 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid ( 'table' );
         $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )
         ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
-        ->order ( 'c.Continent' )
-        ->limit ( 15 );
+        ->order ( 'c.Continent' );
         
-        $grid->addColumn ( 'c.Name', array ('title' => 'Country (District)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.District}})</em>' ) )->addColumn ( 'ct.District', array ('title' => 'District', 'hide' => 1 ) )->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => array ('number', array ('dias' => 1 ) ) ) )->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
+        $grid->addColumn ( 'c.Name AS Country', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) )
+        ->addColumn ( 'ct.Name', array ('title' => 'District', 'hide' => 1 ) )
+        ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
+        ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number') )
+        ->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
+        ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
+        ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
 
         $this->view->pages = $grid->deploy ();
@@ -226,7 +214,7 @@ class SiteController extends Zend_Controller_Action
         $language = $db->fetchCol ( "SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC" );
         
         $grid->addColumn ( 'id', array ('title' => 'ID', 'hide' => 1 ) );
-        $grid->addColumn ( 'firstname', array ('title' => 'First Name' ) );
+        $grid->addColumn ( 'firstname AS apelido', array ('title' => 'First Name' ) );
         $grid->addColumn ( 'lastname', array ('title' => 'Last Name' ) );
         $grid->addColumn ( 'title', array ('title' => 'Title' ) );
         $grid->addColumn ( 'age', array ('title' => 'Age' ) );
@@ -296,7 +284,7 @@ class SiteController extends Zend_Controller_Action
                     array('product_id'))
              ->join(array('l' => 'line_items'),
                     'p.product_id = l.product_id',
-                    array('Barcelos' => 'COUNT(*)'))
+                    array('line_items_per_product' => 'COUNT(*)'))
              ->group('p.product_id');
              
         $grid->queryFromZendDbSelect ( $select,$db );
