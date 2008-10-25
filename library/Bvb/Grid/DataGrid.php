@@ -831,7 +831,14 @@ class Bvb_Grid_DataGrid
                 }
             } else
             {
-                if (strpos ( $value, "." ))
+                if (stripos ( $value, ' AS ' ))
+                {
+                    $asFinal = substr ( $value, stripos ( $value, ' as' ) + 4 );
+                    $asValue = substr ( $value, 0, stripos ( $value, ' as' ) );
+                    
+                     $fields [] = $this->_db->quoteIdentifier ( $asValue ) .' AS ' . $asFinal;
+                     
+                }elseif (strpos ( $value, "." ))
                 {
                     $ini = substr ( $value, 0, (strpos ( $value, "." )) );
                     $fields [] = $this->_db->quoteIdentifier ( $ini ) . substr ( $value, strpos ( $value, "." ) );
@@ -841,6 +848,8 @@ class Bvb_Grid_DataGrid
                 }
             }
         }
+        
+        
         return implode ( ', ', $fields );
     }
 
@@ -1239,7 +1248,7 @@ class Bvb_Grid_DataGrid
         $ncampos = array ();
         foreach ( $campos as $value )
         {
-            $ncampos [] = stripos ( $value, ' AS ' ) ? end ( explode ( ' ', $value ) ) : $value;
+            $ncampos [] = stripos ( $value, ' AS ' ) ? substr ( $value, 0, stripos ( $value, ' AS ' ) ) : $value;
         }
         
         $campos = $ncampos;
@@ -1265,6 +1274,8 @@ class Bvb_Grid_DataGrid
             default :
                 break;
         }
+        
+        
         
         return $ncampos;
     }
@@ -2160,8 +2171,7 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
-
-
+    
         if ($this->cache ['use'] == 1)
         {
             

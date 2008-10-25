@@ -1636,7 +1636,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             if (( int ) @$this->info ['limit'] > 0)
             {
-                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', '' ), $this->temp ['table']->pagination () );
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ('', '', '', (int)$this->info ['limit'] ), $this->temp ['table']->pagination () );
             
             } elseif ($npaginas > 1 && count ( $this->export ) > 0)
             {
