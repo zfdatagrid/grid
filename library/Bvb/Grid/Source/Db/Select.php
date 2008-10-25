@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Mascker
  *
@@ -27,14 +29,21 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
     protected $_db;
 
 
-    function getFieldsFromTable($table, $prefix = null)
+    function getFieldsFromTable($table, $prefix = null, $order = 0)
     {
 
         $table = $this->_db->describeTable ( $table );
         
         foreach ( $table as $column )
         {
-            $columns [] = isset ( $prefix ) ? $prefix . '.' . $column ['COLUMN_NAME'] : $column ['COLUMN_NAME'];
+            
+            if ($order == 0)
+            {
+                $columns [] = isset ( $prefix ) ? $prefix . '.' . $column ['COLUMN_NAME'] : $column ['COLUMN_NAME'];
+            } else
+            {
+                $columns [] = isset ( $prefix ) ? $prefix . '.' . $column ['COLUMN_NAME'] : $column ['COLUMN_NAME'];
+            }
         }
         
         return $columns;
@@ -55,43 +64,69 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
             $this->data ['table'] [$key] = array ('prefix' => $key, 'table' => $table ['tableName'] );
         }
         
- 
-        
         
         //A parte dos fields
         foreach ( $parts ['columns'] as $key => $column )
         {
             
-            
-            if (!is_object($column [1]))
+            if (! is_object ( $column [1] ))
             {
                 $this->data ['columns'] [] = strlen ( $column [2] ) > 0 ? $column [0] . '.' . $column [1] . ' AS ' . $column [2] : $column [0] . '.' . $column [1];
+                if (strlen ( $column [0] ) > 0)
+                {
+                    $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
+                } else
+                {
+                    $this->data ['orderField'] [] = $column [1];
+                }
             
-            } elseif(is_object($column [1]))
+            } elseif (is_object ( $column [1] ))
             {
-                 $this->data ['columns'] [] = $column [1] . ' AS ' . $column [2] ;
+                $this->data ['columns'] [] = $column [1] . ' AS ' . $column [2];
+                $this->data ['orderField'] [] = $column [2];
             
-            } elseif($column [1] == '*' )
+            } elseif ($column [1] == '*')
             {
                 $this->data ['columns'] = array_merge ( $this->data ['columns'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ) );
+                $this->data ['orderField'] = array_merge ( $this->data ['orderField'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ), 1 );
+
+            } elseif (null === $column [2])
+            {
+                $this->data ['columns'] [] = $column [1];
+                if (strlen ( $column [0] ) > 0)
+                {
+                    $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
+                } else
+                {
+                    $this->data ['orderField'] [] = $column [1];
+                }
             }
         }
-         
+        
         $this->data ['where'] = implode ( ' ', $parts ['where'] );
         
 
         //Agora construir o FROM
         
 
+
         $from = $parts ['from'];
         $totalFrom = count ( $from );
         
+
         if ($totalFrom == 1)
         {
-            foreach ( $from as $key => $value )
+            
+            if (key ( $parts ['from'] ) == $parts ['form'] ['tableName'])
             {
-                $this->data ['from'] = $value['tableName'] . ' ' . $key;
+                $this->data ['from'] = $parts ['form'] ['tableName'];
+            } else
+            {
+                
+                $this->data ['from'] = $parts ['form'] ['tableName'] . ' ' . key ( $parts ['from'] );
             }
+        
+
         } else
         {
             
@@ -115,9 +150,7 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         
 
         $this->data ['groupBy'] = implode ( ', ', $parts ['group'] );
-        $this->data ['having'] = $parts ['having'][0];
-        
-        
+        $this->data ['having'] = $parts ['having'] [0];
         
 
         $order = $parts ['order'];
@@ -129,13 +162,18 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         
         $this->data ['order'] = substr ( $this->data ['order'], 0, - 1 );
         
-    
 
-        $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  '. $this->data['groupBy'].'  HAVING '.$this->data['having'];
+        $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  ' . $this->data ['groupBy'] . '  HAVING ' . $this->data ['having'];
+        
 
-     
+        #echo $query;
+        #die();
+        
+
+
         #$this->_db->fetchAll($query);
         
+
 
         return $this->data;
     }

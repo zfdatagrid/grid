@@ -278,8 +278,7 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid ( 'table' );
         
         $db = Zend_Registry::get ( 'db' );
-        
-     $select = $db->select()
+    $select = $db->select()
              ->from(array('p' => 'products'),
                     array('product_id'))
              ->join(array('l' => 'line_items'),
