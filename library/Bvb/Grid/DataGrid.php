@@ -23,6 +23,17 @@
 class Bvb_Grid_DataGrid
 {
 
+    
+    /**
+     * [PT] Utilizado para quando temos uma source externa (Zend_Db_*)
+     * e por isso mesmo não podemos alterar nenhuns valores
+     */
+    private $noMoreDataActions = 0;
+    
+    
+    private $sourceIsExternal = 0;
+    
+    
     public $libraryDir = 'library';
 
     
@@ -392,10 +403,17 @@ class Bvb_Grid_DataGrid
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data ))
         {
+            if($this->noMoreDataActions==1 && $var !='primaryKey')
+            {
+                throw new Exception('When using outside sources you can not alter nothing related to the database. PE: Columsn, order, from, etc');
+                return false;
+            }
+            
             if ($var == 'from' && ! strpos ( " ", trim ( $value ) ))
             {
                 $this->data ['from'] = trim ( $value );
                 $this->data ['table'] = trim ( $value );
+           
             } else
             {
                 $this->data [$var] = $value;
@@ -778,7 +796,12 @@ class Bvb_Grid_DataGrid
      */
     function buildSelectFields($values)
     {
-
+        if($this->sourceIsExternal==1)
+        {
+             return implode ( ', ', $values );
+        }
+        
+        
         foreach ( $values as $value )
         {
             if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
@@ -801,8 +824,7 @@ class Bvb_Grid_DataGrid
                 {
                     $fields [] = $sqlExp . '(' . $this->_db->quoteIdentifier ( $asValue ) . ') AS ' . $this->_db->quoteIdentifier ( $asValue );
                 }
-            } else
-            {
+            } else  {
                 if (strpos ( $value, "." ))
                 {
                     $ini = substr ( $value, 0, (strpos ( $value, "." )) );
@@ -2304,6 +2326,65 @@ class Bvb_Grid_DataGrid
         return $this;
     }
 
+    function queryFromZendDbSelect(Zend_Db_Select $select,$db)
+    {
+        $this->sourceIsExternal = 1;
+        
+        unset($this->data);
+        
+        $final = new Bvb_Grid_Source_Db_Select($select,$db);
+        
+        $final = $this->object2array($final);
+        
+        foreach ($final['data']['columns'] AS $column)
+        {
+            $title = str_replace("_",' ',ucfirst(end(explode('.',$column))));
+            $this->addColumn($column,array('title'=>$title));
+        }
+      
+        if(strlen($final['data']['from'])>0)
+        {
+            $this->from = $final['data']['from'];
+        }
+        
+        
+        $table = array();
+        $prefix = array();
+        
+        foreach ($final['data']['table'] as $value)
+        {
+            array_push($table,$value['table']);
+            array_push($prefix,$value['prefix']);
+        }
+        
+        $this->table = array_combine($prefix,$table);
+
+    
+        if(strlen($final['data']['groupBy'])>0)
+        {
+            $this->groupby = $final['data']['groupBy'];
+        }
+        
+        if(strlen($final['data']['having'])>0)
+        {
+            $this->having = $final['data']['having'];
+        }
+    
+        if(strlen($final['data']['where'])>0)
+        {
+            $this->where = $final['data']['where'];
+        }
+    
+        if(strlen($final['data']['order'])>0)
+        {
+            $this->order = $final['data']['order'];
+        }
+        
+        $this->noMoreDataActions = 1;
+        
+        return true;
+    }
+        
 
     function selectFromDbTable($table)
     {
