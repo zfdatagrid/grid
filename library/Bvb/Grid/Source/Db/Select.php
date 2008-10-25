@@ -124,8 +124,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         $this->data ['order'] = substr ( $this->data ['order'], 0, - 1 );
         
 
-        Zend_Debug::dump ( $parts );
-        
         $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  '. $this->data['groupBy'].'  HAVING '.$this->data['having'];
      
         

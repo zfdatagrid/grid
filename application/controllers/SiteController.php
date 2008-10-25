@@ -292,11 +292,13 @@ class SiteController extends Zend_Controller_Action
         $db = Zend_Registry::get ( 'db' );
         
         
-      $select = $db->select()
-             ->from(array('p' => 'products'), 'p.product_id')
-             ->columns('product_name', 'p');
+     $select = $db->select()
+             ->from(array('p' => 'products'),
+                    array('product_id', 'product_name'))
+             ->join(array('l' => 'line_items'),
+                    'p.product_id = l.product_id');
              
-        $grid->queryFromZendDbSelect ( $select,$db );
+        $grid->queryFromZendDbSelect ( $select, $db );
         
         $this->view->pages = $grid->deploy ();
         $this->view->action = 'basic';
