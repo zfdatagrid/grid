@@ -1480,7 +1480,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $actual = ( int ) isset ( $this->ctrlParams ['start'] ) ? $this->ctrlParams ['start'] : 0;
         
-        $ppagina = $this->data ['pagination'] ['per_page'];
+        $ppagina = $this->pagination;
         $result2 = '';
         
         $pa = $actual == 0 ? 1 : ceil ( $actual / $ppagina ) + 1;
@@ -1499,6 +1499,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/start/0\">1</a>";
         
         }
+        
+        
+        
         if ($npaginas > 5)
         {
             $in = min ( max ( 1, $actual - 4 ), $npaginas - 5 );

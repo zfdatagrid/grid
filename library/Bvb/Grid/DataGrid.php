@@ -25,7 +25,7 @@ class Bvb_Grid_DataGrid
 
     
     private $_fieldsOrder;
-    
+
     /**
      * [PT] Utilizado para quando temos uma source externa (Zend_Db_*)
      * e por isso mesmo não podemos alterar nenhuns valores
@@ -61,6 +61,9 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     protected $_formatter;
+    
+    
+    protected $pagination = 15;
 
     
     /**
@@ -307,14 +310,10 @@ class Bvb_Grid_DataGrid
         $this->_elements ['filter'] = new Zend_Loader_PluginLoader ( );
         $this->_elements ['validator'] = new Zend_Loader_PluginLoader ( );
         
-        $this->_templates ['table'] = new Zend_Loader_PluginLoader ( );
-        
 
         if (is_array ( $this->export ))
         {
-            $noTable = $this->export;
-            
-            foreach ( $noTable as $temp )
+            foreach ( $this->export as $temp )
             {
                 $this->_templates = new Zend_Loader_PluginLoader ( array (), $temp );
             }
@@ -457,7 +456,6 @@ class Bvb_Grid_DataGrid
         if (! @is_array ( $this->_describeTables [$table] ))
         {
             
-
             if ($this->cache ['use'] == 1)
             {
                 
@@ -743,7 +741,7 @@ class Bvb_Grid_DataGrid
     function setPagination($number = 15)
     {
 
-        $this->data ['pagination'] ['per_page'] = ( int ) $number;
+        $this->pagination = ( int ) $number;
         return $this;
     }
 
@@ -998,14 +996,14 @@ class Bvb_Grid_DataGrid
         $order1 = explode ( "_", $order );
         $orderf = strtoupper ( end ( $order1 ) );
         
-        
+
         if ($orderf != 'DESC' and $orderf != 'ASC')
         {
             
             $orderf = 'ASC';
             $order_field = $order;
             $query_order = " ORDER BY " . $this->_db->quoteIdentifier ( $order_field ) . " $orderf ";
-            
+        
         } else
         {
             array_pop ( $order1 );
@@ -1013,10 +1011,10 @@ class Bvb_Grid_DataGrid
             $query_order = " ORDER BY " . $this->_db->quoteIdentifier ( $order_field ) . " $orderf ";
         }
         
-         
+
         $this->order [$order_field] = $orderf == 'ASC' ? 'DESC' : 'ASC';
         
-     
+
         if (! in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) ))
         {
             unset ( $query_order );
@@ -1027,17 +1025,12 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
-        
-        
-        if (( int ) @$this->data ['pagination'] ['per_page'] == 0)
+        if (( int ) @$this->pagination == 0)
         {
-            $this->data ['pagination'] ['per_page'] = 15;
+            $this->pagination = 15;
         }
         
-        
-        
-        
+
         if (strlen ( $this->fieldHorizontalRow ) > 0)
         {
             $split = $this->_db->quoteIdentifier ( $this->fieldHorizontalRow );
@@ -1047,8 +1040,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
-        
+
         $groupBy = '';
         if (isset ( $this->info ['groupby'] ))
         {
@@ -1070,22 +1062,22 @@ class Bvb_Grid_DataGrid
         {
             if (is_array ( $this->info ['limit'] ))
             {
-                $limit = $this->info ['limit'] [0] . ',' . $this->info ['limit'] [1];
+                $limit = " LIMIT ". $this->info ['limit'] [0] . ',' . $this->info ['limit'] [1];
             } else
             {
-                $limit = $this->info ['limit'];
+                $limit = " LIMIT ". $this->info ['limit'];
             }
         } else
         {
-            $limit = "$inicio, " . $this->data ['pagination'] ['per_page'];
+            $limit = " LIMIT ". $inicio.  " , $this->pagination";
         }
         
         
-        $final = " $groupBy $having $query_order   LIMIT " . $limit;
-        
-        
-    
 
+        $final =  "$groupBy $having $query_order  $limit ";
+        
+
+    
         return $final;
     }
 
@@ -1320,8 +1312,7 @@ class Bvb_Grid_DataGrid
         $url = $this->getUrl ( array ('order', 'start', 'comm' ) );
         $tcampos = count ( $this->_fields );
         
-        
-        
+
         for($i = 0; $i < count ( $this->extra_fields ); $i ++)
         {
             if ($this->extra_fields [$i] ['position'] == 'left')
@@ -1350,13 +1341,17 @@ class Bvb_Grid_DataGrid
         for($i = 0; $i < $tcampos; $i ++)
         {
             
-            $order = $titles [$i] == key ( $this->order ) ? $this->order [$titles [$i]] : 'ASC';
-
+            $fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
             
+            $orderFinal = strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0 ? $fieldsToOrder [$i] ['orderField'] : $titles [$i];
+            
+            $order = $orderFinal == key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
+            
+
             if (! isset ( $novaData [$titles [$i]] ['hide'] ))
             {
                 
-                
+
                 if ($titles [$i] == key ( $this->order ))
                 {
                     if ($order == 'ASC')
@@ -1372,27 +1367,21 @@ class Bvb_Grid_DataGrid
                     $img = "";
                 }
                 
+
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
                 
-                
+
                 if ($noOrder == 1)
                 {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
                 } else
                 {
-                    $fieldsToOrder = $this->reset_keys($this->data['fields']);
-                    
-                    
-                    $orderFinal = strlen($fieldsToOrder[$i]['orderField'])>0?$fieldsToOrder[$i]['orderField']:$titles[$i];
-                    
-                    $return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $titles [$i], 'url' => "$url/order/{$orderFinal}_$order", 'img' => $img, 'value' => $this->_titles [$links [$i]] );
+                    $return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'img' => $img, 'value' => $this->_titles [$links [$i]] );
                 }
             }
         }
         
-        
-        
-        
+
         for($i = 0; $i < count ( $this->extra_fields ); $i ++)
         {
             if ($this->extra_fields [$i] ['position'] == 'right')
@@ -1403,8 +1392,7 @@ class Bvb_Grid_DataGrid
         
         $this->_finalFields = $return;
         
-        
-        
+
         return $return;
     }
 
@@ -1486,8 +1474,12 @@ class Bvb_Grid_DataGrid
             $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
             $this->filters [$valor] ['values'] = $this->_db->fetchAll ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) AS value, " . $this->filters [$valor] ['distinct'] ['name'] . " AS name FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
         }
+        
+
         //[PT] Remover os paramteros que não queremos na url
         $url = urlencode ( $this->getUrl ( array ('filters', 'start', 'comm' ) ) );
+        
+
         //Vamos remover os AS dos indices da data global por cauda de substituirmos o campo de procura
         $fieldsSemAsFinal = $this->removeAsFromFields ();
         if (isset ( $fieldsSemAsFinal [$campo] ['searchField'] ))
@@ -1780,17 +1772,18 @@ class Bvb_Grid_DataGrid
             $fields_final = array ();
             $i = 0;
             
-            
+
             foreach ( $fields as $key => $value )
             {
                 
-              
+
                 //A parte da order
-                if(isset($value['orderField']))
+                if (isset ( $value ['orderField'] ))
                 {
-                    $orderFields[$key] = $value['orderField'];
-                }else{
-                    $orderFields[$key] = $key;
+                    $orderFields [$key] = $value ['orderField'];
+                } else
+                {
+                    $orderFields [$key] = $key;
                 }
                 
                 if (isset ( $value ['title'] ))
@@ -1801,7 +1794,7 @@ class Bvb_Grid_DataGrid
                     $titulos [$key] = ucfirst ( $key );
                 }
                 
-                
+
                 if (isset ( $value ['order'] ))
                 {
                     if (@$value ['order'] > - 1)
@@ -1813,7 +1806,7 @@ class Bvb_Grid_DataGrid
                     $fields_final [$i] = $key;
                 }
                 
-                
+
                 if (isset ( $value ['hhide'] ))
                 {
                     if ($value ['hide'] == 1)
@@ -1824,11 +1817,11 @@ class Bvb_Grid_DataGrid
                 $i ++;
             }
             
-            
+
             ksort ( $fields_final );
             $fields_final = $this->reset_keys ( $fields_final );
-            
-            
+        
+
         } else
         {
             //Não forneceu dados, temos que ir buscá-los todos às tabelas
@@ -1853,8 +1846,7 @@ class Bvb_Grid_DataGrid
                 }
             }
             
-            
-            
+
             $fields_final = $fl;
             if (is_array ( $this->data ['hide'] ))
             {
@@ -1865,8 +1857,7 @@ class Bvb_Grid_DataGrid
                 }
             }
             
-            
-            
+
             foreach ( $fields_final as $value )
             {
                 $value_final [] = $value;
@@ -1875,7 +1866,7 @@ class Bvb_Grid_DataGrid
             $orderFields = $fields_final;
         }
         
-        
+
         $this->totalHiddenFields = $hide;
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
@@ -2249,7 +2240,8 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
-        
+
+
         if ($this->cache ['use'] == 1)
         {
             
@@ -2444,12 +2436,11 @@ class Bvb_Grid_DataGrid
         $column = $final ['data'] ['columns'];
         $orderField = $final ['data'] ['orderField'];
         
-   
-        
-        for ( $i=0;$i<count($column);$i++)
+
+        for($i = 0; $i < count ( $column ); $i ++)
         
         {
-            $title = ucwords ( str_replace ( "_", ' ', end ( explode ( '.', $column[$i] ) ) ) );
+            $title = ucwords ( str_replace ( "_", ' ', end ( explode ( '.', $column [$i] ) ) ) );
             
             if (stripos ( $title, 'as' ))
             {
@@ -2459,7 +2450,8 @@ class Bvb_Grid_DataGrid
             #$column = reset ( explode ( ' ', $column ) );
             
 
-            $this->addColumn ( $column[$i], array ('title' => $title, 'orderField' => $orderField[$i]  ) );
+
+            $this->addColumn ( $column [$i], array ('title' => $title, 'orderField' => $orderField [$i] ) );
         }
         
 

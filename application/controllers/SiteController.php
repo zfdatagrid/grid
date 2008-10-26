@@ -269,7 +269,7 @@ class SiteController extends Zend_Controller_Action
 
     /**
      * TESTE FUNCTION
-     * DO NOT USE
+     * "DO NOT" USE
      *
      */
     function selectAction()
@@ -300,7 +300,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->from ( 'City' );
-        $grid->export( array());
 
         
         $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
