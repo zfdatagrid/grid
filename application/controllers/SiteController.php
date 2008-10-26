@@ -22,20 +22,30 @@ class SiteController extends Zend_Controller_Action
         
         switch ($export)
         {
+            case 'xml' :
+                $grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            case 'csv' :
+                $grid = new Bvb_Grid_Deploy_Csv ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
             case 'excel' :
-                $grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp' );
+              
+                $grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+               
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'word' :
-                $grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp' );
+                $grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'wordx' :
-                $grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp' );
+                $grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'pdf' :
-                $grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp' );
+                $grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'print' :
@@ -208,7 +218,8 @@ class SiteController extends Zend_Controller_Action
         
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )->order ( 'id DESC ' );
+        $grid->from ( 'crud' )
+        ->order ( 'id DESC ' );
         
         $paises = $db->fetchCol ( "SELECT DISTINCT(Name) FROM Country ORDER BY Name ASC " );
         $language = $db->fetchCol ( "SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC" );

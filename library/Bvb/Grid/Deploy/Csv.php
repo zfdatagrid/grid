@@ -1,4 +1,7 @@
 <?php
+
+
+
 /**
  * Mascker
  *
@@ -21,17 +24,34 @@
 class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
 {
 
+    protected $dir;
 
-    protected  $output = 'csv';
+    protected $title;
+
+    protected $options = array ();
+
+    protected $output = 'csv';
+
 
     /*
     * @param array $data
     */
-    function __construct ($db,$title,$dir)
+    function __construct($db, $title, $dir, $options = array('download'))
     {
-        parent::__construct($db);
 
+        if (! in_array ( 'csv', $this->export ))
+        {
+            echo $this->__ ( "You dont' have permission to export the results to this format" );
+            die ();
+        }
+        
+        $this->dir = rtrim ( $dir, "/" ) . "/";
+        $this->title = $title;
+        $this->options = $options;
+        
+        parent::__construct ( $db );
     }
+
 
     /**
      * [Para podemros utiliza]
@@ -39,86 +59,96 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-
-    function __set($var,$value)
+    
+    function __set($var, $value)
     {
-        parent::__set($var,$value);
+
+        parent::__set ( $var, $value );
     }
+
 
     function buildTitltesCsv($titles)
     {
 
-        foreach ($titles as $title) {
-
-            $grid .=  $title['value'] . ",";
+        foreach ( $titles as $title )
+        {
+            
+            $grid .= '"' . $title ['value'] . '",';
         }
-
-        return $grid."\n";
-
+        
+        return substr ( $grid, 0, - 1 ) . "\n";
+    
     }
+
 
     function buildSqlexpCsv($sql)
     {
-        if(is_array($sql))
-        {
 
-            foreach ($sql as $exp) {
-                $grid .= $exp['value'] .",";
+        if (is_array ( $sql ))
+        {
+            
+            foreach ( $sql as $exp )
+            {
+                $grid .= '"' . $exp ['value'] . '",';
             }
         }
+        
 
-
-        return $grid."\n";
-
+        return substr ( $grid, 0, - 1 ) . " \n";
+    
     }
 
 
     function buildGridCsv($grids)
     {
 
-
-        foreach ($grids as $value) {
+        $grid = '';
+        foreach ( $grids as $value )
+        {
             
-            $totalFields = count($value);
-            
-            $i=2;
-            foreach ($value as $final) {
-
-                $final['value']  = strip_tags($final['value']);
-
-                /*
-                if(strpos ( ",",  $final['value']) || strpos ( '""',  $final['value'] ) || strpos ( '\n',  $final['value'] ))
-                {
-                $grid .= '"'.$final['value'].'"';
-                }else{
-                $grid .= $final['value'];
-                }
-
-                */
-                
-                $grid .= '"'.$final['value'].'",';
-
+            foreach ( $value as $final )
+            {
+                $grid .= '"' . $final ['value'] . '",';
             }
-
-            $grid .= $grid ."\n";
+            
+            $grid = substr ( $grid, 0, - 1 ) . " \n";
         }
-        return $grid."\n";
-
+        
+        return $grid;
+    
     }
 
 
     function deploy()
     {
 
-        $this->setPagination(100);
+        $this->setPagination ( 0 );
         
-        parent::deploy();
+        parent::deploy ();
+        
+        $grid .= self::buildTitltesCsv ( parent::buildTitles () );
+        $grid .= self::buildGridCsv ( parent::buildGrid () );
+        $grid .= self::buildSqlexpCsv ( parent::buildSqlExp () );
+        
 
-        $grid .= self::buildTitltesCsv(parent::buildTitles());
-        $grid .= self::buildGridCsv(parent::buildGrid());
-        $grid .= self::buildSqlexpCsv(parent::buildSqlExp());
-        echo $grid;
-        die();
+        file_put_contents ( $this->dir . $this->title . ".csv", $grid );
+        
+        
+        if (in_array ( 'download', $this->options ))
+        {
+            header ( 'Content-type: text/plain' );
+            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.csv"' );
+            readfile ( $this->dir . $this->title . '.csv' );
+        }
+        
+
+        if (! in_array ( 'save', $this->options ))
+        {
+            unlink ( $this->dir . $this->title . '.csv' );
+        }
+        
+        die ();
+    
     }
 
 }

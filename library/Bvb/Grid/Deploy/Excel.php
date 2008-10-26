@@ -27,12 +27,15 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
     
     protected $output = 'excel';
 
-    public $title;
+   protected $dir;
 
-    public $dir;
+    protected $title;
+
+    protected $options = array ();
+    
 
 
-    function __construct($db, $title, $dir)
+    function __construct($db, $title, $dir, $options = array('download'))
     {
 
         
@@ -42,9 +45,11 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
             die();
         }
         
-        $this->dir = rtrim ( $dir, "/" ) . "/";
-        
+         $this->dir = rtrim ( $dir, "/" ) . "/";
         $this->title = $title;
+        $this->options = $options;
+        
+        
         parent::__construct ( $db );
     }
 
@@ -66,7 +71,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
     function deploy()
     {
 
-        $this->setPagination(10000000);
+        $this->setPagination(0);
         
         parent::deploy ();
         
@@ -86,13 +91,13 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
         }
         
         */
-        $xml = '<' . '?xml version="1.0"?' . '><' . '?mso-application progid="Excel.Sheet"?' . '>
+        $xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns:x="urn:schemas-microsoft-com:office:excel"
   xmlns="urn:schemas-microsoft-com:office:spreadsheet"
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
         
 
-        $xml .= '<Worksheet ss:Name="<![CDATA[' . $this->title. ']]>" ss:Description="<![CDATA[' . $this->title . ']]>"><ss:Table>';
+        $xml .= '<Worksheet ss:Name="' . $this->title. '" ss:Description="' . $this->title . '"><ss:Table>';
         
         $xml .= '<ss:Row>';
         foreach ( $titles as $value )
@@ -100,7 +105,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
             
             $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
             
-            $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
+            $xml .= '<ss:Cell><Data ss:Type="' . $type . '">' . $value['value'] . '</Data></ss:Cell>';
         }
         $xml .= '</ss:Row>';
         
@@ -119,7 +124,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
                     
 
                     $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
-                    $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
+                    $xml .= '<ss:Cell><Data ss:Type="' . $type . '">' . $value['value'] . '</Data></ss:Cell>';
                     
                     $a ++;
                 }
@@ -128,7 +133,6 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
         
         }
         
-
         if (is_array ( $sql ))
         {
             $xml .= '<ss:Row>';
@@ -137,33 +141,36 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid
                 
                 $type = ! is_numeric ( $value ['value'] ) ? 'String' : 'Number';
                 
-                $xml .= '<ss:Cell><Data ss:Type="' . $type . '"><![CDATA[' . $value['value'] . ']]></Data></ss:Cell>';
+                $xml .= '<ss:Cell><Data ss:Type="' . $type . '">' . $value['value'] . '</Data></ss:Cell>';
             }
             $xml .= '</ss:Row>';
         }
-        
+      
 
         $xml .= '</ss:Table></Worksheet>';
         
 
         $xml .= '</Workbook>';
         
-
-        if (file_exists ( $this->dir . $this->title . '.xls' ))
-        {
-            $data = date ( 'd-m-Y H\:i\:s' );
-            rename ( $this->dir . $this->title . '.xls', $this->dir . $this->title . '-' . $data . '.xls' );
-        }
-        
+  
         file_put_contents ( $this->dir . $this->title . ".xls", $xml );
         
-        header ( 'Content-type: application/excel' );
         
-        // It will be called downloaded.pdf
-        header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xls"' );
-        readfile ( $this->dir . $this->title . '.xls' );
-        unlink ( $this->dir . $this->title . '.xls' );
+        if (in_array ( 'download', $this->options ))
+        {
+            header ( 'Content-type: application/excel' );
+            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xls"' );
+            readfile ( $this->dir . $this->title . '.xls' );
+        }
+        
+
+        if (! in_array ( 'save', $this->options ))
+        {
+            unlink ( $this->dir . $this->title . '.xls' );
+        }
+        
         die ();
+        
     }
 
 }

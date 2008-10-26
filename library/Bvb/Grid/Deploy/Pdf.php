@@ -1,4 +1,7 @@
 <?php
+
+
+
 /**
  * Mascker
  *
@@ -21,31 +24,38 @@
 class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 {
 
-    protected  $output = 'pdf';
+    protected $output = 'pdf';
 
-    public $pdfInfo = array();
+    public $pdfInfo = array ();
 
-    public $dir ;
+    public $dir;
 
-    protected $style ;
+    protected $style;
+
+    protected $options = array ();
 
     public $title;
 
-    function __construct ($db,$title,$dir)
+
+    function __construct($db, $title, $dir, $options = array('download'))
     {
+
         if (! in_array ( 'pdf', $this->export ))
         {
-            echo $this->__( "You dont' have permission to export the results to this format" );
-            die();
+            echo $this->__ ( "You dont' have permission to export the results to this format" );
+            die ();
         }
+        
 
-        $this->dir = rtrim($dir,"/")."/";
-
+        $this->dir = rtrim ( $dir, "/" ) . "/";
         $this->title = $title;
-        parent::__construct($db);
-
+        $this->options = $options;
+        
+        parent::__construct ( $db );
+    
 
     }
+
 
     /**
      * [Para podemros utiliza]
@@ -53,21 +63,23 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-
-    function __set($var,$value)
+    
+    function __set($var, $value)
     {
-        parent::__set($var,$value);
+
+        parent::__set ( $var, $value );
     }
+
 
     function calculateCellSize()
     {
 
-        $titles  = parent::buildTitles();
-        $sqlexp = parent::buildSqlExp();
-        $grid = parent::buildGrid();
-
-        $nome = reset($titles);
-
+        $titles = parent::buildTitles ();
+        $sqlexp = parent::buildSqlExp ();
+        $grid = parent::buildGrid ();
+        
+        $nome = reset ( $titles );
+        
         /*
         if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')  )
         {
@@ -77,523 +89,558 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $remove = true;
         }
         */
-
+        
         $i = 0;
-
-        foreach ($titles as $titulos)
+        
+        foreach ( $titles as $titulos )
         {
-
-            if((@$titulos['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
+            
+            if ((@$titulos ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
             {
-                $larg[$i] = strlen($titulos['value']);
-                $i++;
+                $larg [$i] = strlen ( $titulos ['value'] );
+                $i ++;
             }
         }
-
-
+        
 
         $i = 0;
-
-        if(is_array($sqlexp))
+        
+        if (is_array ( $sqlexp ))
         {
-            foreach ($sqlexp as $sql)
+            foreach ( $sqlexp as $sql )
             {
-                if(($sql['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='') || $this->info['hRow']['title'] =='')
+                if (($sql ['field'] != $this->info ['hRow'] ['field'] && $this->info ['hRow'] ['title'] != '') || $this->info ['hRow'] ['title'] == '')
                 {
-                    if($larg[$i]<strlen($sql['value']))
+                    if ($larg [$i] < strlen ( $sql ['value'] ))
                     {
-                        $larg[$i] = strlen($sql['value']);
+                        $larg [$i] = strlen ( $sql ['value'] );
                     }
-                    $i++;
+                    $i ++;
                 }
             }
         }
-
-
-
-
+        
 
         /////////////////
         /////////////////
         /////////////////
-        if(@$this->info['hRow']['title']!='')
+        if (@$this->info ['hRow'] ['title'] != '')
         {
             $bar = $grid;
-
-            $hbar = trim($this->info['hRow']['field']);
-
-            $p=0;
-            foreach ($grid[0] as $value)
+            
+            $hbar = trim ( $this->info ['hRow'] ['field'] );
+            
+            $p = 0;
+            foreach ( $grid [0] as $value )
             {
-                if($value['field'] == $hbar)
+                if ($value ['field'] == $hbar)
                 {
                     $hRowIndex = $p;
                 }
-
-                $p++;
+                
+                $p ++;
             }
             $aa = 0;
         }
-
+        
 
         //////////////
         //////////////
         //////////////
+        
 
 
-
-
-        foreach ($grid as $row)
+        foreach ( $grid as $row )
         {
+            
+            $i = 0;
+            
+            $a = 1;
+            foreach ( $row as $value )
+            {
+                
 
-            $i=0;
+                $value ['value'] = strip_tags ( $value ['value'] );
+                
 
-            $a=1;
-            foreach ($row as $value) {
-
-
-                $value['value'] = strip_tags($value['value']);
-
-
-                if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
-                || @$this->info['hRow']['title'] =='')
+                if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                 {
-
-                    if($larg[$i]<strlen($value['value']))
+                    
+                    if ($larg [$i] < strlen ( $value ['value'] ))
                     {
-                        $larg[$i] = strlen($value['value']);
+                        $larg [$i] = strlen ( $value ['value'] );
                     }
-                    $i++;
+                    $i ++;
                 }
-                $a++;
+                $a ++;
             }
-            $i++;
-
+            $i ++;
+        
         }
-
+        
         return $larg;
-
+    
     }
-
 
 
     function deploy()
     {
-        $this->setPagination(100000);
-        parent::deploy();
 
+        $this->setPagination ( 0 );
+        parent::deploy ();
+        
         $la = '';
-
-        if(!$this->temp['pdf'] instanceof Bvb_Grid_Template_Pdf_Pdf )
+        
+        if (! $this->temp ['pdf'] instanceof Bvb_Grid_Template_Pdf_Pdf)
         {
-            $this->setTemplate('pdf','pdf');
+            $this->setTemplate ( 'pdf', 'pdf' );
         }
+        
 
+        $this->pdfInfo = $this->temp ['pdf']->info ();
+        $this->style = $this->temp ['pdf']->style ();
+        
 
-        $this->pdfInfo = $this->temp['pdf']->info();
-        $this->style = $this->temp['pdf']->style();
+        $larg = self::calculateCellSize ();
+        $total_len = array_sum ( $larg );
+        
 
-
-        $larg = self::calculateCellSize();
-        $total_len = array_sum($larg);
-
-
-        if($total_len<50)
+        if ($total_len < 50)
         {
             $cellFontSize = 8;
-        }else{
+        } else
+        {
             $cellFontSize = 7;
         }
-
+        
         //set font
+        
 
 
         /////////////
-
-        $titulos = parent::buildTitles();
-        $sql = parent::buildSqlExp();
-        $grid = parent::BuildGrid();
+        
 
 
-        if(strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE' && strtoupper($this->pdfInfo['size'])=='A4' )
+        $titulos = parent::buildTitles ();
+        $sql = parent::buildSqlExp ();
+        $grid = parent::BuildGrid ();
+        
+
+        if (strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->pdfInfo ['size'] ) == 'A4')
         {
-            $totalPaginas = ceil(count($grid)/26);
-
-        }elseif(strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE' && strtoupper($this->pdfInfo['size'])=='LETTER' )
+            $totalPaginas = ceil ( count ( $grid ) / 26 );
+        
+        } elseif (strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->pdfInfo ['size'] ) == 'LETTER')
         {
-            $totalPaginas = ceil(count($grid)/27);
-
-        }else{
-            $totalPaginas = ceil(count($grid)/37);
-
+            $totalPaginas = ceil ( count ( $grid ) / 27 );
+        
+        } else
+        {
+            $totalPaginas = ceil ( count ( $grid ) / 37 );
+        
         }
+        
+        if ($totalPaginas < 1)
+        {
+            $totalPaginas = 1;
+        }
+        
 
-        if($totalPaginas<1){$totalPaginas=1;}
-
-
-
-        $pdf = new Zend_Pdf();
-
+        $pdf = new Zend_Pdf ( );
+        
         // Create new Style
-        $style = new Zend_Pdf_Style();
-        $style->setFillColor(new Zend_Pdf_Color_Html($this->style['lines']));
-
-        $topo = new Zend_Pdf_Style();
-        $topo->setFillColor(new Zend_Pdf_Color_Html($this->style['header']));
-
-        $td = new Zend_Pdf_Style();
-        $td->setFillColor(new Zend_Pdf_Color_Html($this->style['row2']));
-
-        $td2 = new Zend_Pdf_Style();
-        $td2->setFillColor(new Zend_Pdf_Color_Html($this->style['row1']));
-
-        $hRowStyle = new Zend_Pdf_Style();
-        $hRowStyle->setFillColor(new Zend_Pdf_Color_Html($this->style['hrow']));
-
-        $styleSql = new Zend_Pdf_Style();
-        $styleSql->setFillColor(new Zend_Pdf_Color_Html($this->style['sqlexp']));
-
-        $styleText = new Zend_Pdf_Style();
-        $styleText->setFillColor(new Zend_Pdf_Color_Html($this->style['text']));
-
+        $style = new Zend_Pdf_Style ( );
+        $style->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['lines'] ) );
+        
+        $topo = new Zend_Pdf_Style ( );
+        $topo->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['header'] ) );
+        
+        $td = new Zend_Pdf_Style ( );
+        $td->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['row2'] ) );
+        
+        $td2 = new Zend_Pdf_Style ( );
+        $td2->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['row1'] ) );
+        
+        $hRowStyle = new Zend_Pdf_Style ( );
+        $hRowStyle->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['hrow'] ) );
+        
+        $styleSql = new Zend_Pdf_Style ( );
+        $styleSql->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['sqlexp'] ) );
+        
+        $styleText = new Zend_Pdf_Style ( );
+        $styleText->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['text'] ) );
+        
         // Add new page to the document
+        
 
-        if(strtoupper($this->pdfInfo['size']='LETTER') && strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE')
+
+        if (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
         {
-            $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
-        }elseif(strtoupper($this->pdfInfo['size']='LETTER') && strtoupper($this->pdfInfo['orientation'])!='LANDSCAPE')
+            $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
+        } elseif (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) != 'LANDSCAPE')
         {
-            $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER);
-        }elseif(strtoupper($this->pdfInfo['size']!='A4') && strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE')
+            $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER );
+        } elseif (strtoupper ( $this->pdfInfo ['size'] != 'A4' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
         {
-            $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4_LANDSCAPE  );
-        }else {
-            $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4 );
+            $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4_LANDSCAPE );
+        } else
+        {
+            $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4 );
         }
+        
 
+        $page->setStyle ( $style );
+        $pdf->pages [] = $page;
+        
 
-        $page->setStyle($style);
-        $pdf->pages[] = $page;
-
-
-
-        $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-        $page->setFont($font, 14);
+        $font = Zend_Pdf_Font::fontWithName ( Zend_Pdf_Font::FONT_HELVETICA );
+        $page->setFont ( $font, 14 );
         //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        
 
 
-        if(file_exists($this->pdfInfo['logo']))
+        if (file_exists ( $this->pdfInfo ['logo'] ))
         {
-            $image = Zend_Pdf_Image::imageWithPath($this->pdfInfo['logo']);
-
-            list($width, $height, $type, $attr) = getimagesize($this->pdfInfo['logo']);
-
-            $page->drawImage($image, 40,$page->getHeight() - $height -40 ,40 + $width,$page->getHeight()-40);
+            $image = Zend_Pdf_Image::imageWithPath ( $this->pdfInfo ['logo'] );
+            
+            list ( $width, $height, $type, $attr ) = getimagesize ( $this->pdfInfo ['logo'] );
+            
+            $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
         }
-
-        $page->drawText($this->pdfInfo['title'],$width + 70,$page->getHeight() -70);
-        $page->setFont($font, $cellFontSize);
-
-        $page->drawText($this->pdfInfo['subtitle'],$width + 70,$page->getHeight() -80);
-
+        
+        $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70 );
+        $page->setFont ( $font, $cellFontSize );
+        
+        $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 );
+        
         //Iniciar a contagem de páginas
         $pagina = 1;
+        
 
-
-
-        $page->drawText($this->pdfInfo['footer'],40,40);
-        if(@$this->pdfInfo['noPagination']!=1)
+        $page->drawText ( $this->pdfInfo ['footer'], 40, 40 );
+        if (@$this->pdfInfo ['noPagination'] != 1)
         {
-            $page->drawText($this->pdfInfo['page'].' '.$pagina.'/'.$totalPaginas,$page->getWidth()-(strlen($this->pdfInfo['page'])*$cellFontSize)-50,40);
+            $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 );
         }
+        
 
-
-        $page->setFont($font, $cellFontSize);
-        $pl = $page->getWidth()-80;
-
+        $page->setFont ( $font, $cellFontSize );
+        $pl = $page->getWidth () - 80;
+        
 
         $i = 0;
-
-        foreach ($larg as $final)
+        
+        foreach ( $larg as $final )
         {
-            $cell[$i] = round($final*$pl/$total_len);
-            $i++;
+            $cell [$i] = round ( $final * $pl / $total_len );
+            $i ++;
         }
+        
 
-
-
-        $nome = reset($titulos);
-
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')   )
+        $nome = reset ( $titulos );
+        
+        if ($nome ['field'] == 'id' || strpos ( $nome ['field'], '_id' ) || strpos ( $nome ['field'], 'id_' ) || strpos ( $nome ['field'], '.id' ))
         {
-            @array_shift($titulos);
-            @array_shift($sql);
+            @array_shift ( $titulos );
+            @array_shift ( $sql );
             $remove = true;
         }
-
-        $total_celulas = count($titulos);
-        if(@$this->info['hRow']['title'] !='')
+        
+        $total_celulas = count ( $titulos );
+        if (@$this->info ['hRow'] ['title'] != '')
         {
-            $total_celulas--;
+            $total_celulas --;
         }
-        $largura = ($page->getWidth()-80)/$total_celulas;
-        $altura = $page->getHeight() - 120;
+        $largura = ($page->getWidth () - 80) / $total_celulas;
+        $altura = $page->getHeight () - 120;
+        
 
+        $i = 0;
+        $page->setFont ( $font, $cellFontSize + 1 );
+        foreach ( $titulos as $value )
+        {
+            
 
-
-        $i=0;
-        $page->setFont($font, $cellFontSize + 1);
-        foreach ($titulos as $value) {
-
-
-
-            if(($value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
+            if (($value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
             {
+                
+                if (( int ) $la == 0)
+                {
+                    $largura1 = 40;
+                } else
+                {
+                    $largura1 = $cell [$i - 1] + $largura1;
+                }
+                
 
-                if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
-
-
-                $page->setStyle($topo);
-                $page->drawRectangle($largura1, $altura -4, $largura1 + $cell[$i] + 1, $altura+12);
-                $page->setStyle($styleText);
-                $page->drawText($value['value'], $largura1 +2, $altura);
+                $page->setStyle ( $topo );
+                $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
+                $page->setStyle ( $styleText );
+                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
                 $la = $largura1;
-
-                $i++;
+                
+                $i ++;
             }
-
+        
         }
-        $page->setFont($font, $cellFontSize);
+        $page->setFont ( $font, $cellFontSize );
+        
 
-
-        $page->setStyle($style);
-
-
+        $page->setStyle ( $style );
+        
 
         /////////////
+        
 
 
-        if(is_array($grid))
+        if (is_array ( $grid ))
         {
+            
 
-
             /////////////////
             /////////////////
             /////////////////
-            if(@$this->info['hRow']['title']!='')
+            if (@$this->info ['hRow'] ['title'] != '')
             {
                 $bar = $grid;
-
-                $hbar = trim($this->info['hRow']['field']);
-
-                $p=0;
-                foreach ($grid[0] as $value)
+                
+                $hbar = trim ( $this->info ['hRow'] ['field'] );
+                
+                $p = 0;
+                foreach ( $grid [0] as $value )
                 {
-                    if($value['field'] == $hbar)
+                    if ($value ['field'] == $hbar)
                     {
                         $hRowIndex = $p;
                     }
-
-                    $p++;
+                    
+                    $p ++;
                 }
                 $aa = 0;
             }
-
+            
             //////////////
             //////////////
             //////////////
+            
 
-            $ia=0;
 
+            $ia = 0;
+            
             $aa = 0;
-            foreach ($grid as $value)
+            foreach ( $grid as $value )
             {
-
-                if($altura<=80)
+                
+                if ($altura <= 80)
                 {
                     // Add new page to the document
-                    if(strtoupper($this->pdfInfo['size']='LETTER') && strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE')
+                    if (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
                     {
-                        $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
-                    }elseif(strtoupper($this->pdfInfo['size']='LETTER') && strtoupper($this->pdfInfo['orientation'])!='LANDSCAPE')
+                        $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
+                    } elseif (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) != 'LANDSCAPE')
                     {
-                        $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER);
-                    }elseif(strtoupper($this->pdfInfo['size']!='A4') && strtoupper($this->pdfInfo['orientation'])=='LANDSCAPE')
+                        $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER );
+                    } elseif (strtoupper ( $this->pdfInfo ['size'] != 'A4' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
                     {
-                        $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4_LANDSCAPE  );
-                    }else {
-                        $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4 );
+                        $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4_LANDSCAPE );
+                    } else
+                    {
+                        $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4 );
                     }
+                    
 
-
-                    $page->setStyle($style);
-                    $pdf->pages[] = $page;
-                    $pagina++;
-
-                    $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-
-                    $page->setFont($font, 14);
-
+                    $page->setStyle ( $style );
+                    $pdf->pages [] = $page;
+                    $pagina ++;
+                    
+                    $font = Zend_Pdf_Font::fontWithName ( Zend_Pdf_Font::FONT_HELVETICA );
+                    
+                    $page->setFont ( $font, 14 );
+                    
 
                     //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-                    if(file_exists($this->pdfInfo['logo']))
+                    if (file_exists ( $this->pdfInfo ['logo'] ))
                     {
-                        $image = Zend_Pdf_Image::imageWithPath($this->pdfInfo['logo']);
-                        list($width, $height, $type, $attr) = getimagesize($this->pdfInfo['logo']);
-                        $page->drawImage($image, 40,$page->getHeight() - $height -40 ,40 + $width,$page->getHeight()-40);
+                        $image = Zend_Pdf_Image::imageWithPath ( $this->pdfInfo ['logo'] );
+                        list ( $width, $height, $type, $attr ) = getimagesize ( $this->pdfInfo ['logo'] );
+                        $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
                     }
-
-                    $page->drawText($this->pdfInfo['title'],$width + 70,$page->getHeight() -70);
-                    $page->setFont($font, $cellFontSize);
-
-                    $page->drawText($this->pdfInfo['subtitle'],$width + 70,$page->getHeight() -80);
-
+                    
+                    $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70 );
+                    $page->setFont ( $font, $cellFontSize );
+                    
+                    $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 );
+                    
 
                     //set font
-                    $altura = $page->getHeight()-120;
-
-                    $page->drawText($this->pdfInfo['footer'],40,40);
-                    if($this->pdfInfo['noPagination']!=1)
+                    $altura = $page->getHeight () - 120;
+                    
+                    $page->drawText ( $this->pdfInfo ['footer'], 40, 40 );
+                    if ($this->pdfInfo ['noPagination'] != 1)
                     {
-                        $page->drawText($this->pdfInfo['page'].' '.$pagina.'/'.$totalPaginas,$page->getWidth()-(strlen($this->pdfInfo['page'])*$cellFontSize)-50,40);
+                        $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 );
                     }
-
+                    
 
                     //Colocar novamento os títulos em cada página
-                    reset($titulos);
-                    $i=0;
+                    reset ( $titulos );
+                    $i = 0;
                     $largura1 = 40;
-                    $page->setFont($font, $cellFontSize + 1);
-                    foreach ($titulos as $title) {
-
-                        if(($title['field']!=$this->info['hRow']['field'] && $this->info['hRow']['title'] !='') || $this->info['hRow']['title'] =='')
+                    $page->setFont ( $font, $cellFontSize + 1 );
+                    foreach ( $titulos as $title )
+                    {
+                        
+                        if (($title ['field'] != $this->info ['hRow'] ['field'] && $this->info ['hRow'] ['title'] != '') || $this->info ['hRow'] ['title'] == '')
                         {
-
-                            if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
-
-                            $page->setStyle($topo);
-                            $page->drawRectangle($largura1, $altura -4, $largura1 + $cell[$i]+1, $altura+12);
-                            $page->setStyle($style);
-                            $page->drawText($title['value'], $largura1 +2, $altura);
+                            
+                            if (( int ) $la == 0)
+                            {
+                                $largura1 = 40;
+                            } else
+                            {
+                                $largura1 = $cell [$i - 1] + $largura1;
+                            }
+                            
+                            $page->setStyle ( $topo );
+                            $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
+                            $page->setStyle ( $style );
+                            $page->drawText ( $title ['value'], $largura1 + 2, $altura );
                             $la = $largura1;
-
-                            $i++;
+                            
+                            $i ++;
                         }
                     }
-                    $page->setFont($font, $cellFontSize);
+                    $page->setFont ( $font, $cellFontSize );
                 }
-
-
+                
 
                 $la = 0;
                 $altura = $altura - 16;
-                $i=0;
-                $tdf = $ia%2?$td:$td2;
-
-                $a=1;
-
+                $i = 0;
+                $tdf = $ia % 2 ? $td : $td2;
+                
+                $a = 1;
+                
 
                 ////////////
                 ////////////
                 //A linha horizontal
-                if(@$this->info['hRow']['title']!='')
+                if (@$this->info ['hRow'] ['title'] != '')
                 {
-
-                    if($bar[$aa][$hRowIndex]['value'] != $bar[$aa-1][$hRowIndex]['value'])
+                    
+                    if ($bar [$aa] [$hRowIndex] ['value'] != $bar [$aa - 1] [$hRowIndex] ['value'])
                     {
-
-                        $centrar = $page->getWidth()-80;
-                        $centrar = round($centrar/2) + 30;
-
-                        if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
-
-                        $page->setStyle($hRowStyle);
-                        $page->drawRectangle($largura1,$altura -4,$page->getWidth()-40,$altura+12);
-                        $page->setStyle($styleText);
-                        $page->drawText($bar[$aa][$hRowIndex]['value'], $centrar, $altura);
+                        
+                        $centrar = $page->getWidth () - 80;
+                        $centrar = round ( $centrar / 2 ) + 30;
+                        
+                        if (( int ) $la == 0)
+                        {
+                            $largura1 = 40;
+                        } else
+                        {
+                            $largura1 = $cell [$i - 1] + $largura1;
+                        }
+                        
+                        $page->setStyle ( $hRowStyle );
+                        $page->drawRectangle ( $largura1, $altura - 4, $page->getWidth () - 40, $altura + 12 );
+                        $page->setStyle ( $styleText );
+                        $page->drawText ( $bar [$aa] [$hRowIndex] ['value'], $centrar, $altura );
                         $la = 0;
-                        $altura = $altura-16;
-
+                        $altura = $altura - 16;
+                    
                     }
                 }
-
+                
                 ////////////
                 ////////////
+                
 
 
-                foreach ($value as $value1) {
+                foreach ( $value as $value1 )
+                {
+                    
+                    $value1 ['value'] = strip_tags ( $value1 ['value'] );
+                    
 
-                    $value1['value']  = strip_tags($value1['value']);
-
-
-                    if(($value1['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
-                    || @$this->info['hRow']['title'] =='')
+                    if (($value1 ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                     {
+                        
 
-
-                        if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
-
-                        $page->setStyle($tdf);
-                        $page->drawRectangle($largura1,$altura -4,$largura1 + $cell[$i]+1,$altura+12);
-                        $page->setStyle($styleText);
-                        $page->drawText($value1['value'], $largura1+2, $altura);
-
+                        if (( int ) $la == 0)
+                        {
+                            $largura1 = 40;
+                        } else
+                        {
+                            $largura1 = $cell [$i - 1] + $largura1;
+                        }
+                        
+                        $page->setStyle ( $tdf );
+                        $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
+                        $page->setStyle ( $styleText );
+                        $page->drawText ( $value1 ['value'], $largura1 + 2, $altura );
+                        
                         $la = $largura1;
-                        $i++;
+                        $i ++;
                     }
-
-                    $a++;
+                    
+                    $a ++;
                 }
-
-                $aa++;
-                $ia++;
+                
+                $aa ++;
+                $ia ++;
             }
         }
-
-
+        
 
         /////////////
+        
+
 
         $la = 0;
         $altura = $altura - 16;
-        $i=0;
-
-        if(is_array($sql)){
-            foreach ($sql as $value) {
-
-                if((int)$la==0){$largura1=40;}else{$largura1 = $cell[$i-1] + $largura1;}
-
-                $page->setStyle($styleSql);
-                $page->drawRectangle($largura1, $altura -4, $largura1 + $cell[$i], $altura+12);
-                $page->setStyle($styleText);
-                $page->drawText($value['value'], $largura1 +2, $altura);
+        $i = 0;
+        
+        if (is_array ( $sql ))
+        {
+            foreach ( $sql as $value )
+            {
+                
+                if (( int ) $la == 0)
+                {
+                    $largura1 = 40;
+                } else
+                {
+                    $largura1 = $cell [$i - 1] + $largura1;
+                }
+                
+                $page->setStyle ( $styleSql );
+                $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i], $altura + 12 );
+                $page->setStyle ( $styleText );
+                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
                 $la = $largura1;
-
+                
                 $la = $largura1;
-                $i++;
+                $i ++;
             }
         }
+        
 
-
-        if(file_exists($this->dir.$this->title.'.pdf'))
+        $pdf->save ( $this->dir . $this->title . '.pdf' );
+        
+        if (in_array ( 'download', $this->options ))
         {
-            $data = date('d-m-Y H-i-s');
-            rename($this->dir.$this->title.'.pdf',$this->dir.$this->title.'-'.$data.'.pdf');
+            header ( 'Content-type: application/pdf' );
+            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.pdf"' );
+            readfile ( $this->dir . $this->title . '.pdf' );
         }
-
-
-        $pdf->save($this->dir.$this->title.'.pdf');
-
-
-        header('Content-type: application/pdf');
-
-        // It will be called downloaded.pdf
-        header('Content-Disposition: attachment; filename="'.$this->title.'.pdf"');
-        readfile($this->dir.$this->title.'.pdf');
-        unlink($this->dir.$this->title.'.pdf');
-        die();
-
-        #return $grid;
+        
+        if (! in_array ( 'save', $this->options ))
+        {
+            unlink ( $this->dir . $this->title . '.pdf' );
+        }
+        
+        die ();
     }
 
 

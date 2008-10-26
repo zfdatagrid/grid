@@ -61,7 +61,7 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     protected $_formatter;
-    
+
     
     protected $pagination = 15;
 
@@ -71,9 +71,11 @@ class Bvb_Grid_DataGrid
      *
      * @var unknown_type
      */
-    public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
+    # public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
+    
 
-    # public $export = array('pdf','word','excel','print','xml','csv');
+    public $export = array ('pdf', 'word','wordx', 'excel', 'print', 'xml', 'csv' );
+
     /**
      * [PT] Toda a informação que não está ligada com a base de dados
      * [EN] All info that is not directly related to the database
@@ -1057,24 +1059,23 @@ class Bvb_Grid_DataGrid
         {
             if (is_array ( $this->info ['limit'] ))
             {
-                $limit = " LIMIT ". $this->info ['limit'] [0] . ',' . $this->info ['limit'] [1];
+                $limit = " LIMIT " . $this->info ['limit'] [0] . ',' . $this->info ['limit'] [1];
             } else
             {
-                $limit = " LIMIT ". $this->info ['limit'];
+                $limit = " LIMIT " . $this->info ['limit'];
             }
-        } elseif($this->pagination>0)
+        } elseif ($this->pagination > 0)
         {
-            $limit = " LIMIT ". $inicio.  " , $this->pagination";
-        }else{
+            $limit = " LIMIT " . $inicio . " , $this->pagination";
+        } else
+        {
             $limit = '';
         }
         
+
+        $final = "$groupBy $having $query_order  $limit ";
         
 
-        $final =  "$groupBy $having $query_order  $limit ";
-        
-
-    
         return $final;
     }
 
@@ -1592,14 +1593,11 @@ class Bvb_Grid_DataGrid
          * [PT] Para criamos as variaveis a substituir
          */
         $extra_fields = $this->extra_fields;
-        if (is_array ( $extra_fields ))
-        {
-            foreach ( $extra_fields as $value )
-            {
-                $replace [] = $value ['decorator'];
-            }
-        }
+        
+        
         $search = $this->map_array ( $this->_fields, 'prepare_replace' );
+        
+        
         foreach ( $this->_fields as $field )
         {
             $fields_duble [] = $field;
@@ -1611,6 +1609,8 @@ class Bvb_Grid_DataGrid
                 $fields [] = $field;
             }
         }
+        
+        
         $i = 0;
         foreach ( $this->_result as $dados )
         {
@@ -1641,8 +1641,13 @@ class Bvb_Grid_DataGrid
             $integralFields = array_keys ( $this->removeAsFromFields () );
             foreach ( $fields as $campos )
             {
+                
+                
                 $campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
                 $campos = trim ( $campos );
+                
+                
+                
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ))
                 {
                     $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
@@ -1650,23 +1655,36 @@ class Bvb_Grid_DataGrid
                 {
                     $new_value = htmlspecialchars ( $dados->$campos );
                 }
+                
+                
+                
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ))
                 {
                     $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
                     $new_value = eval ( 'return ' . $evalf );
                 }
+                
+                
+                
                 //[PT]Aplicar o formato da célula
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ))
                 {
                     $new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
                 }
+                
+                
+                
                 if (! isset ( $this->data ['fields'] [$fields_duble [$is]] ['hide'] ))
                 {
                     $fieldClass = isset ( $this->data ['fields'] [$fields_duble [$is]] ['class'] ) ? $this->data ['fields'] [$fields_duble [$is]] ['class'] : '';
                     $class = isset ( $class ) ? $class : '';
                     $return [$i] [] = @array ('class' => $class . " " . $fieldClass, 'value' => stripslashes ( $new_value ), 'field' => $integralFields [$is] );
                 }
+                
+                
                 $is ++;
+                
+                
             }
             /**
              * Deal with extra fields from the right

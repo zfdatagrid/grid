@@ -1,4 +1,7 @@
 <?php
+
+
+
 /**
  * Mascker
  *
@@ -21,7 +24,15 @@
 class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
 {
 
-    protected  $output = 'xml';
+    protected $dir;
+
+    protected $title;
+
+    protected $options = array ();
+    
+    protected $output = 'xml';
+
+
     /**
      * [EN] The __construct function receives the db adapter. All information related to the
      * [EN] URL is also processed here
@@ -31,11 +42,23 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
      *
      * @param array $data
      */
-    function __construct ($db)
+     function __construct($db, $title, $dir, $options = array('download'))
     {
-        parent::__construct($db);
 
+      
+        if (! in_array ( 'excel', $this->export ))
+        {
+            echo $this->__ ( "You dont' have permission to export the results to this format" );
+            die ();
+        }
+        
+        $this->dir = rtrim ( $dir, "/" ) . "/";
+        $this->title = $title;
+        $this->options = $options;
+        parent::__construct ( $db );
+    
     }
+
 
     /**
      * [Para podemros utiliza]
@@ -43,91 +66,117 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-
-    function __set($var,$value)
+    
+    function __set($var, $value)
     {
-        parent::__set($var,$value);
+
+        parent::__set ( $var, $value );
     }
+
 
     function buildTitltesXml($titles)
     {
 
         $grid .= "<fields>\n";
-
-        foreach ($titles as $title) {
-
-            $grid .= "<".$title['field']."><![CDATA[" . $title['value'] . "]]></".$title['field'].">\n";
-
+        
+        foreach ( $titles as $title )
+        {
+            
+            $grid .= "<" . $title ['field'] . "><![CDATA[" . $title ['value'] . "]]></" . $title ['field'] . ">\n";
+        
         }
-
+        
         $grid .= "</fields>\n";
-
+        
         return $grid;
-
+    
     }
+
 
     function buildSqlexpXml($sql)
     {
-        if(is_array($sql))
+
+        if (is_array ( $sql ))
         {
-        $grid .="<sqlexp>\n";
+            $grid .= "<sqlexp>\n";
+            
 
-       
-            foreach ($sql as $exp) {
-                $grid .="<".$exp['field']."><![CDATA[". $exp['value'] ."]]></".$exp['field'].">\n";;
+            foreach ( $sql as $exp )
+            {
+                $grid .= "<" . $exp ['field'] . "><![CDATA[" . $exp ['value'] . "]]></" . $exp ['field'] . ">\n";
+                ;
             }
-
-        $grid .="</sqlexp>\n";
+            
+            $grid .= "</sqlexp>\n";
         }
-
+        
         return $grid;
-
+    
     }
 
 
     function buildGridXml($grids)
     {
-        $grid .="<results>\n";
 
+        $grid .= "<results>\n";
+        
 
-        foreach ($grids as $value) {
-            $i++;
-            $grid .="<row>\n";
-            foreach ($value as $final) {
-
+        foreach ( $grids as $value )
+        {
+            $i ++;
+            $grid .= "<row>\n";
+            foreach ( $value as $final )
+            {
+                
                 #$final['value']  = strip_tags($final['value']);
+                
 
-                $grid .="<".$final['field']."><![CDATA[" . $final['value'] . "]]></".$final['field'].">\n";
+                $grid .= "<" . $final ['field'] . "><![CDATA[" . $final ['value'] . "]]></" . $final ['field'] . ">\n";
             }
-            $grid .="</row>\n";
+            $grid .= "</row>\n";
         }
-
-        $grid .="</results>\n";
-
+        
+        $grid .= "</results>\n";
+        
 
         return $grid;
-
+    
     }
 
 
     function deploy()
     {
-         
-        $this->setPagination(10000000000);
-        parent::deploy();
 
-        header("Content-type: application/xml");
-        $grid .='<?xml version="1.0" encoding="UTF-8"?>'."\n";
-        $grid .="<grid>\n";
+        $this->setPagination ( 0 );
+        parent::deploy ();
+        
+       
+        $grid .= '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $grid .= "<grid>\n";
+        
+        $grid .= self::buildTitltesXml ( parent::buildTitles () );
+        $grid .= self::buildGridXml ( parent::buildGrid () );
+        $grid .= self::buildSqlexpXml ( parent::buildSqlExp () );
+        
+        $grid .= "</grid>";
+        
+        file_put_contents ( $this->dir . $this->title . ".xml", $grid );
+        
+        
+        if (in_array ( 'download', $this->options ))
+        {
+            header ( "Content-type: application/xml" );
+            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xml"' );
+            readfile ( $this->dir . $this->title . '.xml' );
+        }
+        
 
-        $grid .= self::buildTitltesXml(parent::buildTitles());
-        $grid .= self::buildGridXml(parent::buildGrid());
-        $grid .= self::buildSqlexpXml(parent::buildSqlExp());
-
-        $grid .="</grid>";
-
-        echo $grid;
-        die();
+        if (! in_array ( 'save', $this->options ))
+        {
+            unlink ( $this->dir . $this->title . '.xml' );
+        }
+        
+        die ();
     }
 
 }

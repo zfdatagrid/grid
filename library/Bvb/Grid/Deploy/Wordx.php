@@ -29,18 +29,22 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
     
     public $title;
 
+    protected $options = array ();
+
     public $wordInfo;
 
     public $style;
 
     public $dir;
 
+    private $inicialDir;
+
     protected $templateDir;
 
     protected $output = 'word';
 
 
-    function __construct($db, $title, $dir)
+    function __construct($db, $title, $dir, $options = array('download'))
     {
 
         
@@ -50,9 +54,12 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
             die ();
         }
         
-        $this->title = $title;
-        
         $this->dir = rtrim ( $dir, "/" ) . "/";
+        $this->title = $title;
+        $this->options = $options;
+        $this->inicialDir = $this->dir;
+        
+
         parent::__construct ( $db );
         
         $this->setTemplate ( 'wordx', 'wordx' );
@@ -158,6 +165,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
     // ------------------------------------------------------------
     
 
+
     /**
      * [PT] Remove direcotiros e subdirectorios
      *
@@ -257,17 +265,19 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
     function deploy()
     {
 
-        $this->setPagination ( 10000000 );
+        $this->setPagination ( 0 );
         
         parent::deploy ();
         
 
         if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx)
         {
-            $this->setTemplate ( 'word', 'word' );
+            $t = $this->setTemplate ( 'wordx', 'wordx' );
         }
         
-        $this->templateDir = explode ( '/', $this->templateInfo ['dir'] );
+        $this->templateDir = explode ( '_', get_class () );
+        
+
         array_pop ( $this->templateDir );
         
         $this->templateDir = ucfirst ( end ( $this->templateDir ) );
@@ -277,8 +287,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         $this->dir = rtrim ( $this->dir, '/' ) . '/' . ucfirst ( $this->templateInfo ['name'] ) . '/';
         
 
-        $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . $this->templateInfo ['dir'] . rtrim ( ucfirst ( $this->templateInfo ['name'] ), '/' ) . '/';
+        $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . str_replace ( '_', '/', get_class ( $this->temp ['wordx'] ) ) . '/';
         
+
         $this->deldir ( $this->dir );
         
         $this->copyDir ( $pathTemplate, $this->dir );
@@ -300,6 +311,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
         #O HEADER
         
+
 
         if (file_exists ( $this->wordInfo ['logo'] ))
         {
@@ -330,6 +342,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         /////////////////////////
         
 
+
         #END HEADER
         
 
@@ -345,14 +358,8 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
 
         #START DOCUMENT.XML
-        /*
-        if ($nome ['field'] == 'id' || strpos ( $nome ['field'], '_id' ) || strpos ( $nome ['field'], 'id_' ) || strpos ( $nome ['field'], '.id' )) {
-            @array_shift ( $titles );
-            @array_shift ( $sql );
+        
 
-            $remove = true;
-        }
-*/
         $xml = $this->temp ['wordx']->globalStart ();
         
         $xml .= $this->temp ['wordx']->titlesStart ();
@@ -424,6 +431,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
                 ////////////
                 
 
+
                 $xml .= $this->temp ['wordx']->loopStart ();
                 
                 $a = 1;
@@ -462,15 +470,8 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         $xml .= $this->temp ['wordx']->globalEnd ();
         
 
-        /*
-        if (file_exists ( $this->dir . $this->title . '.xml' )) {
-        $data = date ( 'd-m-Y H\:i\:s' );
-        rename ( $this->dir . $this->title . '.xml', $this->dir . $this->title . '-' . $data . '.xml' );
-        }
-        */
         file_put_contents ( $this->dir . "word/document.xml", $xml );
         
-
         $final = $this->scan_directory_recursively ( $this->dir );
         $f = explode ( '|', $this->zipPaths ( $final ) );
         array_pop ( $f );
@@ -494,15 +495,23 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         $zip->close ();
         
 
-        #rename($filename,'media/'.$this->title.".docx");
+        rename ( $filename, $this->inicialDir . $this->title . '.docx' );
         
 
-
-        header ( 'Content-type: application/word' );
-        header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
-        readfile ( $filename );
+        if (in_array ( 'download', $this->options ))
+        {
+            header ( 'Content-type: application/word' );
+            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
+            readfile (  $this->inicialDir . $this->title . '.docx' );
+        }
         
-
+        if (! in_array ( 'save', $this->options ))
+        {
+            unlink ( $this->inicialDir . $this->title . '.docx');
+        }
+        
+        $this->deldir($this->dir );
+        
         die ();
     }
 

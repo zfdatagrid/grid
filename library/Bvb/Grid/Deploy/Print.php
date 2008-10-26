@@ -59,7 +59,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
     function deploy()
     {
-         $this->setPagination ( 10000000 );
+         $this->setPagination ( 0 );
 
         parent::deploy();
 
