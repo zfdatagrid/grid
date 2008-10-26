@@ -1487,9 +1487,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         //[PT] Calcular o número total de páginas
         //[EN] Calculate the number of pages
+        if($this->pagination>0)
+        {
         $npaginas = ceil ( $this->_totalRecords / $ppagina );
-        
         $actual = floor ( $actual / $ppagina ) + 1;
+        }else{
+            $npaginas = 0;
+            $actual = 0;
+        }
+        
         
         if (array_key_exists ( 'ajax', $this->info ))
         {
@@ -1643,15 +1649,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             } elseif ($npaginas > 1 && count ( $this->export ) > 0)
             {
+            
+                if($this->pagination==0){$pag='';$f='';}
                 $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' to ' . $registoFinal . ' of ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             } elseif ($npaginas < 2 && count ( $this->export ) > 0)
             {
-                
+            
+                if($this->pagination==0){$pag='';$f='';}
                 $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, '', '', $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             } elseif (count ( $this->export ) == 0)
             {
+                
+                if($this->pagination==0){$pag='';$f='';}
                 $result2 .= str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ('', $pag, $f, $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             }

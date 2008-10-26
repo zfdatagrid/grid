@@ -1025,11 +1025,6 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        if (( int ) @$this->pagination == 0)
-        {
-            $this->pagination = 15;
-        }
-        
 
         if (strlen ( $this->fieldHorizontalRow ) > 0)
         {
@@ -1067,9 +1062,11 @@ class Bvb_Grid_DataGrid
             {
                 $limit = " LIMIT ". $this->info ['limit'];
             }
-        } else
+        } elseif($this->pagination>0)
         {
             $limit = " LIMIT ". $inicio.  " , $this->pagination";
+        }else{
+            $limit = '';
         }
         
         
