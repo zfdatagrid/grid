@@ -33,7 +33,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     function globalStart()
     {
 
-        return "THis template comes from My/Template/Table/Outside.php
+        return "This template comes from My/Template/Table/Outside.php
         <table id=\"newGrid\" width=\"100%\"  align=\"center\" cellspacing=\"1\" >";
     }
 

@@ -74,7 +74,8 @@ class Bvb_Grid_DataGrid
     # public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
     
 
-    public $export = array ('pdf', 'word','wordx', 'excel', 'print', 'xml', 'csv' );
+
+    public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv' );
 
     /**
      * [PT] Toda a informação que não está ligada com a base de dados
@@ -338,8 +339,9 @@ class Bvb_Grid_DataGrid
         $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Csv', 'Bvb_Grid_Template_Csv', 'csv' );
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Xml', 'Bvb_Grid_Template_Xml', 'xml' );
     
-
     }
 
 
@@ -1594,10 +1596,10 @@ class Bvb_Grid_DataGrid
          */
         $extra_fields = $this->extra_fields;
         
-        
+
         $search = $this->map_array ( $this->_fields, 'prepare_replace' );
         
-        
+
         foreach ( $this->_fields as $field )
         {
             $fields_duble [] = $field;
@@ -1610,7 +1612,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
+
         $i = 0;
         foreach ( $this->_result as $dados )
         {
@@ -1642,12 +1644,11 @@ class Bvb_Grid_DataGrid
             foreach ( $fields as $campos )
             {
                 
-                
+
                 $campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
                 $campos = trim ( $campos );
                 
-                
-                
+
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ))
                 {
                     $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
@@ -1656,24 +1657,21 @@ class Bvb_Grid_DataGrid
                     $new_value = htmlspecialchars ( $dados->$campos );
                 }
                 
-                
-                
+
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ))
                 {
                     $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
                     $new_value = eval ( 'return ' . $evalf );
                 }
                 
-                
-                
+
                 //[PT]Aplicar o formato da célula
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ))
                 {
                     $new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
                 }
                 
-                
-                
+
                 if (! isset ( $this->data ['fields'] [$fields_duble [$is]] ['hide'] ))
                 {
                     $fieldClass = isset ( $this->data ['fields'] [$fields_duble [$is]] ['class'] ) ? $this->data ['fields'] [$fields_duble [$is]] ['class'] : '';
@@ -1681,10 +1679,10 @@ class Bvb_Grid_DataGrid
                     $return [$i] [] = @array ('class' => $class . " " . $fieldClass, 'value' => stripslashes ( $new_value ), 'field' => $integralFields [$is] );
                 }
                 
-                
+
                 $is ++;
-                
-                
+            
+
             }
             /**
              * Deal with extra fields from the right
@@ -2366,12 +2364,13 @@ class Bvb_Grid_DataGrid
     function setTemplate($template, $output = 'table', $options = array())
     {
 
+        
         $class = $this->_templates->load ( $template, $output );
         
         $this->temp [$output] = new $class ( $options );
         $this->activeTemplates [] = $output;
         
-        @$this->templateInfo = array ('name' => $template, 'options' => $options );
+        @$this->templateInfo = array ('name' => $template, 'dir' => $this->_templates->getClassPath ( $template, $output ), 'class' => $this->_templates->getClassName ( $template, $output ), 'options' => $options );
         
         return $this->temp [$output];
     

@@ -23,29 +23,29 @@ class SiteController extends Zend_Controller_Action
         switch ($export)
         {
             case 'xml' :
-                $grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'csv' :
-                $grid = new Bvb_Grid_Deploy_Csv ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Csv ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'excel' :
               
-                $grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp' ,array('download'));
                
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'word' :
-                $grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'wordx' :
-                $grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'pdf' :
-                $grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp' ,array('download','save'));
+                $grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
                 break;
             case 'print' :
@@ -183,7 +183,6 @@ class SiteController extends Zend_Controller_Action
 
     function extraAction()
     {
-
         
         $grid = $this->grid ( 'table' );
         $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )->table ( array ('c' => 'Country', 'ct' => 'City' ) )->noFilters ( 1 );
@@ -272,7 +271,7 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addFilters ( $filters );
         
-
+        
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }

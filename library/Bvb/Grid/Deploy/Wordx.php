@@ -26,7 +26,6 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
     
     public $templateInfo;
 
-    
     public $title;
 
     protected $options = array ();
@@ -62,7 +61,11 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
         parent::__construct ( $db );
         
-        $this->setTemplate ( 'wordx', 'wordx' );
+        if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx)
+        {
+            $this->setTemplate ( 'wordx', 'wordx' );
+        }
+    
     }
 
 
@@ -272,12 +275,10 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
         if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx)
         {
-            $t = $this->setTemplate ( 'wordx', 'wordx' );
+            $this->setTemplate ( 'wordx', 'wordx' );
         }
         
-        $this->templateDir = explode ( '_', get_class () );
-        
-
+        $this->templateDir = explode ( '/', $this->templateInfo ['dir'] );
         array_pop ( $this->templateDir );
         
         $this->templateDir = ucfirst ( end ( $this->templateDir ) );
@@ -286,8 +287,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         
         $this->dir = rtrim ( $this->dir, '/' ) . '/' . ucfirst ( $this->templateInfo ['name'] ) . '/';
         
-
-        $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . str_replace ( '_', '/', get_class ( $this->temp ['wordx'] ) ) . '/';
+        $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
         
 
         $this->deldir ( $this->dir );
@@ -359,6 +359,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
 
         #START DOCUMENT.XML
         
+
 
         $xml = $this->temp ['wordx']->globalStart ();
         
@@ -502,15 +503,15 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid
         {
             header ( 'Content-type: application/word' );
             header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
-            readfile (  $this->inicialDir . $this->title . '.docx' );
+            readfile ( $this->inicialDir . $this->title . '.docx' );
         }
         
         if (! in_array ( 'save', $this->options ))
         {
-            unlink ( $this->inicialDir . $this->title . '.docx');
+            unlink ( $this->inicialDir . $this->title . '.docx' );
         }
         
-        $this->deldir($this->dir );
+        $this->deldir ( $this->dir );
         
         die ();
     }
