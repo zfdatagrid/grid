@@ -72,7 +72,7 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     # public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
-    public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv','ods','odt' );
+    public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt' );
 
     /**
      * [PT] Toda a informação que não está ligada com a base de dados
@@ -407,11 +407,7 @@ class Bvb_Grid_DataGrid
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data ))
         {
-            if ($this->noMoreDataActions == 1 && $var != 'primaryKey')
-            {
-                throw new Exception ( 'When using outside sources you can not alter nothing related to the database. PE: Columns, order, from, etc' );
-            }
-            
+           
             if ($var == 'from' && ! strpos ( " ", trim ( $value ) ))
             {
                 $this->data ['from'] = trim ( $value );
@@ -511,13 +507,9 @@ class Bvb_Grid_DataGrid
     function addColumn($field, $options = array())
     {
 
-        if ($this->noMoreDataActions == 1)
-        {
-            throw new Exception ( 'When using outside sources you can not alter nothing related to the database. PE: Columns, order, from, etc' );
-        }
-        
         if (@is_array ( $this->data ['fields'] ))
         {
+            
             if (! array_key_exists ( $field, $this->data ['fields'] ))
             {
                 $this->data ['fields'] [$field] = $options;
@@ -529,7 +521,20 @@ class Bvb_Grid_DataGrid
                         $this->info ['hRow'] = array ('field' => $field, 'title' => $options ['title'] );
                     }
                 }
+                
+                if (isset ( $options ['groupBy'] ))
+                {
+                    $this->info ['groupby'] = $field;
+                }
+            
+            } else
+            {
+                
+                $this->data ['fields'] [$field] = array_merge_recursive ( $this->data ['fields'] [$field], $options );
+            
             }
+        
+
         } else
         {
             $this->data ['fields'] [$field] = $options;
@@ -812,9 +817,12 @@ class Bvb_Grid_DataGrid
 
         foreach ( $values as $value )
         {
+            
+            /*
             if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
             {
                 $sqlExp = $this->data ['fields'] [$value] ['sqlexp'];
+                
                 if (stripos ( $value, ' AS ' ))
                 {
                     $asFinal = substr ( $value, stripos ( $value, ' as' ) + 4 );
@@ -824,6 +832,8 @@ class Bvb_Grid_DataGrid
                     $asFinal = substr ( $value, stripos ( $value, ' as' ) + 5 );
                     $asValue = $value;
                 }
+                
+               
                 if (strpos ( $value, "." ))
                 {
                     $ini = substr ( $value, 0, (strpos ( $value, "." )) );
@@ -832,8 +842,27 @@ class Bvb_Grid_DataGrid
                 {
                     $fields [] = $sqlExp . '(' . $this->_db->quoteIdentifier ( $asValue ) . ') AS ' . $this->_db->quoteIdentifier ( $asValue );
                 }
+                
+                
             } else
+            
+            */
+            if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
             {
+                $sqlExp = trim($this->data ['fields'] [$value] ['sqlexp']);
+                
+                if (stripos ( $sqlExp, " AS " ))
+                {
+                    $fields [] = $sqlExp ;
+                } else
+                {
+                    $fields [] = $sqlExp . ' AS ' . str_replace('.','',$value) ;
+                }
+                
+           
+               
+            } else {
+                
                 if (stripos ( $value, ' AS ' ))
                 {
                     $asFinal = substr ( $value, stripos ( $value, ' as' ) + 4 );
@@ -1369,6 +1398,8 @@ class Bvb_Grid_DataGrid
 
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
                 
+                
+               
 
                 if ($noOrder == 1)
                 {
@@ -2252,8 +2283,7 @@ class Bvb_Grid_DataGrid
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
         
-
-
+        
         if ($this->cache ['use'] == 1)
         {
             
@@ -2362,7 +2392,7 @@ class Bvb_Grid_DataGrid
      */
     function setTemplate($template, $output = 'table', $options = array())
     {
-        
+
         $class = $this->_templates->load ( $template, $output );
         
         $this->temp [$output] = new $class ( $options );
