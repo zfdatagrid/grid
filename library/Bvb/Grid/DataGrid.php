@@ -72,10 +72,7 @@ class Bvb_Grid_DataGrid
      * @var unknown_type
      */
     # public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
-    
-
-
-    public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv' );
+    public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv','ods','odt' );
 
     /**
      * [PT] Toda a informação que não está ligada com a base de dados
@@ -341,6 +338,8 @@ class Bvb_Grid_DataGrid
         $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Csv', 'Bvb_Grid_Template_Csv', 'csv' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Xml', 'Bvb_Grid_Template_Xml', 'xml' );
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Ods', 'Bvb_Grid_Template_Ods', 'ods' );
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
     
     }
 
@@ -2363,14 +2362,13 @@ class Bvb_Grid_DataGrid
      */
     function setTemplate($template, $output = 'table', $options = array())
     {
-
         
         $class = $this->_templates->load ( $template, $output );
         
         $this->temp [$output] = new $class ( $options );
         $this->activeTemplates [] = $output;
         
-        @$this->templateInfo = array ('name' => $template, 'dir' => $this->_templates->getClassPath ( $template, $output ), 'class' => $this->_templates->getClassName ( $template, $output ), 'options' => $options );
+        $this->temp [$output]->templateInfo = array ('name' => $template, 'dir' => $this->_templates->getClassPath ( $template, $output ), 'class' => $this->_templates->getClassName ( $template, $output ), 'options' => $options );
         
         return $this->temp [$output];
     

@@ -22,6 +22,14 @@ class SiteController extends Zend_Controller_Action
         
         switch ($export)
         {
+            case 'odt' :
+                $grid = new Bvb_Grid_Deploy_Odt ( $db, 'Grid Example', 'media/temp' ,array('download'));
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
+            case 'ods' :
+                $grid = new Bvb_Grid_Deploy_Ods ( $db, 'Grid Example', 'media/temp' ,array('download'));
+                #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
+                break;
             case 'xml' :
                 $grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp' ,array('download'));
                 #$grid->cache = array('use'=>0,'instance'=>Zend_Registry::get('cache'),'tag'=>'grid');
@@ -271,6 +279,7 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addFilters ( $filters );
         
+ 
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
@@ -316,12 +325,13 @@ class SiteController extends Zend_Controller_Action
 'orientation' => '', #landscape || ''
 'page' => 'Page N.' );
         
-
-        $grid->setTemplate ( 'print', 'print', $pdf );
-        $grid->setTemplate ( 'pdf', 'pdf', $pdf );
-        $grid->setTemplate ( 'word', 'word', $pdf );
-        $grid->setTemplate ( 'wordx', 'wordx', $pdf );
-        
+//
+//        $grid->setTemplate ( 'print', 'print', $pdf );
+//        $grid->setTemplate ( 'pdf', 'pdf', $pdf );
+//        $grid->setTemplate ( 'word', 'word', $pdf );
+//        $grid->setTemplate ( 'wordx', 'wordx', $pdf );
+//        $grid->setTemplate ( 'ods', 'ods', $pdf );
+//        
 
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
