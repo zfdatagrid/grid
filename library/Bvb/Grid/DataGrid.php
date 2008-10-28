@@ -1050,7 +1050,7 @@ class Bvb_Grid_DataGrid
 
         $this->order [$order_field] = $orderf == 'ASC' ? 'DESC' : 'ASC';
         
-        
+
         if (! in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) ))
         {
             unset ( $query_order );
@@ -1060,8 +1060,6 @@ class Bvb_Grid_DataGrid
                 $query_order = " ORDER BY  " . $this->data ['order'];
             }
         }
-        
-
         
 
         if (strlen ( $this->fieldHorizontalRow ) > 0)
@@ -1296,7 +1294,7 @@ class Bvb_Grid_DataGrid
     {
 
         $ncampos = array ();
-        foreach ( $campos as $key=>$value )
+        foreach ( $campos as $key => $value )
         {
             
             if (strlen ( $value ) == 0)
@@ -1386,7 +1384,7 @@ class Bvb_Grid_DataGrid
             
             $fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
             
-            $orderFinal = strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0 ? $fieldsToOrder [$i] ['orderField'] : $titles [$i];
+            @$orderFinal = strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0 ? $fieldsToOrder [$i] ['orderField'] : $titles [$i];
             
             $order = $orderFinal == key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
             
@@ -2236,14 +2234,13 @@ class Bvb_Grid_DataGrid
         }
         
 
-        if ($this->hasGroup == 1)
+        if (@strlen ( $this->info ['groupby'] ) > 0)
         {
-            $query_count = $this->getQuery ();
+            $queryGroup = " GROUP BY " . $this->info ['groupby'];
         
-        } else
-        {
-            $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where ";
         }
+        
+        $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where " . $queryGroup;
         
 
         return $query_count;
@@ -2295,6 +2292,7 @@ class Bvb_Grid_DataGrid
         $query = $this->getQuery ();
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
+        
 
 
         if ($this->cache ['use'] == 1)
