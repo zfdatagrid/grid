@@ -64,45 +64,65 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
             $this->data ['table'] [$key] = array ('prefix' => $key, 'table' => $table ['tableName'] );
         }
         
-        
-        //A parte dos fields
-        foreach ( $parts ['columns'] as $key => $column )
+
+        if (count ( $parts ['columns'] ) == 1)
         {
             
-            if (! is_object ( $column [1] ))
+            if ($parts ['distinct']==true)
             {
-                $this->data ['columns'] [] = strlen ( $column [2] ) > 0 ? $column [0] . '.' . $column [1] . ' AS ' . $column [2] : $column [0] . '.' . $column [1];
-                if (strlen ( $column [0] ) > 0)
-                {
-                    $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
-                } else
-                {
-                    $this->data ['orderField'] [] = $column [1];
-                }
+                $this->data ['columns'] [] = ' DISTINCT('.$parts ['columns'] [0] [1].') AS  '.$parts ['columns'] [0] [0].' ';
+                $this->data ['orderField'] [] = 'pTotal';
+            } else
+            {
+                $this->data ['columns'] = $this->getFieldsFromTable ( $this->data ['table'] [$parts ['columns'] [0] [0]] ['table'], $this->data ['table'] ['prefix'] );
+            }
             
-            } elseif (is_object ( $column [1] ))
-            {
-                $this->data ['columns'] [] = $column [1] . ' AS ' . $column [2];
-                $this->data ['orderField'] [] = $column [2];
             
-            } elseif ($column [1] == '*')
-            {
-                $this->data ['columns'] = array_merge ( $this->data ['columns'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ) );
-                $this->data ['orderField'] = array_merge ( $this->data ['orderField'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ), 1 );
+        } else
+        {
+            
 
-            } elseif (null === $column [2])
+            //A parte dos fields
+            foreach ( $parts ['columns'] as $key => $column )
             {
-                $this->data ['columns'] [] = $column [1];
-                if (strlen ( $column [0] ) > 0)
+                
+                if ($column [1] == '*')
                 {
-                    $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
-                } else
+                    
+                    $this->data ['columns'] = @array_merge ( $this->data ['columns'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ) );
+                    $this->data ['orderField'] = @array_merge ( $this->data ['orderField'], $this->getFieldsFromTable ( $this->data ['table'] [$column [0]] ['table'], $column [0] ), 1 );
+                
+                } elseif (! is_object ( $column [1] ))
                 {
-                    $this->data ['orderField'] [] = $column [1];
+                    $this->data ['columns'] [] = strlen ( $column [2] ) > 0 ? $column [0] . '.' . $column [1] . ' AS ' . $column [2] : $column [0] . '.' . $column [1];
+                    if (strlen ( $column [0] ) > 0)
+                    {
+                        $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
+                    } else
+                    {
+                        $this->data ['orderField'] [] = $column [1];
+                    }
+                
+                } elseif (is_object ( $column [1] ))
+                {
+                    $this->data ['columns'] [] = $column [1] . ' AS ' . $column [2];
+                    $this->data ['orderField'] [] = $column [2];
+                
+                } elseif (null === $column [2])
+                {
+                    $this->data ['columns'] [] = $column [1];
+                    if (strlen ( $column [0] ) > 0)
+                    {
+                        $this->data ['orderField'] [] = $column [0] . '.' . $column [1];
+                    } else
+                    {
+                        $this->data ['orderField'] [] = $column [1];
+                    }
                 }
             }
         }
         
+
         $this->data ['where'] = implode ( ' ', $parts ['where'] );
         
 
@@ -117,16 +137,16 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         if ($totalFrom == 1)
         {
             
-            if (key ( $parts ['from'] ) == $parts ['form'] ['tableName'])
+            if (key ( $parts ['from'] ) == $parts ['from'] ['tableName'])
             {
-                $this->data ['from'] = $parts ['form'] ['tableName'];
+                $this->data ['from'] = $parts ['from'] ['tableName'];
             } else
             {
+                $keyFrom = key ( $parts ['from'] );
                 
-                $this->data ['from'] = $parts ['form'] ['tableName'] . ' ' . key ( $parts ['from'] );
+                $this->data ['from'] = $parts ['from'] [$keyFrom] ['tableName'] . ' ' . $keyFrom;
             }
         
-
         } else
         {
             
@@ -166,15 +186,11 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  ' . $this->data ['groupBy'] . '  HAVING ' . $this->data ['having'];
         
 
-        #echo $query;
-        #die();
-        
-
-
         #$this->_db->fetchAll($query);
         
 
 
+        
         return $this->data;
     }
 

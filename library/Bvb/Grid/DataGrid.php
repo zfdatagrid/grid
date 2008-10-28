@@ -67,11 +67,10 @@ class Bvb_Grid_DataGrid
 
     
     /**
-     * Os tipode de exportação que podemos utilizar
+     * Os tipo de de exportação que podemos utilizar
      *
      * @var unknown_type
      */
-    # public $export = array ('pdf', 'word', 'excel', 'print', 'wordx' );
     public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt' );
 
     /**
@@ -225,7 +224,7 @@ class Bvb_Grid_DataGrid
     public $totalHiddenFields;
 
     /**
-     * [PT] COnfirmar que foi tudo analisado aantes de processar a query
+     * [PT] COnfirmar que foi tudo analisado antes de processar a query
      *
      * @var unknown_type
      */
@@ -407,7 +406,6 @@ class Bvb_Grid_DataGrid
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data ))
         {
-           
             if ($var == 'from' && ! strpos ( " ", trim ( $value ) ))
             {
                 $this->data ['from'] = trim ( $value );
@@ -539,6 +537,8 @@ class Bvb_Grid_DataGrid
         {
             $this->data ['fields'] [$field] = $options;
         }
+        
+
         return $this;
     }
 
@@ -849,19 +849,19 @@ class Bvb_Grid_DataGrid
             */
             if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
             {
-                $sqlExp = trim($this->data ['fields'] [$value] ['sqlexp']);
+                $sqlExp = trim ( $this->data ['fields'] [$value] ['sqlexp'] );
                 
                 if (stripos ( $sqlExp, " AS " ))
                 {
-                    $fields [] = $sqlExp ;
+                    $fields [] = $sqlExp;
                 } else
                 {
-                    $fields [] = $sqlExp . ' AS ' . str_replace('.','',$value) ;
+                    $fields [] = $sqlExp . ' AS ' . str_replace ( '.', '', $value );
                 }
-                
-           
-               
-            } else {
+            
+
+            } else
+            {
                 
                 if (stripos ( $value, ' AS ' ))
                 {
@@ -971,6 +971,8 @@ class Bvb_Grid_DataGrid
         $filters = str_replace ( "filter_", "", $filters );
         $filters = Zend_Json::decode ( $filters );
         $fieldsSemAsFinal = $this->removeAsFromFields ();
+        
+
         if (is_array ( $filters ))
         {
             foreach ( $filters as $key => $filtro )
@@ -992,6 +994,8 @@ class Bvb_Grid_DataGrid
                 }
             }
         }
+        
+
         $this->_filtersValues = $valor_filters;
         if ($tem_where)
         {
@@ -1046,7 +1050,7 @@ class Bvb_Grid_DataGrid
 
         $this->order [$order_field] = $orderf == 'ASC' ? 'DESC' : 'ASC';
         
-
+        
         if (! in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) ))
         {
             unset ( $query_order );
@@ -1058,6 +1062,8 @@ class Bvb_Grid_DataGrid
         }
         
 
+        
+
         if (strlen ( $this->fieldHorizontalRow ) > 0)
         {
             $split = $this->_db->quoteIdentifier ( $this->fieldHorizontalRow );
@@ -1067,7 +1073,6 @@ class Bvb_Grid_DataGrid
             }
         }
         
-
         $groupBy = '';
         if (isset ( $this->info ['groupby'] ))
         {
@@ -1291,9 +1296,19 @@ class Bvb_Grid_DataGrid
     {
 
         $ncampos = array ();
-        foreach ( $campos as $value )
+        foreach ( $campos as $key=>$value )
         {
-            $ncampos [] = stripos ( $value, ' AS ' ) ? substr ( $value, 0, stripos ( $value, ' AS ' ) ) : $value;
+            
+            if (strlen ( $value ) == 0)
+            {
+                
+                $ncampos [] = stripos ( $key, ' AS ' ) ? substr ( $key, 0, stripos ( $key, ' AS ' ) ) : $key;
+            } else
+            {
+                $ncampos [] = stripos ( $value, ' AS ' ) ? substr ( $value, 0, stripos ( $value, ' AS ' ) ) : $value;
+                ;
+            }
+        
         }
         
         $campos = $ncampos;
@@ -1398,8 +1413,6 @@ class Bvb_Grid_DataGrid
 
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
                 
-                
-               
 
                 if ($noOrder == 1)
                 {
@@ -2282,8 +2295,8 @@ class Bvb_Grid_DataGrid
         $query = $this->getQuery ();
         $query_count = $this->getQueryCount ();
         #$result = $this->_db->fetchAll ( $query ); 
-        
-        
+
+
         if ($this->cache ['use'] == 1)
         {
             
@@ -2473,6 +2486,7 @@ class Bvb_Grid_DataGrid
         
         $final = new Bvb_Grid_Source_Db_Select ( $select, $db );
         
+
         $final = $this->object2array ( $final );
         
         $column = $final ['data'] ['columns'];
@@ -2532,7 +2546,7 @@ class Bvb_Grid_DataGrid
         
         if (strlen ( $final ['data'] ['order'] ) > 0)
         {
-            $this->order = $final ['data'] ['order'];
+            #$this->order = $final ['data'] ['order'];
         }
         
         $this->noMoreDataActions = 1;
