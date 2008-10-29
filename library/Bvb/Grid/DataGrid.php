@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Mascker
  *
@@ -691,6 +689,8 @@ class Bvb_Grid_DataGrid
             }
             $xml ['data'] ['where'] = $final;
         }
+        
+        
         foreach ( $xml ['data'] ['fields'] as $key => $final )
         {
             if (is_array ( $final ['@attributes'] ))
@@ -699,6 +699,8 @@ class Bvb_Grid_DataGrid
                 $xml ['data'] ['fields'] [$key . " AS " . $final ['@attributes'] ['as']] = $final;
             }
         }
+        
+        
         self::setData ( $xml );
     }
 
@@ -1513,7 +1515,7 @@ class Bvb_Grid_DataGrid
         {
             $this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
             $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
-            $this->filters [$valor] ['values'] = $this->_db->fetchAll ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) AS value, " . $this->filters [$valor] ['distinct'] ['name'] . " AS name FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
+            $this->filters [$valor] ['values'] = $this->_db->fetchPairs ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) , " . $this->filters [$valor] ['distinct'] ['name'] . "  FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
         }
         
 
@@ -1528,6 +1530,9 @@ class Bvb_Grid_DataGrid
             $nkey = $this->replaceAsString ( $fieldsSemAsFinal [$campo] ['searchField'] );
             @$this->_filtersValues [$campo] = $this->_filtersValues [$nkey];
         }
+        
+        
+        
         if (! is_array ( $this->data ['table'] ))
         {
             $table = $this->getDescribeTable ( $this->data ['table'] );
@@ -1536,15 +1541,22 @@ class Bvb_Grid_DataGrid
             $ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
             $table = $this->getDescribeTable ( $this->data ['table'] [$ini] );
         }
+        
+        
+        
         $campo_simples = substr ( $campo, strpos ( $campo, "." ) + 1 );
         @$tipo = $table [$campo_simples];
         $tipo = $tipo ['DATA_TYPE'];
         $help_javascript = '';
+        
+        
         if (substr ( $tipo, 0, 4 ) == 'enum')
         {
             $enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
             $tipo = 'enum';
         }
+        
+        
         foreach ( array_keys ( $this->filters ) as $value )
         {
             //[PT] Temos que ver se o campo não está oculto
@@ -1556,12 +1568,15 @@ class Bvb_Grid_DataGrid
                 $help_javascript .= "filter_" . $value . ",";
             }
         }
+        
+        
         if (@$options ['noFilters'] != 1)
         {
             $help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
             $onchange = "onchange=\"changeFilters('$help_javascript','$url');\"";
         }
         $opcoes = $this->filters [$campo];
+        
         if (isset ( $opcoes ['style'] ))
         {
             $opt = " style=\"{$opcoes['style']}\"  ";
@@ -1569,19 +1584,24 @@ class Bvb_Grid_DataGrid
         {
             $opt = " style=\"width:95%\"  ";
         }
+        
+        
         if (@is_array ( $opcoes ['values'] ))
         {
+            
             $tipo = 'invalid';
             $avalor = $opcoes ['values'];
             $valor = "<select name=\"$campo\" $opt $onchange id=\"filter_" . $this->replaceDots ( $campo ) . "\"  >";
             $valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
-            foreach ( $avalor as $value )
+            foreach ( $avalor as $key=>$value )
             {
-                $selected = $this->_filtersValues [$campo] == $value->value ? "selected" : "";
-                $valor .= "<option value=\"" . stripslashes ( $value->value ) . "\" $selected >" . stripslashes ( $value->name ) . "</option>";
+                $selected = $this->_filtersValues [$campo] == $key ? "selected" : "";
+                $valor .= "<option value=\"" . stripslashes ( $key ) . "\" $selected >" . stripslashes ( $value ) . "</option>";
             }
             $valor .= "</select>";
         }
+        
+        
         switch ($tipo)
         {
             case 'invalid' :
