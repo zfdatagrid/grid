@@ -121,7 +121,7 @@ class Bvb_Grid_Template_Table_Table
     function loopLoop ($values)
     {
         $class =  $this->i % 2 ? "alt" : "";
-        return "<td class=\"$class {{class}} \" >{{value}}&nbsp;</td>";
+        return "<td class=\"$class {{class}} \" >{{value}}</td>";
     }
 
 

@@ -108,7 +108,6 @@ class SiteController extends Zend_Controller_Action
 
     function codeAction()
     {
-
         $this->render ( 'code' );
     }
 
@@ -172,7 +171,7 @@ class SiteController extends Zend_Controller_Action
         ->addColumn ( 'ct.Name', array ('title' => 'District', 'hide' => 1 ) )
         ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
         ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )
-        ->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50', 'sqlexp' => "NOW()" ) )
+        ->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
         ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
         ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
@@ -233,10 +232,10 @@ class SiteController extends Zend_Controller_Action
         $grid->addColumn ( 'id', array ('title' => 'ID', 'hide' => 1 ) );
         $grid->addColumn ( 'firstname AS apelido', array ('title' => 'First Name' ) );
         $grid->addColumn ( 'lastname', array ('title' => 'Last Name' ) );
-        $grid->addColumn ( 'title', array ('title' => 'Title' ) );
-        $grid->addColumn ( 'age', array ('title' => 'Age', 'sqlexp' => 'FORMAT(age, 4)' ) );
+        $grid->addColumn ( 'email', array ('title' => 'Email' ) );
+        $grid->addColumn ( 'age', array ('title' => 'Age' ) );
         $grid->addColumn ( 'language', array ('title' => 'Language' ) );
-        $grid->addColumn ( 'date_added', array ('title' => 'Added', 'format' => array ('date', 'en_US' ) ) );
+        $grid->addColumn ( 'date_added', array ('title' => 'Added', 'format' => array ('date', 'en_US' ),'class'=>'width_150' ) );
         $grid->addColumn ( 'country', array ('title' => 'Country' ) );
         
 
@@ -254,17 +253,24 @@ class SiteController extends Zend_Controller_Action
 
         $fAdd = new Bvb_Grid_Form_Column ( 'firstname' );
         $fAdd->title ( 'First name' )
-        ->validators ( array ('EmailAddress' ) )
+        ->validators ( array ('StringLength'=>array(3,10) ) )
         ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
-        ->description ( 'Insert you email address' );
+        ->description ( 'Insert your first name' );
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
-        $lastName->title ( 'Last name' );
+        $lastName->title ( 'Last name' )
+        ->validators ( array ('StringLength'=>array(3,10) ) );
         
         $country = new Bvb_Grid_Form_Column ( 'country' );
         $country->title ( 'Country' )
         ->description ( 'Choose your Country' )
         ->values ( $paises );
+        
+         $email = new Bvb_Grid_Form_Column ( 'email' );
+        $email->title ( 'Email Address' )
+        ->validators ( array ('EmailAddress' ) )
+        ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
+        ->description ( 'Insert you email address' );
         
 
         $lang = new Bvb_Grid_Form_Column ( 'language' );
@@ -272,17 +278,23 @@ class SiteController extends Zend_Controller_Action
         ->description ( 'Your language' )
         ->values ( $language );
         
-        $form->addColumns ( $fAdd, $lastName, $lang, $country );
+        
+        $age = new Bvb_Grid_Form_Column('age');
+        $age->title('Age')
+        ->description('Choose your age')
+        ->values(range(100,10));
+        
+        $form->addColumns ( $fAdd, $lastName, $email, $lang, $country,$age );
         
         $grid->addForm ( $form );
         
         $filters = new Bvb_Grid_Filters ( );
         $filters->addFilter ( 'firstname' )
         ->addFilter ( 'lastname' )
+        ->addFilter ( 'email')
         ->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )
         ->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )
-        ->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) )
-        ->addFilter ( 'title', array ('distinct' => array ('name' => 'title', 'field' => 'title' ) ) );
+        ->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) );
         
         $grid->addFilters ( $filters );
         
@@ -292,11 +304,7 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    /**
-     * TESTE FUNCTION
-     * "DO NOT" USE
-     *
-     */
+   
     function selectAction()
     {
 
