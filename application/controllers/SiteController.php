@@ -250,7 +250,6 @@ class SiteController extends Zend_Controller_Action
         #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
         
 
-
         $fAdd = new Bvb_Grid_Form_Column ( 'firstname' );
         $fAdd->title ( 'First name' )
         ->validators ( array ('StringLength'=>array(3,10) ) )
@@ -264,7 +263,7 @@ class SiteController extends Zend_Controller_Action
         $country = new Bvb_Grid_Form_Column ( 'country' );
         $country->title ( 'Country' )
         ->description ( 'Choose your Country' )
-        ->values ( $paises );
+        ->values ( array_combine($paises,$paises) );
         
          $email = new Bvb_Grid_Form_Column ( 'email' );
         $email->title ( 'Email Address' )
@@ -276,13 +275,13 @@ class SiteController extends Zend_Controller_Action
         $lang = new Bvb_Grid_Form_Column ( 'language' );
         $lang->title ( 'Language' )
         ->description ( 'Your language' )
-        ->values ( $language );
+        ->values ( array_combine($language,$language)  );
         
         
         $age = new Bvb_Grid_Form_Column('age');
         $age->title('Age')
         ->description('Choose your age')
-        ->values(range(100,10));
+        ->values(array_combine(range(10,100),range(10,100)));
         
         $form->addColumns ( $fAdd, $lastName, $email, $lang, $country,$age );
         

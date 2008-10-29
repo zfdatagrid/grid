@@ -1082,7 +1082,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $valor = "<select name=\"$field\" $opt  >";
                 
-                foreach ( $avalor as $value )
+                foreach ( $avalor as $key=>$value )
                 {
                     
                     //[PT]Se o modo for de edição vefiicar se não é o valor que vem da base de dados
@@ -1093,7 +1093,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     {
                         $selected = null;
                     }
-                    $valor .= "<option value=\"{$value}\" $selected >" . ucfirst ( $value ) . "</option>";
+                    $valor .= "<option value=\"{$key}\" $selected >" . ucfirst ( $value ) . "</option>";
                 }
                 
                 $valor .= "</select>";
