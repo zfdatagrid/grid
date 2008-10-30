@@ -2253,6 +2253,7 @@ class Bvb_Grid_DataGrid
         
         }
         
+        $queryGroup = '';
 
         if (@strlen ( $this->info ['groupby'] ) > 0)
         {

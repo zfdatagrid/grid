@@ -1019,7 +1019,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      */
     function buildFormElement($field, $inicial_value = '', $mod = 'edit', $fieldValue = '')
     {
-
+        
         //[PT]Se não for edição remover o valor incicial (ele assume o nome dos campos)
         if ($mod != 'edit')
         {
@@ -1082,7 +1082,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $valor = "<select name=\"$field\" $opt  >";
                 
-                foreach ( $avalor as $key=>$value )
+                foreach ( $avalor as $key => $value )
                 {
                     
                     //[PT]Se o modo for de edição vefiicar se não é o valor que vem da base de dados
@@ -1282,7 +1282,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 if (is_array ( $this->_formMessages [$titles [$i]] ))
                 {
                     
-                    foreach ( $this->_formMessages [$titles [$i]] as $key => $formS )
+                    foreach ( $this->_formMessages [$titles [$i]] as $formS )
                     {
                         $finalV .= '<br>' . implode ( '<br>', $formS );
                     }
@@ -1294,7 +1294,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             {
                 $finalV = '';
             }
-            
+           
 
             $fieldValue = isset ( $this->_formValues [$value] ) ? $this->_formValues [$value] : '';
             $fieldDescription = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['description'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['description'] : '';
@@ -1302,6 +1302,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $fieldTitle = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['title'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['title'] : '';
             
             $grid .= str_replace ( "{{value}}", $this->__ ( $fieldTitle ) . '<br><em>' . $this->__ ( $fieldDescription ) . '</em>', $this->temp ['table']->formLeft () );
+
             $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod, $fieldValue ) . $finalV, $this->temp ['table']->formRight () );
             
             $grid .= $this->temp ['table']->formEnd ();
@@ -1827,18 +1828,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $this->setTemplate ( 'table', 'table' );
         }
         
-        //[PT] As classes em CSS para aplicar as diferentes zonas
-        //[EN] The CSS classes to apply
-        
-
 
         //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
         //[EN] The extra fields, they are not part of database table.
         //[EN] Usefull for adding links (a least for me :D )
-        
-
-
-        #$this->extra_fields =  $this->info[ 'extra_fields' ];
         
 
 
@@ -1852,6 +1845,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             {
                 $this->extra_fields = array ();
             }
+            //[PT]Vamos remover os argumentos da url que não queremos
+            //[EN] Remove the unnecessary URL params
+            //Vamos remover os elementos em caso de falha de validação
+            $removeParams = array ('filters', 'add' );
+            foreach ( array_keys ( $this->info ['add'] ['fields'] ) as $key )
+            {
+                array_push ( $removeParams, $key );
+            }
+            $url = parent::getUrl ( $removeParams );
             
             array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{" . $this->getPrimaryKey () . "}}\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
         
@@ -1878,7 +1880,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             if (($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen ( $this->_comm ) > 1))
             {
                 
-                $url = parent::getUrl ( array ('filters', 'add' ) );
+
+                //[PT]Vamos remover os argumentos da url que não queremos
+                //[EN] Remove the unnecessary URL params
+                //Vamos remover os elementos em caso de falha de validação
+                $removeParams = array ('filters', 'add' );
+                foreach ( array_keys ( $this->info ['add'] ['fields'] ) as $key )
+                {
+                    array_push ( $removeParams, $key );
+                }
+                $url = parent::getUrl ( $removeParams );
                 
                 $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp ['table']->formGlobal () . self::gridForm () . "</table></form><br><br>";
             

@@ -241,6 +241,7 @@ class SiteController extends Zend_Controller_Action
 
         $form = new Bvb_Grid_Form ( );
         $form->add ( 1 )
+        ->edit ( 1 )
         ->button ( 1 )
         ->delete ( 1 )
         ->onAddForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) )
@@ -258,6 +259,7 @@ class SiteController extends Zend_Controller_Action
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
         $lastName->title ( 'Last name' )
+        ->description('Your last name')
         ->validators ( array ('StringLength'=>array(3,10) ) );
         
         $country = new Bvb_Grid_Form_Column ( 'country' );
