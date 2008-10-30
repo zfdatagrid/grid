@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Mascker
  *
@@ -666,15 +668,10 @@ class Bvb_Grid_DataGrid
     function setDataFromXml($file)
     {
 
-        $fc = Zend_Controller_Front::getInstance ();
-        $modulo = strtolower ( $fc->getRequest ()->getModuleName () );
-        if (strpos ( $file, '_' ) === false)
-        {
-            $file = $modulo . "_" . ucfirst ( $file );
-        }
-        //Temos que
-        $file = rtrim ( str_replace ( "_", "/grids/", $file ), ".xml" ) . ".xml";
+        $file = rtrim ( $file, ".xml" ) . ".xml";
         $xml = $this->object2array ( simplexml_load_file ( $file ) );
+        
+
         if (strlen ( $xml ['data'] ['where'] ) > 0)
         {
             $final = $xml ['data'] ['where'];
@@ -690,7 +687,6 @@ class Bvb_Grid_DataGrid
             $xml ['data'] ['where'] = $final;
         }
         
-        
         foreach ( $xml ['data'] ['fields'] as $key => $final )
         {
             if (is_array ( $final ['@attributes'] ))
@@ -700,8 +696,10 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
+
         self::setData ( $xml );
+        $this->info = $xml ['info'];
+    
     }
 
 
@@ -1531,8 +1529,7 @@ class Bvb_Grid_DataGrid
             @$this->_filtersValues [$campo] = $this->_filtersValues [$nkey];
         }
         
-        
-        
+
         if (! is_array ( $this->data ['table'] ))
         {
             $table = $this->getDescribeTable ( $this->data ['table'] );
@@ -1542,21 +1539,20 @@ class Bvb_Grid_DataGrid
             $table = $this->getDescribeTable ( $this->data ['table'] [$ini] );
         }
         
-        
-        
+
         $campo_simples = substr ( $campo, strpos ( $campo, "." ) + 1 );
         @$tipo = $table [$campo_simples];
         $tipo = $tipo ['DATA_TYPE'];
         $help_javascript = '';
         
-        
+
         if (substr ( $tipo, 0, 4 ) == 'enum')
         {
             $enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
             $tipo = 'enum';
         }
         
-        
+
         foreach ( array_keys ( $this->filters ) as $value )
         {
             //[PT] Temos que ver se o campo não está oculto
@@ -1569,7 +1565,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-        
+
         if (@$options ['noFilters'] != 1)
         {
             $help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
@@ -1585,7 +1581,7 @@ class Bvb_Grid_DataGrid
             $opt = " style=\"width:95%\"  ";
         }
         
-        
+
         if (@is_array ( $opcoes ['values'] ))
         {
             
@@ -1593,7 +1589,7 @@ class Bvb_Grid_DataGrid
             $avalor = $opcoes ['values'];
             $valor = "<select name=\"$campo\" $opt $onchange id=\"filter_" . $this->replaceDots ( $campo ) . "\"  >";
             $valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
-            foreach ( $avalor as $key=>$value )
+            foreach ( $avalor as $key => $value )
             {
                 $selected = $this->_filtersValues [$campo] == $key ? "selected" : "";
                 $valor .= "<option value=\"" . stripslashes ( $key ) . "\" $selected >" . stripslashes ( $value ) . "</option>";
@@ -1601,7 +1597,7 @@ class Bvb_Grid_DataGrid
             $valor .= "</select>";
         }
         
-        
+
         switch ($tipo)
         {
             case 'invalid' :
@@ -1802,6 +1798,8 @@ class Bvb_Grid_DataGrid
     {
 
         $exp = isset ( $this->info ['sqlexp'] ) ? $this->info ['sqlexp'] : '';
+        
+
         if (! is_array ( $exp ))
         {
             return false;
@@ -2254,7 +2252,7 @@ class Bvb_Grid_DataGrid
         }
         
         $queryGroup = '';
-
+        
         if (@strlen ( $this->info ['groupby'] ) > 0)
         {
             $queryGroup = " GROUP BY " . $this->info ['groupby'];

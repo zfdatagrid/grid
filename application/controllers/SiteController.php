@@ -6,12 +6,61 @@ class SiteController extends Zend_Controller_Action
 {
 
 
+    /**
+     * [EN]If a action don't exist, just redirect to the basic
+     *
+     * @param string $name
+     * @param array $var
+     */
     function __call($name, $var)
     {
+
         $this->_redirect ( 'default/site/basic', array ('exit' => 1 ) );
     }
 
 
+    /**
+     * [EN] I think this is needed for something. can't remember
+     *
+     */
+    function init()
+    {
+
+        $this->view->url = Zend_Registry::get ( 'config' )->site->url;
+    }
+
+
+    /**
+     * Same as __call
+     *
+     */
+    function indexAction()
+    {
+
+        $this->_forward ( 'basic' );
+    }
+
+
+    /**
+     * Show the source code for this controller
+     *
+     */
+    function codeAction()
+    {
+
+        $this->render ( 'code' );
+    }
+
+
+    /**
+     * [EN] Simplify the datagrid creation process
+     * [EN] Instead of having to write "long" lines of code we can simplify this.
+     * [EN] In fact if you have a Class that extends the Zend_Controller_Action
+     * [EN] It's not a bad idea put this piece o code there. May be very useful
+     * 
+     *
+     * @return unknown
+     */
     function grid()
     {
 
@@ -73,12 +122,16 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * A simple action that shows pictures in a complete diferent template
+     *
+     */
     function imagesAction()
     {
 
         $grid = $this->grid ( 'table' );
         $grid->from ( 'images' )
-        ->addColumn ( 'url', array ('decorator' => '<a href="{{url}}"><img src="{{url}}" border="0"></a>', 'title' => 'Katie Melua - Image Galerie' ) )
+        ->addColumn ( 'url', array ('decorator' => '<a href="{{url}}"><img src="{{url}}" border="0"></a>', 'title' => 'Katie Melua - Image Gallery' ) )
         ->noOrder ( 1 )
         ->setPagination ( 10000 )
         ->setTemplate ( 'images' );
@@ -88,6 +141,10 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * An example of a group grid
+     *
+     */
     function groupAction()
     {
 
@@ -106,26 +163,14 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    function codeAction()
-    {
-        $this->render ( 'code' );
-    }
-
-
-    function init()
-    {
-
-        $this->view->url = Zend_Registry::get ( 'config' )->site->url;
-    }
-
-
-    function indexAction()
-    {
-
-        $this->_forward ( 'basic' );
-    }
-
-
+    /**
+     * A simple usage of advanced filters. Every time you change a filter, the system automatically  
+     *runs a query to the others filters, making sure they don't allow you to filter for a record that is not in the database
+     *
+     * 
+     * We also use SQL expressions and they will appear on the last line (before pagination)
+     * The average of LifeExpectancy and to SUM of Population
+     */
     function filtersAction()
     {
 
@@ -148,7 +193,8 @@ class SiteController extends Zend_Controller_Action
         ->addFilter ( 'continent', array ('distinct' => array ('field' => 'continent', 'name' => 'continent' ) ) )
         ->addFilter ( 'LifeExpectancy', array ('distinct' => array ('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy' ) ) )
         ->addFilter ( 'GovernmentForm', array ('distinct' => array ('field' => 'GovernmentForm', 'name' => 'GovernmentForm' ) ) )
-        ->addFilter ( 'HeadOfState' )->addFilter ( 'Population' );
+        ->addFilter ( 'HeadOfState' )
+        ->addFilter ( 'Population' );
         
         $grid->addFilters ( $filters );
         
@@ -158,6 +204,13 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * A join query example
+     * 
+     * Just don't forget if there is a field with the sdame name in more than one table
+     * you must rename the output name of that fielf ba appending AS othername
+     *
+     */
     function joinsAction()
     {
 
@@ -181,6 +234,11 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * Adding extra columns to a datagrid. They can be at left or right.
+     * Also notice that you can use fields values to populate the fields by surrounding the field name with {{}}
+     *
+     */
     function extraAction()
     {
 
@@ -216,6 +274,12 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * Performing CRUD operations.
+     * 
+     * Check how easy it is to set a form.
+     *
+     */
     function crudAction()
     {
 
@@ -223,8 +287,7 @@ class SiteController extends Zend_Controller_Action
         
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )
-        ->order ( 'id DESC ' );
+        $grid->from ( 'crud' )->order ( 'id DESC ' );
         
         $paises = $db->fetchCol ( "SELECT DISTINCT(Name) FROM Country ORDER BY Name ASC " );
         $language = $db->fetchCol ( "SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC" );
@@ -235,7 +298,7 @@ class SiteController extends Zend_Controller_Action
         $grid->addColumn ( 'email', array ('title' => 'Email' ) );
         $grid->addColumn ( 'age', array ('title' => 'Age' ) );
         $grid->addColumn ( 'language', array ('title' => 'Language' ) );
-        $grid->addColumn ( 'date_added', array ('title' => 'Added', 'format' => array ('date', 'en_US' ),'class'=>'width_150' ) );
+        $grid->addColumn ( 'date_added', array ('title' => 'Updated', 'format' => array ('date', 'en_US' ), 'class' => 'width_150' ) );
         $grid->addColumn ( 'country', array ('title' => 'Country' ) );
         
 
@@ -251,23 +314,24 @@ class SiteController extends Zend_Controller_Action
         #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
         
 
+
         $fAdd = new Bvb_Grid_Form_Column ( 'firstname' );
         $fAdd->title ( 'First name' )
-        ->validators ( array ('StringLength'=>array(3,10) ) )
+        ->validators ( array ('StringLength' => array (3, 10 ) ) )
         ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
         ->description ( 'Insert your first name' );
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
         $lastName->title ( 'Last name' )
-        ->description('Your last name')
-        ->validators ( array ('StringLength'=>array(3,10) ) );
+        ->description ( 'Your last name' )
+        ->validators ( array ('StringLength' => array (3, 10 ) ) );
         
         $country = new Bvb_Grid_Form_Column ( 'country' );
         $country->title ( 'Country' )
         ->description ( 'Choose your Country' )
-        ->values ( array_combine($paises,$paises) );
+        ->values ( array_combine ( $paises, $paises ) );
         
-         $email = new Bvb_Grid_Form_Column ( 'email' );
+        $email = new Bvb_Grid_Form_Column ( 'email' );
         $email->title ( 'Email Address' )
         ->validators ( array ('EmailAddress' ) )
         ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
@@ -277,22 +341,24 @@ class SiteController extends Zend_Controller_Action
         $lang = new Bvb_Grid_Form_Column ( 'language' );
         $lang->title ( 'Language' )
         ->description ( 'Your language' )
-        ->values ( array_combine($language,$language)  );
+        ->values ( array_combine ( $language, $language ) );
         
+
+        $age = new Bvb_Grid_Form_Column ( 'age' );
+        $age->title ( 'Age' )
+        ->description ( 'Choose your age' )
+        ->values ( array_combine ( range ( 10, 100 ), range ( 10, 100 ) ) );
         
-        $age = new Bvb_Grid_Form_Column('age');
-        $age->title('Age')
-        ->description('Choose your age')
-        ->values(array_combine(range(10,100),range(10,100)));
-        
-        $form->addColumns ( $fAdd, $lastName, $email, $lang, $country,$age );
+        $form->addColumns ( $fAdd, $lastName, $email, $lang, $country, $age );
         
         $grid->addForm ( $form );
         
+        
+        //Add  filters
         $filters = new Bvb_Grid_Filters ( );
         $filters->addFilter ( 'firstname' )
         ->addFilter ( 'lastname' )
-        ->addFilter ( 'email')
+        ->addFilter ( 'email' )
         ->addFilter ( 'age', array ('distinct' => array ('name' => 'age', 'field' => 'age' ) ) )
         ->addFilter ( 'country', array ('distinct' => array ('name' => 'country', 'field' => 'country' ) ) )
         ->addFilter ( 'language', array ('distinct' => array ('name' => 'language', 'field' => 'language' ) ) );
@@ -305,17 +371,20 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-   
+    /**
+     * This example shows you how to use a Zend_Db_Select instance to build the grid.
+     * 
+     *
+     */
     function selectAction()
     {
 
         $grid = $this->grid ( 'table' );
         
         $db = Zend_Registry::get ( 'db' );
-       $select = $db->select()
-             ->from('products',
-                    array('product_id', 'product_name', 'price'))
-             ->where('price > 100.00');
+        $select = $db->select ()
+        ->from ( 'products', array ('product_id', 'product_name', 'price' ) )
+        ->where ( 'price > 100.00' );
         
         $grid->queryFromZendDbSelect ( $select, $db );
         $grid->noFilters ( 1 );
@@ -326,6 +395,14 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * The 'most' basic example.
+     * 
+     * Please check the $pdf array to see how we can configure the templates header and footer. 
+     * If you are exporting to PDF you can even choose between  a letter format or A4 format, and set the page orientation
+     * landascape or '' (empty) for vertical
+     *
+     */
     function basicAction()
     {
 
@@ -337,13 +414,12 @@ class SiteController extends Zend_Controller_Action
 'orientation' => 'landscape', # || ''
 'page' => 'Page N.' );
         
-        
+
         $grid->setTemplate ( 'print', 'print', $pdf );
         $grid->setTemplate ( 'pdf', 'pdf', $pdf );
         $grid->setTemplate ( 'word', 'word', $pdf );
         $grid->setTemplate ( 'wordx', 'wordx', $pdf );
         $grid->setTemplate ( 'ods', 'ods', $pdf );
-                
         
 
         $this->view->pages = $grid->deploy ();
@@ -351,6 +427,10 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
+     *
+     */
     function templateAction()
     {
 
@@ -364,6 +444,10 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * This example allow you to create an horizontal row, for every distinct value from a field
+     *
+     */
     function hrowAction()
     {
 
@@ -392,6 +476,10 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * If you don't like to work with array when adding columns, you can work by dereferencing objects
+     *
+     */
     function columnAction()
     {
 
@@ -439,11 +527,25 @@ class SiteController extends Zend_Controller_Action
         ->addFilter ( 'c.Continent', array ('distinct' => array ('field' => 'c.Continent', 'name' => 'c.Continent' ) ) )
         ->addFilter ( 'c.LifeExpectancy', array ('distinct' => array ('field' => 'c.LifeExpectancy', 'name' => 'c.LifeExpectancy' ) ) )
         ->addFilter ( 'c.GovernmentForm', array ('distinct' => array ('field' => 'c.GovernmentForm', 'name' => 'c.GovernmentForm' ) ) )
-        ->addFilter ( 'c.HeadOfState' )->addFilter ( 'c.Population' );
+        ->addFilter ( 'c.HeadOfState' )
+        ->addFilter ( 'c.Population' );
         
         $grid->addFilters ( $filters );
         
         $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
+    
+    
+    function xmlAction()
+    {
+        
+        $grid = $this->grid ( 'table' );
+        
+        $grid->setDataFromXMl ('application/grids/basic');
+        
+        $this->view->pages = $grid->deploy ();
+        $this->view->action = 'basic';
         $this->render ( 'index' );
     }
 }

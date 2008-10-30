@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grid>
+	<data>
+		<from>Country</from>
+		<order>name ASC</order>
+		<fields>
+			<Name>
+				<title>Country</title>
+				<class>width_200</class>
+			</Name>
+			<Continent>
+				<title>Continent</title>
+			</Continent>
+			<Population>
+				<title>Population</title>
+				<class>width_80</class>
+				<eval>number_format('{{Population}}');
+				</eval>
+			</Population>
+			<LifeExpectancy>
+				<title>Life E.</title>
+				<class>width_50</class>
+			</LifeExpectancy>
+			<GovernmentForm>
+				<title>Government Form</title>
+				<searchType>=</searchType>
+			</GovernmentForm>
+			<HeadOfState>
+				<title>Head Of State</title>
+			</HeadOfState>
+		</fields>
+		<filters>
+			<Name>
+				<distinct>
+					<field>Name</field>
+					<name>Name</name>
+				</distinct>
+			</Name>
+			<Continent>
+				<distinct>
+					<field>Continent</field>
+					<name>Continent</name>
+				</distinct>
+			</Continent>
+			<LifeExpectancy>
+				<distinct>
+					<field>LifeExpectancy</field>
+					<name>LifeExpectancy</name>
+				</distinct>
+			</LifeExpectancy>
+			<GovernmentForm>
+				<distinct>
+					<field>GovernmentForm</field>
+					<name>GovernmentForm</name>
+				</distinct>
+			</GovernmentForm>
+			<HeadOfState>
+			</HeadOfState>
+			<Population>
+			</Population>
+		</filters>
+	</data>
+	<info>
+		<sqlexp>
+			<LifeExpectancy>AVG</LifeExpectancy>
+			<Population>SUM</Population>
+		</sqlexp>
+	</info>
+</grid>
