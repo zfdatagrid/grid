@@ -176,9 +176,8 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         
-        $grid->setPagination ( 15 );
-        
         $grid->from ( 'Country ' )
+        ->order('name ASC')
         ->addColumn ( 'Name', array ('title' => 'Country', 'class' => 'width_200' ) )
         ->addColumn ( 'continent', array ('title' => 'Continent' ) )
         ->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80', 'eval' => "number_format('{{Population}}');" ) )
@@ -542,7 +541,7 @@ class SiteController extends Zend_Controller_Action
         
         $grid = $this->grid ( 'table' );
         
-        $grid->setDataFromXMl ('application/grids/basic');
+        $grid->setDataFromXMl ('application/grids/Basic');
         
         $this->view->pages = $grid->deploy ();
         $this->view->action = 'basic';
