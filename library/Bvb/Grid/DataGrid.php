@@ -795,7 +795,7 @@ class Bvb_Grid_DataGrid
         $totalFields = $totalFields + $a;
         $colspan = $totalFields + count ( $this->extra_fields );
         
-        if (is_object ( $this->temp ))
+        if (@is_object (  $this->temp [$this->output]))
         {
             $this->temp [$this->output]->colSpan = $colspan;
         }
