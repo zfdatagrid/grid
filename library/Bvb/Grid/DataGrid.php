@@ -794,7 +794,11 @@ class Bvb_Grid_DataGrid
         }
         $totalFields = $totalFields + $a;
         $colspan = $totalFields + count ( $this->extra_fields );
-        $this->temp [$this->output]->colSpan = $colspan;
+        
+        if (is_object ( $this->temp ))
+        {
+            $this->temp [$this->output]->colSpan = $colspan;
+        }
         return $colspan;
         #return count ( $this->_fields ) - $this->totalHiddenFields + count($this->extra_fields);
     }
