@@ -406,7 +406,10 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'City' );
+        $grid->from ( 'articles' )
+        ->addColumn('id')
+        ->addColumn('titulo')
+        ->addColumn('data',array('sqlexp' => 'FORMAT(data, 1)'));
         
 
         $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4

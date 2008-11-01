@@ -2343,7 +2343,7 @@ class Bvb_Grid_DataGrid
             
             $result = $this->_db->fetchAll ( $query );
             
-            if ($this->hasGroup != 1 && $this->sourceIsExternal != 1)
+            if ( $this->sourceIsExternal != 1)
             {
                 $resultCount = $this->_db->fetchOne ( $query_count );
             } else
