@@ -406,6 +406,7 @@ class Bvb_Grid_DataGrid
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data ))
         {
+            
             if ($var == 'from' && ! strpos ( " ", trim ( $value ) ))
             {
                 $this->data ['from'] = trim ( $value );
@@ -795,7 +796,7 @@ class Bvb_Grid_DataGrid
         $totalFields = $totalFields + $a;
         $colspan = $totalFields + count ( $this->extra_fields );
         
-        if (@is_object (  $this->temp [$this->output]))
+        if (@is_object ( $this->temp [$this->output] ))
         {
             $this->temp [$this->output]->colSpan = $colspan;
         }
@@ -1208,8 +1209,11 @@ class Bvb_Grid_DataGrid
         {
             return false;
         }
+        
+
         $data = $this->map_array ( $this->_fields, 'replace_AS' );
         $tcampos = count ( $data );
+        
         for($i = 0; $i < count ( $this->extra_fields ); $i ++)
         {
             if ($this->extra_fields [$i] ['position'] == 'left')
@@ -1217,6 +1221,8 @@ class Bvb_Grid_DataGrid
                 $return [] = array ('type' => 'extraField', 'class' => $this->template ['classes'] ['filter'], 'position' => 'left' );
             }
         }
+        
+
         for($i = 0; $i < $tcampos; $i ++)
         {
             if (! isset ( $this->data ['fields'] [$this->_fields [$i]] ['hide'] ))
@@ -1236,6 +1242,8 @@ class Bvb_Grid_DataGrid
                 }
             }
         }
+        
+
         for($i = 0; $i < count ( $this->extra_fields ); $i ++)
         {
             if ($this->extra_fields [$i] ['position'] == 'right')
@@ -1243,6 +1251,8 @@ class Bvb_Grid_DataGrid
                 $return [] = array ('type' => 'extraField', 'class' => $this->template ['classes'] ['filter'], 'position' => 'right' );
             }
         }
+        
+
         return $return;
     }
 
@@ -1883,7 +1893,7 @@ class Bvb_Grid_DataGrid
                 }
                 
 
-                if (isset ( $value ['hhide'] ))
+                if (isset ( $value ['hide'] ))
                 {
                     if ($value ['hide'] == 1)
                     {
@@ -1924,23 +1934,27 @@ class Bvb_Grid_DataGrid
             
 
             $fields_final = $fl;
-            if (is_array ( $this->data ['hide'] ))
-            {
-                foreach ( $fields_final as $key => $value )
-                {
-                    if (in_array ( $value, $this->data ['hide'] ))
-                        unset ( $fields_final [$key] );
-                }
-            }
-            
-
-            foreach ( $fields_final as $value )
-            {
-                $value_final [] = $value;
-            }
-            $fields_final = $value_final;
-            $orderFields = $fields_final;
+            $orderFields = $fl;
         }
+        
+
+        //Vamos remover os campos que não quermeos mostrar
+        $naoMostrar = array_flip ( $fields_final );
+        
+
+        foreach ( $naoMostrar as $key => $field )
+        {
+            if (@in_array ( $key, $this->data ['hide'] ))
+            {
+                unset ( $naoMostrar [$key] );
+                unset ( $orderFields [$key] );
+                unset ( $titulos [$key] );
+                unset ( $this->data ['fields'] [$key] );
+            
+            }
+        }
+        
+        $fields_final = array_values ( array_flip ( $naoMostrar ) );
         
 
         $this->totalHiddenFields = $hide;
@@ -1999,9 +2013,10 @@ class Bvb_Grid_DataGrid
 
         if (@is_array ( $this->data ['hide'] ))
         {
+            
             foreach ( $this->data ['hide'] as $value )
             {
-                if (! in_array ( $value, $titulos ))
+                if (array_key_exists ( $value, $titulos ))
                 {
                     unset ( $titulos [$value] );
                 }
@@ -2016,6 +2031,8 @@ class Bvb_Grid_DataGrid
                 }
             }
         }
+        
+
         return $titulos;
     }
 
@@ -2343,7 +2360,7 @@ class Bvb_Grid_DataGrid
             
             $result = $this->_db->fetchAll ( $query );
             
-            if ( $this->sourceIsExternal != 1)
+            if ($this->sourceIsExternal != 1)
             {
                 $resultCount = $this->_db->fetchOne ( $query_count );
             } else
