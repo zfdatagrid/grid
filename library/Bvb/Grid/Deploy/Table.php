@@ -1019,7 +1019,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      */
     function buildFormElement($field, $inicial_value = '', $mod = 'edit', $fieldValue = '')
     {
-        
+
         //[PT]Se não for edição remover o valor incicial (ele assume o nome dos campos)
         if ($mod != 'edit')
         {
@@ -1294,7 +1294,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             {
                 $finalV = '';
             }
-           
+            
 
             $fieldValue = isset ( $this->_formValues [$value] ) ? $this->_formValues [$value] : '';
             $fieldDescription = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['description'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['description'] : '';
@@ -1302,7 +1302,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $fieldTitle = isset ( $this->info ['add'] ['fields'] [$titles [$i]] ['title'] ) ? $this->info ['add'] ['fields'] [$titles [$i]] ['title'] : '';
             
             $grid .= str_replace ( "{{value}}", $this->__ ( $fieldTitle ) . '<br><em>' . $this->__ ( $fieldDescription ) . '</em>', $this->temp ['table']->formLeft () );
-
+            
             $grid .= str_replace ( "{{value}}", self::buildFormElement ( $key, $value, $mod, $fieldValue ) . $finalV, $this->temp ['table']->formRight () );
             
             $grid .= $this->temp ['table']->formEnd ();
@@ -1585,26 +1585,34 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         if ($npaginas > 1 && ( int ) @$this->info ['limit'] == 0)
         {
             
-            //[PT] Construir o select
-            //[EN] Buil the select form element
-            if (array_key_exists ( 'ajax', $this->info ))
+
+            if ($npaginas < 100)
             {
-                $f = "<select id=\"idf\" onchange=\"javascript:openAjax('grid','{$url}/start/'+this.value)\">";
-            } else
-            {
-                $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start/'+this.value\">";
-            }
-            
-            for($i = 1; $i <= $npaginas; $i ++)
-            {
-                $f .= "<option ";
-                if ($pa == $i)
+                //[PT] Construir o select
+                //[EN] Buil the select form element
+                if (array_key_exists ( 'ajax', $this->info ))
                 {
-                    $f .= " selected ";
+                    $f = "<select id=\"idf\" onchange=\"javascript:openAjax('grid','{$url}/start/'+this.value)\">";
+                } else
+                {
+                    $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start/'+this.value\">";
                 }
-                $f .= " value=\"" . (($i - 1) * $ppagina) . "\">$i</option>\n";
+                
+                for($i = 1; $i <= $npaginas; $i ++)
+                {
+                    $f .= "<option ";
+                    if ($pa == $i)
+                    {
+                        $f .= " selected ";
+                    }
+                    $f .= " value=\"" . (($i - 1) * $ppagina) . "\">$i</option>\n";
+                }
+                $f .= "</select>";
+            
+            }else{
+                #$f ='<input type="text" size="3" style="width:40px !important;">';
+                $f ='';
             }
-            $f .= "</select>";
         
         }
         
@@ -1652,6 +1660,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $pag = '';
                     $f = '';
                 }
+                
                 $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' to ' . $registoFinal . ' of ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             } elseif ($npaginas < 2 && count ( $this->export ) > 0)
