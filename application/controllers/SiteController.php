@@ -331,7 +331,7 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    function testeAction()
+    function testAction()
     {
 
         #$url = 'http://services.sapo.pt/Holiday/GetNationalHolidays?year=2008';
@@ -343,13 +343,13 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid ( 'table' );
         
 
-        #$grid->setDataFromCsv ('media/files/grid.csv');
+        $grid->setDataFromCsv ('media/files/grid.csv');
         #$grid->setDataFromXml ( $url, 'channel,item' );
         #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
-        $grid->setDataFromJson(file_get_contents('http://services.sapo.pt/JobOffers/JSON'));
+        #$grid->setDataFromJson(file_get_contents('http://services.sapo.pt/JobOffers/JSON'));
         #$grid->setDataFromXml($url);
         
-     /*   
+     
         $grid->addColumn('ID',array('searchType'=>'llike'));
         
         $grid->order('Name');
@@ -361,7 +361,7 @@ class SiteController extends Zend_Controller_Action
         ->addFilter ( 'District')
         ->addFilter ( 'Population' );
         
-        $grid->addFilters ( $filters );*/
+        $grid->addFilters ( $filters );
         
 
         $this->view->pages = $grid->deploy ();
