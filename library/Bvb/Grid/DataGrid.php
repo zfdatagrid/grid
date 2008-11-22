@@ -1,7 +1,6 @@
 <?php
 
 
-
 /**
  * Mascker
  *
@@ -23,7 +22,14 @@
 class Bvb_Grid_DataGrid
 {
 
-    
+    private $_searchPerformedInArray = false;
+
+    protected $_adapter = 'db';
+
+    public $arrayData = array ();
+
+    public $escapeOutput = true;
+
     private $_fieldsOrder;
 
     /**
@@ -280,6 +286,8 @@ class Bvb_Grid_DataGrid
      */
     private $hasGroup = 0;
 
+    private $_resultRaw;
+
 
     /**
      * [PT] A função __construct recebe o adapter para se liga à base de dados
@@ -339,6 +347,254 @@ class Bvb_Grid_DataGrid
         $this->addTemplateDir ( 'Bvb/Grid/Template/Xml', 'Bvb_Grid_Template_Xml', 'xml' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Ods', 'Bvb_Grid_Template_Ods', 'ods' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
+    
+    }
+
+
+    function setAdapter($adapter)
+    {
+
+        $this->_adapter = strtolower ( $adapter ) != 'db' ? 'array' : 'db';
+        
+        return $this;
+    }
+
+
+    function setDataFromCsv($file, $field = null, $separator = ',')
+    {
+
+        $this->_adapter = 'array';
+        
+
+        if ($this->cache ['use'] == 1)
+        {
+            $cache = $this->cache ['instance'];
+            
+            if (! $final = $cache->load ( md5 ( 'array' . $file ) ))
+            {
+                
+
+                $row = 0;
+                $handle = fopen ( $file, "r" );
+                while ( ($data = fgetcsv ( $handle, 1000, $separator )) !== FALSE )
+                {
+                    $num = count ( $data );
+                    
+                    if (null != $field)
+                    {
+                        for($c = 0; $c < $num; $c ++)
+                        {
+                            $final [$row] [$field [$c]] = $data [$c];
+                        }
+                    } else
+                    {
+                        if ($row == 0)
+                        {
+                            for($c = 0; $c < $num; $c ++)
+                            {
+                                $field [] = $data [$c];
+                            }
+                        
+                        } else
+                        {
+                            for($c = 0; $c < $num; $c ++)
+                            {
+                                $final [$row - 1] [$field [$c]] = $data [$c];
+                            }
+                        }
+                    }
+                    
+                    $row ++;
+                }
+                
+                fclose ( $handle );
+                
+                $cache->save ( $final, md5 ( 'array' . $file ), array ($this->cache ['tag'] ) );
+                $cache->save ( $field, md5 ( 'field' . $file ), array ($this->cache ['tag'] ) );
+            
+            } else
+            {
+                $final = $cache->load ( md5 ( 'array' . $file ) );
+                $field = $cache->load ( md5 ( 'field' . $file ) );
+            }
+        
+        } else
+        {
+            
+            $row = 0;
+            $handle = fopen ( $file, "r" );
+            while ( ($data = fgetcsv ( $handle, 1000, $separator )) !== FALSE )
+            {
+                $num = count ( $data );
+                
+
+                if (null != $field)
+                {
+                    
+                    for($c = 0; $c < $num; $c ++)
+                    {
+                        $final [$row] [$field [$c]] = $data [$c];
+                    }
+                
+
+                } else
+                {
+                    if ($row == 0)
+                    {
+                        for($c = 0; $c < $num; $c ++)
+                        {
+                            $field [] = $data [$c];
+                        }
+                    
+                    } else
+                    {
+                        for($c = 0; $c < $num; $c ++)
+                        {
+                            $final [$row - 1] [$field [$c]] = $data [$c];
+                        }
+                    }
+                }
+                
+                $row ++;
+            }
+            
+            fclose ( $handle );
+        }
+        
+
+        $this->addArrayColumns ( $field );
+        $this->addArrayData ( $final );
+        
+        return $this;
+    
+    }
+
+
+    function setDataFromXml($url, $loop = null, $columns = null)
+    {
+
+        $this->_adapter = 'array';
+        
+
+        if ($this->cache ['use'] == 1)
+        {
+            $cache = $this->cache ['instance'];
+            
+            if (! $xml = $cache->load ( md5 ( $url ) ))
+            {
+                $xml = simplexml_load_file ( $url );
+                $xml = $this->object2array ( $xml );
+                $cache->save ( $xml, md5 ( $url ), array ($this->cache ['tag'] ) );
+            } else
+            {
+                $xml = $cache->load ( md5 ( $url ) );
+            }
+        } else
+        {
+            $xml = simplexml_load_file ( $url );
+            $xml = $this->object2array ( $xml );
+        }
+        
+
+        $cols = explode ( ',', $loop );
+        if (is_array ( $cols ))
+        {
+            foreach ( $cols as $value )
+            {
+                $xml = $xml [$value];
+            }
+        }
+        
+
+        if (is_array ( $columns ))
+        {
+            foreach ( $columns as $value )
+            {
+                $columns = $columns [$value];
+            }
+        } else
+        {
+            $columns = array_keys ( $xml [0] );
+        }
+        
+        $this->addArrayColumns ( $columns );
+        $this->addArrayData ( $xml );
+        
+        return $this;
+    
+    }
+
+
+    function setDataFromJson($array, $file = false, $loop = null, $columns = null)
+    {
+
+        $this->_adapter = 'array';
+        
+        if (true === $file)
+        {
+            if ($this->cache ['use'] == 1)
+            {
+                $cache = $this->cache ['instance'];
+                if (! $array = $cache->load ( md5 ( $array ) ))
+                {
+                    $array = file_get_contents ( $array );
+                    
+                    $cache->save ( $array, md5 ( $array ), array ($this->cache ['tag'] ) );
+                } else
+                {
+                    $array = $cache->load ( md5 ( $array ) );
+                }
+            } else
+            {
+                $array = file_get_contents ( $array );
+            }
+        
+
+        }
+        
+        $xml = Zend_Json::decode ( $array );
+        
+
+
+        $cols = explode ( ',', $loop );
+        if (is_array ( $cols ))
+        {
+            foreach ( $cols as $value )
+            {
+                $xml = $xml [$value];
+            }
+        }
+        
+
+        if (is_array ( $columns ))
+        {
+            foreach ( $columns as $value )
+            {
+                $columns = $columns [$value];
+            }
+        } else
+        {
+            $columns = array_keys ( $xml [0] );
+        }
+        
+
+        $this->addArrayColumns ( $columns );
+        $this->addArrayData ( $xml );
+        
+        return $this;
+    
+    }
+
+
+    function setDataFromArray($array)
+    {
+
+        $this->_adapter = 'array';
+        
+        $this->addArrayColumns ( array_keys ( $array [0] ) );
+        $this->addArrayData ( $array );
+        
+        return $this;
     
     }
 
@@ -411,6 +667,7 @@ class Bvb_Grid_DataGrid
             {
                 $this->data ['from'] = trim ( $value );
                 $this->data ['table'] = trim ( $value );
+                $this->_adapter = 'db';
             
             } else
             {
@@ -666,7 +923,7 @@ class Bvb_Grid_DataGrid
      * TEST
      *
      */
-    function setDataFromXml($file)
+    function setGridFromXml($file)
     {
 
         $file = rtrim ( $file, ".xml" ) . ".xml";
@@ -1001,7 +1258,6 @@ class Bvb_Grid_DataGrid
         }
         
 
-        $this->_filtersValues = $valor_filters;
         if ($tem_where)
         {
             $query_final = "  " . $query_where;
@@ -1227,7 +1483,7 @@ class Bvb_Grid_DataGrid
         {
             if (! isset ( $this->data ['fields'] [$this->_fields [$i]] ['hide'] ))
             {
-                if (array_key_exists ( $data [$i], $this->filters ))
+                if (@array_key_exists ( $data [$i], $this->filters ))
                 {
                     if (isset ( $this->filters [$data [$i]] ['decorator'] ) && is_array ( $this->filters [$data [$i]] ))
                     {
@@ -1307,10 +1563,17 @@ class Bvb_Grid_DataGrid
     function map_array($campos, $callback)
     {
 
+        if (! is_array ( $campos ))
+            return FALSE;
+        
+
         $ncampos = array ();
         foreach ( $campos as $key => $value )
         {
+            if (is_array ( $value ))
+                return FALSE;
             
+
             if (strlen ( $value ) == 0)
             {
                 
@@ -1378,8 +1641,8 @@ class Bvb_Grid_DataGrid
         
         $titles = $this->map_array ( $this->_fields, 'replace_AS' );
         
-
         $novaData = array ();
+        
         if (is_array ( $this->data ['fields'] ))
         {
             foreach ( $this->data ['fields'] as $key => $value )
@@ -1389,25 +1652,26 @@ class Bvb_Grid_DataGrid
             }
         }
         
-
         $links = $this->_fields;
         
 
         for($i = 0; $i < $tcampos; $i ++)
         {
-            
+            if (isset ( $this->ctrlParams ['order'] ))
+            {
+                $this->order [reset ( explode ( '_', $this->ctrlParams ['order'] ) )] = strtoupper ( end ( explode ( '_', $this->ctrlParams ['order'] ) ) ) == 'ASC' ? 'DESC' : 'ASC';
+            }
             $fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
             
             @$orderFinal = strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0 ? $fieldsToOrder [$i] ['orderField'] : $titles [$i];
             
-            $order = $orderFinal == key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
+            $order = $orderFinal == @key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
             
 
             if (! isset ( $novaData [$titles [$i]] ['hide'] ))
             {
                 
-
-                if ($titles [$i] == key ( $this->order ))
+                if ($titles [$i] == @key ( $this->order ))
                 {
                     if ($order == 'ASC')
                     {
@@ -1449,6 +1713,44 @@ class Bvb_Grid_DataGrid
         
 
         return $return;
+    }
+
+
+    /**
+     * Add the columns using an array
+     */
+    function addArrayColumns(array $columns)
+    {
+
+        if ($this->_adapter != 'array')
+            return false;
+        
+        foreach ( $columns as $value )
+        {
+            if (is_array ( $value ))
+            {
+                $this->addArrayColumns ( $value );
+            } else
+            {
+                $this->addColumn ( $value );
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Add the records using an array
+     */
+    function addArrayData($data)
+    {
+
+        if ($this->_adapter != 'array')
+            return false;
+        
+        $this->_result = $data;
+        $this->_resultRaw = $data;
+        return $this;
     }
 
 
@@ -1508,6 +1810,22 @@ class Bvb_Grid_DataGrid
 
 
     /**
+     * Create the filters when using the array adapter
+     */
+    function builFilterFromArray($field)
+    {
+
+        $filter = array ();
+        foreach ( $this->_resultRaw as $value )
+        {
+            $filter [$value [$field]] = $value [$field];
+        }
+        
+        return $filter;
+    }
+
+
+    /**
      * [PT] Formatar o tipo de campo nos filtros
      * [PT] Ou do tipo select ou text
      * 
@@ -1522,15 +1840,24 @@ class Bvb_Grid_DataGrid
     function formatField($campo, $valor, $options = array())
     {
 
-        //[PT] Aqui vemos se no filtros nos pede os campos distinctos.
-        if (@is_array ( $this->filters [$valor] ['distinct'] ))
+        if ($this->_adapter == 'db')
         {
-            $this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
-            $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
-            $this->filters [$valor] ['values'] = $this->_db->fetchPairs ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) , " . $this->filters [$valor] ['distinct'] ['name'] . "  FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
+            //[PT] Aqui vemos se no filtros nos pede os campos distinctos.
+            if (@is_array ( $this->filters [$valor] ['distinct'] ))
+            {
+                $this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
+                $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
+                $this->filters [$valor] ['values'] = $this->_db->fetchPairs ( "SELECT DISTINCT({$this->filters[$valor]['distinct']['field']}) , " . $this->filters [$valor] ['distinct'] ['name'] . "  FROM " . $this->data ['from'] . " " . $this->buildQueryWhere () . " ORDER BY {$this->filters[$valor]['distinct']['name']} ASC" );
+            }
+        
         }
         
-
+        if ($this->_adapter == 'array' && @in_array ( 'distinct', $this->filters [$valor] ))
+        {
+            
+            $this->filters [$valor] ['values'] = $this->builFilterFromArray ( $campo );
+        }
+        
         //[PT] Remover os paramteros que não queremos na url
         $url = urlencode ( $this->getUrl ( array ('filters', 'start', 'comm' ) ) );
         
@@ -1543,14 +1870,16 @@ class Bvb_Grid_DataGrid
             @$this->_filtersValues [$campo] = $this->_filtersValues [$nkey];
         }
         
-
-        if (! is_array ( $this->data ['table'] ))
+        if ($this->_adapter == 'db')
         {
-            $table = $this->getDescribeTable ( $this->data ['table'] );
-        } else
-        {
-            $ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
-            $table = $this->getDescribeTable ( $this->data ['table'] [$ini] );
+            if (! is_array ( $this->data ['table'] ))
+            {
+                $table = $this->getDescribeTable ( $this->data ['table'] );
+            } else
+            {
+                $ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
+                $table = $this->getDescribeTable ( $this->data ['table'] [$ini] );
+            }
         }
         
 
@@ -1651,6 +1980,18 @@ class Bvb_Grid_DataGrid
 
 
     /**
+     * Escape the output
+     */
+    function escapeOutput($escape)
+    {
+
+        $this->escapeOutput = ( bool ) $escape;
+        
+        return $this;
+    }
+
+
+    /**
      * [PT] Contruir o loop para o centro da tabela
      * 
      * [EN] The loop for the results.
@@ -1712,34 +2053,55 @@ class Bvb_Grid_DataGrid
              */
             $is = 0;
             $integralFields = array_keys ( $this->removeAsFromFields () );
+            
+
             foreach ( $fields as $campos )
             {
                 
-
                 $campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
                 $campos = trim ( $campos );
                 
-
-                if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ))
-                {
-                    $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
-                } else
-                {
-                    $new_value = htmlspecialchars ( $dados->$campos );
-                }
-                
-
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ))
                 {
-                    $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( get_object_vars ( $dados ), 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
-                    $new_value = eval ( 'return ' . $evalf );
+                    $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+                    
+
+                    $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
+                    $new_value = eval ( 'return ' . $evalf . ';' );
+                
+                } else
+                {
+                    if ($this->_adapter == 'db')
+                    {
+                        $final = $this->object2array ( $dados );
+                    } else
+                    {
+                        $final = $dados;
+                    }
+                    
+                    if (! is_array ( $final [$campos] ))
+                    {
+                        $new_value = $final [$campos];
+                    }
                 }
                 
 
+                if ($this->escapeOutput === true)
+                {
+                    $new_value = htmlspecialchars ( $new_value );
+                }
+                
                 //[PT]Aplicar o formato da célula
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ))
                 {
                     $new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
+                }
+                
+
+                if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] ))
+                {
+                    $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+                    $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
                 }
                 
 
@@ -1793,6 +2155,11 @@ class Bvb_Grid_DataGrid
     function reset_keys($array)
     {
 
+        
+        if (! is_array ( $array ))
+            return FALSE;
+        
+
         $novo_array = array ();
         $i = 0;
         foreach ( $array as $value )
@@ -1805,11 +2172,17 @@ class Bvb_Grid_DataGrid
 
 
     /**
-     * Somar os dados de uma coluna
+     * Apply SQL Functions
      *
      */
     function buildSqlExp()
     {
+
+        if ($this->_adapter == 'array')
+        {
+            return FALSE;
+        }
+        
 
         $exp = isset ( $this->info ['sqlexp'] ) ? $this->info ['sqlexp'] : '';
         
@@ -1984,10 +2357,13 @@ class Bvb_Grid_DataGrid
         {
             return false;
         }
+        
+        $titulos = null;
+
         if (is_array ( $filters ))
         {
             return $filters;
-        } else
+        } elseif ($this->_adapter == 'db')
         {
             //Não forneceu dados, temos que ir buscá-los todos às tabelas
             if (is_array ( $this->data ['table'] ))
@@ -2023,11 +2399,14 @@ class Bvb_Grid_DataGrid
             }
         } else
         {
-            foreach ( $titulos as $key => $value )
+            if (@is_array ( $titulos ))
             {
-                if (! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) ))
+                foreach ( $titulos as $key => $value )
                 {
-                    unset ( $titulos [$key] );
+                    if (! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) ))
+                    {
+                        unset ( $titulos [$key] );
+                    }
                 }
             }
         }
@@ -2323,59 +2702,143 @@ class Bvb_Grid_DataGrid
     function deploy()
     {
 
+        
         if ($this->consolidated == 0)
         {
             $this->consolidateQuery ();
         }
         
-
-        $query = $this->getQuery ();
-        $query_count = $this->getQueryCount ();
-        #$result = $this->_db->fetchAll ( $query ); 
-        
-
-
-        if ($this->cache ['use'] == 1)
+        if ($this->_adapter == 'db')
         {
-            
-            $cache = $this->cache ['instance'];
+            $query = $this->getQuery ();
+            $query_count = $this->getQueryCount ();
+            #$result = $this->_db->fetchAll ( $query ); 
             
 
-            if (! $result = $cache->load ( md5 ( $query ) ))
+
+            if ($this->cache ['use'] == 1)
             {
-                $result = $this->_db->fetchAll ( $query );
-                $resultCount = $this->_db->fetchOne ( $query_count );
-                $cache->save ( $result, md5 ( $query ), array ($this->cache ['tag'] ) );
-                $cache->save ( $resultCount, md5 ( $query_count ), array ($this->cache ['tag'] ) );
+                
+                $cache = $this->cache ['instance'];
+                
+
+                if (! $result = $cache->load ( md5 ( $query ) ))
+                {
+                    $result = $this->_db->fetchAll ( $query );
+                    $resultCount = $this->_db->fetchOne ( $query_count );
+                    $cache->save ( $result, md5 ( $query ), array ($this->cache ['tag'] ) );
+                    $cache->save ( $resultCount, md5 ( $query_count ), array ($this->cache ['tag'] ) );
+                
+                } else
+                {
+                    $result = $cache->load ( md5 ( $query ) );
+                    $resultCount = $cache->load ( md5 ( $query_count ) );
+                }
             
+
             } else
             {
-                $result = $cache->load ( md5 ( $query ) );
-                $resultCount = $cache->load ( md5 ( $query_count ) );
+                
+                $result = $this->_db->fetchAll ( $query );
+                
+                if ($this->sourceIsExternal != 1)
+                {
+                    $resultCount = $this->_db->fetchOne ( $query_count );
+                } else
+                {
+                    $resultCount = count ( $this->_db->fetchAll ( $query ) );
+                }
             }
+            
+
+            //[PT] O total de registos encontrados na query sem aplicar os limites
+            $this->_totalRecords = $resultCount;
+            
+
+            //[PT]Os registos dentro dos limites
+            $this->_result = $result;
         
 
         } else
         {
             
-            $result = $this->_db->fetchAll ( $query );
+            $filters = Zend_Json::decode ( @$this->ctrlParams ['filters'] );
             
-            if ($this->sourceIsExternal != 1)
+            if (is_array ( $filters ))
             {
-                $resultCount = $this->_db->fetchOne ( $query_count );
-            } else
-            {
-                $resultCount = count ( $this->_db->fetchAll ( $query ) );
+                
+                foreach ( $filters as $key => $filter )
+                {
+                    $key = end ( explode ( '_', $key ) );
+                    $filterValue [$key] = $filter;
+                    if (strlen ( $filter ) > 0)
+                    {
+                        $find [] = $this->findInArray ( $filter, $key );
+                    }
+                }
+                
+
+                $this->_filtersValues = $filterValue;
+                
+                if (count ( $find [0] ) > 0)
+                {
+                    for($i = 0; $i < count ( $find [0] ); $i ++)
+                    {
+                        $recordFiltered [] = $find [0] [$i];
+                    }
+                    
+                    $this->_result = $recordFiltered;
+                
+                } elseif ($this->_searchPerformedInArray === true)
+                {
+                    $this->_result = array ();
+                }
+            
+
             }
+            
+
+            if (isset ( $this->ctrlParams ['order'] ) || strlen ( @$this->data ['order'] ) > 3)
+            {
+                
+                if (strlen ( $this->data ['order'] ) > 3 && ! isset ( $this->ctrlParams ['order'] ))
+                {
+                    
+                    $order = reset ( explode ( ' ', $this->data ['order'] ) );
+                    $orderType = end ( explode ( ' ', $this->data ['order'] ) );
+                    if (strtoupper ( $orderType ) != 'ASC' && strtoupper ( $orderType ) != 'DESC')
+                    {
+                        $orderType = 'ASC';
+                    }
+                    
+
+                    $orderType = strtoupper ( $orderType ) == 'ASC' ? SORT_ASC : SORT_DESC;
+                
+                } else
+                {
+                    $order = reset ( explode ( '_', $this->ctrlParams ['order'] ) );
+                    $orderType = end ( explode ( '_', $this->ctrlParams ['order'] ) );
+                    
+                    $orderType = strtoupper ( $orderType ) == 'ASC' ? SORT_ASC : SORT_DESC;
+                }
+                
+
+                // Obtain a list of columns
+                foreach ( $this->_result as $key => $row )
+                {
+                    $result [$key] = $row [$order];
+                }
+                
+
+                @array_multisort ( $result, $orderType, $this->_result );
+            
+            }
+            
+
+            $this->_totalRecords = count ( $this->_result );
+            $result = array_slice ( $this->_result, ( int ) @$this->ctrlParams ['start'] < $this->_totalRecords ? ( int ) @$this->ctrlParams ['start'] : 0, 15 );
+            $this->_result = $result;
         }
-        
-
-        //[PT] O total de registos encontrados na query sem aplicar os limites
-        $this->_totalRecords = $resultCount;
-        
-
-        //[PT]Os registos dentro dos limites
-        $this->_result = $result;
         
 
         //[PT]Alguma coisa correu mal. Não adicionaram opção
@@ -2383,6 +2846,140 @@ class Bvb_Grid_DataGrid
         {
             throw new Exception ( 'Database options not found. ' );
         }
+    }
+
+
+    /**
+     * Search function for array adapters
+     */
+    function findInArray($search, $field)
+    {
+
+        $this->_searchPerformedInArray = true;
+        
+        $find = array ();
+        
+        foreach ( $this->_result as $result )
+        {
+            foreach ( $result as $key => $final )
+            {
+                
+                if ($key == $field)
+                {
+                    if ($this->applySearchTypeToArray ( $final, $search, $key ))
+                    {
+                        
+                        $find [] = $result;
+                    }
+                }
+            }
+        
+        }
+        
+        return $find;
+    
+    }
+
+
+    /**
+     * Apply the search to a give field when the adaptar is an array
+     */
+    function applySearchTypeToArray($final, $search, $key)
+    {
+
+        $enc = stripos ( $final, $search );
+        
+        if (@$this->data ['fields'] [$key] ['searchType'] != "")
+        {
+            $filtro = $this->data ['fields'] [$key] ['searchType'];
+        }
+        $filtro = @strtolower ( $filtro );
+        
+
+        switch ($filtro)
+        {
+            case 'equal' :
+            case '=' :
+                if ($search == $final)
+                    return true;
+                break;
+            case 'rlike' :
+                if (substr ( $final, 0, strlen ( $search ) ) == $search)
+                    return true;
+                break;
+            case 'llike' :
+                if (substr ( $final, - strlen ( $search ) ) == $search)
+                    return true;
+                break;
+            case '>=' :
+                if ($final >= $search)
+                    return true;
+                break;
+            case '>' :
+                if ($final > $search)
+                    return true;
+                break;
+            case '<>' :
+            case '!=' :
+                if ($final != $search)
+                    return true;
+                break;
+            case '<=' :
+                if ($final <= $search)
+                    return true;
+                break;
+            case '<' :
+                if ($final < $search)
+                    return true;
+                break;
+            default :
+                $enc = stripos ( $final, $search );
+                if ($enc !== false)
+                {
+                    return true;
+                }
+                break;
+        }
+        
+        return false;
+    
+    }
+
+
+    /**
+     * Remove a colum
+     */
+    function removeColumn($column)
+    {
+
+        unset ( $this->data ['fields'] [$column] );
+        return $this;
+    }
+
+
+    /**
+     * Remove an array of columns
+     */
+    function removeColumns(array $columns)
+    {
+
+        foreach ( $columns as $column )
+        {
+            $this->removeColumn ( $column );
+        }
+        
+        return $this;
+    }
+
+
+    /**
+     * Reset a column to clear all customizations 
+     */
+    function resetColumn($column)
+    {
+
+        $this->removeColumn ( $column );
+        $this->addColumn ( $column );
     }
 
 
@@ -2515,6 +3112,9 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Create the grid using a Zend_Db_Select Object
+     */
     function queryFromZendDbSelect(Zend_Db_Select $select, $db)
     {
 
@@ -2584,7 +3184,7 @@ class Bvb_Grid_DataGrid
         
         if (strlen ( $final ['data'] ['order'] ) > 0)
         {
-            #$this->order = $final ['data'] ['order'];
+            $this->order = $final ['data'] ['order'];
         }
         
         $this->noMoreDataActions = 1;

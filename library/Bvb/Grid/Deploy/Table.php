@@ -1,7 +1,6 @@
 <?php
 
 
-
 /**
  * Mascker
  *
@@ -744,10 +743,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $final = '';
         
-        if ((@$this->info ['double_tables'] == 0 && @$this->ctrlParams ['add'] != 1 && @$this->ctrlParams ['edit'] != 1) && $this->getPrimaryKey () && @$this->info ['add'] ['allow'] == 1 && @$this->info ['add'] ['button'] == 1 && @$this->info ['add'] ['no_button'] != 1)
+        if ($this->_adapter == 'db')
         {
-            
-            $final = "<div class=\"addRecord\" ><a href=\"$url/add/1\">" . $this->__ ( 'Add Record' ) . "</a></div>";
+            if ((@$this->info ['double_tables'] == 0 && @$this->ctrlParams ['add'] != 1 && @$this->ctrlParams ['edit'] != 1) && $this->getPrimaryKey () && @$this->info ['add'] ['allow'] == 1 && @$this->info ['add'] ['button'] == 1 && @$this->info ['add'] ['no_button'] != 1)
+            {
+                
+                $final = "<div class=\"addRecord\" ><a href=\"$url/add/1\">" . $this->__ ( 'Add Record' ) . "</a></div>";
+            }
         }
         
         //[PT] O início do template
@@ -804,7 +806,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      */
     function buildFiltersTable($filters)
     {
-
         //[PT]Não existem filtros, vamos embora
         if (! is_array ( $filters ))
         {
@@ -881,8 +882,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 
         //[PT]Temos que saber qual é o campo que está ordenado para depois poder-mos meter a imagem
         //[PT]Caso esteja definda no template
-        $order = array_keys ( $this->order );
-        $order2 = array_keys ( array_flip ( $this->order ) );
+        $order = @array_keys ( $this->order );
+        $order2 = @array_keys ( array_flip ( $this->order ) );
         
         //[PT]O campo que esta a ser ordenado
         $orderField = $order [0];
@@ -950,17 +951,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                         //[PT]Versão em estado incial de ajax. Não e´para levar a sério por enquanto
                         if (array_key_exists ( 'ajax', $this->info ))
                         {
-                            
                             $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
                         } else
                         {
-                            
                             //[PT]Substituir os valores no template
                             $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
                         }
-                    
                     }
                 }
             
@@ -1609,9 +1607,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 }
                 $f .= "</select>";
             
-            }else{
+            } else
+            {
                 #$f ='<input type="text" size="3" style="width:40px !important;">';
-                $f ='';
+                $f = '';
             }
         
         }
@@ -1824,11 +1823,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         $url = parent::getUrl ( 'comm' );
         
 
-        //[PT] Precisamos de processar os forimulário, se necessário,
-        //[PT] Antes de fazer-mos a query
-        self::processForm ();
+        if ($this->_adapter == 'bd')
+        {
+            //[PT] Precisamos de processar os forimulário, se necessário,
+            //[PT] Antes de fazer-mos a query
+            self::processForm ();
+        }
         
-
         parent::deploy ();
         
 
