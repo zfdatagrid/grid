@@ -1506,7 +1506,7 @@ class Bvb_Grid_DataGrid
                 $return [] = array ('type' => 'extraField', 'class' => $this->template ['classes'] ['filter'], 'position' => 'right' );
             }
         }
-      
+        
         return $return;
     }
 
@@ -2773,23 +2773,18 @@ class Bvb_Grid_DataGrid
                 {
                     $key = end ( explode ( '_', $key ) );
                     $filterValue [$key] = $filter;
-                    if (strlen ( $filter ) > 0)
-                    {
-                        $find [] = $this->findInArray ( $filter, $key );
-                    }
                 }
                 
+                $filters = $filterValue;
+                
 
+                $find = $this->findInArray ( $filters );
+                
                 $this->_filtersValues = $filterValue;
                 
-                if (count ( $find [0] ) > 0)
+                if (count ( $find ) > 0)
                 {
-                    for($i = 0; $i < count ( $find [0] ); $i ++)
-                    {
-                        $recordFiltered [] = $find [0] [$i];
-                    }
-                    
-                    $this->_result = $recordFiltered;
+                    $this->_result = $find;
                 
                 } elseif ($this->_searchPerformedInArray === true)
                 {
@@ -2854,30 +2849,48 @@ class Bvb_Grid_DataGrid
     /**
      * Search function for array adapters
      */
-    function findInArray($search, $field)
+    function findInArray($filters)
     {
 
+        $filtersNumber = 0;
+        foreach ($filters as $value)
+        {
+            if(strlen($value)>0){$filtersNumber++;}
+        }
+        
         $this->_searchPerformedInArray = true;
         
         $find = array ();
         
         foreach ( $this->_result as $result )
         {
-            foreach ( $result as $key => $final )
+            
+            $i = 0;
+            
+            foreach ( $filters as $filterKey => $filterValue )
             {
-                
-                if ($key == $field)
+                foreach ( $result as $fieldKey => $fieldValue )
                 {
-                    if ($this->applySearchTypeToArray ( $final, $search, $key ))
+                    if (strlen ( $filterValue ) > 0 && $fieldKey == $filterKey)
                     {
                         
-                        $find [] = $result;
+                        if ($this->applySearchTypeToArray ( $fieldValue, $filterValue, $filterKey ))
+                        {
+                            $i ++;
+                        }
                     }
                 }
+            }
+            
+
+            if ($i == $filtersNumber)
+            {
+                $find [] = $result;
             }
         
         }
         
+
         return $find;
     
     }
@@ -2949,7 +2962,7 @@ class Bvb_Grid_DataGrid
 
 
     /**
-     * Remove a colum
+     * Remove a column
      */
     function removeColumn($column)
     {
