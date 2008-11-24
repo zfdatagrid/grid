@@ -555,7 +555,6 @@ class Bvb_Grid_DataGrid
         $xml = Zend_Json::decode ( $array );
         
 
-
         $cols = explode ( ',', $loop );
         if (is_array ( $cols ))
         {
@@ -1257,7 +1256,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
-
+        $this->_filtersValues = $valor_filters;
         if ($tem_where)
         {
             $query_final = "  " . $query_where;
@@ -1507,8 +1506,7 @@ class Bvb_Grid_DataGrid
                 $return [] = array ('type' => 'extraField', 'class' => $this->template ['classes'] ['filter'], 'position' => 'right' );
             }
         }
-        
-
+      
         return $return;
     }
 
@@ -1916,7 +1914,7 @@ class Bvb_Grid_DataGrid
         }
         $opcoes = $this->filters [$campo];
         
-        if (isset ( $opcoes ['style'] ))
+        if (strlen ( @$opcoes ['style'] ) > 1)
         {
             $opt = " style=\"{$opcoes['style']}\"  ";
         } else
@@ -1962,6 +1960,8 @@ class Bvb_Grid_DataGrid
                 $valor = "<input type=\"text\" $onchange id=\"filter_" . @str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . @$this->_filtersValues [$campo] . "\" $opt>";
                 break;
         }
+        
+
         return $valor;
     }
 
@@ -2359,7 +2359,7 @@ class Bvb_Grid_DataGrid
         }
         
         $titulos = null;
-
+        
         if (is_array ( $filters ))
         {
             return $filters;
@@ -2452,14 +2452,16 @@ class Bvb_Grid_DataGrid
                 $field = $value ['COLUMN_NAME'];
             }
         }
+        
         if (@count ( $primary_key ) != 1)
         {
             return false;
             #throw new Exception('Incaple to get the table primary key. The system can only perform adicional actions on tables with ONE primary key');
         }
+        
         $this->_getPrimaryKey [$this->data ['table']] = $field;
+        
         return $this->_getPrimaryKey [$this->data ['table']];
-        ;
     }
 
 
