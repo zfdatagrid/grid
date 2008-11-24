@@ -1507,6 +1507,7 @@ class Bvb_Grid_DataGrid
             }
         }
         
+
         return $return;
     }
 
@@ -1720,6 +1721,8 @@ class Bvb_Grid_DataGrid
     function addArrayColumns(array $columns)
     {
 
+        $filter = array ();
+        
         if ($this->_adapter != 'array')
             return false;
         
@@ -1731,8 +1734,12 @@ class Bvb_Grid_DataGrid
             } else
             {
                 $this->addColumn ( $value );
+                $filter [$value] = $value;
             }
         }
+        
+        $this->filters = $filter;
+        
         return true;
     }
 
@@ -1819,7 +1826,7 @@ class Bvb_Grid_DataGrid
             $filter [$value [$field]] = $value [$field];
         }
         
-        return $filter;
+        return array_unique ( $filter );
     }
 
 
@@ -1961,7 +1968,6 @@ class Bvb_Grid_DataGrid
                 break;
         }
         
-
         return $valor;
     }
 
@@ -2832,8 +2838,27 @@ class Bvb_Grid_DataGrid
             }
             
 
-            $this->_totalRecords = count ( $this->_result );
-            $result = array_slice ( $this->_result, ( int ) @$this->ctrlParams ['start'] < $this->_totalRecords ? ( int ) @$this->ctrlParams ['start'] : 0, 15 );
+            if (@strlen ( $this->info ['limit'] ) > 0 || @is_array ( $this->info ['limit'] ))
+            {
+                if (is_array ( $this->info ['limit'] ))
+                {
+                    $this->_totalRecords = $this->info ['limit'] [1];
+                    $result = array_slice ( $this->_result, $this->info ['limit'] [0], $this->info ['limit'] [1] );
+                } else
+                {
+                    $this->_totalRecords = $this->info ['limit'];
+                    $result = array_slice ( $this->_result, 0, $this->info ['limit'] );
+                }
+            
+
+            } else
+            {
+                $this->_totalRecords = count ( $this->_result );
+                $result = array_slice ( $this->_result, ( int ) @$this->ctrlParams ['start'] < $this->_totalRecords ? ( int ) @$this->ctrlParams ['start'] : 0, 15 );
+            
+            }
+            
+
             $this->_result = $result;
         }
         
@@ -2853,9 +2878,12 @@ class Bvb_Grid_DataGrid
     {
 
         $filtersNumber = 0;
-        foreach ($filters as $value)
+        foreach ( $filters as $value )
         {
-            if(strlen($value)>0){$filtersNumber++;}
+            if (strlen ( $value ) > 0)
+            {
+                $filtersNumber ++;
+            }
         }
         
         $this->_searchPerformedInArray = true;
