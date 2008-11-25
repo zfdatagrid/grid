@@ -1823,7 +1823,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         $url = parent::getUrl ( 'comm' );
         
 
-        if ($this->_adapter == 'bd')
+        if ($this->_adapter == 'db')
         {
             //[PT] Precisamos de processar os forimulário, se necessário,
             //[PT] Antes de fazer-mos a query
