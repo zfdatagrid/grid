@@ -532,29 +532,33 @@ class Bvb_Grid_DataGrid
         
         if (true === $file)
         {
+            
             if ($this->cache ['use'] == 1)
             {
                 $cache = $this->cache ['instance'];
-                if (! $array = $cache->load ( md5 ( $array ) ))
+                
+                if (! $result = $cache->load ( md5 ( $array ) ))
                 {
-                    $array = file_get_contents ( $array );
+                    $result = file_get_contents ( $array );
                     
-                    $cache->save ( $array, md5 ( $array ), array ($this->cache ['tag'] ) );
+                    $cache->save ( $result, md5 ( $array ), array ($this->cache ['tag'] ) );
                 } else
                 {
-                    $array = $cache->load ( md5 ( $array ) );
+                    $result = $cache->load ( md5 ( $array ) );
                 }
             } else
             {
-                $array = file_get_contents ( $array );
+                $result = file_get_contents ( $array );
             }
         
 
+        } else
+        {
+            $result = $array;
         }
         
-        $xml = Zend_Json::decode ( $array );
+        $xml = Zend_Json::decode ( $result );
         
-
         $cols = explode ( ',', $loop );
         if (is_array ( $cols ))
         {
@@ -564,7 +568,6 @@ class Bvb_Grid_DataGrid
             }
         }
         
-
         if (is_array ( $columns ))
         {
             foreach ( $columns as $value )
@@ -1753,6 +1756,7 @@ class Bvb_Grid_DataGrid
         if ($this->_adapter != 'array')
             return false;
         
+
         $this->_result = $data;
         $this->_resultRaw = $data;
         return $this;
@@ -2771,7 +2775,6 @@ class Bvb_Grid_DataGrid
         {
             
             $filters = Zend_Json::decode ( @$this->ctrlParams ['filters'] );
-            
             if (is_array ( $filters ))
             {
                 

@@ -114,7 +114,7 @@ class SiteController extends Zend_Controller_Action
                 $grid->addElementDir ( 'My/Filter', 'My_Filter', 'filter' );
                 $grid->addFormatterDir ( 'My/Formatter', 'My_Formatter' );
                 $grid->imagesUrl = $this->getRequest ()->getBaseUrl () . '/public/images/';
-                $grid->cache = array ('use' => 1, 'instance' => Zend_Registry::get ( 'cache' ), 'tag' => 'grid' );
+                $grid->cache = array ('use' => 0, 'instance' => Zend_Registry::get ( 'cache' ), 'tag' => 'grid' );
                 
                 break;
         }
@@ -334,25 +334,23 @@ class SiteController extends Zend_Controller_Action
     function testAction()
     {
 
-        #$url = 'http://services.sapo.pt/Holiday/GetNationalHolidays?year=2008';
         $url = 'http://espacoultra.blogspot.com/feeds/posts/default?alt=rss';
         
 
-      
-        
         $grid = $this->grid ( 'table' );
         
 
-        $grid->setDataFromCsv ('media/files/grid.csv');
+        #Zend_Debug::dump(Zend_Json::decode(file_get_contents('http://services.sapo.pt/JobOffers/JSON')));
+        
+        $grid->setDataFromCsv ( 'media/files/grid.csv' );
         #$grid->setDataFromXml ( $url, 'channel,item' );
         #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
-        #$grid->setDataFromJson(file_get_contents('http://services.sapo.pt/JobOffers/JSON'));
-        #$grid->setDataFromXml($url);
+        #$grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
         
-     
-        $grid->addColumn('ID',array('searchType'=>'llike'));
-        
-        $grid->order('Name');
+
+
+        /*  
+        $grid->order('ID');
 
         $filters = new Bvb_Grid_Filters ( );
         $filters->addFilter ( 'Name')
@@ -363,7 +361,9 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addFilters ( $filters );
         
-
+        */
+        
+        
         $this->view->pages = $grid->deploy ();
         
         $this->render ( 'index' );
