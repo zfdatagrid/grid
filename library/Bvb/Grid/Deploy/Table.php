@@ -806,6 +806,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      */
     function buildFiltersTable($filters)
     {
+
         //[PT]Não existem filtros, vamos embora
         if (! is_array ( $filters ))
         {
@@ -1055,30 +1056,54 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         }
         
 
-        $opcoes = $this->info [$mod] ['fields'] [$field];
+        $options = $this->info [$mod] ['fields'] [$field];
         
         //[PT]Se nas ipções do campo tiveram sido definidos styles, apli´ca-los
         //[PT]Caso contrário fazer um wdth de 95% para ficar mais vistoso
-        if (isset ( $opcoes ['style'] ))
+        
+
+
+        $attr = '';
+        
+
+        if (! is_array ( @$options ['attributes'] ))
         {
-            $opt = " style=\"{$opcoes['style']}\"  ";
+            $options ['attributes'] = array ();
+            
+            if (! in_array ( 'style', @$options ['attributes'] ))
+            {
+                $options ['attributes'] ['style'] = 'width:95%';
+            }
         } else
         {
-            $opt = " style=\"width:95%\"  ";
+            
+            if (! array_key_exists('style', @$options ['attributes'] ))
+            {
+                $options ['attributes'] ['style'] = 'width:95%';
+            }
+        }
+        
+
+        if (@is_array ( $options ['attributes'] ))
+        {
+            foreach ( $options ['attributes'] as $key => $value )
+            {
+                $attr .= " $key=\"$value\" ";
+            }
         }
         
         //[PT]Significa que alguém que especificar os valoes que pode ser mostrados através
         //[PT] de um menu select (dropdown?)
-        if (isset ( $opcoes ['values'] ))
+        if (isset ( $options ['values'] ))
         {
-            if (is_array ( $opcoes ['values'] ))
+            if (is_array ( $options ['values'] ))
             {
                 //[PT]Apesar de não ser invalido, declaramos assim para depois podermos
                 //[PT]passar despercebidos no switch que vem aí
                 $tipo = 'invalid';
-                $avalor = $opcoes ['values'];
+                $avalor = $options ['values'];
                 
-                $valor = "<select name=\"$field\" $opt  >";
+                $valor = "<select name=\"$field\"   $attr >";
                 
                 foreach ( $avalor as $key => $value )
                 {
@@ -1113,7 +1138,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 $size = count ( $avalor ) > 7 ? 7 : count ( $avalor );
                 
-                $valor = "<select multiple=\"multiple\" size=\"$size\" name=\"{$field}[]\" $opt  >";
+                $valor = "<select multiple=\"multiple\"  size=\"$size\" name=\"{$field}[]\" $attr  >";
                 foreach ( $avalor as $value )
                 {
                     
@@ -1131,7 +1156,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 //[PT]De notar que isto só é utilizado se o utilizar não definir opções manualmente
                 $avalor = explode ( ",", substr ( $enum, 4 ) );
                 
-                $valor = "<select  name=\"$field\" $opt  >";
+                $valor = "<select  name=\"$field\" $attr  >";
                 foreach ( $avalor as $value )
                 {
                     $selected = $value == "'" . $inicial_value . "'" ? "selected" : "";
@@ -1149,7 +1174,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 //[PT]Como é text vamos mostrar uma textarea
                 $height = strlen ( $inicial_value / 60 ) < 30 ? 30 : strlen ( $inicial_value / 60 );
                 
-                $valor = "<textarea  name=\"{$field}\"   class=\"input_p\"  style=\"height:{$height}px;\">" . stripslashes ( $inicial_value ) . "</textarea>";
+                $valor = "<textarea  name=\"{$field}\"  style=\"height:{$height}px;\" $attr>" . stripslashes ( $inicial_value ) . "</textarea>";
                 break;
             
             default :
@@ -1157,7 +1182,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 //[PT]Seja qual for o outro valor mostradors um campo de texto
                 //[PT]Ainda é preciso saber como tratar dos campo blob,
                 //[PT]por enquanto não existe nada para eles. nem esta nos meus planos
-                $valor = "<input type=\"text\"  name=\"{$field}\"   class=\"input_p\" value=\"" . stripslashes ( $inicial_value ) . "\" $opt>";
+                $valor = "<input  type=\"text\"  name=\"{$field}\"   value=\"" . stripslashes ( $inicial_value ) . "\" $attr>";
                 
                 break;
         }
@@ -1268,6 +1293,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $i = 0;
         
+
         foreach ( $fields as $key => $value )
         {
             
