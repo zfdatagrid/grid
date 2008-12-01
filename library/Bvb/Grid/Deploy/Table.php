@@ -1686,7 +1686,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $f = '';
                 }
                 
-                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' to ' . $registoFinal . ' of ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' '.$this->__('to').' ' . $registoFinal . ' '.$this->__('of').'  ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             } elseif ($npaginas < 2 && count ( $this->export ) > 0)
             {
