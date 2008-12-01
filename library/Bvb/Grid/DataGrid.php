@@ -1433,12 +1433,15 @@ class Bvb_Grid_DataGrid
                 @$url .= "/" . trim ( $key ) . "/" . trim ( $param );
             }
         }
+        
         if (strlen ( $params ['action'] ) > 0)
         {
             $action = "/" . $params ['action'];
         }
+        
+        
         //[PT] Não precisamos das keys de action e controller, por isso removemos
-        //[EN] Remove the action e controller keys, they are not necessary (in fact they aren't part ot url)
+        //[EN] Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists ( 'ajax', $this->info ))
         {
             return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/modo/ajax";

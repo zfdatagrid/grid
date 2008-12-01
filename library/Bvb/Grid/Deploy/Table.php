@@ -1230,7 +1230,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         
         $fields = $this->_fields;
         
-        if (is_array ( $this->info ['add'] ['fields'] ))
+        if (is_array ( @$this->info ['add'] ['fields'] ))
         {
             unset ( $fields_to );
             
