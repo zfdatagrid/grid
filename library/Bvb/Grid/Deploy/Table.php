@@ -344,34 +344,29 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     {
                         unset ( $final_values [$key] );
                     }
-                }
-                
+                    
 
-                if ($mode == 'add')
-                {
-                    foreach ( array_keys ( $final_values ) as $key )
+                    if ($mode == 'add')
                     {
+                        
                         if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['readonly'] ))
                         {
-                           $final_values [$key] ='';
+                            $final_values [$key] = '';
+                        }
+                    
+                    }
+                    
+                    if ($mode == 'edit')
+                    {
+                        
+                        if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['readonly'] ))
+                        {
+                            unset ( $final_values [$key] );
                         }
                     }
                 }
                 
-                
 
-                if ($mode == 'edit')
-                {
-                    foreach ( array_keys ( $final_values ) as $key )
-                    {
-                        if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['readonly'] ))
-                        {
-                             unset ( $final_values [$key] );
-                        }
-                    }
-                }
-                
-                
                 //[PT] Processar dados
                 //[EN] Process data
                 if ($mode == 'add' && is_array ( $final_values ))
