@@ -336,6 +336,42 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 
                 unset ( $final_values [parent::getPrimaryKey ()] );
                 
+
+                foreach ( array_keys ( $final_values ) as $key )
+                {
+                    
+                    if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['disabled'] ))
+                    {
+                        unset ( $final_values [$key] );
+                    }
+                }
+                
+
+                if ($mode == 'add')
+                {
+                    foreach ( array_keys ( $final_values ) as $key )
+                    {
+                        if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['readonly'] ))
+                        {
+                           $final_values [$key] ='';
+                        }
+                    }
+                }
+                
+                
+
+                if ($mode == 'edit')
+                {
+                    foreach ( array_keys ( $final_values ) as $key )
+                    {
+                        if (isset ( $this->info ['add'] ['fields'] [$key] ['attributes'] ['readonly'] ))
+                        {
+                             unset ( $final_values [$key] );
+                        }
+                    }
+                }
+                
+                
                 //[PT] Processar dados
                 //[EN] Process data
                 if ($mode == 'add' && is_array ( $final_values ))
@@ -1077,7 +1113,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         } else
         {
             
-            if (! array_key_exists('style', @$options ['attributes'] ))
+            if (! array_key_exists ( 'style', @$options ['attributes'] ))
             {
                 $options ['attributes'] ['style'] = 'width:95%';
             }
@@ -1308,7 +1344,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     
                     foreach ( $this->_formMessages [$titles [$i]] as $formS )
                     {
-                        $finalV .= '<br>' . implode ( '<br>', $formS );
+                        $finalV .= '<br />' . implode ( '<br />', $formS );
                     }
                     
                     $finalV = '<span style="color:red;">' . $finalV . '</span>';
@@ -1686,7 +1722,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     $f = '';
                 }
                 
-                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' '.$this->__('to').' ' . $registoFinal . ' '.$this->__('of').'  ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
+                $result2 = str_replace ( array ('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}' ), array ($exp, $pag, $f, $registoActual . ' ' . $this->__ ( 'to' ) . ' ' . $registoFinal . ' ' . $this->__ ( 'of' ) . '  ' . $this->_totalRecords ), $this->temp ['table']->pagination () );
             
             } elseif ($npaginas < 2 && count ( $this->export ) > 0)
             {
