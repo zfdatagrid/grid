@@ -1480,7 +1480,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             $set = null;
             $grid .= $this->temp ['table']->loopEnd ( $finalFields );
             
-            $aa ++;
+            @$aa ++;
         }
         
         if ($this->_totalRecords == 0)

@@ -137,7 +137,7 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         if ($totalFrom == 1)
         {
             
-            if (key ( $parts ['from'] ) == $parts ['from'] ['tableName'])
+            if (@key ( $parts ['from'] ) == @$parts ['from'] ['tableName'])
             {
                 $this->data ['from'] = $parts ['from'] ['tableName'];
             } else
@@ -170,7 +170,7 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
         
 
         $this->data ['groupBy'] = implode ( ', ', $parts ['group'] );
-        $this->data ['having'] = $parts ['having'] [0];
+        @$this->data ['having'] = $parts ['having'] [0];
         
 
         $order = $parts ['order'];
@@ -180,7 +180,7 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select
             $this->data ['order'] .= $value [0] . ' ' . $value [1] . ' ,';
         }
         
-        $this->data ['order'] = substr ( $this->data ['order'], 0, - 1 );
+        @$this->data ['order'] = substr ( $this->data ['order'], 0, - 1 );
         
 
         $query = "SELECT " . implode ( ', ', $this->data ['columns'] ) . ' FROM  ' . $this->data ['from'] . ' WHERE ( ' . $this->data ['where'] . ' ) GROUP BY  ' . $this->data ['groupBy'] . '  HAVING ' . $this->data ['having'];
