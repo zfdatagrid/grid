@@ -50,14 +50,12 @@ class Bvb_Grid_Template_Table_Select extends Bvb_Grid_Template_Table_Table
             $this->ic = $this->ic - 1;
         }
 
-
-
         $this->i++;
         $this->ic++;
         $this->ia++;
         $this->insideLoop = 1;
 
-        return "<tr onclick=\"setpointer(this, ".($this->ic )." , '#90aaEB');checkCheckbox($this->ia)\" >";
+        return "<tr onclick=\"setpointer(this, ".($this->ic )." , '#90aaEB'); checkCheckbox($this->ia)\" >";
     }
 
 
@@ -76,7 +74,7 @@ class Bvb_Grid_Template_Table_Select extends Bvb_Grid_Template_Table_Table
 
         $class =  $this->i % 2 ? "alt" : "";
 
-        return "<td class=\"$class {{class}}\" $input2 >$input &nbsp;</td>";
+        return "<td class=\"$class {{class}}\" $input2 > $input &nbsp;</td>";
     }
 
 
