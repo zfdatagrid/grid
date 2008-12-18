@@ -1204,10 +1204,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                 break;
             case 'text' :
                 
-                //[PT]Como é text vamos mostrar uma textarea
-                $height = strlen ( $inicial_value / 60 ) < 30 ? 30 : strlen ( $inicial_value / 60 );
-                
-                $valor = "<textarea  name=\"{$field}\"  style=\"height:{$height}px;\" $attr>" . stripslashes ( $inicial_value ) . "</textarea>";
+                $valor = "<textarea  name=\"{$field}\"   $attr>" . stripslashes ( $inicial_value ) . "</textarea>";
                 break;
             
             default :
