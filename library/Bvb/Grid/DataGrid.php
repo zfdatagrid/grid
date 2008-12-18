@@ -2144,7 +2144,7 @@ class Bvb_Grid_DataGrid
                         if (isset ( $value ['eval'] ))
                         {
                             $evalf = str_replace ( $search, $fi, $value ['eval'] );
-                            $new_value = eval ( 'return ' . $evalf );
+                            $new_value = eval ( 'return ' . trim($evalf,';') );
                         }
                         $finalClass = isset ( $value ['class'] ) ? $value ['class'] : '';
                         $class = isset ( $class ) ? $class : '';
