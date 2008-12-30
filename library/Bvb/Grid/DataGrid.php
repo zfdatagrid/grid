@@ -1439,7 +1439,7 @@ class Bvb_Grid_DataGrid
             $action = "/" . $params ['action'];
         }
         
-        
+
         //[PT] Não precisamos das keys de action e controller, por isso removemos
         //[EN] Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists ( 'ajax', $this->info ))
@@ -2107,6 +2107,9 @@ class Bvb_Grid_DataGrid
                 //[PT]Aplicar o formato da célula
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] ))
                 {
+                    $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+                    $new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['format'] );
+                    
                     $new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
                 }
                 
@@ -2144,7 +2147,7 @@ class Bvb_Grid_DataGrid
                         if (isset ( $value ['eval'] ))
                         {
                             $evalf = str_replace ( $search, $fi, $value ['eval'] );
-                            $new_value = eval ( 'return ' . trim($evalf,';') );
+                            $new_value = eval ( 'return ' . trim ( $evalf, ';' ) );
                         }
                         $finalClass = isset ( $value ['class'] ) ? $value ['class'] : '';
                         $class = isset ( $class ) ? $class : '';
