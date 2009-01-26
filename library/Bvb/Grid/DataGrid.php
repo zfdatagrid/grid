@@ -1520,10 +1520,8 @@ class Bvb_Grid_DataGrid
 
     /**
      * [PT] Vamos consildar os campoos que estão no array pelo dos fields da tabela
-     * [PT] Não podemos usar o metodo describeTable() porque ele não nos dá se é de auto-incremento
      * 
      * [En] Consolidate the fields that are in the array with the one on the table
-     * [EN] We can not use the describeTable method because we can't know if a field is auto-increment
      *
      * @param array $fields
      * @param string $table
@@ -1531,17 +1529,17 @@ class Bvb_Grid_DataGrid
      */
     function consolidateFields($fields, $table)
     {
-
-        $table = $this->_db->quoteIdentifier ( $table );
+        $table = $this->_db->describeTable($table);
         
-        $table = $this->_db->fetchAll ( "SHOW COLUMNS FROM $table" );
+        
         foreach ( $table as $value )
         {
-            if ($value->Extra != 'auto_increment')
+            if ($value['IDENTITY'] === false)
             {
-                $table_fields [] = $value->Field;
+                $table_fields [] = $value['COLUMN_NAME'];
             }
         }
+        
         foreach ( $fields as $key => $value )
         {
             if (! in_array ( $value, $table_fields ))
