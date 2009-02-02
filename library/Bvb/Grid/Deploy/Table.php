@@ -517,7 +517,25 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                     
                     //[PT] Se for array, significa que o Zend_Validate recebe argumentos
                     //[EN] If an array, means the Validator receives arguments
-                    $t = new $class ( implode ( ',', $validators [$key] ) );
+                    
+
+
+                    switch (count ( $validators [$key] ))
+                    {
+                        case 5 :
+                            $t = new $class ( $validators [$key] [0], $validators [$key] [1], $validators [$key] [2], $validators [$key] [3], $validators [$key] [4] );
+                            break;
+                        case 4 :
+                            $t = new $class ( $validators [$key] [0], $validators [$key] [1], $validators [$key] [2], $validators [$key] [3] );
+                            break;
+                        case 3 :
+                            $t = new $class ( $validators [$key] [0], $validators [$key] [1], $validators [$key] [2] );
+                            break;
+                        default :
+                            $t = new $class ( $validators [$key] [0], $validators [$key] [1] );
+                            break;
+                    }
+                    
                     $return = $t->isValid ( $value );
                     
                     if ($return === false)
