@@ -1,24 +1,25 @@
 <?php
 
-
 /**
  * Mascker
  *
  * LICENSE
  *
- * This source file is subject to the GNU General Public License 2.0
+ * This source file is subject to the new BSD license
  * It is  available through the world-wide-web at this URL:
- * http://www.opensource.org/licenses/gpl-2.0.php
+ * http://www.petala-azul.com/bsd.txt
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Mascker_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
- * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
+ * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
+
+
 
 class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
 {
@@ -668,7 +669,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
      * [PT] Ou do tipo select ou text
      * 
      * [EN] Field type on the filters area. If the field type is enum, build the options
-     * [EN] Also, we first need to check if the user has defined values to presente.
+     * [EN] Also, we first need to check if the user has defined values.
      * [EN] If set, this values override the others
      *
      * @param string $campo

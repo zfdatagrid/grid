@@ -1,25 +1,24 @@
 <?php
 
-
-
 /**
  * Mascker
  *
  * LICENSE
  *
- * This source file is subject to the GNU General Public License 2.0
+ * This source file is subject to the new BSD license
  * It is  available through the world-wide-web at this URL:
- * http://www.opensource.org/licenses/gpl-2.0.php
+ * http://www.petala-azul.com/bsd.txt
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Mascker_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
- * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
+ * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.1  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
+
 
 class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 {
@@ -78,18 +77,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $sqlexp = parent::buildSqlExp ();
         $grid = parent::buildGrid ();
         
-        $nome = reset ( $titles );
-        
-        /*
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')  )
-        {
-        @array_shift($titles);
-        @array_shift($sql);
 
-        $remove = true;
-        }
-        */
-        
         $i = 0;
         
         foreach ( $titles as $titulos )
@@ -332,26 +320,17 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         
         foreach ( $larg as $final )
         {
+            
             $cell [$i] = round ( $final * $pl / $total_len );
             $i ++;
         }
         
 
-        $nome = reset ( $titulos );
-        
-        if ($nome ['field'] == 'id' || strpos ( $nome ['field'], '_id' ) || strpos ( $nome ['field'], 'id_' ) || strpos ( $nome ['field'], '.id' ))
-        {
-            @array_shift ( $titulos );
-            @array_shift ( $sql );
-            $remove = true;
-        }
-        
         $total_celulas = count ( $titulos );
         if (@$this->info ['hRow'] ['title'] != '')
         {
             $total_celulas --;
         }
-        $largura = ($page->getWidth () - 80) / $total_celulas;
         $altura = $page->getHeight () - 120;
         
 
@@ -359,33 +338,31 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $page->setFont ( $font, $cellFontSize + 1 );
         foreach ( $titulos as $value )
         {
-            
-
             if (($value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
             {
-                
                 if (( int ) $la == 0)
                 {
-                    $largura1 = 40;
+                    $largura = 40;
                 } else
                 {
-                    $largura1 = $cell [$i - 1] + $largura1;
+                    $largura = $cell [$i - 1] + $largura;
                 }
                 
 
                 $page->setStyle ( $topo );
-                $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
+                $page->drawRectangle ( $largura, $altura - 4, $largura + $cell [$i] + 1, $altura + 12 );
                 $page->setStyle ( $styleText );
-                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
-                $la = $largura1;
+                $page->drawText ( $value ['value'], $largura + 2, $altura );
+                $la = $largura;
                 
                 $i ++;
+            
+
             }
-        
         }
-        $page->setFont ( $font, $cellFontSize );
         
 
+        $page->setFont ( $font, $cellFontSize );
         $page->setStyle ( $style );
         
 
@@ -396,7 +373,6 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         if (is_array ( $grid ))
         {
             
-
             /////////////////
             /////////////////
             /////////////////
@@ -426,7 +402,6 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
 
             $ia = 0;
-            
             $aa = 0;
             foreach ( $grid as $value )
             {
@@ -476,7 +451,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                     $altura = $page->getHeight () - 120;
                     
                     $page->drawText ( $this->pdfInfo ['footer'], 40, 40 );
-                    if ($this->pdfInfo ['noPagination'] != 1)
+                    if (@$this->pdfInfo ['noPagination'] != 1)
                     {
                         $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 );
                     }
@@ -485,27 +460,27 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                     //Colocar novamento os títulos em cada página
                     reset ( $titulos );
                     $i = 0;
-                    $largura1 = 40;
+                    $largura = 40;
                     $page->setFont ( $font, $cellFontSize + 1 );
                     foreach ( $titulos as $title )
                     {
                         
-                        if (($title ['field'] != $this->info ['hRow'] ['field'] && $this->info ['hRow'] ['title'] != '') || $this->info ['hRow'] ['title'] == '')
+                        if (($title ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                         {
                             
                             if (( int ) $la == 0)
                             {
-                                $largura1 = 40;
+                                $largura = 40;
                             } else
                             {
-                                $largura1 = $cell [$i - 1] + $largura1;
+                                @$largura = $cell [$i - 1] + $largura;
                             }
                             
                             $page->setStyle ( $topo );
-                            $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
+                            $page->drawRectangle ( $largura, $altura - 4, $largura + $cell [$i] + 1, $altura + 12 );
                             $page->setStyle ( $style );
-                            $page->drawText ( $title ['value'], $largura1 + 2, $altura );
-                            $la = $largura1;
+                            $page->drawText ( $title ['value'], $largura + 2, $altura );
+                            $la = $largura;
                             
                             $i ++;
                         }
@@ -515,13 +490,12 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 
 
                 $la = 0;
-                $altura = $altura - 16;
+                $altura -= 16;
                 $i = 0;
                 $tdf = $ia % 2 ? $td : $td2;
                 
                 $a = 1;
                 
-
                 ////////////
                 ////////////
                 //A linha horizontal
@@ -536,18 +510,18 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                         
                         if (( int ) $la == 0)
                         {
-                            $largura1 = 40;
+                            $largura = 40;
                         } else
                         {
-                            $largura1 = $cell [$i - 1] + $largura1;
+                            $largura = $cell [$i - 1] + $largura;
                         }
                         
                         $page->setStyle ( $hRowStyle );
-                        $page->drawRectangle ( $largura1, $altura - 4, $page->getWidth () - 40, $altura + 12 );
+                        $page->drawRectangle ( $largura, $altura - 4, $page->getWidth () - 40, $altura + 12 );
                         $page->setStyle ( $styleText );
                         $page->drawText ( $bar [$aa] [$hRowIndex] ['value'], $centrar, $altura );
                         $la = 0;
-                        $altura = $altura - 16;
+                        $altura -= 16;
                     
                     }
                 }
@@ -556,46 +530,43 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 ////////////
                 
 
-
+                $numberLines = $this->numberLines ( $value, $cell );
+                
                 foreach ( $value as $value1 )
                 {
                     
                     $value1 ['value'] = strip_tags ( $value1 ['value'] );
                     
-
+                    
                     if (($value1 ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                     {
+                        $largura = ( int ) $la == 0 ? 40 : $largura = $cell [$i - 1] + $largura;
+                        
+                        $firstHeight = $altura - $numberLines * 10;
                         
 
-                        if (( int ) $la == 0)
+                        $page->setStyle ( $tdf );
+                        $page->drawRectangle ( $largura, $firstHeight - 4, $largura + $cell [$i] + 1, $altura + 12 );
+                        $page->setStyle ( $styleText );
+                        
+                        for($j = 0; $j < $numberLines; $j ++)
                         {
-                            $largura1 = 40;
-                        } else
-                        {
-                            $largura1 = $cell [$i - 1] + $largura1;
+                            $page->drawText ( substr ( $value1 ['value'], $j * $this->cellLength ( $cell [$i] ), $this->cellLength ( $cell [$i] ) ), $largura + 2, $altura - $j * 11 );
                         }
                         
-                        $page->setStyle ( $tdf );
-                        $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
-                        $page->setStyle ( $styleText );
-                        $page->drawText ( $value1 ['value'], $largura1 + 2, $altura );
-                        
-                        $la = $largura1;
+
+                        $la = $largura;
                         $i ++;
                     }
-                    
                     $a ++;
                 }
                 
                 $aa ++;
                 $ia ++;
             }
+        
         }
         
-
-        /////////////
-        
-
 
         $la = 0;
         $altura = $altura - 16;
@@ -608,19 +579,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 
                 if (( int ) $la == 0)
                 {
-                    $largura1 = 40;
+                    $largura = 40;
                 } else
                 {
-                    $largura1 = $cell [$i - 1] + $largura1;
+                    $largura = $cell [$i - 1] + $largura;
                 }
                 
                 $page->setStyle ( $styleSql );
-                $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i], $altura + 12 );
+                $page->drawRectangle ( $largura, $altura - 4, $largura + $cell [$i], $altura + 12 );
                 $page->setStyle ( $styleText );
-                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
-                $la = $largura1;
+                $page->drawText ( $value ['value'], $largura + 2, $altura );
+                $la = $largura;
                 
-                $la = $largura1;
+                $la = $largura;
                 $i ++;
             }
         }
@@ -643,6 +614,54 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         die ();
     }
 
+
+    /////////////
+    
+
+
+    function numberLines($value, $cell)
+    {
+
+        $j = 0;
+        foreach ( $value as $linhas )
+        {
+            $linha [$j] = strlen ( strip_tags ( $linhas ['value'] ) );
+            $nl = 230 * $cell [$j] / 790;
+            $numberLines [] = $linha [$j] / $nl;
+            $j ++;
+        }
+        
+        sort ( $numberLines );
+        
+        return ceil ( end ( $numberLines ) );
+    
+    }
+
+
+    /////////////
+    
+
+
+    function cellLength($cellValue)
+    {
+
+        if ($cellValue > 500)
+        {
+            $value = 175;
+        } elseif ($cellValue > 300)
+        {
+            $value = 165;
+        } elseif ($cellValue > 100)
+        {
+            $value = 160;
+        } else
+        {
+            $value = 150;
+        }
+        
+        return $value * $cellValue / 553;
+    
+    }
 
 }
 
