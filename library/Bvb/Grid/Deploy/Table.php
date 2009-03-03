@@ -489,8 +489,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
         if (is_array ( $values ) && $mode == 'edit')
         {
             
-            if (! in_array ( $value, $values ))
-            {
+             if (! in_array ( $value, $values ) && !array_key_exists($value, $values))
+            { 
                 $this->_failedValidation = true;
                 return false;
             }
@@ -532,8 +532,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
                         case 3 :
                             $t = new $class ( $validators [$key] [0], $validators [$key] [1], $validators [$key] [2] );
                             break;
+                        case 2:
+ 							$t = new $class ( $validators [$key] [0], $validators [$key] [1] );
+							break;
                         default :
-                            $t = new $class ( $validators [$key] [0], $validators [$key] [1] );
+                            $t = new $class ( $validators [$key] [0]);
                             break;
                     }
                     
