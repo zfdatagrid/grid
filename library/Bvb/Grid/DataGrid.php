@@ -2857,8 +2857,12 @@ class Bvb_Grid_DataGrid
                     $result = array_slice ( $this->_result, 0, $this->info ['limit'] );
                 }
             
-
-            } else
+            } elseif($this->pagination==0)
+            {
+                $this->_totalRecords = count ( $this->_result );
+                $result = $this->_result;
+            
+            }else
             {
                 $this->_totalRecords = count ( $this->_result );
                 $result = array_slice ( $this->_result, ( int ) @$this->ctrlParams ['start'] < $this->_totalRecords ? ( int ) @$this->ctrlParams ['start'] : 0, 15 );
