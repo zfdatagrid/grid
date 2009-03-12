@@ -50,7 +50,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
 
         $class = $this->i % 2 ? "alt" : "";
         
-        return "<td  class=\"$class {{class}}\" >{{value}}</td>";
+        return "<td  class=\"$class {{class}}\" >{{value}}&nbsp;</td>";
     }
 
 

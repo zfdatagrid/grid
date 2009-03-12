@@ -71,13 +71,18 @@ class Bvb_Grid_DataGrid
     protected $_formatter;
 
     
+    /**
+     * Number of results per page
+     *
+     * @var int
+     */
     protected $pagination = 15;
 
     
     /**
      * Os tipo de de exportação que podemos utilizar
      *
-     * @var unknown_type
+     * @var array
      */
     public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt' );
 
@@ -140,14 +145,14 @@ class Bvb_Grid_DataGrid
 
     /**
      * [PT] Array com os titulos a ser aplicados
-     * [EN] Array containing filed titles
+     * [EN] Array containing field titles
      *
      * @var array
      */
     protected $_titles;
 
     /**
-     * [PT] Array contento os campos da(s) tablea(s)
+     * [PT] Array contendo os campos da(s) tabela(s)
      * [EN] Array containing table(s) fields
      *
      * @var array
@@ -165,7 +170,7 @@ class Bvb_Grid_DataGrid
     /**
      * [PT] A lista de filtros
      *
-     * @var unknown_type
+     * @var array
      */
     public $filters;
 
@@ -353,6 +358,11 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Define the adapter to use
+     *
+     * @param string $adapter
+     */
     function setAdapter($adapter)
     {
 
@@ -362,6 +372,14 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Enter data using a csv file
+     *
+     * @param string $file
+     * @param string $field
+     * @param string $separator
+     * @return unknown
+     */
     function setDataFromCsv($file, $field = null, $separator = ',')
     {
 
@@ -472,6 +490,13 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Set the data using a XML file
+     *
+     * @param string $url
+     * @param bool $loop
+     * @param bool $columns
+     */
     function setDataFromXml($url, $loop = null, $columns = null)
     {
 
@@ -527,6 +552,14 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Set the data using a JSON formatted value
+     *
+     * @param string $array
+     * @param bool $file
+     * @param bool $loop
+     * @param bool $columns
+     */
     function setDataFromJson($array, $file = false, $loop = null, $columns = null)
     {
 
@@ -590,6 +623,11 @@ class Bvb_Grid_DataGrid
     }
 
 
+    /**
+     * Set the data using an array
+     *
+     * @param array $array
+     */
     function setDataFromArray($array)
     {
 
@@ -1685,7 +1723,8 @@ class Bvb_Grid_DataGrid
                     {
                         $order_img = 'asc';
                     }
-                    $img = $this->template ['images'] [$order_img];
+                    $img = @$this->template ['images'] [$order_img];
+                    
                 } else
                 {
                     $img = "";

@@ -1719,6 +1719,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid
             
             $exp = '';
             
+            
             foreach ( $this->export as $export )
             {
                 $exp .= "<a target='_blank' href='$url/export/{$export}'>" . $images [$export] . "</a>";

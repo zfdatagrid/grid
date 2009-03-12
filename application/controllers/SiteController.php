@@ -10,15 +10,14 @@ class SiteController extends Zend_Controller_Action
      *
      * @param string $name
      * @param array $var
-   */
+     */
     function __call($name, $var)
     {
-
         $this->_redirect ( 'default/site/basic', array ('exit' => 1 ) );
         return false;
     }
-     
-    
+
+
     /**
      * [EN] I think this is needed for something. can't remember
      *
@@ -102,7 +101,7 @@ class SiteController extends Zend_Controller_Action
                 break;
         }
         
-        $grid = new $grid (  $db, 'Grid Example', 'media/temp', array ('download' ) );
+        $grid = new $grid ( $db, 'Grid Example', 'media/temp', array ('download' ) );
         $grid->escapeOutput ( false );
         $grid->addTemplateDir ( 'My/Template/Table', 'My_Template_Table', 'table' );
         $grid->addElementDir ( 'My/Validate', 'My_Validate', 'validator' );
@@ -185,7 +184,8 @@ class SiteController extends Zend_Controller_Action
         ->addFilter ( 'continent', array ('distinct' => array ('field' => 'continent', 'name' => 'continent' ) ) )
         ->addFilter ( 'LifeExpectancy', array ('distinct' => array ('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy' ) ) )
         ->addFilter ( 'GovernmentForm', array ('distinct' => array ('field' => 'GovernmentForm', 'name' => 'GovernmentForm' ) ) )
-        ->addFilter ( 'HeadOfState' )->addFilter ( 'Population' );
+        ->addFilter ( 'HeadOfState' )
+        ->addFilter ( 'Population' );
         
         $grid->addFilters ( $filters );
         
@@ -278,7 +278,8 @@ class SiteController extends Zend_Controller_Action
         
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )->order ( 'id DESC ' );
+        $grid->from ( 'crud' )
+        ->order ( 'id DESC ' );
         
         $paises = $db->fetchCol ( "SELECT DISTINCT(Name) FROM Country ORDER BY Name ASC " );
         $language = $db->fetchCol ( "SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC" );
@@ -342,7 +343,7 @@ class SiteController extends Zend_Controller_Action
         
         $form->addColumns ( $fAdd, $lastName, $email, $lang, $country, $age );
         
-        
+
         $grid->addForm ( $form );
         
 
@@ -398,6 +399,7 @@ class SiteController extends Zend_Controller_Action
 
         #Zend_Debug::dump(Zend_Json::decode(file_get_contents('http://services.sapo.pt/JobOffers/JSON')));
         
+
 
         $grid->setDataFromCsv ( 'media/files/grid.csv' );
         #$grid->setDataFromXml ( $url, 'channel,item' );
@@ -459,6 +461,26 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    function pdfAction()
+    {
+
+        $grid = $this->grid ( 'table' );
+        $grid->from ( 'pdf' );
+        
+
+        $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
+'orientation' => 'landscape', # || ''
+'page' => 'Page N.' );
+        
+
+        $grid->setTemplate ( 'pdf', 'pdf', $pdf );
+        
+
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
+
+
     /**
      * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
      *
@@ -492,7 +514,7 @@ class SiteController extends Zend_Controller_Action
         
 
 
-        $grid->setPagination ( 12 );
+        $grid->setPagination ( 1200 );
         
         $grid->addColumn ( 'c.Name AS cap', array ('title' => 'Country (Capital)', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) );
         $grid->addColumn ( 'ct.Name', array ('title' => 'Capital', 'hide' => 1 ) );
@@ -526,7 +548,8 @@ class SiteController extends Zend_Controller_Action
 
 
         $cap = new Bvb_Grid_Column ( 'c.Name AS cap' );
-        $cap->title ( 'Country (Capital)' )->decorator ( '{{c.Name}} <em>({{ct.Name}})</em>' );
+        $cap->title ( 'Country (Capital)' )
+        ->decorator ( '{{c.Name}} <em>({{ct.Name}})</em>' );
         
         $name = new Bvb_Grid_Column ( 'ct.Name' );
         $name->title ( 'Capital' )
@@ -558,7 +581,8 @@ class SiteController extends Zend_Controller_Action
         ->addFilter ( 'c.Continent', array ('distinct' => array ('field' => 'c.Continent', 'name' => 'c.Continent' ) ) )
         ->addFilter ( 'c.LifeExpectancy', array ('distinct' => array ('field' => 'c.LifeExpectancy', 'name' => 'c.LifeExpectancy' ) ) )
         ->addFilter ( 'c.GovernmentForm', array ('distinct' => array ('field' => 'c.GovernmentForm', 'name' => 'c.GovernmentForm' ) ) )
-        ->addFilter ( 'c.HeadOfState' )->addFilter ( 'c.Population' );
+        ->addFilter ( 'c.HeadOfState' )
+        ->addFilter ( 'c.Population' );
         
         $grid->addFilters ( $filters );
         
