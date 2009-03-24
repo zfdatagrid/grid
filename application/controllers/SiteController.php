@@ -4,7 +4,6 @@
 class SiteController extends Zend_Controller_Action
 {
 
-
     /**
      * [EN]If a action don't exist, just redirect to the basic
      *
@@ -205,7 +204,6 @@ class SiteController extends Zend_Controller_Action
     function joinsAction()
     {
 
-        
         $grid = $this->grid ( 'table' );
         $grid->from ( 'Country c INNER JOIN City ct ON c.Capital=ct.ID ' )
         ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
@@ -213,17 +211,63 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addColumn ( 'c.Name AS Country', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) )
         ->addColumn ( 'ct.Name', array ('title' => 'District', 'hide' => 1 ) )
+        ->addColumn('ct.ID',array('hide'=>1))
         ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
         ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )
         ->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
         ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
         ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
-
+        
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
 
+    
+    function joincrudAction()
+    {
+        
+         
+        $grid = $this->grid ( 'table' );
+        $grid->from ( 'crud c LEFT JOIN bugs b ON c.id_bug=b.bug_id ' )
+        ->table ( array ('c' => 'crud', 'b' => 'bugs' ) )
+        ->order ( 'c.id' );
+        
+        $grid->addColumn ( 'c.id', array ('title' => 'ID',  ) )
+        ->addColumn ( 'c.firstname', array ('title' => 'First Name', 'class' => 'width_120' ) )
+        ->addColumn ( 'c.lastname', array ('title' => 'Last Name') )
+        ->addColumn ( 'c.age', array ('title' => 'Age', 'class' => 'width_50' ) )
+        ->addColumn ( 'c.email', array ('title' => 'Email' ) )
+        ->addColumn ( 'b.bug_description', array ('title' => 'Bug Description' , 'class' => 'width_100', ) );
+        
+        
+        $form = new Bvb_Grid_Form ( );
+        $form->add ( 1 )
+        ->edit ( 1 )
+        ->primaryKey('c.id')
+        ->button ( 1 )
+        ->delete ( 1 );
+        
+        $lang = new Bvb_Grid_Form_Column ( 'c.firstname' );
+        $lang->title ( 'First Name' ); 
+        
+        $nome = new Bvb_Grid_Form_Column('c.lastname');
+        $nome->title('Last Name');
+        
+        $continent = new Bvb_Grid_Form_Column('c.age');
+        $continent->title('Age');
+        
+        $region = new Bvb_Grid_Form_Column('b.bug_description');
+        $region->title('Bug Description');
+        
+        $form->addColumns ( $lang,$nome,$continent, $region);
+        
+
+        $grid->addForm ( $form );
+           
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
 
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
@@ -391,38 +435,13 @@ class SiteController extends Zend_Controller_Action
     function testAction()
     {
 
-        $url = 'http://espacoultra.blogspot.com/feeds/posts/default?alt=rss';
-        
-
         $grid = $this->grid ( 'table' );
         
-
-        #Zend_Debug::dump(Zend_Json::decode(file_get_contents('http://services.sapo.pt/JobOffers/JSON')));
-        
-
-
-        $grid->setDataFromCsv ( 'media/files/grid.csv' );
+        #grid->setDataFromCsv ( 'media/files/grid.csv' );
         #$grid->setDataFromXml ( $url, 'channel,item' );
         #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
-        #$grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
+        $grid->setDataFromJson('http://services.sapo.pt/Exchange/CurrenciesJSON',true,'Currencies,Currency');
         
-
-
-        /*  
-        $grid->order('ID');
-
-        $filters = new Bvb_Grid_Filters ( );
-        $filters->addFilter ( 'Name')
-        ->addFilter ( 'ID')
-        ->addFilter ( 'CountryCode')
-        ->addFilter ( 'District')
-        ->addFilter ( 'Population' );
-        
-        $grid->addFilters ( $filters );
-        
-        */
-        
-
         $this->view->pages = $grid->deploy ();
         
         $this->render ( 'index' );

@@ -24,7 +24,7 @@ Zend_Registry::set ( 'config', $config );
 // Database
 $db = Zend_Db::factory ( $config->db->adapter, $config->db->config->toArray () );
 Zend_Db_Table::setDefaultAdapter ( $db );
-$db->getConnection ()->exec ( "SET NAMES utf8" );
+#$db->getConnection ()->exec ( "SET NAMES utf8" );
 $db->setFetchMode ( Zend_Db::FETCH_OBJ );
 $db->setProfiler(true);
 Zend_Registry::set ( 'db', $db );
