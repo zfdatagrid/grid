@@ -365,7 +365,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             foreach ($fields as $value) {
                 
 
-                $value = str_replace(".", "_", $value);
+                $value = preg_replace("/\./", '_', $value, 1);
                 
 
                 $this->_formValues[$value] = $param->getPost($value);
@@ -373,10 +373,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
                 $fieldType = $this->getFieldType($value, $this->data['from']);
                 
+
                 if ( substr($fieldType, 0, 3) != 'set' ) {
+                    
                     $result = self::applyFilters($param->getPost($value), $value, $mode);
                     
+
                     $result = self::Validate($result, $value, $mode);
+                
+
                 } else {
                     
                     $possibleValuesForSetField = explode(",", str_replace(array('(' , ')' , '\'' , 'set'), array('' , '' , '' , ''), $fieldType));
@@ -401,8 +406,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             }
             
-
-
             //[PT] Se passou na validação
             //[EN] If pass validation
             if ( $this->_failedValidation !== true ) {
@@ -503,7 +506,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                             
                             }
                             
-                            $pk = substr($pk,strpos($pk,'.')+1);
+                            $pk = substr($pk, strpos($pk, '.') + 1);
                             
                             $this->_db->update($this->data['table'][$tableAbv], $valuesForUpdate, " $pk=" . $this->_db->quote($op_query['id']) . " $where ");
                         
@@ -514,7 +517,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                         
                         }
                         
-                        
+
                         $this->message = $this->__('Record saved');
                         $this->messageOk = true;
                     
@@ -613,6 +616,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function applyFilters ($value, $field, $mode) {
 
 
+        if ( $this->_crudJoin ) {
+            $field = preg_replace("/_/", '.', $field, 1);
+        }
+        
         $filters = isset($this->info[$mode]['fields'][$field]['filters']) ? $this->info[$mode]['fields'][$field]['filters'] : '';
         
         if ( is_array($filters) ) {
@@ -642,11 +649,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function Validate ($value, $field, $mode = 'edit') {
 
 
+        if ( $this->_crudJoin ) {
+            $field = preg_replace("/_/", '.', $field, 1);
+        }
+        
         //[PT] Array de valores possiveis
         $values = isset($this->info[$mode]['fields'][$field]['values']) ? $this->info[$mode]['fields'][$field]['values'] : '';
         
         //[PT]A Lista de possiveis "validadores"
         $validators = isset($this->info[$mode]['fields'][$field]['validators']) ? $this->info[$mode]['fields'][$field]['validators'] : '';
+        
         
         //[PT] Podemos validar logo se o valor estiver na array de valores permitidos
         if ( is_array($values) && $mode == 'edit' ) {
@@ -669,6 +681,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $class = $this->_elements['validator']->load($func);
                 
 
+
                 //[PT] Se for array, significa que o Zend_Validate recebe argumentos
                 //[EN] If an array, means the Validator receives arguments
                 if ( is_array($validators[$key]) ) {
@@ -676,9 +689,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     //[PT] Se for array, significa que o Zend_Validate recebe argumentos
                     //[EN] If an array, means the Validator receives arguments
                     
-
-
-
                     switch ( count($validators[$key]) ) {
                         case 5:
                             $t = new $class($validators[$key][0], $validators[$key][1], $validators[$key][2], $validators[$key][3], $validators[$key][4]);
@@ -708,6 +718,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     }
                 
                 } else {
+                    
                     $t = new $class();
                     $return = $t->isValid($value);
                     

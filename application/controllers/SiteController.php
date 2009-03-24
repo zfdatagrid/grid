@@ -249,7 +249,8 @@ class SiteController extends Zend_Controller_Action
         ->delete ( 1 );
         
         $lang = new Bvb_Grid_Form_Column ( 'c.firstname' );
-        $lang->title ( 'First Name' ); 
+        $lang->title ( 'First Name' )
+        ->validators ( array ('StringLength' => array (3, 10 ) ) ); 
         
         $nome = new Bvb_Grid_Form_Column('c.lastname');
         $nome->title('Last Name');
