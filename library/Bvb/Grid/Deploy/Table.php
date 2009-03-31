@@ -563,19 +563,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
 
 
-    function prefixArray ($t) {
-
-
-        foreach ($t as $key => $value) {
-            $t['c.' . $key] = $value;
-        }
-        
-        return $t;
-    
-    }
-
-
-
     /**
      * Return the fields to be used in a specific table
      *
@@ -659,7 +646,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         //[PT]A Lista de possiveis "validadores"
         $validators = isset($this->info[$mode]['fields'][$field]['validators']) ? $this->info[$mode]['fields'][$field]['validators'] : '';
         
-        
+
         //[PT] Podemos validar logo se o valor estiver na array de valores permitidos
         if ( is_array($values) && $mode == 'edit' ) {
             
@@ -689,6 +676,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     //[PT] Se for array, significa que o Zend_Validate recebe argumentos
                     //[EN] If an array, means the Validator receives arguments
                     
+
+
                     switch ( count($validators[$key]) ) {
                         case 5:
                             $t = new $class($validators[$key][0], $validators[$key][1], $validators[$key][2], $validators[$key][3], $validators[$key][4]);
@@ -1510,7 +1499,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 
                 $fields = $this->_db->fetchRow(" SELECT $select_fields FROM " . $this->data['from'] . " WHERE $pk = " . $this->_db->quote($final['id']) . " ");
                 
-                $fields = $this->convertOutputNamesFromSqlToUserDefined($fields);
+                if ( $this->_crudJoin ) {
+                    $fields = $this->convertOutputNamesFromSqlToUserDefined($fields);
+                }
                 
                 $button_name = $this->__('Edit');
                 
@@ -1537,13 +1528,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
 
 
-
         $grid .= $this->temp['table']->formHeader();
         
         $i = 0;
         
-
-
         foreach ($fields as $key => $value) {
             
             $grid .= $this->temp['table']->formStart();
@@ -1579,6 +1567,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $i ++;
         }
         
+
         $grid .= $this->temp['table']->formStart();
         $grid .= str_replace("{{value}}", "<input type=\"submit\"  value=\"" . $button_name . "\"> " . $form_hidden . "", $this->temp['table']->formButtons());
         $grid .= $this->temp['table']->formEnd();
