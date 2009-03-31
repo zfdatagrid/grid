@@ -2017,6 +2017,10 @@ class Bvb_Grid_DataGrid {
                             $evalf = str_replace($search, $fi, $value['eval']);
                             $new_value = eval('return ' . $evalf);
                         }
+                    
+                        if ( isset($value['format']) ) {
+                            $new_value = $this->applyFormat($new_value, $value['format'], $value['format']);
+                        }
                         $return[$i][] = @array('class' => $class . ' ' . $value['class'] , 'value' => $new_value);
                     }
                 }
