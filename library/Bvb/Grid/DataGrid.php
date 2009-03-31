@@ -2094,6 +2094,11 @@ class Bvb_Grid_DataGrid {
                             $evalf = str_replace($search, $fi, $value['eval']);
                             $new_value = eval('return ' . trim($evalf, ';'));
                         }
+                        
+                        if ( isset($value['format']) ) {
+                            $new_value = $this->applyFormat($new_value, $value['format'], $value['format']);
+                        }
+                        
                         $finalClass = isset($value['class']) ? $value['class'] : '';
                         $class = isset($class) ? $class : '';
                         $return[$i][] = array('class' => $class . ' ' . $finalClass , 'value' => $new_value);
@@ -2354,7 +2359,6 @@ class Bvb_Grid_DataGrid {
 
 
         
-        
         $table = $this->data['table'];
         
         if ( $this->_crudJoin ) {
@@ -2367,7 +2371,7 @@ class Bvb_Grid_DataGrid {
             $table = $newTable;
         }
         
-        
+
         if ( is_array($table) ) {
             return false;
         }
@@ -2391,7 +2395,7 @@ class Bvb_Grid_DataGrid {
             }
         }
         
-        if ( $this->_crudJoin) {
+        if ( $this->_crudJoin ) {
             $field = reset(explode('.', $this->info['crud']['primaryKey'])) . '.' . $field;
         }
         
