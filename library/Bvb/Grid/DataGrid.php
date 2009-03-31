@@ -609,8 +609,12 @@ class Bvb_Grid_DataGrid {
             $result = $array;
         }
         
+      
+        
         $xml = Zend_Json::decode($result);
         
+      
+    
         $cols = explode(',', $loop);
         if ( is_array($cols) ) {
             foreach ($cols as $value) {
@@ -618,6 +622,7 @@ class Bvb_Grid_DataGrid {
             }
         }
         
+          
         if ( is_array($columns) ) {
             foreach ($columns as $value) {
                 $columns = $columns[$value];
@@ -1563,6 +1568,7 @@ class Bvb_Grid_DataGrid {
     /**
      * [PT]Aplicar diversas funções a arrays
      *
+     * [EN]Apply various functions to arrays
      * @param unknown_type $campos
      * @param unknown_type $callback
      * @return unknown
@@ -2456,6 +2462,9 @@ class Bvb_Grid_DataGrid {
         if ( ! @is_array($this->filters) && @is_array($this->data['filters']) ) {
             $this->filters = $this->data['filters'];
         }
+        
+        
+        
         //[PT]Aqui vamos veriifcar se o campo tem a opção de pesquisa num campo da base de dados
         //[PT]diferente do que é mostrado. Se assim for adicionamos nos o campo
         //[PT]de forma automática e, naturalmente, ocultá-mo-lo

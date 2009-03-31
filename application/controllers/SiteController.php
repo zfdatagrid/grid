@@ -441,8 +441,8 @@ class SiteController extends Zend_Controller_Action
         #grid->setDataFromCsv ( 'media/files/grid.csv' );
         #$grid->setDataFromXml ( $url, 'channel,item' );
         #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
-        $grid->setDataFromJson('http://services.sapo.pt/Exchange/CurrenciesJSON',true,'Currencies,Currency');
-        
+        $grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
+       
         $this->view->pages = $grid->deploy ();
         
         $this->render ( 'index' );
