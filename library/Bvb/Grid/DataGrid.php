@@ -1301,9 +1301,14 @@ class Bvb_Grid_DataGrid {
                     if ( @$fieldsSemAsFinal[$key]['searchField'] != "" ) {
                         $key = $this->replaceAsString($fieldsSemAsFinal[$key]['searchField']);
                     }
-                    $new_where .= " AND $key " . $this->buildSearchType($filtro, $oldKey) . "  ";
-                    $tem_where = true;
-                    $valor_filters[$key] = $filtro;
+                     if (array_key_exists('sqlexp', $this->data['fields'][$key])) 
+ 		                   { 
+ 		                   	 	$new_where .= " AND " .$this->data['fields'][$key]['sqlexp']. " " . $this->buildSearchType ( $filtro, $oldKey ) . "  "; 
+ 		                   } else { 
+			                    $new_where .= " AND $key " . $this->buildSearchType($filtro, $oldKey) . "  ";
+			                    $tem_where = true;
+			                    $valor_filters[$key] = $filtro;
+ 						}
                 }
             }
         }
