@@ -29,8 +29,7 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
     protected $_db;
 
 
-
-    function getFieldsFromTable ($table, $prefix = null, $order = 0) {
+    function getFieldsFromTable ($table, $prefix = null) {
 
 
         $table = $this->_db->describeTable($table);
@@ -51,9 +50,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
 
         $this->_db = $db;
         
-        $parts = $select->_parts;
-        
-
         $wrk = $select->getPart(Zend_Db_Select::FROM);
         //A parte das tables que existem
         foreach ($wrk as $key => $table) {
@@ -118,9 +114,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
         
 
         //Agora construir o FROM
-        
-
-
 
         $froms = $select->getPart(Zend_Db_Select::FROM);
         $totalFrom = count($froms);
@@ -159,9 +152,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
         $_having = $select->getPart(Zend_Db_Select::HAVING);
         @$this->data['having'] = $_having;
         
-        //        @$this->data ['having'] = $parts ['having'] [0];
-        
-
 
         $order = $select->getPart(Zend_Db_Select::ORDER);
         $this->data['order'] = "";
@@ -181,10 +171,27 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
 
 
         #$this->_db->fetchAll($query);
+ 
+       
         
-
-
-
+   /*     echo "<pre>";
+        
+        print_r( $select->getPart('from'));
+        
+       $stmt = $db->query($select);
+		$result = $stmt->fetchAll();
+		
+		
+		print_r($result);
+        
+        die();
+        */
+        
+        if(count($select->getPart('union'))>1)
+        {
+        	throw new Exception('UNION queries not yet supported');
+        }
+        
         return $this->data;
     }
 
