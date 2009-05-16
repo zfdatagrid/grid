@@ -22,7 +22,7 @@ class SiteController extends Zend_Controller_Action
      *
      */
     function init()
-    {
+    { 
 
         $this->view->url = Zend_Registry::get ( 'config' )->site->url;
     }
@@ -112,6 +112,23 @@ class SiteController extends Zend_Controller_Action
         return $grid;
     }
 
+    
+    function unionAction()
+    {
+    	$db = Zend_Registry::get('db');
+		   		
+		$select1 = "SELECT bug_id as id FROM bugs" ;
+		$select2 = "SELECT price as id from products";
+		
+		$select = $db->select()
+					->order('id')
+			       ->union(array($select1, $select2));
+		    		
+		$grid = $this->grid ( 'table' );
+		$grid->queryFromZendDbSelect ( $select, $db );
+		    	 $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
 
     /**
      * A simple action that shows pictures in a complete diferent template
