@@ -185,8 +185,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
 
         parent::__construct($db);
+       
         
         $this->setTemplate('table', 'table');
+      
     }
 
 
@@ -253,22 +255,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     protected function processForm () {
 
 
-        $pk = parent::getPrimaryKey();
-        
-        #if (@$this->info ['add'] ['allow'] == 1 && $pk)
-        
-
-
-
-        if ( @$this->info['add']['allow'] == 1 ) {
+        if ( isset($this->info['add']['allow']) && $this->info['add']['allow'] == 1 ) {
             $this->allowAdd = 1;
         }
         
-        if ( @$this->info['delete']['allow'] == 1 ) {
+        if ( isset($this->info['delete']['allow']) && $this->info['delete']['allow'] == 1 ) {
             $this->allowDelete = 1;
         }
         
-        if ( @$this->info['edit']['allow'] == 1 ) {
+        if (  isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1 ) {
             $this->allowEdit = 1;
         }
         
@@ -317,7 +312,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
 
 
-            //[EN] We mst know what fields to get with getPost(). We only gonna get the fieds
+            //[EN] We must know what fields to get with getPost(). We only gonna get the fieds
             //[EN] That belong to the database table. We must ensure we process the right data.
             //[EN] So we also must verify if have been defined the fields to process
             if ( is_array($this->info[$mode]['fields']) ) {
@@ -359,6 +354,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
             
 
+            $queryUrl = $this->getPkFromUrl();
 
             //[PT] APlicar os filtros e a validação. Primeiro são aplicados os filtros
             //[EN] Apply filter and validators. Firtst we apply the filters
@@ -421,9 +417,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     $final_values = $final;
                 }
                 
-                unset($final_values[parent::getPrimaryKey()]);
+                $pk2 = parent::getPrimaryKey();
                 
-
+                foreach ($pk2 as $value) {
+                	 unset($final_values[$value]);
+                }
+                
                 //Deal with readonly and disabled attributes. 
                 //Also check for security issues
                 foreach (array_keys($final_values) as $key) {
@@ -492,7 +491,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                         if ( $this->_crudJoin ) {
                             
 
-                            $tableAbv = substr($pk, 0, strpos($pk, '.'));
+                            $tableAbv = substr($pk2[0], 0, strpos($pk2[0], '.'));
                             
                             $valuesForUpdate = array();
                             
@@ -506,14 +505,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                             
                             }
                             
-                            $pk = substr($pk, strpos($pk, '.') + 1);
+                            $pk = substr($pk2[0], strpos($pk2[0], '.') + 1);
+                            
                             
                             $this->_db->update($this->data['table'][$tableAbv], $valuesForUpdate, " $pk=" . $this->_db->quote($op_query['id']) . " $where ");
                         
 
-
                         } else {
-                            $this->_db->update($this->data['table'], $final_values, " $pk=" . $this->_db->quote($op_query['id']) . " $where ");
+                            
+                            $this->_db->update($this->data['table'], $final_values, $queryUrl . $where );
                         
                         }
                         
@@ -729,7 +729,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function deleteRecord ($sql) {
 
 
-        $param = explode(";", $sql);
+        @$param = explode(";", $sql);
         
         foreach ($param as $value) {
             $dec = explode(":", $value);
@@ -740,8 +740,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             return 0;
         }
         
-
-        $id = $this->_db->quoteIdentifier(parent::getPrimaryKey());
+        
+        $urlQuery = $this->getPkFromUrl();
+        
+        $pkArray = parent::getPrimaryKey();
+         $id = $this->_db->quoteIdentifier($pkArray[0]);
+        
         
         if ( isset($this->info['delete']['where']) ) {
             
@@ -753,14 +757,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         try {
             
+            $pkParentArray = $this->getPrimaryKey();
+            $pkParent = $pkParentArray[0];
+            
             if ( is_array($this->info['delete']['cascadeDelete']) ) {
                 foreach ($this->info['delete']['cascadeDelete'] as $value) {
                     
                     $operand = isset($value['operand']) ? $value['operand'] : '=';
-                    $parentField = isset($value['parentField']) ? $value['parentField'] : $this->getPrimaryKey();
+                    $parentField = isset($value['parentField']) ? $value['parentField'] : $pkParent;
                     
-                    if ( $parentField != $this->getPrimaryKey() ) {
-                        $finalValue = $this->_db->fetchOne("SELECT " . $this->_db->quoteIdentifier($parentField) . " FROM  " . $this->_db->quoteIdentifier($this->data['table']) . " WHERE id=" . $this->_db->quote($final['id']));
+                    if ( $parentField != $pkParent && !is_array($pkParentArray)) {
+                        $finalValue = $this->_db->fetchOne("SELECT " . $this->_db->quoteIdentifier($parentField) . " FROM  " . $this->_db->quoteIdentifier($this->data['table']) . " WHERE ". $urlQuery);
                     } else {
                         $finalValue = $final['id'];
                     }
@@ -774,7 +781,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $id = substr($id, strpos($id, '.') + 1);
             }
             
-            $this->_db->delete($this->getMainTableName(), "  $id =" . $this->_db->quote($final['id']) . " $where ");
+            $this->_db->delete($this->getMainTableName(), $urlQuery . $where );
             
 
             $this->messageOk = true;
@@ -785,6 +792,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $this->message = $this->__('Error deleting record =>') . $e->getMessage();
         }
         
+        unset($this->ctrlParams['comm']);
 
         if ( $this->cache['use'] == 1 ) {
             $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
@@ -938,7 +946,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $final = '';
         
         if ( $this->_adapter == 'db' ) {
-            if ( (@$this->info['double_tables'] == 0 && @$this->ctrlParams['add'] != 1 && @$this->ctrlParams['edit'] != 1) && $this->getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1 ) {
+            if ( ($this->getInfo('double_tables') == 0 && @$this->ctrlParams['add'] != 1 && @$this->ctrlParams['edit'] != 1) && $this->getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1 ) {
                 
                 $final = "<div class=\"addRecord\" ><a href=\"$url/add/1\">" . $this->__('Add Record') . "</a></div>";
             }
@@ -1039,7 +1047,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             //[PT]Temos que percorrer todos os exra_fields para saber-mos se pertencem à direita
             //[PT]e adicioná.los à lista de campos
             if ( $filter['type'] == 'extraField' && $filter['position'] == 'right' ) {
-                $grid .= str_replace('{{value}}', $filter['value'], $this->temp['table']->filtersLoop());
+               @ $grid .= str_replace('{{value}}', $filter['value'], $this->temp['table']->filtersLoop());
             }
         
         }
@@ -1122,7 +1130,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     } else {
                         
                         //[PT]Versão em estado incial de ajax. Não e¬¥para levar a sério por enquanto
-                        if ( @$this->info['ajax'] === true ) {
+                        if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                             $grid .= str_replace('{{value}}', "<a href=\"javascript:openAjax('grid','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->temp['table']->titlesLoop());
                         
                         } else {
@@ -1419,6 +1427,27 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     }
 
 
+    function getPkFromUrl()
+    {
+        
+        $param = $this->ctrlParams['comm'];
+        $param = end(explode(';',$param));
+        $param  =substr($param,1,-1);
+        
+        $paramF = explode('-',$param);
+        $param = '';
+        foreach ($paramF as $value)
+        {
+            $f = explode(':',$value);
+            
+            $param .= " AND  ".$this->_db->quoteIdentifier($f[0]).'='.$this->_db->quote($f[1]);
+        }
+        
+        $param = substr($param,4);
+        
+        return $param;
+        
+    }
 
     /**
      * [PT] A tabela a meostrar quando queremos adicionar ou editar registos
@@ -1441,9 +1470,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         //[EN] Get the comm param, and "decode" it
         $final = self::convertComm();
         
-        $pk = $this->_db->quoteIdentifier(parent::getPrimaryKey());
-        
-
+        $urlQuery = $this->getPkFromUrl();
 
         $select_fields = $this->buildSelectFieldsForUpdate();
         
@@ -1481,7 +1508,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             if ( $final['mode'] == 'edit' && ! $this->_editNoForm ) {
                 
-                $fields = $this->_db->fetchRow(" SELECT $select_fields FROM " . $this->data['from'] . " WHERE $pk = " . $this->_db->quote($final['id']) . " ");
+                $fields = $this->_db->fetchRow(" SELECT $select_fields FROM " . $this->data['from'] . " WHERE $urlQuery ");
                 
                 if ( $this->_crudJoin ) {
                     $fields = $this->convertOutputNamesFromSqlToUserDefined($fields);
@@ -1515,7 +1542,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $grid .= $this->temp['table']->formHeader();
         
         $i = 0;
-        
+      
         foreach ($fields as $key => $value) {
             
             $grid .= $this->temp['table']->formStart();
@@ -1598,6 +1625,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $aa = 0;
         }
         
+        $aa = 0;
         foreach ($grids as $value) {
             //Os decorators
             $search = $this->_fields;
@@ -1704,6 +1732,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
      * @return string
      */
     function pagination () {
+        
+        $f = '';
 
 
         $url = parent::getUrl(array('start'));
@@ -1726,7 +1756,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
         
 
-        if ( @$this->info['ajax'] === true ) {
+        if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:openAjax('grid','$url/start/0')\">1</a>";
         } else {
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/start/0\">1</a>";
@@ -1739,7 +1769,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $fin = max(min($npaginas, $actual + 4), 6);
             
             for ( $i = $in + 1; $i < $fin; $i ++ ) {
-                if ( @$this->info['ajax'] === true ) {
+                if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=javascript:openAjax('grid','$url/start/" . (($i - 1) * $ppagina) . "')> $i </a>";
                 } else {
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href='$url/start/" . (($i - 1) * $ppagina) . "'> $i </a>";
@@ -1751,7 +1781,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         } else {
             
             for ( $i = 2; $i < $npaginas; $i ++ ) {
-                if ( @$this->info['ajax'] === true ) {
+                if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                     
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:openAjax('grid','" . $url . "/start/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
                 
@@ -1764,7 +1794,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
         }
         
-        if ( @$this->info['ajax'] === true ) {
+        if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
             $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:openAjax('grid','$url/start/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
         
         } else {
@@ -1774,7 +1804,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         if ( $actual != 1 ) {
             
-            if ( @$this->info['ajax'] === true ) {
+            if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                 $pag = " <a href=\"javascript:openAjax('grid','$url/start/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:aopenAjax'grid','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
             
             } else {
@@ -1785,7 +1815,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
         
         if ( $actual != $npaginas ) {
-            if ( @$this->info['ajax'] === true ) {
+            if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                 
                 $pag .= "&nbsp;&nbsp;<a href=\"javascript:openAjax('grid','$url/start/" . ($actual * $ppagina) . "')\">" . $this->__('Next') . "</a> <a href=\"javascript:openAjax('grid','$url/start/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__('Last') . "&nbsp;&nbsp;</a>";
             } else {
@@ -1795,13 +1825,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         }
         
-        if ( $npaginas > 1 && (int) @$this->info['limit'] == 0 ) {
+        if ( $npaginas > 1 && isset($this->info['limit']) && (int) @$this->info['limit'] == 0 ) {
             
 
             if ( $npaginas < 100 ) {
                 //[PT] Construir o select
                 //[EN] Buil the select form element
-                if ( @$this->info['ajax'] === true ) {
+                if ( isset($this->info['ajax']) &&  $this->info['ajax'] === true ) {
                     $f = "<select id=\"idf\" onchange=\"javascript:openAjax('grid','{$url}/start/'+this.value)\">";
                 } else {
                     $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start/'+this.value\">";
@@ -1850,7 +1880,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $exp .= "<a target='_blank' href='$url/export/{$export}'>" . $images[$export] . "</a>";
             }
             
-            if ( (int) @$this->info['limit'] > 0 ) {
+            if ( isset($this->info['limit']) && (int) @$this->info['limit'] > 0 ) {
                 $result2 = str_replace(array('{{export}}' , '{{pagination}}' , '{{pageSelect}}' , '{{numberRecords}}'), array($exp , '' , '' , (int) $this->info['limit']), $this->temp['table']->pagination());
             
             } elseif ( $npaginas > 1 && count($this->export) > 0 ) {
@@ -2022,7 +2052,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         parent::deploy();
         
-
+ 
         if ( ! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table ) {
             $this->setTemplate('table', 'table');
         }
@@ -2054,7 +2084,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
             $url = parent::getUrl($removeParams);
             
-            array_unshift($this->extra_fields, array('position' => 'left' , 'name' => 'E' , 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;id:{{" . $this->getPrimaryKey() . "}}\" > " . $images['edit'] . "</a>" , 'edit' => true));
+            $pkUrl = $this->getPrimaryKey();
+            $urlFinal = '';
+            foreach ($pkUrl as $value)
+            {
+                $urlFinal .= $value.':{{'.$value.'}}-';
+            }
+            
+            $urlFinal = trim($urlFinal,'-');
+            
+            
+            array_unshift($this->extra_fields, array('position' => 'left' , 'name' => 'E' , 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>" , 'edit' => true));
         
         }
         
@@ -2063,14 +2103,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $this->extra_fields = array();
             }
             
-            array_unshift($this->extra_fields, array('position' => 'left' , 'name' => 'D' , 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__('Are you sure?') . "','$url/comm/" . "mode:delete;id:{{" . $this->getPrimaryKey() . "}}');\" > " . $images['delete'] . "</a>" , 'delete' => true));
+            array_unshift($this->extra_fields, array('position' => 'left' , 'name' => 'D' , 'decorator' => "<a href=\"#\" onclick=\"confirmDel('" . $this->__('Are you sure?') . "','$url/comm/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>" , 'delete' => true));
         }
         
         if ( strlen($this->message) > 0 ) {
             $grid = str_replace("{{value}}", $this->message, $this->temp['table']->formMessage($this->messageOk));
         }
         
-        if ( (@$this->ctrlParams['edit'] == 1 || @$this->ctrlParams['add'] == 1 || @$this->info['double_tables'] == 1) || ($this->formPost == 1 && $this->formSuccess == 0) ) {
+        if ( ( (isset($this->ctrlParams['edit']) && $this->ctrlParams['edit'] == 1) || @$this->ctrlParams['add'] == 1 || @$this->info['double_tables'] == 1) || ($this->formPost == 1 && $this->formSuccess == 0) ) {
             
             if ( ($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen($this->_comm) > 1) ) {
                 
@@ -2079,9 +2119,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 //[EN] Remove the unnecessary URL params
                 //Vamos remover os elementos em caso de falha de validação
                 
-
-
-
                 $removeParams = array('filters' , 'add');
                 
                 foreach (array_keys($this->info['add']['fields']) as $key) {
@@ -2090,14 +2127,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 
                 $url = parent::getUrl($removeParams);
                 
-                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal() . self::gridForm() . "</table></form><br><br>";
+                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal() . self::gridForm() . "</form><br><br>";
             
             }
         }
         
         $grid .= "<input type=\"hidden\" name=\"inputId\" id=\"inputId\">";
         
-        if ( @$this->info['double_tables'] == 1 || (@$this->ctrlParams['edit'] != 1 && @$this->ctrlParams['add'] != 1) ) {
+        if ( (isset($this->info['double_tables']) && $this->info['double_tables'] == 1) || (@$this->ctrlParams['edit'] != 1 && @$this->ctrlParams['add'] != 1) ) {
             
             if ( ($this->formPost == 1 && $this->formSuccess == 1) || $this->formPost == 0 ) {
                 
