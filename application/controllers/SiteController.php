@@ -459,12 +459,50 @@ class SiteController extends Zend_Controller_Action
         #$grid->setDataFromXml ( $url, 'channel,item' );
         #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
         $grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
-       
+       $grid->setPagination(10);
+        
         $this->view->pages = $grid->deploy ();
         
         $this->render ( 'index' );
     }
 
+
+    /**
+     * The 'most' basic example.
+     * 
+     * Please check the $pdf array to see how we can configure the templates header and footer. 
+     * If you are exporting to PDF you can even choose between  a letter format or A4 format, and set the page orientation
+     * landascape or '' (empty) for vertical
+     *
+     */
+    function vincentAction()
+    {
+ $db = Zend_Registry::get ( 'db' );
+        $grid = $this->grid ( 'table' );
+        
+         $select = $db->select ()->distinct()
+        ->from ('ProjetClient1 as p1', array('p1.id','p1.cp','p1.ville') )
+        ->joinLeft ( 'FicheClient1 as f1', 'p1.id_client = f1.id' , array('f1.id as f1_id','f1.email','f1.nom as nom'))
+        ->joinLeft ( 'TypeClient as tc', 'f1.id_type_client = tc.id' , array('tc.nom as type') )
+        ;
+        
+        $grid->queryFromZendDbSelect($select,$db);
+        
+        
+        $btnVoir = new Bvb_Grid_ExtraColumns();
+      	$btnVoir ->position('right')        
+   			   ->name('Voir')        
+	  		   ->decorator("<a href=\"/fiche/index/email/{{f1.email}}/id_client/{{f1.id}}\" id=''>{{f1.id}}</a>");
+	  		   
+	  	$grid->addExtraColumns($btnVoir);
+        
+        //$grid->hide = array('f1.id AS f1_id');
+        
+	  	$grid->addColumn('f1.id', array('hide'=>1));
+        
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
 
     /**
      * The 'most' basic example.
@@ -492,7 +530,8 @@ class SiteController extends Zend_Controller_Action
         $grid->setTemplate ( 'wordx', 'wordx', $pdf );
         $grid->setTemplate ( 'ods', 'ods', $pdf );
         
-
+        $grid->setPrimaryGrid(false);
+        
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
