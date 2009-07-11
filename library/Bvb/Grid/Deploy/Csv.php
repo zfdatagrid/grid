@@ -1,5 +1,7 @@
 <?php
 
+
+
 /**
  * Mascker
  *
@@ -21,8 +23,7 @@
 
 
 
-class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
-{
+class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid {
 
     protected $dir;
 
@@ -36,11 +37,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     /*
     * @param array $data
     */
-    function __construct($db, $title, $dir, $options = array('download'))
-    {
+    function __construct($db, $title, $dir, $options = array('download')) {
 
-        if (! in_array ( 'csv', $this->export ))
-        {
+        if (! in_array ( 'csv', $this->export )) {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
             die ();
         }
@@ -60,18 +59,16 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
      * @param string $value
      */
     
-    function __set($var, $value)
-    {
+    function __set($var, $value) {
 
         parent::__set ( $var, $value );
     }
 
 
-    function buildTitltesCsv($titles)
-    {
+    function buildTitltesCsv($titles) {
 
-        foreach ( $titles as $title )
-        {
+        $grid = '';
+        foreach ( $titles as $title ) {
             
             $grid .= '"' . $title ['value'] . '",';
         }
@@ -81,14 +78,12 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     }
 
 
-    function buildSqlexpCsv($sql)
-    {
+    function buildSqlexpCsv($sql) {
 
-        if (is_array ( $sql ))
-        {
+        $grid = '';
+        if (is_array ( $sql )) {
             
-            foreach ( $sql as $exp )
-            {
+            foreach ( $sql as $exp ) {
                 $grid .= '"' . $exp ['value'] . '",';
             }
         }
@@ -99,15 +94,12 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     }
 
 
-    function buildGridCsv($grids)
-    {
+    function buildGridCsv($grids) {
 
         $grid = '';
-        foreach ( $grids as $value )
-        {
+        foreach ( $grids as $value ) {
             
-            foreach ( $value as $final )
-            {
+            foreach ( $value as $final ) {
                 $grid .= '"' . $final ['value'] . '",';
             }
             
@@ -119,9 +111,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
     }
 
 
-    function deploy()
-    {
+    function deploy() {
 
+        $grid = '';
         $this->setPagination ( 0 );
         
         parent::deploy ();
@@ -133,17 +125,15 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid
 
         file_put_contents ( $this->dir . $this->title . ".csv", $grid );
         
-        
-        if (in_array ( 'download', $this->options ))
-        {
+
+        if (in_array ( 'download', $this->options )) {
             header ( 'Content-type: text/plain' );
             header ( 'Content-Disposition: attachment; filename="' . $this->title . '.csv"' );
             readfile ( $this->dir . $this->title . '.csv' );
         }
         
 
-        if (! in_array ( 'save', $this->options ))
-        {
+        if (! in_array ( 'save', $this->options )) {
             unlink ( $this->dir . $this->title . '.csv' );
         }
         
