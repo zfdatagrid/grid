@@ -118,7 +118,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
         $froms = $select->getPart(Zend_Db_Select::FROM);
         $totalFrom = count($froms);
         
-
         if ( $totalFrom == 1 ) {
             
             if ( @key($froms) == @$froms['tableName'] ) {
@@ -170,7 +169,6 @@ class Bvb_Grid_Source_Db_Select extends Zend_Db_Select {
         
 
 
-        #$this->_db->fetchAll($query);
  
        
         
