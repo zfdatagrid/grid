@@ -1450,6 +1450,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
      */
     function getPkFromUrl($array = false) {
 
+        
+        if(!isset($this->ctrlParams ['comm']))
+        {
+            return false;
+        }
+        
         $param = $this->ctrlParams ['comm'];
         $param = end ( explode ( ';', $param ) );
         $param = substr ( $param, 1, - 1 );

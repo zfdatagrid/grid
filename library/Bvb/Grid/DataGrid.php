@@ -2786,15 +2786,28 @@ class Bvb_Grid_DataGrid {
          */
         $this->_select->reset ( Zend_Db_Select::FROM );
         
-        if (stripos ( $fromTable, ' as ' )) {
+        
+        
+        /**
+         * We culd simplify this using the preg_split. 
+         * But it is much faster to use the strpos.
+         * Wating on feedback...
+         */
+        if (strpos ( $fromTable, ' as ' ) !== false) {
             
-            $final = array_map ( 'trim', explode ( 'as', strtolower ( $fromTable ) ) );
+            $final = array_map ( 'trim', explode ( 'as',  $fromTable ) );
             
             $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
-        } else if (stripos ( $fromTable, ' ' )) {
+        } elseif (strpos ( $fromTable, ' AS ' ) !== false) {
             
-            $final = array_map ( 'trim', explode ( ' ', strtolower ( $fromTable ) ) );
+            $final = array_map ( 'trim', explode ( 'AS',  $fromTable ) );
+            
+            $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
+        
+        } elseif (strpos ( $fromTable, ' ' ) !== false) {
+            
+            $final = array_map ( 'trim', explode ( ' ',  $fromTable ) );
             
             $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
@@ -2803,6 +2816,7 @@ class Bvb_Grid_DataGrid {
             $this->_select->from ( $fromTable, array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
         }
+        
         
         $from = str_replace ( $fromTable, '', $from );
         $t = '';
@@ -2854,15 +2868,21 @@ class Bvb_Grid_DataGrid {
      */
     function getArrayForDbSelect($string) {
 
-        if (stripos ( $string, ' as ' )) {
+        if (strpos ( $string, ' AS ' )) {
             
-            $final1 = array_map ( 'trim', explode ( ' as ', strtolower ( $string ) ) );
+            $final1 = array_map ( 'trim', explode ( ' as ',  $string  ) );
             
             $final [$final1 [1]] = $final1 [0];
         
-        } elseif (stripos ( $string, ' ' )) {
+        } elseif (strpos ( $string, ' as ' )) {
             
-            $final1 = array_map ( 'trim', explode ( ' ', strtolower ( $string ) ) );
+            $final1 = array_map ( 'trim', explode ( ' as ',  $string  ) );
+            
+            $final [$final1 [1]] = $final1 [0];
+        
+        } elseif (strpos ( $string, ' ' )) {
+            
+            $final1 = array_map ( 'trim', explode ( ' ',  $string ) );
             
             $final [$final1 [1]] = $final1 [0];
         
@@ -2988,6 +3008,8 @@ class Bvb_Grid_DataGrid {
                 $result = $stmt->fetchAll ();
                 
                 $selectZendDb = clone $this->_select;
+                $selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
+                $selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
                 $selectZendDb->reset ( Zend_Db_Select::COLUMNS );
                 $selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
                 
@@ -3108,7 +3130,7 @@ class Bvb_Grid_DataGrid {
             $this->_result = $result;
         }
         
-
+        
 
         //[PT]Alguma coisa correu mal. Não adicionaram opção
         //Something went wrong....
