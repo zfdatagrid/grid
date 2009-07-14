@@ -172,6 +172,8 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
     function deploy()
     {
+        $width= 0;
+        
 
         $this->setPagination ( 0 );
         parent::deploy ();

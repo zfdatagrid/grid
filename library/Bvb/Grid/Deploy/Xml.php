@@ -76,6 +76,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
 
     function buildTitltesXml($titles)
     {
+        $grid = '';
 
         $grid .= "<fields>\n";
         
