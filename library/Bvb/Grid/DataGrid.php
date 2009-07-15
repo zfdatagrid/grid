@@ -169,7 +169,7 @@ class Bvb_Grid_DataGrid {
      * [PT] A parte where da query // 
      * [EN] Where part from query
      */
-    protected $_queryWhere = '';
+    protected $_queryWhere = false;
 
     /**
      * [PT] O adpater da BD
@@ -917,7 +917,7 @@ class Bvb_Grid_DataGrid {
     function updateColumn($field, $options = array()) {
 
         
-        if (@is_array ( $this->data ['fields'] )) {
+        if (isset ( $this->data ['fields'] ) && is_array ( $this->data ['fields'] )) {
             
             if (! array_key_exists ( $field, $this->data ['fields'] )) {
                 
@@ -1347,24 +1347,18 @@ class Bvb_Grid_DataGrid {
      * [PT] Construir o WHERE da query
      * [EN] Build the query WHERE
      *
-     * @return string
+     * @return void
      */
     function buildQueryWhere() {
 
         
-        if (strlen ( $this->_queryWhere ) > 1) {
-            return $this->_queryWhere;
+        if ($this->_queryWhere) {
+            return;
         }
         if (strlen ( trim ( $this->_where ) ) > 1) {
-            $query_where = " WHERE " . $this->_where . "  ";
-            $tem_where_1 = true;
-        } else {
-            $query_where = '';
-            $tem_where_1 = false;
+            $this->_select->where ( $this->_where );
         }
-        $query_final = '';
-        $new_where = '';
-        $tem_where = false;
+        
         //Vamos criar a aray para sabermos o valor dos filtro
         $valor_filters = array ();
         $filters = @urldecode ( $this->ctrlParams ['filters'] );
@@ -1384,11 +1378,9 @@ class Bvb_Grid_DataGrid {
                         $key = $this->replaceAsString ( $fieldsSemAsFinal [$key] ['searchField'] );
                     }
                     if (array_key_exists ( 'sqlexp', $this->data ['fields'] [$key] )) {
-                        $new_where .= " AND " . $this->data ['fields'] [$key] ['sqlexp'] . " " . $this->buildSearchType ( $filtro, $oldKey ) . "  ";
+                        $this->buildSearchType ( $filtro, $oldKey, $key );
                     } else {
-                        
-                        $new_where .= " AND $key " . $this->buildSearchType ( $filtro, $oldKey, $key ) . "  ";
-                        $tem_where = true;
+                        $this->buildSearchType ( $filtro, $oldKey, $key );
                         $valor_filters [$key] = $filtro;
                     }
                 }
@@ -1396,19 +1388,8 @@ class Bvb_Grid_DataGrid {
         }
         
         $this->_filtersValues = $valor_filters;
-        if ($tem_where) {
-            $query_final = "  " . $query_where;
-            if ($tem_where && $tem_where_1) {
-                $query_final = $query_final . " AND ";
-            }
-            $query_final .= "(" . substr ( $new_where, 4 ) . ")";
         
-        } else {
-            $query_final = $query_where;
-        }
-        
-        $this->_queryWhere = $query_final;
-        return $this->_queryWhere;
+        return;
     }
 
 
@@ -2153,7 +2134,6 @@ class Bvb_Grid_DataGrid {
 
         $search = $this->map_array ( $this->_fields, 'prepare_replace' );
         
-
         foreach ( $this->_fields as $field ) {
             $fields_duble [] = $field;
             if (strpos ( $field, "." )) {
@@ -2168,6 +2148,7 @@ class Bvb_Grid_DataGrid {
         
 
         foreach ( $this->_result as $dados ) {
+            
             /**
              *Deal with extrafield from the left
              */
@@ -2193,7 +2174,6 @@ class Bvb_Grid_DataGrid {
              */
             $is = 0;
             $integralFields = array_keys ( $this->removeAsFromFields () );
-            
 
             foreach ( $fields as $campos ) {
                 
@@ -2203,7 +2183,6 @@ class Bvb_Grid_DataGrid {
                 if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
                     $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
                     
-
                     $evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
                     $new_value = eval ( 'return ' . $evalf . ';' );
                 
@@ -2373,7 +2352,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]COnfirmar que os campos existem mesmo na tabela, se não existir removemos
+     * [PT] Confirmar que os campos existem mesmo na tabela, se não existir removemos
      * [EN] Make sure the fields exists on the database, if not remove them from the array
      *
      * @param array $fields
@@ -2386,7 +2365,6 @@ class Bvb_Grid_DataGrid {
             $fields_final = array ();
             $i = 0;
             
-
             foreach ( $fields as $key => $value ) {
                 
 
@@ -2398,6 +2376,7 @@ class Bvb_Grid_DataGrid {
                 }
                 
                 if (isset ( $value ['title'] )) {
+                    
                     $titulos [$key] = $value ['title'];
                 } else {
                     $titulos [$key] = ucfirst ( $key );
@@ -2426,7 +2405,11 @@ class Bvb_Grid_DataGrid {
             $fields_final = $this->reset_keys ( $fields_final );
         
 
-        } else {
+
+        }
+        
+        /*
+         * else {
             //Não forneceu dados, temos que ir buscá-los todos às tabelas
             if (is_array ( $this->data ['table'] )) {
                 foreach ( $this->data ['table'] as $key => $value ) {
@@ -2447,7 +2430,8 @@ class Bvb_Grid_DataGrid {
 
             $fields_final = $fl;
             $orderFields = $fl;
-        }
+        }	
+         */
         
 
         //Vamos remover os campos que não quermeos mostrar
@@ -2466,6 +2450,7 @@ class Bvb_Grid_DataGrid {
         
         $fields_final = array_values ( array_flip ( $naoMostrar ) );
         
+
 
         $this->totalHiddenFields = $hide;
         $this->_fields = $fields_final;
@@ -2662,21 +2647,25 @@ class Bvb_Grid_DataGrid {
         //[PT]Esta parte de cerificação de campos é dos filtros. Se for distinct e os campos
         //[PT]Definidos ainda não estiverem lá, adiciona-mos nós e de forma oculta
         if (is_array ( $this->filters )) {
+            
             foreach ( $this->filters as $value ) {
                 
+
                 if (is_array ( $value ) && isset ( $value ['distinct'] ['field'] ) && isset ( $value ['distinct'] ['name'] )) {
                     
                     if (! array_key_exists ( $value ['distinct'] ['field'], $this->data ['fields'] )) {
-                        $this->addColumn ( $value ['distinct'] ['field'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
+                        $this->addColumn ( $value ['distinct'] ['field'] . ' AS f' . md5 ( $value ['distinct'] ['field'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
                     }
                     
-                    if (! array_key_exists ( $value ['distinct'] ['name'], $this->data ['fields'] )) {
+                    if (! array_key_exists ( $value ['distinct'] ['name'], $this->data ['fields'] ) && $value ['distinct'] ['name'] != $value ['distinct'] ['field']) {
                         $this->addColumn ( $value ['distinct'] ['name'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
                     }
                     $this->data ['fields'] [$value ['distinct'] ['name']] ['searchField'] = $value ['distinct'] ['field'];
                 }
             
             }
+        
+
         }
         
 
@@ -2723,14 +2712,7 @@ class Bvb_Grid_DataGrid {
         if ($this->consolidated == 0) {
             $this->consolidateQuery ();
         }
-        //[PT] O where que é sempre aplicado
-        //[EN] Get the WHERE condition and apply from now on...
-        $this->_where = @$this->data ['where'];
-        #        $this->buildQueryWhere ();
         
-
-
-
         $this->buildQuery ();
         
         $this->buildSelectQuery ();
@@ -2769,8 +2751,10 @@ class Bvb_Grid_DataGrid {
                 $this->_select->from ( $from );
             }
             
+            $this->buildColumns ();
+            
             /**
-             * No joins, so let get out...
+             * No joins
              */
             return;
         }
@@ -2786,8 +2770,8 @@ class Bvb_Grid_DataGrid {
          */
         $this->_select->reset ( Zend_Db_Select::FROM );
         
-        
-        
+
+
         /**
          * We culd simplify this using the preg_split. 
          * But it is much faster to use the strpos.
@@ -2795,19 +2779,19 @@ class Bvb_Grid_DataGrid {
          */
         if (strpos ( $fromTable, ' as ' ) !== false) {
             
-            $final = array_map ( 'trim', explode ( 'as',  $fromTable ) );
+            $final = array_map ( 'trim', explode ( 'as', $fromTable ) );
             
             $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
         } elseif (strpos ( $fromTable, ' AS ' ) !== false) {
             
-            $final = array_map ( 'trim', explode ( 'AS',  $fromTable ) );
+            $final = array_map ( 'trim', explode ( 'AS', $fromTable ) );
             
             $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
         } elseif (strpos ( $fromTable, ' ' ) !== false) {
             
-            $final = array_map ( 'trim', explode ( ' ',  $fromTable ) );
+            $final = array_map ( 'trim', explode ( ' ', $fromTable ) );
             
             $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
         
@@ -2817,7 +2801,7 @@ class Bvb_Grid_DataGrid {
         
         }
         
-        
+
         $from = str_replace ( $fromTable, '', $from );
         $t = '';
         
@@ -2854,7 +2838,61 @@ class Bvb_Grid_DataGrid {
             }
         }
         
+
+
         return;
+    }
+
+
+    /**
+     * Build fields if necessary
+     *
+     * @return void
+     */
+    function buildColumns() {
+
+        
+        if ($this->_selectZendDb === true) {
+            return;
+        }
+        
+        //Lets add the columns
+        if (count ( $this->data ['fields'] ) != count ( $this->_select->getPart ( Zend_Db_Select::COLUMNS ) )) {
+            
+
+            //Reset all columns already set
+            $this->_select->reset ( Zend_Db_Select::COLUMNS );
+            
+            $this->_fields = false;
+            $this->_titles = false;
+            
+
+
+            
+            foreach ( array_keys ( $this->data ['fields'] ) as $field ) {
+                $finalField = $this->getArrayForDbSelect ( $field );
+                
+
+                if (is_array ( $finalField )) {
+                    
+                    $this->_fields [] = key ( $finalField );
+                    $this->_titles [key ( $finalField )] = $this->data ['fields'] [$field] ['title'];
+                    $this->_select->columns ( $finalField );
+                } else {
+                    
+                    $this->_select->columns ( $finalField );
+                    
+                    $this->_fields [] = $finalField;
+                    $this->_titles [$finalField] = isset ( $this->data ['fields'] [$field] ['title'] ) ? $this->data ['fields'] [$field] ['title'] : ucfirst ( $finalField );
+                }
+            
+            }
+        
+
+        }
+        
+        return;
+    
     }
 
 
@@ -2870,19 +2908,19 @@ class Bvb_Grid_DataGrid {
 
         if (strpos ( $string, ' AS ' )) {
             
-            $final1 = array_map ( 'trim', explode ( ' as ',  $string  ) );
+            $final1 = array_map ( 'trim', explode ( ' AS ', $string ) );
             
             $final [$final1 [1]] = $final1 [0];
         
         } elseif (strpos ( $string, ' as ' )) {
             
-            $final1 = array_map ( 'trim', explode ( ' as ',  $string  ) );
+            $final1 = array_map ( 'trim', explode ( ' as ', $string ) );
             
             $final [$final1 [1]] = $final1 [0];
         
         } elseif (strpos ( $string, ' ' )) {
             
-            $final1 = array_map ( 'trim', explode ( ' ',  $string ) );
+            $final1 = array_map ( 'trim', explode ( ' ', $string ) );
             
             $final [$final1 [1]] = $final1 [0];
         
@@ -2973,12 +3011,16 @@ class Bvb_Grid_DataGrid {
             $this->consolidateQuery ();
         }
         
+
         if ($this->_adapter == 'db') {
             
 
             $this->getQuery ();
             $this->getQueryCount ();
             
+            $this->buildColumns ();
+            
+
             if ($this->cache ['use'] == 1) {
                 
                 $cache = $this->cache ['instance'];
@@ -3031,22 +3073,6 @@ class Bvb_Grid_DataGrid {
         
 
         } else {
-            
-
-            //This shouldnt be here
-            //We need to remove unwanted columns
-            if ($this->_adapter == 'db') {
-                if (count ( $this->_result [0] ) != count ( $this->_fields )) {
-                    $arrayDiff = array_diff ( array_keys ( $this->_result [0] ), $this->_fields );
-                    
-                    for($i = 0; $i < count ( $this->_result ); $i ++) {
-                        foreach ( $arrayDiff as $value ) {
-                            unset ( $this->_result [$i] [$value] );
-                        }
-                    }
-                }
-            
-            }
             
 
             $filters = Zend_Json::decode ( @$this->ctrlParams ['filters'] );
@@ -3130,17 +3156,17 @@ class Bvb_Grid_DataGrid {
             $this->_result = $result;
         }
         
-        
 
-        //[PT]Alguma coisa correu mal. Não adicionaram opção
-        //Something went wrong....
-        if (! is_array ( $this->data )) {
-            throw new Exception ( 'Database options not found. ' );
-        }
+    return ;
     }
 
 
-    
+    function __toString() {
+
+        return $this->_select->__toString ();
+    }
+
+
     /**
      * Search function for array adapters
      */

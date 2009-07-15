@@ -8,14 +8,25 @@ set_include_path ( '.' . PATH_SEPARATOR . './library/'
 .'.' . PATH_SEPARATOR . './application/'
 . PATH_SEPARATOR . get_include_path () );
 
-include "Zend/Loader.php";
-Zend_Loader::registerAutoload ();
 
+include "Zend/Loader/Autoloader.php";
+$autoloader = Zend_Loader_Autoloader::getInstance();
+$autoloader->registerNamespace('Bvb_');
+$autoloader->registerNamespace('My_');
+$autoloader->suppressNotFoundWarnings(false);
+$autoloader->setFallbackAutoloader(true);
 
+/*
 $view = new Zend_View();
 $view->setScriptPath('app/skins/bvb/views/');
 $view->doctype('XHTML1_TRANSITIONAL');
 $view->setEncoding('UTF-8');
+$view->addHelperPath('ZendX/JQuery/View/Helper/', 'ZendX_JQuery_View_Helper');
+
+$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
+$viewRenderer->setView($view);
+Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);
+*/
 
 // Load Config
 $config = new Zend_Config_Ini ( './application/config.ini', 'general' );

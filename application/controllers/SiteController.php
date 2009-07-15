@@ -194,7 +194,6 @@ class SiteController extends Zend_Controller_Action
         ->addColumn ( 'HeadOfState', array ('title' => 'Head Of State', 'searchType' => '=' ) )
         ->sqlexp ( array ('LifeExpectancy' => 'AVG', 'Population' => 'SUM' ) );
         
-
         $filters = new Bvb_Grid_Filters ( );
         $filters->addFilter ( 'Name', array ('distinct' => array ('field' => 'Name', 'name' => 'Name' ) ) )
         ->addFilter ( 'Continent', array ('distinct' => array ('field' => 'Continent', 'name' => 'Continent' ) ) )
@@ -221,7 +220,7 @@ class SiteController extends Zend_Controller_Action
     function joinsAction()
     {
         $grid = $this->grid ( 'table' );
-       $grid->from ( 'Country as c INNER JOIN City  as ct ON c.Capital=ct.ID ' )
+       $grid->from ( 'Country as c INNER JOIN City as ct ON c.Capital=ct.ID ' )
         ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
         ->order ( 'c.Continent' );
         
@@ -372,7 +371,7 @@ class SiteController extends Zend_Controller_Action
         ->validators ( array ('StringLength' => array (3, 10 ) ) )
         ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
         ->attributes(array('type'=>'password'))
-        ->description ( 'Insert your first name' );
+        ->description ( 'Insert your first name. (password type...)' );
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
         $lastName->title ( 'Last name' )
@@ -448,87 +447,27 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    function testAction()
+    function csvAction()
     {
 
         $grid = $this->grid ( 'table' );
-        
-        #grid->setDataFromCsv ( 'media/files/grid.csv' );
-        #$grid->setDataFromXml ( $url, 'channel,item' );
-        #$grid->removeColumns ( array ('guid', 'pubDate', 'link', 'author', 'category', 'title' ) );
+        $grid->setDataFromCsv ( 'media/files/grid.csv' );
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
+
+
+    function sapoAction()
+    {
+
+        $grid = $this->grid ( 'table' );
         $grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
         $grid->setPagination(10);
-        
-        $this->view->pages = $grid->deploy ();
-        
-        $this->render ( 'index' );
-    }
-
-
-    /**
-     * The 'most' basic example.
-     * 
-     * Please check the $pdf array to see how we can configure the templates header and footer. 
-     * If you are exporting to PDF you can even choose between  a letter format or A4 format, and set the page orientation
-     * landascape or '' (empty) for vertical
-     *
-     */
-    function vincentAction()
-    {
- $db = Zend_Registry::get ( 'db' );
-        $grid = $this->grid ( 'table' );
-        
-         $select = $db->select ()->distinct()
-        ->from ('ProjetClient1 as p1', array('p1.id','p1.cp','p1.ville') )
-        ->joinLeft ( 'FicheClient1 as f1', 'p1.id_client = f1.id' , array('f1.id as f1_id','f1.email','f1.nom as nom'))
-        ->joinLeft ( 'TypeClient as tc', 'f1.id_type_client = tc.id' , array('tc.nom as type') )
-        ;
-        
-        $grid->queryFromZendDbSelect($select,$db);
-        
-        
-        $btnVoir = new Bvb_Grid_ExtraColumns();
-      	$btnVoir ->position('right')        
-   			   ->name('Voir')        
-	  		   ->decorator("<a href=\"/fiche/index/email/{{f1.email}}/id_client/{{f1.id}}\" id=''>{{f1.id}}</a>");
-	  		   
-	  	$grid->addExtraColumns($btnVoir);
-        
-        //$grid->hide = array('f1.id AS f1_id');
-        
-	  	$grid->addColumn('f1.id', array('hide'=>1));
-        
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
-    
-    
-    function novaAction()
-    {
-        
-        
-        $db = Zend_Registry::get('db');
 
-        $select = $db->select()
-                    ->from('City')
-                    ->limit(2)
-                    ->order('ID');
-        
-        $stmt = $select->query();
-        $result = $stmt->fetchAll();
 
-        
-        
-        echo "<pre>";
-        
-        
-        print_r($result);
-        
-        
-        die();
-        
-    }
-    
 
     /**
      * The 'most' basic example.
@@ -555,7 +494,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setTemplate ( 'word', 'word', $pdf );
         $grid->setTemplate ( 'wordx', 'wordx', $pdf );
         $grid->setTemplate ( 'ods', 'ods', $pdf );
-        $grid->sqlexp ( array ('Population' => array('SUM','ROUND'), 'ID' => 'AVG' ) );
+        $grid->sqlexp ( array ('Population' => array('AVG'), 'ID' => 'COUNT' ) );
         
         //$grid->setPrimaryGrid(false);
         
