@@ -467,6 +467,16 @@ class SiteController extends Zend_Controller_Action
         $this->render ( 'index' );
     }
 
+    function feedAction()
+    {
+
+        $grid = $this->grid ( 'table' );
+        $grid->setDataFromXml('http://petala-azul.com/blog/feed/','channel,item');
+        $grid->setPagination(10);
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
+
 
 
     /**
@@ -550,12 +560,10 @@ class SiteController extends Zend_Controller_Action
         ->table ( array ('c' => 'Country', 'ct' => 'City' ) );
         #->noFilters(1);
         #->noOrder(1);
-        
-
 
         $grid->setPagination ( 1200 );
         
-        $grid->addColumn ( 'Name', array ('title' => 'Country (Capital)') );
+        $grid->addColumn ( 'Name', array ('title' => 'Country') );
         $grid->addColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
         $grid->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80' ) );
         $grid->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) );

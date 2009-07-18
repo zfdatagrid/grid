@@ -56,19 +56,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     protected $formSuccess = 0;
 
     /**
-     * [PT] Se o formulário foi submetido 
+     * [PT] If the form has been submited
      *
      * @var bool
      */
     protected $formPost = 0;
 
     /**
-     * [PT] Guarda os valores dos forms se der erro
+     * [PT] Form values
      */
     protected $_formValues = array ();
 
     /**
-     * [PT] AS mensagens de erro no form
+     * [PT] Form error messages
      *
      * @var unknown_type
      */
@@ -82,40 +82,35 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     protected $output = 'table';
 
     /**
-     * [PT] Permissão para adicionar
-     * [EN] Permission to add records
+     *  Permission to add records
      *
      * @var array
      */
     private $allowAdd = null;
 
     /**
-     * [PT] Permissão para editar registos
-     * [EN] Permission to edit records
+     *  Permission to edit records
      *
      * @var array
      */
     private $allowEdit = null;
 
     /**
-     * [PT] Permissão para remover registos
-     * [EN] Permission to delete records
+     *  Permission to delete records
      *
      * @var array
      */
     private $allowDelete = null;
 
     /**
-     * [PT] String com a mensagem depois de submetido o formulario
-     * [EN] Message after form submission
+     *  Message after form submission
      *
      * @var string
      */
     public $message;
 
     /**
-     * [PT] Dados do template
-     * [EN] Template data
+     *  Template data
      *
      * @var array
      */
@@ -129,38 +124,36 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     protected $_editNoForm;
 
     /**
-     * [PT] A url das imagens para exportação
+     * Images url for export
      *
      * @var string
      */
     public $imagesUrl;
 
     /**
-     * [PT] Se quando é permitido adicionar registo, mostramos as duas tabelas
-     * [PT] uma com os registos e a outra com os formulários
+     * If we are allowed to add records to the database if we
+     * show two tables (the form and the grid) or just one
      *
      * @var bool
      */
     protected $double_tables = 0;
 
     /**
-     * [PT] Set se falhar a validação do formulario
-     * [EN] Set if form vaidation failed
+     *  Set if form vaidation failed
      *
      * @var bool
      */
     protected $_failedValidation;
 
     /**
-     * [PT] Utilizado para receber os dados de remoção de registos
-     * [EN] Url param with the information about removing records
+     *  Url param with the information about removing records
      *
      * @var string
      */
     protected $_comm;
 
     /**
-     * [PT] o template
+     * Template
      *
      * @var object
      */
@@ -169,16 +162,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] A função __construct recebe o adapter para se liga à base de dados
-     * [PT] É também tratada toda a informação relacionada com a url e os params
-     * [PT] É também instaciada o Auth do Zend_Auth. A autenticação deve ter sido
-     * [PT] Efectuada utilizando o método store, para agora poder validar o user
-     * 
-     * [EN] The __construct function receives the db adapter. All information related to the
-     * [EN] URL is also processed here
-     * [EN] To edit, add, or delete records, a user must be authenticated, so we instanciate 
-     * [EN] it here. Remember to use the method write when autenticating a user, so we can know 
-     * [EN] if its logged or not
+     *  The __construct function receives the db adapter. All information related to the
+     *  URL is also processed here
+     *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
+     *  it here. Remember to use the method write when autenticating a user, so we can know 
+     *  if its logged or not
      *
      * @param array $data
      */
@@ -193,8 +181,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [Para podemros utiliza]
-     *
      * @param string $var
      * @param string $value
      */
@@ -240,13 +226,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     
     /**
      * 
-     * [PT] Aqui é processada toda a informação relacionada com os formulários
-     * [PT] Verificamos se o utilizador pode ou não adicionar dados e
-     * [PT] Depois verificamos o o request->method para saber se é post. Se for processamos
-     * 
-     * [EN] Process all information forms related
-     * [EN] First we check for permissions to add, edit, delete
-     * [EN] And then the request->isPost. If true we process the data
+     *  Process all information forms related
+     *  First we check for permissions to add, edit, delete
+     *  And then the request->isPost. If true we process the data
      *
      */
     
@@ -265,10 +247,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $this->allowEdit = 1;
         }
         
-        //[PT] Se podermos remover ou editar, temos que inicializar a classe de encriptação
-        //[PT] Para remover enviamos os parametros pela URL encriptados. Para editar enviamos uma flag
-        //[EN] IF a user can edit or delete data we must instanciate the crypt classe.
-        //[EN] This is an extra-security step.
+        // IF a user can edit or delete data we must instanciate the crypt classe.
+        // This is an extra-security step.
         
 
 
@@ -281,8 +261,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
 
         /**
-         * [PT] Remover se houver alguma coisa a remover
-         * [EN] emove if there is something to remove
+         *  emove if there is something to remove
          */
         if ($this->allowDelete) {
             self::deleteRecord ( $dec );
@@ -302,17 +281,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $mode = $get_mode == 'edit' ? 'edit' : 'add';
             
 
-            //[PT] Temos que saber quais os campos que vamos buscar ao Post. S√≥ vamos buscar os nomes
-            //[PT] Dos campos da tabela da base de dados.
-            //[PT] Temos por isso que verificar se o utilizador definiu campos a serem processados
-            //[PT] Ou se são para processar todos
-            
-
-
-
-            //[EN] We must know what fields to get with getPost(). We only gonna get the fieds
-            //[EN] That belong to the database table. We must ensure we process the right data.
-            //[EN] So we also must verify if have been defined the fields to process
+            // We must know what fields to get with getPost(). We only gonna get the fieds
+            // That belong to the database table. We must ensure we process the right data.
+            // So we also must verify if have been defined the fields to process
             if (is_array ( $this->info [$mode] ['fields'] )) {
                 $fields = array ();
                 
@@ -354,8 +325,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             $queryUrl = $this->getPkFromUrl ();
             
-            //[PT] APlicar os filtros e a validação. Primeiro são aplicados os filtros
-            //[EN] Apply filter and validators. Firtst we apply the filters
+            // Apply filter and validators. Firtst we apply the filters
             foreach ( $fields as $value ) {
                 
 
@@ -399,13 +369,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             }
             
-            //[PT] Se passou na validação
-            //[EN] If pass validation
+            // If pass validation
             if ($this->_failedValidation !== true) {
                 
-                //[PT] vamos saber se existem campos com entrada forçada.
-                //[EN] Check ig the user has defined "force" fields. If so we need to merge them
-                //[EN] With the ones we get from the form process
+                // Check ig the user has defined "force" fields. If so we need to merge them
+                // With the ones we get from the form process
                 $force = $this->info [$mode] ['force'];
                 if (is_array ( $force )) {
                     $final_values = array_merge ( $final, $force );
@@ -446,8 +414,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 }
                 
 
-                //[PT] Processar dados
-                //[EN] Process data
+                // Process data
                 if ($mode == 'add' && is_array ( $final_values )) {
                     
                     try {
@@ -477,8 +444,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 
                 }
                 
-                //[PT] Processar dados
-                //[EN] Process data
+                // Process data
                 if ($mode == 'edit' && is_array ( $final_values )) {
                     
                     $where = isset ( $this->info ['edit'] ['where'] ) ? " AND " . $this->info ['edit'] ['where'] : '';
@@ -524,7 +490,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     }
                     
 
-                    //[PT] Notificar que ja nao é preciso mostrar o form
+                    //No need to show the form
                     $this->_editNoForm = 1;
                     
                     unset ( $this->ctrlParams ['comm'] );
@@ -548,8 +514,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
             }
             
-            //[PT] Agone unset todos os campso, para aurl não ficar comprida. $this->getUrl
-            //[EN] Unset all params so we can have a more ckean URl when calling $this->getUrl
+            // Unset all params so we can have a more ckean URl when calling $this->getUrl
             if (is_array ( $final_values )) {
                 foreach ( $final_values as $key => $value ) {
                    unset ( $this->ctrlParams [$key] );
@@ -599,10 +564,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Aplicar os filtros ao formulário. Os filtros são aplicados usando
-     * [PT] os que vem por defeito na ZF
-     * 
-     * [EN] Apply filter susing the Zend Framework set.
+     *  Apply filter susing the Zend Framework set.
      *
      * @param string $value
      * @param string $field
@@ -619,7 +581,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
         
         if (is_array ( $filters )) {
-            //[PT] OK. Tem filtros para aplicar. Vamos buscar os dirs
+            //It has filters to apply. Get dirs...
             foreach ( $filters as $func ) {
                 $class = $this->_elements ['filter']->load ( $func );
                 $t = new $class ( );
@@ -633,9 +595,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Validar o formulário usando as funções por defeito da ZF
-     * 
-     * [EN] Validate fields using the set on he Zend Framework
+     *  Validate fields using the set on he Zend Framework
      *
      * @param string $value
      * @param string $field
@@ -649,14 +609,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $field = preg_replace ( "/_/", '.', $field, 1 );
         }
         
-        //[PT] Array de valores possiveis
+        //Array with allowed values
         $values = isset ( $this->info [$mode] ['fields'] [$field] ['values'] ) ? $this->info [$mode] ['fields'] [$field] ['values'] : '';
         
-        //[PT]A Lista de possiveis "validadores"
+        //Array of validators
         $validators = isset ( $this->info [$mode] ['fields'] [$field] ['validators'] ) ? $this->info [$mode] ['fields'] [$field] ['validators'] : '';
         
 
-        //[PT] Podemos validar logo se o valor estiver na array de valores permitidos
+        //Check if the value is in the allowed values array
         if (is_array ( $values ) && $mode == 'edit') {
             
             if (! in_array ( $value, $values ) && ! array_key_exists ( $value, $values )) {
@@ -678,15 +638,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 
 
 
-                //[PT] Se for array, significa que o Zend_Validate recebe argumentos
-                //[EN] If an array, means the Validator receives arguments
+                // If an array, means the Validator receives arguments
                 if (is_array ( $validators [$key] )) {
                     
-                    //[PT] Se for array, significa que o Zend_Validate recebe argumentos
-                    //[EN] If an array, means the Validator receives arguments
+                    // If an array, means the Validator receives arguments
                     
-
-
 
                     $refObj = new ReflectionClass ( $class );
                     $t = $refObj->newInstanceArgs ( $validators [$key] );
@@ -728,11 +684,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Remover da base de dados
-     * [PT] Não esquecer de verificar se o utilizador anexou um WHERE
-     * [PT] O que significa que temos de o junter a query
-     * [EN] Remove the record from the table
-     * [EN] Don't forget to see if the user as set an "extra" WHERE.
+     *  Remove the record from the table
+     *  Don't forget to see if the user as set an "extra" WHERE.
      * 
      * @param string $sql
      * @param string $user
@@ -843,12 +796,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Formatar o tipo de campo nos filtros
-     * [PT] Ou do tipo select ou text
-     * 
-     * [EN] Field type on the filters area. If the field type is enum, build the options
-     * [EN] Also, we first need to check if the user has defined values.
-     * [EN] If set, this values override the others
+     *  Field type on the filters area. If the field type is enum, build the options
+     *  Also, we first need to check if the user has defined values.
+     *  If set, this values override the others
      *
      * @param string $campo
      * @param string $valor
@@ -949,9 +899,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Construir o header da tabela (a primeira linha e nao os titulos)
-     * 
-     * [EN] Build the first line of the table (Not the TH )
+     *  Build the first line of the table (Not the TH )
      *
      * @return string
      */
@@ -969,12 +917,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
         }
         
-        //[PT] O início do template
+        //Template start
         $final .= $this->temp ['table']->globalStart ();
         
         /**
-         * [PT] TEmos que saber se exite uma ordem ou um filtro para podermos apresentar
-         * a td para dar a opção de limpar tudo de uma única vez
+         * We must check if there is a filter set or an order, to show the extra th on top
          */
         if (isset ( $this->ctrlParams ['filters'] ) || isset ( $this->ctrlParams ['order'] )) {
             
@@ -984,23 +931,22 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
             $this->temp ['table']->hasExtraRow = 1;
             
-            //[PT] Ordem e filtros
+            //Filters and order
             if (isset ( $this->ctrlParams ['filters'] ) and isset ( $this->ctrlParams ['order'] )) {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a> | <a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a> | <a href=\"$url3\">" . $this->__ ( 'Remove Filters &amp; Order' ) . "</a>";
-                //[PT] FIltros apenas
+                //Only filters
             } elseif (isset ( $this->ctrlParams ['filters'] ) && ! isset ( $this->ctrlParams ['order'] )) {
                 $final1 = "<a href=\"$url\">" . $this->__ ( 'Remove Filters' ) . "</a>";
                 
-            //[PT] Ordem apenas
+            //Only order
             } elseif (! isset ( $this->ctrlParams ['filters'] ) && isset ( $this->ctrlParams ['order'] )) {
                 $final1 = "<a href=\"$url2\">" . $this->__ ( 'Remove Order' ) . "</a>";
             }
             
-            //[PT]Substituir os valores no loop (na realidade é apenas uma ocorrencia)
-            //[PT]Não sendo por isso loop :D
+            //Replace values
             $final .= str_replace ( "{{value}}", $final1, $this->temp ['table']->extra () );
             
-        //[PT] Fechar o ciclo
+        //close cycle
         }
         
         return $final;
@@ -1009,32 +955,31 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Construir os filtros. A informação que recebos de forma abstracta vem como array.
-     * [PT]Aqui só temos que a meter no sítio certo 
-     *
-     * @param unknown_type $filters
+     * 
+     * Build filters.
+     * 
+     * We receive the information from an array
+     * @param array $filters
      * @return unknown
      */
     function buildFiltersTable($filters) {
 
         
-        //[PT]Não existem filtros, vamos embora
+        //There are no filters. 
         if (! is_array ( $filters )) {
             $this->temp ['table']->hasFilters = 0;
             return '';
         }
         
-        //[PT]Iniciar o template
+        //Start the template
         $grid = $this->temp ['table']->filtersStart ();
         
-        //[PT]Vamos percorrer os filtros todos a colocá-los no campo respectivo
         foreach ( $filters as $filter ) {
             
-            //[PT]Temos que percorrer todos os extra_fields e saber se pertencem a esquerda
-            //[PT]para poderem ser adicionados à lista de campos
+            //Check extra fields
             if ($filter ['type'] == 'extraField' && $filter ['position'] == 'left') {
                 
-                //[PT]Substituir o valor no template
+                //Replace values
                 $filterValue = isset ( $filter ['value'] ) ? $filter ['value'] : '';
                 
                 $grid .= str_replace ( '{{value}}', $filterValue . '&nbsp;', $this->temp ['table']->filtersLoop () );
@@ -1043,33 +988,30 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
             $hRowField = isset ( $this->info ['hRow'] ['field'] ) ? $this->info ['hRow'] ['field'] : '';
             
-            //[PT]Aqui estamos a verificar se não temos a situação da linha horizontal hRow
+            //Check if we have an horizontal row
             if ((@$filter ['field'] != $hRowField && isset ( $this->info ['hRow'] ['title'] )) || ! isset ( $this->info ['hRow'] ['title'] )) {
                 
                 if ($filter ['type'] == 'field') {
                     
                     $filterValue = isset ( $filter ['value'] ) ? $filter ['value'] : '';
                     
-                    //[PT]Para podemrmos trabalhar nas urls se não depois no JS dá erro
-                    //[PT]Se o valor for nulo, mete-mos um espaço para  a tabela não ficar com falha
                     $newValue = strlen ( urldecode ( $filterValue ) ) > 0 ? urldecode ( $filter ['value'] ) : "&nbsp;";
                     
-                    //[PT]Substituir o valor no template
+                    //Replace values
                     $grid .= str_replace ( '{{value}}', $newValue, $this->temp ['table']->filtersLoop () );
                 
                 }
             }
             
 
-            //[PT]Temos que percorrer todos os exra_fields para saber-mos se pertencem à direita
-            //[PT]e adicioná.los à lista de campos
+            //Check extra fields from the right
             if ($filter ['type'] == 'extraField' && $filter ['position'] == 'right') {
                 @ $grid .= str_replace ( '{{value}}', $filter ['value'], $this->temp ['table']->filtersLoop () );
             }
         
         }
         
-        //[PT]Fechar o template dos Filtros
+        //Close template 
         $grid .= $this->temp ['table']->filtersEnd ();
         
         return $grid;
@@ -1078,8 +1020,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Construir os titulos da tabela.
-     * [PT]São recebidos como array. O "mesmo" procedimento que com os filtros
+     * Buil Table titles.
      *
      * @param array $titles
      * @return string
@@ -1087,33 +1028,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function buildTitltesTable($titles) {
 
         
-        //[PT]Temos que saber qual é o campo que está ordenado para depois poder-mos meter a imagem
-        //[PT]Caso esteja definda no template
+        //We must now the field that is being ordered. So we can grab the image
         $order = @array_keys ( $this->order );
         $order2 = @array_keys ( array_flip ( $this->order ) );
         
-        //[PT]O campo que esta a ser ordenado
+        //The field that is being ordered
         $orderField = $order [0];
         
-        //[PT]A ordem contrária a que está a ser ordenada.
+        //The oposite order
         $order = strtolower ( $order2 [0] );
         
-        //[PT]Vamos buscar as "imagens" da ordenação.
-        //[PT]quem diz imagens, diz outra coisa qualquer já que vamos buscar texto
+        //Lets get the images for defining the order
         $images = $this->temp ['table']->images ( $this->imagesUrl );
         
-        //[PT]O inicio do template para os titulos
+        //Iniciate titles template
         $grid = $this->temp ['table']->titlesStart ();
         
-        //[PT]O ciclo por entre os títulos
         foreach ( $titles as $title ) {
             
-            //[PT]Veiricamos aqui se o campo que esta a ser ordenado é o mesmo que estamos a
-            //[PT]passar no ciclo. Se for definimos a imagem.
-            
-
-
-
             if (isset ( $title ['field'] )) {
                 if ($title ['field'] == $orderField) {
                     $imgFinal = $images [$order];
@@ -1124,7 +1056,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $imgFinal = '';
             }
             
-            //[PT]Tratar dos campos extra (extra_fields) e aplicar o template
+            //deal with extra field and template
             if ($title ['type'] == 'extraField' && $title ['position'] == 'left') {
                 $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp ['table']->titlesLoop () );
             }
@@ -1139,19 +1071,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     
                     if ($noOrder == 1) {
                         
-                        //[PT]Defieniu expressamente que não quer ordem, por isso mesmo
-                        //[PT]nãohá ordem para ninguém
-                        //[PT]Além disso fazemos o replace no template
+                        //user set the noOrder(1) method
                         $grid .= str_replace ( '{{value}}', $this->__ ( $title ['value'] ), $this->temp ['table']->titlesLoop () );
                     
                     } else {
                         
-                        //[PT]Versão em estado incial de ajax. Não e¬¥para levar a sério por enquanto
+                        //Not functional (ajax)
                         if (isset ( $this->info ['ajax'] ) && $this->info ['ajax'] === true) {
                             $grid .= str_replace ( '{{value}}', "<a href=\"javascript:openAjax('grid','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
                         } else {
-                            //[PT]Substituir os valores no template
+                            //Replace values in the template
                             $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
                         }
@@ -1160,14 +1090,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
             }
             
-            //[PT]Tratar dos campos extra (extra_fields) e aplicar o template
+            //Deal with extra fields
             if ($title ['type'] == 'extraField' && $title ['position'] == 'right') {
                 $grid .= str_replace ( '{{value}}', $title ['value'], $this->temp ['table']->titlesLoop () );
             }
         
         }
         
-        //[PT]Finalizar o template nos títulos
+        //End template
         $grid .= $this->temp ['table']->titlesEnd ();
         
         return $grid;
@@ -1177,9 +1107,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Converter os dados da url
-     * 
-     * [EN] Convert url  params
+     *  Convert url  params
      *
      * @return array
      */
@@ -1199,11 +1127,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Construir o form que é para ediar ou remover
-     * [PT] é diferento do dos filtros
-     * 
-     * [EN] Build the form elements for the edit or add action
-     * [EN] This is different from the filters
+     *  Build the form elements for the edit or add action
+     *  This is different from the filters
      *
      * @param string $field | The database field that we are processing
      * @param string $inicial_value | the inicial field value
@@ -1215,8 +1140,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         
         $fieldRaw = $field;
-        //[PT]Se não for edição remover o valor incicial (ele assume o nome dos campos)
-        //[EN]If not editing, remove the initial value, otherwise it will assume the fields names
+        //If not editing, remove the initial value, otherwise it will assume the fields names
         if ($mod != 'edit') {
             $field = $inicial_value;
             
@@ -1228,8 +1152,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
         
         
-        //[PT]Vamos buscar a descrição da tabela para sabermos com que tipo de campo
-        //[PT]estamos a lidar
+        //Get table desc to known to field type
         
 
         $table = parent::getDescribeTable ( $this->data ['table'], $fieldRaw );
@@ -1258,8 +1181,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
         @$options = $this->info [$mod] ['fields'] [$field];
         
-        //[PT]Se nas opções do campo tiveram sido definidos styles, aplica-los
-        //[PT]Caso contrário fazer um wdth de 95% para ficar mais vistoso
+        //If the field as options
         $attr = '';
         
         if(isset($options['attributes']['type']))
@@ -1288,15 +1210,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
         }
         
-        //[PT]Significa que alguém que especificar os valoes que pode ser mostrados através
-        //[PT] de um menu select (dropdown?)
+        //User wants to specify the values 
         if (isset ( $options ['values'] )) {
             
 
             if (is_array ( $options ['values'] )) {
                 
-                //[PT]Apesar de não ser invalido, declaramos assim para depois podermos
-                //[PT]passar despercebidos no switch que vem aí
+                //Declare as invalid to skip the swith
                 $tipo = 'invalid';
                 $avalor = $options ['values'];
                 
@@ -1304,7 +1224,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 
                 foreach ( $avalor as $key => $value ) {
                     
-                    //[PT]Se o modo for de edição vefificar se não é o valor que vem da base de dados
+                    //check for select value
                     if ($mod == 'edit') {
                         $selected = $inicial_value == $value ? "selected" : "";
                     } else {
@@ -1323,8 +1243,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 break;
             case 'set' :
                 
-                //[PT]Vamos construir as opções consoante os valores definidos no enum na base de dados
-                //[PT]De notar que isto s√≥ é utilizado se o utilizar não definir opções manualmente
+                //Build options based on set from database, if not defined by the user
                 $avalor = explode ( ",", $set );
                 
                 $setValues = explode ( ',', $inicial_value );
@@ -1344,8 +1263,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 break;
             case 'enum' :
                 
-                //[PT]Vamos construir as opções consoante os valores definidos no enum na base de dados
-                //[PT]De notar que isto só é utilizado se o utilizar não definir opções manualmente
+                //Build options based on enum from database, if not defined by the user
                 $avalor = explode ( ",", substr ( $enum, 4 ) );
                 
                 $valor = "<select  name=\"$fieldRaw\" $attr  >";
@@ -1381,10 +1299,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Quando fazemos uma query à bd, não nos é devolvido o prefixo (c.dias, c.horas devolve dias e horas)
-     * Temos que ir buscar o output e fazer coincidir com os definidos pelo utilizador
-     * 
-     * [EN]When we query the db, we don't get the field prefix (c.days, c.hours returns days and hours)
+     * When we query the db, we don't get the field prefix (c.days, c.hours returns days and hours)
      * We need to make the output match the fields names defined by the user
      *
      */
@@ -1481,23 +1396,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
 
     /**
-     * [PT] A tabela a meostrar quando queremos adicionar ou editar registos
-     * 
-     * [EN] The table to show when editing or adding records
+     *  The table to show when editing or adding records
      *
      * @return string
      */
     function gridForm() {
 
         
-        //[PT]Vamos remover os argumentos da url que não queremos
-        //[EN] Remove the unnecessary URL params
+        // Remove the unnecessary URL params
         $url = parent::getUrl ( array ('comm', 'edit', 'add' ) );
         
         $button_name = $this->__ ( 'Add' );
         
-        //[PT] Converter o modo 
-        //[EN] Get the comm param, and "decode" it
+        // Get the comm param, and "decode" it
         $final = self::convertComm ();
         
         
@@ -1581,8 +1492,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
         
         #$titles = parent::consolidateFields ( $titles, $this->data ['table'] );
-        
-
 
 
         $grid .= $this->temp ['table']->formHeader ();
@@ -1638,8 +1547,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]
-     * Construir a tabela
+     * Buil the table
      *
      * @param array $grids | db results
      * @return unknown
@@ -1650,7 +1558,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         $i = 0;
         $grid = '';
         
-        //Temos uma td a mais com a opção para remover-mos a ordem e filtros
+        //We have an extra td for the text to remove filters and order
         if (isset ( $this->ctrlParams ['filters'] ) || isset ( $this->ctrlParams ['order'] )) {
             $i ++;
         }
@@ -1675,7 +1583,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         $aa = 0;
         foreach ( $grids as $value ) {
-            //Os decorators
+            
+            
+            // decorators
             $search = $this->_finalFields ;
             
             foreach ($search as $key=>$final)
@@ -1701,7 +1611,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                 $diff = count ( $fi ) > count ( $search ) ? count ( $fi ) - count ( $search ) : count ( $search ) - count ( $fi );
                 
                 if (count ( $search ) > count ( $fi ) && $diff == 1) {
-                    //[PT] Tiramos os primeiro elementos por causa de ser um id_
+                    //Remove first element if a id_
                     array_shift ( $search );
                 }
             }
@@ -1720,7 +1630,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
             $finalFields = array_combine ( $search, $fi );
             
-            //A linha horizontal
+            //horizontal row
             if (isset ( $this->info ['hRow'] ['title'] )) {
                 
                 if ($bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value']) {
@@ -1732,7 +1642,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
             $i ++;
             
-            //A TR do ciclo
+            //loop tr
             $grid .= $this->temp ['table']->loopStart ( $finalFields );
             
 
@@ -1798,8 +1708,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Contruir a paginação
-     * [EN] Build pagination
+     *  Build pagination
      *
      * @return string
      */
@@ -1817,8 +1726,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         $pa = $actual == 0 ? 1 : ceil ( $actual / $ppagina ) + 1;
         
-        //[PT] Calcular o número total de páginas
-        //[EN] Calculate the number of pages
+        // Calculate the number of pages
         if ($this->pagination > 0) {
             $npaginas = ceil ( $this->_totalRecords / $ppagina );
             $actual = floor ( $actual / $ppagina ) + 1;
@@ -1901,8 +1809,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             
 
             if ($npaginas < 100) {
-                //[PT] Construir o select
-                //[EN] Buil the select form element
+                // Buil the select form element
                 if (isset ( $this->info ['ajax'] ) && $this->info ['ajax'] === true) {
                     $f = "<select id=\"idf\" onchange=\"javascript:openAjax('grid','{$url}/start/'+this.value)\">";
                 } else {
@@ -1928,7 +1835,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         if ($npaginas > 1 || count ( $this->export ) > 0) {
             
 
-            //Vamos calcular o registo actual
+            //get actual record
             if ($actual <= 1) {
                 $registoActual = 1;
                 $registoFinal = $this->_totalRecords > $ppagina ? $ppagina : $this->_totalRecords;
@@ -1992,11 +1899,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Remover o field the auto-incrment do array. Se é aut-increment não vamos deixar
-     * [PT] O utilizador inserir dados nesse campo
-     * 
-     * [EN] Remeve the auto-increment field from the array. If a field is auto-increment,
-     * [EN] we won't let the user insert data on the field
+     *  Remeve the auto-increment field from the array. If a field is auto-increment,
+     *  we won't let the user insert data on the field
      *
      * @param array $fields
      * @param string $table
@@ -2032,15 +1936,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Verificar que os campos especificados no array existem mesmo
-     * [PT] Se não existirem removemos
-     * [PT] Se no final tivermos uma array vazia, criamos uma nova com todos os campos
-     * [PT] criados com o $this->_fields
-     *
-     * [En] Make sure the filters exists, they are the name from the table field.
-     * [EN] If not, remove them from the array
-     * [EN] If we get an empty array, we then creat a new one with all the fields specifieds
-     * [EN] in $this->_fields method
+     *  Make sure the filters exists, they are the name from the table field.
+     *  If not, remove them from the array
+     *  If we get an empty array, we then creat a new one with all the fields specifieds
+     *  in $this->_fields method
      *
      * @param string $filters
      */
@@ -2058,7 +1957,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         } else {
             
-            //Não forneceu dados, temos que ir buscá-los todos às tabelas
+            //o fields given. Fetch all
             if (is_array ( $this->data ['table'] )) {
                 
                 foreach ( $this->data ['table'] as $key => $value ) {
@@ -2108,7 +2007,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     /**
      * Here we go....
      *
-     * @return unknown
+     * @return string
      */
     function deploy() {
 
@@ -2117,8 +2016,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
 
         if ($this->_adapter == 'db') {
-            //[PT] Precisamos de processar os forimulário, se necessário,
-            //[PT] Antes de fazer-mos a query
+            //Process form, if necessary, before query
             self::processForm ();
         }
         
@@ -2130,13 +2028,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         }
         
 
-        //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
-        //[EN] The extra fields, they are not part of database table.
-        //[EN] Usefull for adding links (a least for me :D )
-        
-
-
-
+        // The extra fields, they are not part of database table.
+        // Usefull for adding links (a least for me :D )
         $grid = '';
         
         $images = $this->temp ['table']->images ( $this->imagesUrl );
@@ -2146,9 +2039,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             if (! is_array ( $this->extra_fields )) {
                 $this->extra_fields = array ();
             }
-            //[PT]Vamos remover os argumentos da url que não queremos
-            //[EN] Remove the unnecessary URL params
-            //Vamos remover os elementos em caso de falha de validação
+            // Remove the unnecessary URL params
             #$removeParams = array ('filters', 'add' );
             $removeParams = array ('filters', 'add', 'edit', 'comm' );
             
@@ -2188,12 +2079,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             if (($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen ( $this->_comm ) > 1)) {
                 
 
-                //[PT]Vamos remover os argumentos da url que não queremos
-                //[EN] Remove the unnecessary URL params
-                //Vamos remover os elementos em caso de falha de validação
-                
-
-
+                // Remove the unnecessary URL params
 
                 $removeParams = array ('filters', 'add' );
                 
@@ -2232,14 +2118,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Método alternativo para adicionar novas colunas
      *
      * @return unknown
      */
     function addForm($form) {
 
         
-        //Vamos primeiros construir os campos
         $form = $this->object2array ( $form );
         
         $fieldsGet = $form ['fields'];

@@ -110,21 +110,21 @@ class Bvb_Grid_DataGrid {
     public static $_cache;
 
     /**
-     * [Onde temos as classes]
+     * classes location
      *
      * @var array
      */
     protected $template = array ();
 
     /**
-     * [O tipo de templates que pode ser utilizado]
+     * templates type to be used
      *
      * @var unknown_type
      */
     protected $_templates;
 
     /**
-     * [PT] A lista de dir e prifx a ser utilizadores para formatar campos
+     * dir and prefix list to be used when formatting fields 
      *
      * @var unknown_type
      */
@@ -140,208 +140,190 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Os tipo de de exportação que podemos utilizar
+     * Type of exportation available
      *
      * @var array
      */
     public $export = array ('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt' );
 
     /**
-     * [PT] Toda a informação que não está ligada com a base de dados
-     * [EN] All info that is not directly related to the database
+     *  All info that is not directly related to the database
      */
     public $info = array ();
 
     /**
-     * [PT] Vamos guardar as tabelas a que já foram aplicadas a query describe table
-     * [EN] Save the result of the describeTables
+     *  Save the result of the describeTables
      */
     protected $_describeTables = array ();
 
     /**
-     * [PT] Armazenar as primrys keys para não termos que fazer o loop sempre 
-     * [PT] Que precisarmos
-     * [EN] Registry for PK
+     *  Registry for PK
      */
     protected $_getPrimaryKey = array ();
 
     /**
-     * [PT] A parte where da query // 
-     * [EN] Where part from query
+     *  Where part from query
      */
     protected $_queryWhere = false;
 
     /**
-     * [PT] O adpater da BD
-     * [EN] DB Adapter
+     *  DB Adapter
      *
      * @var object
      */
     protected $_db;
 
     /**
-     * [PT] A url base para constriuir a url final
-     * [EN] Baseurl
+     *  Baseurl
      *
      * @var string
      */
     protected $_baseUrl;
 
     /**
-     * [PT] O array com o resultado da consulta à base de dados
-     * [EN] Array containing the query result from table(s)
+     *  Array containing the query result from table(s)
      *
      * @var array
      */
     protected $_result;
 
     /**
-     * [PT]Total de registos encontrados
-     * [EN]Total records from db query
+     * Total records from db query
      *
      * @var int
      */
     protected $_totalRecords;
 
     /**
-     * [PT] Array com os titulos a ser aplicados
-     * [EN] Array containing field titles
+     *  Array containing field titles
      *
      * @var array
      */
     protected $_titles;
 
     /**
-     * [PT] Array contendo os campos da(s) tabela(s)
-     * [EN] Array containing table(s) fields
+     *  Array containing table(s) fields
      *
      * @var array
      */
     protected $_fields = array ();
 
     /**
-     * [PT] Where definido pelo utilizador a acrescentar ao criado pela Grid
-     * [EN] Where initially defined by user
+     *  Where initially defined by user
      *
      * @var string
      */
     protected $_where;
 
     /**
-     * [PT] A lista de filtros
+     * Filters list
      *
      * @var array
      */
     public $filters;
 
     /**
-     * [PT] Valores dos filtros que o utiliador inseriu
-     * [EN] Filters values inserted by the user
+     *  Filters values inserted by the user
      *
      * @var array
      */
     protected $_filtersValues;
 
     /**
-     * [PT] Toda a informação relacionada com a base de dados
-     * [EN] All information databse related
+     *  All information databse related
      *
      * @var array
      */
     public $data = array ();
 
     /**
-     * [PT] Lista de filtros a ser aplicado
-     * [EN] Filters List to be applied
+     *  Params list
      *
      * @var array
      */
     public $params = array ();
 
     /**
-     * [PT] Url parametros
-     * [EN] URL params
+     *  URL params
      *
      * @var string
      */
     public $ctrlParams;
 
     /**
-     * [PT] Campos extra
-     * [EN] Extra fields array
+     *  Extra fields array
      *
      * @var array
      */
     public $extra_fields;
 
     /**
-     * [PT]A lista final de campos. Pode parecer estranho, mas é assim
+     * Final fields list (after all procedures).
+     * 
      *
      * @var unknown_type
      */
     protected $_finalFields;
 
     /**
-     * [PT] O colspan a aplicar na tabela
+     * colspan to apply
      *
      * @var unknown_type
      */
     public $_colspan;
 
     /**
-     * [PT] O númeor de campos ocultos que existem
-     * [PT] Para depois podermos calcular o colspan
+     * Number of hidden fields
+     * used to calculate the colspan
      *
      * @var int
      */
     public $totalHiddenFields;
 
     /**
-     * [PT] COnfirmar que foi tudo analisado antes de processar a query
+     * Check if everything was analyzed
      *
      * @var unknown_type
      */
     private $consolidated = 0;
 
     /**
-     * [PT] Se vamos utilizar o cache ou não
-     * [PT] De futuro quando utilizar-mos o cache ele é limpo automaticamente nas funções CRUD
-     *
+     *Use cache or not.
      * @var bool
      */
     public $cache = false;
 
     /**
-     * [PT] A lista de dirs onde procurar por "valideiros" e filtros
+     * Dir list where to find the validators and filters for CRUD 
+     * operations
      *
      * @var array
      */
     protected $_elements = array ();
 
     /**
-     * [PT] TIpos dpermitidos na aplicação aos elementos do formulários
+     * Elements types allowed in forms
      *
      * @var array
      */
     private $_elementsAllowed = array ('filter', 'validator' );
 
     /**
-     * [PT] O campo para depos podermos ordenar caso exista a separação horizontal
+     * The field to set order by, if we have a horizontal row
      *
      * @var string
      */
     private $fieldHorizontalRow;
 
     /**
-     * [PT] A instancia do template
-     * [EN] The template instance
+     *  Template instance
      *
      * @var unknown_type
      */
     protected $temp;
 
     /**
-     * [PT] AS classes dos diferentes tipos de templates que já foram instanciados
+     * Instanciated templates classes
      *
      * @var unknown_type
      */
@@ -349,7 +331,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Se a query tem group by
+     * If the query has group by
      */
     private $hasGroup = 0;
 
@@ -357,7 +339,7 @@ class Bvb_Grid_DataGrid {
     /**
      * Result untouched
      *
-     * @var unknown_type
+     * @var array
      */
     private $_resultRaw;
 
@@ -376,11 +358,8 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] A função __construct recebe o adapter para se liga à base de dados
-     * [PT] É também tratada toda a informação relacionada com a url e os params
-     * 
-     * [EN] The __construct function receives the db adapter. All information related to the
-     * [EN] URL is also processed here
+     *  The __construct function receives the db adapter. All information related to the
+     *  URL is also processed here
      * 
      * @var $db = Zend_Db_Adapter_Abstract
      *
@@ -389,7 +368,7 @@ class Bvb_Grid_DataGrid {
     function __construct($db) {
 
         
-        //[PT] Iniciar o adapter da base de dados
+        //Iniciate adapter
         $this->_db = $db;
         $this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
         
@@ -418,16 +397,16 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        //[EN] Add Zend_Validate and Zend_Filter to the form element
+        // Add Zend_Validate and Zend_Filter to the form element
         $this->addElementDir ( 'Zend/Filter', 'Zend_Filter', 'filter' );
         $this->addElementDir ( 'Zend/Validate', 'Zend_Validate', 'validator' );
         
 
-        //[EN] Add the formatter fir for fields content
+        // Add the formatter fir for fields content
         $this->addFormatterDir ( 'Bvb/Grid/Formatter', 'Bvb_Grid_Formatter' );
         
 
-        //[EN] Add the templates dir's
+        // Add the templates dir's
         $this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Pdf', 'Bvb_Grid_Template_Pdf', 'pdf' );
         $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );
@@ -574,7 +553,7 @@ class Bvb_Grid_DataGrid {
      * @param bool $loop
      * @param bool $columns
      */
-    function setDataFromXml($url, $loop = null, $columns = null) {
+    function setDataFromXml($url, $loop = null, $columns = null, $type = 'file') {
 
         $this->_adapter = 'array';
         
@@ -582,14 +561,24 @@ class Bvb_Grid_DataGrid {
             $cache = $this->cache ['instance'];
             
             if (! $xml = $cache->load ( md5 ( $url ) )) {
-                $xml = simplexml_load_file ( $url );
+                
+                if ($type != 'string') {
+                    $xml = simplexml_load_file ( $url );
+                } else {
+                    $xml = simplexml_load_string ( $url );
+                }
                 $xml = $this->object2array ( $xml );
                 $cache->save ( $xml, md5 ( $url ), array ($this->cache ['tag'] ) );
             } else {
                 $xml = $cache->load ( md5 ( $url ) );
             }
         } else {
-            $xml = simplexml_load_file ( $url );
+            
+            if ($type != 'string') {
+                $xml = simplexml_load_file ( $url );
+            } else {
+                $xml = simplexml_load_string ( $url );
+            }
             $xml = $this->object2array ( $xml );
         }
         
@@ -628,7 +617,7 @@ class Bvb_Grid_DataGrid {
     }
 
 
-    
+     
     /**
      * Set the data using a JSON formatted value
      *
@@ -721,8 +710,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] O tradutor
-     * [EN] The translator
+     *  The translator
      *
      * @param string $message
      * @return string
@@ -739,15 +727,8 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] não faz mais nada senão passar o valor para __set
-     * [PT] só que assim podemos utilizar o para∏¿≈}{⁄{}{⁄ (não me lembro do nome)
-     * [PT] $grid->from('barcelos')
-     *             ->noFilters(1)->
-     *             ->noOrder(1);
-     *
-     * 
-     * [EN] Use the overload function so we can return an object to  make possibler
-     * [EN] the use of 
+     *  Use the overload function so we can return an object to  make possibler
+     *  the use of 
      * $grid->from('barcelos')
      *             ->noFilters(1)->
      *             ->noOrder(1);
@@ -768,18 +749,14 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [Para podemros utiliza]
-     *
      * @param string $var
      * @param string $value
      */
     function __set($var, $value) {
 
         
-        //[PT] A variavel data contém os cmapos que são parte integrante da query e que 
-        //[PT] isso mesmo tem que ser colocado num array distinto
-        //[EN] The data variavel contains options related to the query,
-        //[EN] because of thatm they need to go to a separate Array
+        // The data variavel contains options related to the query,
+        // because of thatm they need to go to a separate Array
         $data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
         if (in_array ( $var, $data )) {
             
@@ -799,7 +776,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]
      * Define which allowed types of exportation 
      *
      * @param array $var
@@ -807,7 +783,6 @@ class Bvb_Grid_DataGrid {
      */
     function export(array $var) {
 
-        
         $this->export = $var;
         return $this;
     }
@@ -832,11 +807,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Buscar a copmposição da tabela
-     * [PT] Depois disso vamos meter a tabela num array. se precisar-mos mais tarde,
-     * [PT] Ela já está lá
-     * 
-     * [EN] Get table description and then save it to a array.
+     *  Get table description and then save it to a array.
      *
      * @param array|string $table
      * @return array
@@ -889,14 +860,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]
-     * Adicionar um campo à lista ja existente.
-     * Temos que verificar se não existe. 
-     * 
-     * Temos também o caso em que o campo pode estar marcado como 
-     * linha horizontal, por isso mesmo temos que o definir na variavel $this->info
-     * 
-     * [EN]
      * Add a new coolumn to the list, if not there yet
      * 
      * We must also check if one of the parameters is an horizontal row.
@@ -914,6 +877,14 @@ class Bvb_Grid_DataGrid {
     }
 
 
+    /**
+     * Update data from a column
+     *
+     * @param string $field
+     * @param array $options
+     * @return self
+     */
+    
     function updateColumn($field, $options = array()) {
 
         
@@ -951,11 +922,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] 
-     * Adicionar mais uma opção para encontro de formatadores de cnteúdo
-     * desde data, numeros, imagens, etc, etc
-     *
-     * [EN]
      * Add a new dir to look for when formating a field
      * 
      * @param string $dir
@@ -972,12 +938,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]
-     * Adicionar um direcório de pesquisa de filtros ou 'validadores'
-     * para quando utilizarmos o formulário
-     * 
-     * 
-     * [EN]
      * Add new elements form dir.
      * TRhey can be filters os validators
      *
@@ -1001,10 +961,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] 
-     * Formatar o valor de cada campo que vem da base de dados
-     * 
-     * [EN]
      * Format a field 
      *
      * @param unknown_type $value
@@ -1014,8 +970,6 @@ class Bvb_Grid_DataGrid {
     function applyFormat($value, $formatter) {
 
         
-        //[PT] Para simplificar as coisas vemos se é um array.
-        //[PT] Pode não ser necessários argumentos adicionais
         if (is_array ( $formatter )) {
             $result = $formatter [0];
             $options = $formatter [1];
@@ -1036,11 +990,8 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Todos os dados relacionados com a conneção á base de dados
-     * [PT] Os filtros, campos extra, etc, etc
-     * 
-     * [EN] All information related with database.
-     *[EN] Filters, extra fields, etc, etc
+     *  All information related with database.
+     * Filters, extra fields, etc, etc
      * @param string $data
      * 
      * */
@@ -1056,11 +1007,9 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Criar a fgrid através de uma ficheiro XML
+     * Create a grid using XML
      * 
-     * TEST
-     * TESTE
-     * TEST
+     * ALPHA!!!!!!!
      *
      */
     function setGridFromXml($file) {
@@ -1097,8 +1046,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]  Os campos permitidos para uma tabela
-     * [EN] The allowed fields from a table
+     *  The allowed fields from a table
      *
      * @param string $mode
      * @param string $table
@@ -1117,8 +1065,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Os campos de uma tabela
-     * [EN] Get table fields
+     *  Get table fields
      *
      * @param string $table
      * @return string
@@ -1136,7 +1083,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Definir a paginação
+     * pagination definition
      *
      */
     function setPagination($number = 15) {
@@ -1149,8 +1096,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Calcular o colspan para a paginação e topo
-     * [EN] Calculate colspan for pagination and top
+     *  Calculate colspan for pagination and top
      *
      * @return int
      */
@@ -1195,8 +1141,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Aplicar o quoteidentifier aos campos da base de dados
-     * [EN] Apply quoteidentifier to the table fields
+     *  Apply quoteidentifier to the table fields
      *
      * @return string
      */
@@ -1210,35 +1155,7 @@ class Bvb_Grid_DataGrid {
 
         foreach ( $values as $value ) {
             
-            /*
-            if (isset ( $this->data ['fields'] [$value] ['sqlexp'] ))
-            {
-                $sqlExp = $this->data ['fields'] [$value] ['sqlexp'];
-                
-                if (stripos ( $value, ' AS ' ))
-                {
-                    $asFinal = substr ( $value, stripos ( $value, ' as' ) + 4 );
-                    $asValue = substr ( $value, 0, stripos ( $value, ' as' ) );
-                } else
-                {
-                    $asFinal = substr ( $value, stripos ( $value, ' as' ) + 5 );
-                    $asValue = $value;
-                }
-                
-               
-                if (strpos ( $value, "." ))
-                {
-                    $ini = substr ( $value, 0, (strpos ( $value, "." )) );
-                    $fields [] = $sqlExp . '(' . $this->_db->quoteIdentifier ( $asValue ) . ') AS ' . $asFinal;
-                } else
-                {
-                    $fields [] = $sqlExp . '(' . $this->_db->quoteIdentifier ( $asValue ) . ') AS ' . $this->_db->quoteIdentifier ( $asValue );
-                }
-                
-                
-            } else
-            
-            */
+
             if (isset ( $this->data ['fields'] [$value] ['sqlexp'] )) {
                 $sqlExp = trim ( $this->data ['fields'] [$value] ['sqlexp'] );
                 
@@ -1273,12 +1190,12 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] O tipo de procura que vai ser utilizado nos filtros
-     * [PT] Por defeito é LIKE, mas não funciona em numeros onde se quero 12 também vai
-     * [PT] considerar o 1123, 1232, etc, 
+     * Searchj type to be used in filters
+     * By default its LIKE
      *
      * @param unknown_type $filtro
      * @param unknown_type $key
+     * @param string $key
      * @return unknown
      */
     function buildSearchType($filtro, $key, $field) {
@@ -1344,8 +1261,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Construir o WHERE da query
-     * [EN] Build the query WHERE
+     *  Build the query WHERE
      *
      * @return void
      */
@@ -1377,7 +1293,7 @@ class Bvb_Grid_DataGrid {
                     if (@$fieldsSemAsFinal [$key] ['searchField'] != "") {
                         $key = $this->replaceAsString ( $fieldsSemAsFinal [$key] ['searchField'] );
                     }
-                    if (array_key_exists ( 'sqlexp', $this->data ['fields'] [$key] )) {
+                    if (@array_key_exists ( 'sqlexp', $this->data ['fields'] [$key] )) {
                         $this->buildSearchType ( $filtro, $oldKey, $key );
                     } else {
                         $this->buildSearchType ( $filtro, $oldKey, $key );
@@ -1395,8 +1311,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] compor a query. Apenas o order e o limit
-     * [EN] Build query. only LIMIT and ORDER
+     *  Build query. only LIMIT and ORDER
      *
      * @return string
      */
@@ -1422,7 +1337,6 @@ class Bvb_Grid_DataGrid {
             $this->_select->order ( $query_order );
         }
         
-
 
         $this->order [$order_field] = $orderf == 'ASC' ? 'DESC' : 'ASC';
         
@@ -1487,8 +1401,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] A URL actual excepto o parametros definido em situation
-     * [EN] Returns the url, without the param(s) specified 
+     *  Returns the url, without the param(s) specified 
      *
      * @param array|string $situation
      * @return string
@@ -1528,9 +1441,7 @@ class Bvb_Grid_DataGrid {
 
 
         foreach ( $params_clean as $key => $param ) {
-            //[PT] Se estivermos a falar dos filtros, temos que fazer o urldecode por causa
-            //[PT] dos caracteres especiais que tem a url ( JSON )
-            //[EN] Apply the urldecode function to the filtros param, because its  JSON
+            // Apply the urldecode function to the filtros param, because its  JSON
             if ($key == 'filters') {
                 $url .= "/" . trim ( $key ) . "/" . trim ( htmlspecialchars ( urlencode ( $param ), ENT_QUOTES ) );
             } else {
@@ -1543,8 +1454,7 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        //[PT] Não precisamos das keys de action e controller, por isso removemos
-        //[EN] Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
+        // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists ( 'ajax', $this->info )) {
             return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/modo/ajax";
         } else {
@@ -1554,8 +1464,7 @@ class Bvb_Grid_DataGrid {
 
 
     /**
-     * [PT] Como utilizamos o método mágico __set, temos que verificar se ele
-     * existe por causa de devolver uma notice...
+     * Check if a var exist 
      *
      * @param string $param
      * @return bool | $param
@@ -1572,11 +1481,9 @@ class Bvb_Grid_DataGrid {
 
 
     /**
-     * [PT] Construir os filtros
-     * [PT] E se necessário colocar lá os valores
      *
-     * [EN] Build Filters. If defined put the values
-     * [EN] Also check if the user wants to hide a field
+     *  Build Filters. If defined put the values
+     *  Also check if the user wants to hide a field
      *  
      * 
      * @return string
@@ -1628,9 +1535,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Vamos consildar os campoos que estão no array pelo dos fields da tabela
-     * 
-     * [En] Consolidate the fields that are in the array with the one on the table
+     *  Consolidate the fields that are in the array with the one on the table
      *
      * @param array $fields
      * @param string $table
@@ -1653,7 +1558,7 @@ class Bvb_Grid_DataGrid {
                 unset ( $fields [$key] );
             }
         }
-        //[PT] Vamos zerar a key
+        //Reset keys
         foreach ( $fields as $value ) {
             $fields_final [] = $value;
         }
@@ -1663,9 +1568,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Aplicar diversas funções a arrays
-     *
-     * [EN]Apply various functions to arrays
+     * Apply various functions to arrays
      * @param unknown_type $campos
      * @param unknown_type $callback
      * @return unknown
@@ -1721,10 +1624,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Construir os títulos
-     * [PT] Já com os links para ordenar
-     * 
-     * [EN] Build the titles with the order links (if wanted)
+     *  Build the titles with the order links (if wanted)
      *
      * @return string
      */
@@ -1857,8 +1757,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Vamos remover os AS dos fields que estão a ser pesquisados para que possamos 
-     * fazer a substituição no campo de procura
+     * remove the word 'as' from fields
      *
      * @return unknown
      */
@@ -1881,10 +1780,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Vamos substituir os pontos dos campos 
-     * [PT]para depois não dar erro no javascript
-     * [PT]já que o ponto é OO
-     *
+     *Replace dots to avoid JS error
      * @param string $string
      * @return unknown
      */
@@ -1897,7 +1793,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Remover O As *.* das queries da bd
+     * Replace As *.* from queries
      *
      * @param unknown_type $string
      * @return unknown
@@ -1925,6 +1821,12 @@ class Bvb_Grid_DataGrid {
     }
 
 
+    /**
+     * Similar to fetchPairs
+     *
+     * @param array $array
+     * @return array
+     */
     function convertResultSetToArrayKeys($array) {
 
         $final = array ();
@@ -1939,12 +1841,9 @@ class Bvb_Grid_DataGrid {
 
 
     /**
-     * [PT] Formatar o tipo de campo nos filtros
-     * [PT] Ou do tipo select ou text
-     * 
-     * [EN] Field type on the filters area. If the field type is enum, build the options
-     * [EN] Also, we first need to check if the user has defined values to presente.
-     * [EN] If set, this values override the others
+     *  Field type on the filters area. If the field type is enum, build the options
+     *  Also, we first need to check if the user has defined values to presente.
+     *  If set, this values override the others
      *
      * @param string $campo
      * @param string $valor
@@ -1954,7 +1853,7 @@ class Bvb_Grid_DataGrid {
 
         
         if ($this->_adapter == 'db') {
-            //[PT] Aqui vemos se no filtros nos pede os campos distinctos.
+            //check if we need to load  fields for filters
             if (@is_array ( $this->filters [$valor] ['distinct'] )) {
                 $this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
                 $this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
@@ -1986,11 +1885,11 @@ class Bvb_Grid_DataGrid {
             $this->filters [$valor] ['values'] = $this->builFilterFromArray ( $campo );
         }
         
-        //[PT] Remover os paramteros que não queremos na url
+        //Remove unwanted url params
         $url = urlencode ( $this->getUrl ( array ('filters', 'start', 'comm' ) ) );
         
 
-        //Vamos remover os AS dos indices da data global por cauda de substituirmos o campo de procura
+
         $fieldsSemAsFinal = $this->removeAsFromFields ();
         if (isset ( $fieldsSemAsFinal [$campo] ['searchField'] )) {
             $nkey = $this->replaceAsString ( $fieldsSemAsFinal [$campo] ['searchField'] );
@@ -2024,9 +1923,8 @@ class Bvb_Grid_DataGrid {
         
 
         foreach ( array_keys ( $this->filters ) as $value ) {
-            //[PT] Temos que ver se o campo não está oculto
-            //[PT] Temos que ver se o campo não é a linha horizontal
-            //[PT] Temos que saber se tem um content próprio
+            
+
             $hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
             if (! isset ( $this->data ['fields'] [$value] ['hide'] ) && $hRow != 1) {
                 $help_javascript .= "filter_" . $value . ",";
@@ -2088,8 +1986,6 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Para subsituir no caso de termos JOINS
-     *
      * @param unknown_type $campos
      * @return unknown
      */
@@ -2115,10 +2011,8 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Contruir o loop para o centro da tabela
-     * 
-     * [EN] The loop for the results.
-     * [EN] Check the extra-fields,
+     *  The loop for the results.
+     *  Check the extra-fields,
      *
      * @return string
      */
@@ -2126,9 +2020,8 @@ class Bvb_Grid_DataGrid {
 
         
         $return = array ();
-        /**
-         * [PT] Para criamos as variaveis a substituir
-         */
+        
+
         $extra_fields = $this->extra_fields;
         
 
@@ -2174,7 +2067,7 @@ class Bvb_Grid_DataGrid {
              */
             $is = 0;
             $integralFields = array_keys ( $this->removeAsFromFields () );
-
+            
             foreach ( $fields as $campos ) {
                 
                 $campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
@@ -2193,7 +2086,7 @@ class Bvb_Grid_DataGrid {
                         $final = $dados;
                     }
                     
-                    if (! is_array ( $final [$campos] )) {
+                    if (isset($final [$campos] ) && !is_array ( $final [$campos] )) {
                         $new_value = $final [$campos];
                     }
                 }
@@ -2259,9 +2152,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Para voltar a colocar a numeração em 0
-     * e, todas as keys de array
-     *
+     *Reset keys
      * @param unknown_type $array
      * @return unknown
      */
@@ -2352,8 +2243,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Confirmar que os campos existem mesmo na tabela, se não existir removemos
-     * [EN] Make sure the fields exists on the database, if not remove them from the array
+     *  Make sure the fields exists on the database, if not remove them from the array
      *
      * @param array $fields
      */
@@ -2408,33 +2298,9 @@ class Bvb_Grid_DataGrid {
 
         }
         
-        /*
-         * else {
-            //Não forneceu dados, temos que ir buscá-los todos às tabelas
-            if (is_array ( $this->data ['table'] )) {
-                foreach ( $this->data ['table'] as $key => $value ) {
-                    $tab = $this->getDescribeTable ( $value );
-                    foreach ( $tab as $list ) {
-                        $fl [] = $key . "." . $list ['COLUMN_NAME'];
-                        $titulos [$key . "." . $list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
-                    }
-                }
-            } else {
-                $tab = $this->getDescribeTable ( $this->data ['table'] );
-                foreach ( $tab as $list ) {
-                    $fl [] = $list ['COLUMN_NAME'];
-                    $titulos [$list ['COLUMN_NAME']] = ucfirst ( $list ['COLUMN_NAME'] );
-                }
-            }
-            
 
-            $fields_final = $fl;
-            $orderFields = $fl;
-        }	
-         */
-        
 
-        //Vamos remover os campos que não quermeos mostrar
+        //remove unwanted fields for dislpay
         $naoMostrar = array_flip ( $fields_final );
         
 
@@ -2461,15 +2327,10 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Verificar que os campos especificados no array existem mesmo
-     * [PT] Se não existirem removemos
-     * [PT] Se no final tivermos uma array vazia, criamos uma nova com todos os campos
-     * [PT] criados com o $this->_fields
-     *
-     * [En] Make sure the filters exists, they are the name from the table field.
-     * [EN] If not, remove them from the array
-     * [EN] If we get an empty array, we then creat a new one with all the fields specifieds
-     * [EN] in $this->_fields method
+     *  Make sure the filters exists, they are the name from the table field.
+     *  If not, remove them from the array
+     *  If we get an empty array, we then creat a new one with all the fields specifieds
+     *  in $this->_fields method
      *
      * @param string $filters
      */
@@ -2501,7 +2362,6 @@ class Bvb_Grid_DataGrid {
             }
         }
         
-
         if (@is_array ( $this->data ['hide'] )) {
             
             foreach ( $this->data ['hide'] as $value ) {
@@ -2526,13 +2386,9 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT] Ir buscar a chave primaria de uma tabela
-     * [PT] Isto é importante porque apenas deixamos editar e adicionar ou remover
-     * [PT] dados de tabelas que contenham chaves primarias
-     * 
-     * [EN] Get the primary table key
-     * [EN] This is important because we only allow edit, add or remove records
-     * [EN] From tables that have on primary key
+     *  Get the primary table key
+     *  This is important because we only allow edit, add or remove records
+     *  From tables that have on primary key
      *
      * @return string
      */
@@ -2587,9 +2443,8 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Servepara confirmar que todos os campos foram adicionados
-     * [PT] porque existem certaz situações em que o sistem os aidicona automaticamente
-     * [PT] como é no caso dos filtros e do searchField nas opções ao adicionar um campo
+     * Confirm that all fields are in the query.
+     * Check for auto filters
      *
      * @return true
      */
@@ -2630,9 +2485,8 @@ class Bvb_Grid_DataGrid {
         
 
 
-        //[PT]Aqui vamos veriifcar se o campo tem a opção de pesquisa num campo da base de dados
-        //[PT]diferente do que é mostrado. Se assim for adicionamos nos o campo
-        //[PT]de forma automática e, naturalmente, ocultá-mo-lo
+        //If a search is performed in a field that isn't displayed,
+        //If so we add the field and hide it
         if (is_array ( $cFields )) {
             foreach ( $cFields as $value ) {
                 if (@$value ['searchField'] != "") {
@@ -2644,8 +2498,8 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        //[PT]Esta parte de cerificação de campos é dos filtros. Se for distinct e os campos
-        //[PT]Definidos ainda não estiverem lá, adiciona-mos nós e de forma oculta
+        //Make sure the fields we need to execute the distinct query for filter exist
+        //If not, we add them and define the hide param as 1
         if (is_array ( $this->filters )) {
             
             foreach ( $this->filters as $value ) {
@@ -2669,9 +2523,8 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        //[PT] Os campos extra, que não estão na base de dados. São sobretudo uteis para criar links
-        //[EN] The extra fields, they are not part of database table.
-        //[EN] Usefull for adding links (a least for me :D )
+        // The extra fields, they are not part of database table.
+        // Usefull for adding links (a least for me :D )
         if (@is_array ( $this->info ['extra_fields'] )) {
             if (! is_array ( $this->extra_fields )) {
                 $this->extra_fields = $this->info ['extra_fields'];
@@ -2681,15 +2534,12 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        //[PT] Temos que validar os campos da tabela.
-        //[EN] Validate table fields, make sure they exist...
+        // Validate table fields, make sure they exist...
         $this->validateFields ( $this->data ['fields'] );
         
 
-        //[PT] Os filtros, não é obrigatório filtrar todos os resultados
-        //[PT] Temos também que os comparar com os campos da base de dados
-        //[EN] Filters. Not required that every field as filter.
-        //[EN] Make sute they exists on the table
+        // Filters. Not required that every field as filter.
+        // Make sute they exists on the table
         $this->filters = self::validateFilters ( $this->filters );
         
 
@@ -2701,8 +2551,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Obter a query que vai ser executada.
-     * [PT]pode dar jeito em certas situações.
+     * Build Query
      *
      * @return unknown
      */
@@ -2868,7 +2717,6 @@ class Bvb_Grid_DataGrid {
             
 
 
-            
             foreach ( array_keys ( $this->data ['fields'] ) as $field ) {
                 $finalField = $this->getArrayForDbSelect ( $field );
                 
@@ -2935,46 +2783,18 @@ class Bvb_Grid_DataGrid {
 
 
     /**
-     * [PT] Criar a query para contar o total de registos que serão devolvidos sem aplicar os limites
+     * Count the rows total without the limit
      *
-     * @return unknown
+     * @return void
      */
     function getQueryCount() {
 
-        
         if ($this->consolidated == 0) {
             $this->consolidateQuery ();
         }
         
-
-        //[PT] O where que é sempre aplicado
-        //[EN] Get the WHERE condition and apply from now on...
-        $this->_where = @$this->data ['where'];
-        $query_where = $this->buildQueryWhere ();
-        
-        if (! is_array ( $this->data ['table'] )) {
-            $from = $this->_db->quoteIdentifier ( $this->data ['from'] );
-        } else {
-            $from = $this->data ['from'];
-        }
-        
-
-        foreach ( $this->data ['fields'] as $total ) {
-            
-            if (isset ( $total ['sqlexp'] )) {
-                $this->hasGroup = 1;
-            }
-        
-        }
-        
-        $queryGroup = '';
-        
-        if (isset ( $this->info ['groupby'] ) && strlen ( $this->info ['groupby'] ) > 0) {
-            $queryGroup = " GROUP BY " . $this->info ['groupby'];
-        
-        }
-        
-        $query_count = "SELECT COUNT(*) AS TOTAL FROM " . $from . " $query_where " . $queryGroup;
+        // Get the WHERE condition and apply from now on...
+        $this->buildQueryWhere ();
         
         $this->_selectCount = clone $this->_select;
         
@@ -2984,14 +2804,12 @@ class Bvb_Grid_DataGrid {
         
         $this->_selectCount->columns ( new Zend_Db_Expr ( 'COUNT(*) AS TOTAL ' ) );
         
-        return $query_count;
+        return;
     }
 
 
     /**
-     * [PT] Fazer o return da grid. Está um bocado sem sentido, mas é o que se arranja por enquanto
-     * 
-     * [EN] Done. Send the gri to the user
+     *  Done. Send the grid to the user
      *
      * @return string
      */
@@ -3065,10 +2883,10 @@ class Bvb_Grid_DataGrid {
             
 
 
-            //[PT] O total de registos encontrados na query sem aplicar os limites
+            //Total records found
             $this->_totalRecords = $resultCount;
             
-            //[PT]Os registos dentro dos limites
+            //The result
             $this->_result = $result;
         
 
@@ -3157,16 +2975,35 @@ class Bvb_Grid_DataGrid {
         }
         
 
-    return ;
+        return;
     }
 
 
+    /**
+     * Return the query to be executed
+     *
+     * @return Zend_Db_Select
+     */
     function __toString() {
 
         return $this->_select->__toString ();
     }
 
 
+    /**
+     * Get details about a column
+     *
+     * @param string $column
+     * @return null|array
+     */
+    function getColumn($column) {
+
+        return isset ( $this->data ['fields'] [$column] ) ? $this->data ['fields'] [$column] : null;
+    
+    }
+
+
+    
     /**
      * Search function for array adapters
      */
@@ -3217,8 +3054,6 @@ class Bvb_Grid_DataGrid {
      * Apply the search to a give field when the adaptar is an array
      */
     function applySearchTypeToArray($final, $search, $key) {
-
-        
 
         $enc = stripos ( ( string ) $final, $search );
         
@@ -3282,7 +3117,6 @@ class Bvb_Grid_DataGrid {
      */
     function removeColumn($column) {
 
-        
         unset ( $this->data ['fields'] [$column] );
         unset ( $this->filters [$column] );
         return $this;
@@ -3310,7 +3144,6 @@ class Bvb_Grid_DataGrid {
      */
     function resetColumn($column) {
 
-        
         $this->removeColumn ( $column );
         $this->addColumn ( $column );
     }
@@ -3318,10 +3151,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Converter um object para um array.
-     * [PT] è necessário quando quisermos faszer o load 
-     * [PT]através de um ficheiro XML
-     *
+     *Convert Object to Array
      * @param object $object
      * @return array
      */
@@ -3347,8 +3177,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * Definir a localização de templates. É muito provável e aconselhável que 
-     * armazene os templates personalizados fora desta pasta
+     * set template locations
      *
      * @param string $path
      * @param string $prefix
@@ -3368,8 +3197,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Definir o template para a grid
-     * [PT] por defeito ele tenta bvb/grid/template/table/table
+     * Define the template to be used
      *
      * @param string $template
      * @return unknown
@@ -3390,12 +3218,11 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Método alternativo para adicionar campos
+     * Add multiple columns at once
      *
      */
     function addColumns() {
 
-        
         $fields = func_get_args ();
         
         foreach ( $fields as $value ) {
@@ -3417,7 +3244,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Método alternativo para adicionar filtros
+     * Add filters
      *
      */
     function addFilters($filters) {
@@ -3430,7 +3257,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     * [PT]Método alternativo para adicionar novas colunas
+     * Add extra columns
      *
      * @return unknown
      */
@@ -3452,6 +3279,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
+     * @deprecated 
      * Create the grid using a Zend_Db_Select Object
      */
     function queryFromZendDbSelect(Zend_Db_Select $select) {
@@ -3460,6 +3288,12 @@ class Bvb_Grid_DataGrid {
     }
 
 
+    /**
+     * Define the query using Zend_Db_Select instance
+     *
+     * @param Zend_Db_Select $select
+     * @return bool
+     */
     function query(Zend_Db_Select $select) {
 
         $this->_selectZendDb = true;
@@ -3502,3 +3336,4 @@ class Bvb_Grid_DataGrid {
 
 }
 
+  
