@@ -1207,7 +1207,10 @@ class Bvb_Grid_DataGrid {
         }
         $op = @strtolower ( $op );
         
-        if (substr ( $filtro, 0,2 )=='>=') {
+        if (substr ( $filtro, 0,1 )=='=') {
+            $op = '=';
+            $filtro = substr ( $filtro, 1 );
+        }elseif (substr ( $filtro, 0,2 )=='>=') {
             $op = '>=';
             $filtro = substr ( $filtro, 2 );
         }elseif ($filtro [0] == '>') {
@@ -1943,7 +1946,7 @@ class Bvb_Grid_DataGrid {
 
         if (@$options ['noFilters'] != 1) {
             $help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
-            $onchange = "onchange=\"changeFilters('$help_javascript','$url');\"";
+            $onchange = "onchange=\"gridChangeFilters('$help_javascript','$url');\"";
         }
         $opcoes = $this->filters [$campo];
         

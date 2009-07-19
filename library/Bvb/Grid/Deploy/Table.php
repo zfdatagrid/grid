@@ -2031,7 +2031,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function deploy() {
 
         
-        if ($this->info ['ajax'] == true && ! isset ( $this->info ['ajaxId'] )) {
+        if (isset($this->info ['ajax']) && $this->info ['ajax'] == true && ! isset ( $this->info ['ajaxId'] )) {
             throw new Exception ( 'You can not use ajax without specifying a id to load the content. Please use $grid->ajaxId()' );
         }
         
@@ -2155,9 +2155,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
     function printScript() {
         
         
-        if($this->info['ajax']==1)
+        if(isset($this->info ['ajax']) && $this->info['ajax']==1)
         {
             $useAjax = 1;
+        }else {
+            $useAjax  =0;
         }
 
         $script = "<script language=\"javascript\" type=\"text/javascript\">
