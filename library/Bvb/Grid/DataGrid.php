@@ -617,7 +617,7 @@ class Bvb_Grid_DataGrid {
     }
 
 
-     
+    
     /**
      * Set the data using a JSON formatted value
      *
@@ -2086,7 +2086,7 @@ class Bvb_Grid_DataGrid {
                         $final = $dados;
                     }
                     
-                    if (isset($final [$campos] ) && !is_array ( $final [$campos] )) {
+                    if (isset ( $final [$campos] ) && ! is_array ( $final [$campos] )) {
                         $new_value = $final [$campos];
                     }
                 }
@@ -2174,57 +2174,103 @@ class Bvb_Grid_DataGrid {
 
 
     
+    function applySqlExpToArray($field, $operation, $option = 0) {
+
+        foreach ( $this->_resultRaw as $value ) {
+            
+            $array [] = $value [$field];
+        
+        }
+        
+        $operation = trim(strtolower($operation)); 
+        
+        switch ($operation) {
+            case 'sum' :
+                return array_sum ( $array );
+                break;
+            case 'count' :
+                return count ( $array );
+                break;
+            case 'min' :
+                sort ( $array );
+                return array_shift ( $array );
+                break;
+            case 'max' :
+                sort ( $array );
+                return array_pop ( $array );
+                break;
+            case 'avg' :
+                $option = ( int ) $option;
+                return round ( array_sum ( $array ) / count ( $array ), $option );
+                break;
+            default :
+                throw new Exception ( 'Operation not found' );
+                break;
+        }
+    }
+
+
     /**
      * Apply SQL Functions
      *
      */
     function buildSqlExp() {
 
-        
-        if ($this->_adapter == 'array') {
-            return FALSE;
-        }
-        
-
         $exp = isset ( $this->info ['sqlexp'] ) ? $this->info ['sqlexp'] : '';
         
-
         if (! is_array ( $exp )) {
             return false;
         }
+        
         $final = $exp;
-        foreach ( $final as $key => $value ) {
-            
+        
 
-            if (is_array ( $value )) {
-                $valor = '';
-                foreach ( $value as $final ) {
-                    $valor .= $final . '(';
-                }
-                
-                $valor .= $key . str_repeat ( ')', count ( $value ) );
-            } else {
-                $valor = "$value($key)";
+        if ($this->_adapter == 'array') {
+            
+            foreach ( $final as $key => $value ) {
+            
+                    $result[$key] = $this->applySqlExpToArray($key,$value);
+
             }
             
-            $select = clone $this->_select;
             
-            $select->reset ( Zend_Db_Select::COLUMNS );
-            $select->reset ( Zend_Db_Select::ORDER );
-            $select->reset ( Zend_Db_Select::LIMIT_COUNT );
-            $select->reset ( Zend_Db_Select::LIMIT_OFFSET );
+        } else {
             
-            $select->columns ( new Zend_Db_Expr ( $valor . ' AS TOTAL' ) );
+
+
+            foreach ( $final as $key => $value ) {
+                
+
+                if (is_array ( $value )) {
+                    $valor = '';
+                    foreach ( $value as $final ) {
+                        $valor .= $final . '(';
+                    }
+                    
+                    $valor .= $key . str_repeat ( ')', count ( $value ) );
+                } else {
+                    $valor = "$value($key)";
+                }
+                
+                $select = clone $this->_select;
+                
+                $select->reset ( Zend_Db_Select::COLUMNS );
+                $select->reset ( Zend_Db_Select::ORDER );
+                $select->reset ( Zend_Db_Select::LIMIT_COUNT );
+                $select->reset ( Zend_Db_Select::LIMIT_OFFSET );
+                
+                $select->columns ( new Zend_Db_Expr ( $valor . ' AS TOTAL' ) );
+                
+                $final = $select->query ();
+                
+                $result1 = $final->fetchAll ();
+                
+                $result [$key] = $result1 [0]->TOTAL;
             
-            $final = $select->query ();
-            
-            $result1 = $final->fetchAll ();
-            
-            $result [$key] = $result1 [0]->TOTAL;
+            }
         
         }
         
-
         if (is_array ( $result )) {
             $return = array ();
             foreach ( $this->_finalFields as $key => $value ) {

@@ -452,6 +452,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->setDataFromCsv ( 'media/files/grid.csv' );
+        $grid->sqlexp ( array ('Population' => 'AVG' ) );
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
@@ -566,7 +567,7 @@ class SiteController extends Zend_Controller_Action
         $grid->addColumn ( 'Name', array ('title' => 'Country') );
         $grid->addColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
         $grid->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80' ) );
-        $grid->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) );
+        $grid->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50','format'=>'number' ) );
         $grid->addColumn ( 'GovernmentForm', array ('title' => 'Government Form' ) );
         $grid->addColumn ( 'HeadOfState', array ('title' => 'Head Of State' ) );
         
