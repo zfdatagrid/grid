@@ -427,7 +427,7 @@ class Bvb_Grid_DataGrid {
      *
      * @param bool $value
      */
-    public function setPrimaryGrid($value) {
+    public function setPrimary($value) {
 
         $this->_isPrimaryGrid = $value;
     }
