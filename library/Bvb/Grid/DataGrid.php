@@ -2185,6 +2185,9 @@ class Bvb_Grid_DataGrid {
         $operation = trim(strtolower($operation)); 
         
         switch ($operation) {
+            case 'product' :
+                return array_product ( $array );
+                break;
             case 'sum' :
                 return array_sum ( $array );
                 break;
