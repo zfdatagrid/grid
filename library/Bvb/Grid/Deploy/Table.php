@@ -922,6 +922,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         /**
          * We must check if there is a filter set or an order, to show the extra th on top
          */
+        
         if (isset ( $this->ctrlParams ['filters'] ) || isset ( $this->ctrlParams ['order'] )) {
             
             $url = $this->getUrl ( 'filters' );
@@ -1104,8 +1105,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                         
                         } else {
                             //Replace values in the template
-                            $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
+                            
+                            if(!array_key_exists('url',$title))
+                            {
+                                $grid .= str_replace ( '{{value}}', $title ['value'] , $this->temp ['table']->titlesLoop () );
                         
+                            }else{
+                                $grid .= str_replace ( '{{value}}', "<a href='" . $title ['url'] . "'>" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
+                        
+                            }
+                            
                         }
                     }
                 }

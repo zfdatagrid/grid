@@ -553,7 +553,7 @@ class Bvb_Grid_DataGrid {
      * @param bool $loop
      * @param bool $columns
      */
-    function setDataFromXml($url, $loop = null, $columns = null, $type = 'file') {
+    function setDataFromXml($url, $loop = null, $columns = null) {
 
         $this->_adapter = 'array';
         
@@ -562,10 +562,10 @@ class Bvb_Grid_DataGrid {
             
             if (! $xml = $cache->load ( md5 ( $url ) )) {
                 
-                if ($type != 'string') {
-                    $xml = simplexml_load_file ( $url );
-                } else {
+                if (strstr ( $url, '<?xml' )) {
                     $xml = simplexml_load_string ( $url );
+                } else {
+                    $xml = simplexml_load_file ( $url );
                 }
                 $xml = $this->object2array ( $xml );
                 $cache->save ( $xml, md5 ( $url ), array ($this->cache ['tag'] ) );
@@ -574,10 +574,10 @@ class Bvb_Grid_DataGrid {
             }
         } else {
             
-            if ($type != 'string') {
-                $xml = simplexml_load_file ( $url );
-            } else {
+            if (strstr ( $url, '<?xml' )) {
                 $xml = simplexml_load_string ( $url );
+            } else {
+                $xml = simplexml_load_file ( $url );
             }
             $xml = $this->object2array ( $xml );
         }
@@ -999,7 +999,7 @@ class Bvb_Grid_DataGrid {
 
         $this->data = $data ['data'];
         $this->info = $data;
-        if (! is_array ( $this->data ['table'] )) {
+        if (!isset($this->data['table']) || ! is_array ( $this->data ['table'] )) {
             $this->data ['table'] = $this->data ['from'];
         }
     }
@@ -1054,7 +1054,6 @@ class Bvb_Grid_DataGrid {
      */
     function getFields($mode = 'edit', $table) {
 
-        
         $get = $this->info [$mode] ['fields'];
         if (! is_array ( $get )) {
             $get = $this->getTableFields ( $table );
@@ -1087,7 +1086,6 @@ class Bvb_Grid_DataGrid {
      *
      */
     function setPagination($number = 15) {
-
         
         $this->pagination = ( int ) $number;
         return $this;
@@ -1207,16 +1205,16 @@ class Bvb_Grid_DataGrid {
         }
         $op = @strtolower ( $op );
         
-        if (substr ( $filtro, 0,1 )=='=') {
+        if (substr ( $filtro, 0, 1 ) == '=') {
             $op = '=';
             $filtro = substr ( $filtro, 1 );
-        }elseif (substr ( $filtro, 0,2 )=='>=') {
+        } elseif (substr ( $filtro, 0, 2 ) == '>=') {
             $op = '>=';
             $filtro = substr ( $filtro, 2 );
-        }elseif ($filtro [0] == '>') {
+        } elseif ($filtro [0] == '>') {
             $op = '>';
             $filtro = substr ( $filtro, 1 );
-        }  elseif (substr ( $filtro, 0,2 ) == '<=') {
+        } elseif (substr ( $filtro, 0, 2 ) == '<=') {
             $op = '<=';
             $filtro = substr ( $filtro, 2 );
         } elseif ($filtro [0] == '<') {
@@ -1232,7 +1230,7 @@ class Bvb_Grid_DataGrid {
             $op = 'rlike';
             $filtro = substr ( $filtro, 0, - 1 );
         }
-
+        
         switch ($op) {
             case 'equal' :
             case '=' :
@@ -1278,15 +1276,16 @@ class Bvb_Grid_DataGrid {
      */
     function buildQueryWhere() {
 
-        
         if ($this->_queryWhere) {
             return;
         }
+        
+        
         if (strlen ( trim ( $this->_where ) ) > 1) {
             $this->_select->where ( $this->_where );
         }
         
-        //Vamos criar a aray para sabermos o valor dos filtro
+        //Build an array to know filters values
         $valor_filters = array ();
         $filters = @urldecode ( $this->ctrlParams ['filters'] );
         $filters = str_replace ( "filter_", "", $filters );
@@ -1322,7 +1321,7 @@ class Bvb_Grid_DataGrid {
 
     
     /**
-     *  Build query. only LIMIT and ORDER
+     *  Build query.
      *
      * @return string
      */
@@ -1502,9 +1501,8 @@ class Bvb_Grid_DataGrid {
      */
     function buildFilters() {
 
-        
         $return = array ();
-        if (isset ( $this->info ['noFilters'] )) {
+        if (isset ( $this->info ['noFilters'] ) || $this->_isPrimaryGrid==false) {
             return false;
         }
         
@@ -1701,8 +1699,7 @@ class Bvb_Grid_DataGrid {
 
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
                 
-
-                if ($noOrder == 1) {
+                if ($noOrder == 1 || $this->_isPrimaryGrid==false) {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
                 } else {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'img' => $img, 'value' => $this->_titles [$links [$i]] );
@@ -2194,7 +2191,7 @@ class Bvb_Grid_DataGrid {
         
         }
         
-        $operation = trim(strtolower($operation)); 
+        $operation = trim ( strtolower ( $operation ) );
         
         switch ($operation) {
             case 'product' :
@@ -2243,12 +2240,12 @@ class Bvb_Grid_DataGrid {
         if ($this->_adapter == 'array') {
             
             foreach ( $final as $key => $value ) {
+                
+                $result [$key] = $this->applySqlExpToArray ( $key, $value );
             
-                    $result[$key] = $this->applySqlExpToArray($key,$value);
-
             }
-            
-            
+        
+
         } else {
             
 
