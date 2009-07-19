@@ -14,10 +14,10 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Mascker_Grid
+ * @package    Bvb_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.1  mascker $
+ * @version    0.4  mascker $
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
@@ -169,7 +169,7 @@ class Bvb_Grid_DataGrid {
     /**
      *  DB Adapter
      *
-     * @var object
+     * @var Zend_Db_Select
      */
     protected $_db;
 
@@ -1445,6 +1445,7 @@ class Bvb_Grid_DataGrid {
         unset ( $params_clean ['controller'] );
         unset ( $params_clean ['module'] );
         unset ( $params_clean ['action'] );
+        unset ( $params_clean ['gridmod'] );
         
 
 
@@ -1464,7 +1465,7 @@ class Bvb_Grid_DataGrid {
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists ( 'ajax', $this->info )) {
-            return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/modo/ajax";
+            return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/gridmod/ajax";
         } else {
             return $this->_baseUrl . "/" . $params ['module'] . "/" . $params ['controller'] . $action . $url;
         }

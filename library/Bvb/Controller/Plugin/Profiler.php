@@ -14,7 +14,7 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Mascker_Grid
+ * @package    Bvb_Grid
  * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
  * @version    0.1  mascker 

@@ -57,7 +57,7 @@ class SiteController extends Zend_Controller_Action
      * [EN] It's not a bad idea put this piece o code there. May be very useful
      * 
      *
-     * @return unknown
+     * @return $grid
      */
     function grid()
     {
@@ -452,7 +452,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->setDataFromCsv ( 'media/files/grid.csv' );
-        $grid->sqlexp ( array ('Population' => 'AVG' ) );
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
@@ -506,6 +505,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setTemplate ( 'wordx', 'wordx', $pdf );
         $grid->setTemplate ( 'ods', 'ods', $pdf );
         $grid->sqlexp ( array ('Population' => array('AVG'), 'ID' => 'COUNT' ) );
+        
         
         //$grid->setPrimaryGrid(false);
         
@@ -651,10 +651,6 @@ class SiteController extends Zend_Controller_Action
 
 
     /**
-     * [PT]Converter um object para um array.
-     * [PT] è necessário quando quisermos faszer o load 
-     * [PT]através de um ficheiro XML
-     *
      * @param object $object
      * @return array
      */
