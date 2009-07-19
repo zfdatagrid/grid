@@ -3033,8 +3033,6 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        echo $this->_select->__toString ();
-        
         return;
     }
 
