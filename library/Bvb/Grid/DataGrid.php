@@ -1207,8 +1207,17 @@ class Bvb_Grid_DataGrid {
         }
         $op = @strtolower ( $op );
         
-        if ($filtro [0] == '=') {
-            $op = '=';
+        if (substr ( $filtro, 0,2 )=='>=') {
+            $op = '>=';
+            $filtro = substr ( $filtro, 2 );
+        }elseif ($filtro [0] == '>') {
+            $op = '>';
+            $filtro = substr ( $filtro, 1 );
+        }  elseif (substr ( $filtro, 0,2 ) == '<=') {
+            $op = '<=';
+            $filtro = substr ( $filtro, 2 );
+        } elseif ($filtro [0] == '<') {
+            $op = '<';
             $filtro = substr ( $filtro, 1 );
         } elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) == '*') {
             $op = 'like';
@@ -1220,7 +1229,6 @@ class Bvb_Grid_DataGrid {
             $op = 'rlike';
             $filtro = substr ( $filtro, 0, - 1 );
         }
-        
 
         switch ($op) {
             case 'equal' :
