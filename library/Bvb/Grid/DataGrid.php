@@ -396,7 +396,6 @@ class Bvb_Grid_DataGrid {
         
         }
         
-
         // Add Zend_Validate and Zend_Filter to the form element
         $this->addElementDir ( 'Zend/Filter', 'Zend_Filter', 'filter' );
         $this->addElementDir ( 'Zend/Validate', 'Zend_Validate', 'validator' );
@@ -999,7 +998,7 @@ class Bvb_Grid_DataGrid {
 
         $this->data = $data ['data'];
         $this->info = $data;
-        if (!isset($this->data['table']) || ! is_array ( $this->data ['table'] )) {
+        if (! isset ( $this->data ['table'] ) || ! is_array ( $this->data ['table'] )) {
             $this->data ['table'] = $this->data ['from'];
         }
     }
@@ -1086,7 +1085,7 @@ class Bvb_Grid_DataGrid {
      *
      */
     function setPagination($number = 15) {
-        
+
         $this->pagination = ( int ) $number;
         return $this;
     }
@@ -1280,10 +1279,11 @@ class Bvb_Grid_DataGrid {
             return;
         }
         
-        
-        if (strlen ( trim ( $this->_where ) ) > 1) {
-            $this->_select->where ( $this->_where );
+
+        if (strlen ( trim ( $this->data['where'] ) ) > 1) {
+            $this->_select->where ( $this->data['where']);
         }
+        
         
         //Build an array to know filters values
         $valor_filters = array ();
@@ -1502,7 +1502,7 @@ class Bvb_Grid_DataGrid {
     function buildFilters() {
 
         $return = array ();
-        if (isset ( $this->info ['noFilters'] ) || $this->_isPrimaryGrid==false) {
+        if (isset ( $this->info ['noFilters'] ) || $this->_isPrimaryGrid == false) {
             return false;
         }
         
@@ -1699,7 +1699,7 @@ class Bvb_Grid_DataGrid {
 
                 $noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
                 
-                if ($noOrder == 1 || $this->_isPrimaryGrid==false) {
+                if ($noOrder == 1 || $this->_isPrimaryGrid == false) {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
                 } else {
                     $return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'img' => $img, 'value' => $this->_titles [$links [$i]] );
@@ -3033,6 +3033,8 @@ class Bvb_Grid_DataGrid {
         }
         
 
+        echo $this->_select->__toString ();
+        
         return;
     }
 
