@@ -1404,7 +1404,7 @@ class Bvb_Grid_DataGrid {
         }
         
 
-        if (isset ( $this->info ['limit'] ) && (strlen ( $this->info ['limit'] ) > 0 || @is_array ( $this->info ['limit'] ))) {
+        if (isset ( $this->info ['limit'] ) && ( ( @is_array ( $this->info ['limit'] ) || strlen ( $this->info ['limit'] ) > 0))) {
             if (is_array ( $this->info ['limit'] )) {
                 $this->_select->limit ( $this->info ['limit'] [1], $this->info ['limit'] [0] );
             } else {
