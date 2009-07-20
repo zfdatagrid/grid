@@ -1228,6 +1228,9 @@ class Bvb_Grid_DataGrid {
         } elseif (substr ( $filtro, 0, 2 ) == '<=') {
             $op = '<=';
             $filtro = substr ( $filtro, 2 );
+        } elseif (substr ( $filtro, 0, 2 ) == '<>') {
+            $op = '<>';
+            $filtro = substr ( $filtro, 2 );
         } elseif ($filtro [0] == '<') {
             $op = '<';
             $filtro = substr ( $filtro, 1 );
