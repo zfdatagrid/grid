@@ -380,8 +380,8 @@ class Bvb_Grid_DataGrid {
         
         }
         
-        
-        
+
+
         //Get the controller params and baseurl to use with filters
         $this->ctrlParams = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
         $this->_baseUrl = Zend_Controller_Front::getInstance ()->getBaseUrl ();
@@ -820,8 +820,7 @@ class Bvb_Grid_DataGrid {
     function getDescribeTable($table, $field = '') {
 
         
-        if($this->_adapter=='array')
-        {
+        if ($this->_adapter == 'array') {
             return false;
         }
         
@@ -856,7 +855,7 @@ class Bvb_Grid_DataGrid {
 
             } else {
                 
-                
+
                 $describe = $this->_db->describeTable ( $table );
             }
             
@@ -1175,6 +1174,7 @@ class Bvb_Grid_DataGrid {
                 }
             
 
+
             } else {
                 
                 if (stripos ( $value, ' AS ' )) {
@@ -1290,7 +1290,7 @@ class Bvb_Grid_DataGrid {
             return;
         }
         
-        if (isset($this->data ['where']) && strlen ( trim ( $this->data ['where'] ) ) > 1) {
+        if (isset ( $this->data ['where'] ) && strlen ( trim ( $this->data ['where'] ) ) > 1) {
             $this->_select->where ( $this->data ['where'] );
         }
         
@@ -1311,6 +1311,7 @@ class Bvb_Grid_DataGrid {
                 } else {
                     $oldKey = $key;
                     if (@$fieldsSemAsFinal [$key] ['searchField'] != "") {
+                        
                         $key = $this->replaceAsString ( $fieldsSemAsFinal [$key] ['searchField'] );
                     }
                     if (@array_key_exists ( 'sqlexp', $this->data ['fields'] [$key] )) {
@@ -2694,27 +2695,29 @@ class Bvb_Grid_DataGrid {
          * But it is much faster to use the strpos.
          * Wating on feedback...
          */
+        
+        
         if (strpos ( $fromTable, ' as ' ) !== false) {
             
             $final = array_map ( 'trim', explode ( 'as', $fromTable ) );
             
-            $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
+            $this->_select->from ( array ($final [1] => $final [0] ) );
         
         } elseif (strpos ( $fromTable, ' AS ' ) !== false) {
             
             $final = array_map ( 'trim', explode ( 'AS', $fromTable ) );
             
-            $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
+            $this->_select->from ( array ($final [1] => $final [0] ) );
         
         } elseif (strpos ( $fromTable, ' ' ) !== false) {
             
             $final = array_map ( 'trim', explode ( ' ', $fromTable ) );
             
-            $this->_select->from ( array ($final [1] => $final [0] ), array_map ( 'trim', explode ( ',', $select_fields ) ) );
+            $this->_select->from ( array ($final [1] => $final [0] ));
         
         } else {
             
-            $this->_select->from ( $fromTable, array_map ( 'trim', explode ( ',', $select_fields ) ) );
+            $this->_select->from ( $fromTable );
         
         }
         
@@ -2776,7 +2779,6 @@ class Bvb_Grid_DataGrid {
         //Lets add the columns
         if (count ( $this->data ['fields'] ) != count ( $this->_select->getPart ( Zend_Db_Select::COLUMNS ) )) {
             
-
             //Reset all columns already set
             $this->_select->reset ( Zend_Db_Select::COLUMNS );
             
@@ -2786,6 +2788,7 @@ class Bvb_Grid_DataGrid {
 
 
             foreach ( array_keys ( $this->data ['fields'] ) as $field ) {
+                
                 $finalField = $this->getArrayForDbSelect ( $field );
                 
 
@@ -2795,9 +2798,21 @@ class Bvb_Grid_DataGrid {
                     $this->_titles [key ( $finalField )] = $this->data ['fields'] [$field] ['title'];
                     $this->_select->columns ( $finalField );
                 } else {
+                    //we need to check if this fields has any sql expression...
                     
-                    $this->_select->columns ( $finalField );
                     
+                    if (isset ( $this->data ['fields'] [$field] ['sqlexp'] )) {
+                        
+                        $sqlexp = trim ( $this->data ['fields'] [$field] ['sqlexp'] );
+                        
+                        $this->_select->columns ( new Zend_Db_Expr ( $sqlexp . ' as ' . $this->_db->quote(end(explode('.',$finalField))) ) );
+                    
+                    } else {
+                        $this->_select->columns ( $finalField );
+                    }
+                    
+
+
                     $this->_fields [] = $finalField;
                     $this->_titles [$finalField] = isset ( $this->data ['fields'] [$field] ['title'] ) ? $this->data ['fields'] [$field] ['title'] : ucfirst ( $finalField );
                 }
@@ -2806,7 +2821,7 @@ class Bvb_Grid_DataGrid {
         
 
         }
-        
+
         return;
     
     }
@@ -2883,6 +2898,7 @@ class Bvb_Grid_DataGrid {
      */
     function deploy() {
 
+        
         if (FALSE === $this->_isPrimaryGrid) {
             $myParams = array ('comm', 'order', 'filters', 'add', 'edit' );
             
