@@ -365,16 +365,22 @@ class Bvb_Grid_DataGrid {
      *
      * @param array $data
      */
-    function __construct($db) {
+    function __construct($db = false) {
 
         
-        //Iniciate adapter
-        $this->_db = $db;
-        $this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
-        
 
-        //Instanciate the Zend_Db_Select object
-        $this->_select = $this->_db->select ();
+        if (! $db instanceof Zend_Db_Adapter_Abstract) {
+            $this->_adapter = 'array';
+        } else {
+            //Iniciate adapter
+            $this->_db = $db;
+            $this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
+            //Instanciate the Zend_Db_Select object
+            $this->_select = $this->_db->select ();
+        
+        }
+        
+        
         
         //Get the controller params and baseurl to use with filters
         $this->ctrlParams = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
@@ -814,6 +820,11 @@ class Bvb_Grid_DataGrid {
     function getDescribeTable($table, $field = '') {
 
         
+        if($this->_adapter=='array')
+        {
+            return false;
+        }
+        
         if (strpos ( $field, '.' )) {
             $tableAb = reset ( explode ( '.', $field ) );
             
@@ -844,6 +855,7 @@ class Bvb_Grid_DataGrid {
             
 
             } else {
+                
                 
                 $describe = $this->_db->describeTable ( $table );
             }
@@ -1267,7 +1279,6 @@ class Bvb_Grid_DataGrid {
     }
 
 
-    
     /**
      *  Build the query WHERE
      *
@@ -1279,12 +1290,11 @@ class Bvb_Grid_DataGrid {
             return;
         }
         
-
-        if (strlen ( trim ( $this->data['where'] ) ) > 1) {
-            $this->_select->where ( $this->data['where']);
+        if (isset($this->data ['where']) && strlen ( trim ( $this->data ['where'] ) ) > 1) {
+            $this->_select->where ( $this->data ['where'] );
         }
         
-        
+
         //Build an array to know filters values
         $valor_filters = array ();
         $filters = @urldecode ( $this->ctrlParams ['filters'] );
