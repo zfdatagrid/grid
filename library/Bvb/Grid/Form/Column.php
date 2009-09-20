@@ -24,7 +24,7 @@ class Bvb_Grid_Form_Column
 {
     public $options;
     
-    function __construct($name, array $options)
+    function __construct($name,  $options = array())
     {
         $this->options['field'] = $name;
         
