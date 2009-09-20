@@ -1101,7 +1101,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
                     } else {
                         
                         if (isset ( $this->info ['ajax'] ) && $this->info ['ajax'] === true) {
-                            $grid .= str_replace ( '{{value}}', "<a href=\"javascript:gridAjax('{$this->info['ajaxId']}','" . $title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
+                           $grid .= str_replace ( '{{value}}', "<a href=\"javascript:gridAjax('{$this->info['ajaxId']}','" .@$title ['url'] . "') \">" . $title ['value'] . $imgFinal . "</a>", $this->temp ['table']->titlesLoop () );
                         
                         } else {
                             //Replace values in the template
@@ -2088,9 +2088,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
             $url = parent::getUrl ( $removeParams );
             
-           
-
-            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;[" . $urlFinal . "]\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
+            if( $this->allowEdit==1 && isset($this->info['ajax']) && $this->info['ajax']==1)
+		        {
+		        	$urlEdit = $this->_baseUrl.'/'. str_replace("/gridmod/ajax","",$url);
+		        }else{
+		        	$urlEdit = $url;
+		        }
+            
+            array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit/1/comm/" . "mode:edit;[" . $urlFinal . "]\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
         
         }
         
@@ -2177,7 +2182,17 @@ function confirmDel(msg, url)
 
     if(confirm(msg))
     {
-        window.location = url;
+    
+    ";
+        if($useAjax ==1)
+        {
+            $script .= "window.location = '".$this->_baseUrl."/'+url.replace('/gridmod/ajax','');";
+        }else{
+            $script .= "window.location = url;";
+        }
+        
+        $script .="
+        
     }else{
         return false;
     }
