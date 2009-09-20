@@ -26,6 +26,14 @@ class Bvb_Grid_DataGrid {
 
     
     /**
+     * Char encoding
+     *
+     * @var string
+     */
+        
+    public $charEncoding = 'UTF-8';
+    
+    /**
      * Var that holds the Zend_Db_Select object when 
      * using the method queryFromZendDbSelect
      *
@@ -436,7 +444,30 @@ class Bvb_Grid_DataGrid {
 
         $this->_isPrimaryGrid = $value;
     }
+    
+    
+    /**
+     * Character encoding
+     *
+     * @param string $encoding
+     * @return unknown
+     */
+    function setcharEncoding($encoding)
+    {
+        $this->charEncoding = $encoding;
+        return $this;
+    }
 
+
+    /**
+     * Returns de char encoding
+     *
+     * @return string
+     */
+    function getCharEncoding()
+    {
+        return $this->charEncoding;
+    }
 
     /**
      * Define the adapter to use
@@ -3242,26 +3273,19 @@ class Bvb_Grid_DataGrid {
      * @param object $object
      * @return array
      */
-    function object2array($object) {
+    function object2array($data) {
 
+        if (! is_object($data) && ! is_array($data))
+            return $data;
         
-        $return = NULL;
-        if (is_array ( $object )) {
-            foreach ( $object as $key => $value )
-                $return [$key] = self::object2array ( $value );
-        } else {
-            $var = get_object_vars ( $object );
-            if ($var) {
-                foreach ( $var as $key => $value )
-                    $return [$key] = self::object2array ( $value );
-            } else {
-                return strval ( $object );
-            }
-        }
-        return $return;
+        if (is_object($data))
+            $data = get_object_vars($data);
+        
+        return array_map(array('self' , 'object2array'), $data);
+    
     }
 
-
+ 
     
     /**
      * set template locations

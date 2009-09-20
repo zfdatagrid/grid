@@ -20,23 +20,25 @@
  */
 
 
-class Bvb_Grid_Form_Column 
+class Bvb_Grid_Form_Column
 {
     public $options;
-
     
-    function __construct($name)
+    function __construct($name, array $options)
     {
         $this->options['field'] = $name;
+        
+        if (count($options) > 0) {
+            $this->options = array_merge($this->options, $options);
+        }
+        
         return $this;
     }
     
-    function __call($name,$args)
+    function __call($name, $args)
     {
         $this->options[$name] = $args[0];
         return $this;
     }
-
-   
 
 }
