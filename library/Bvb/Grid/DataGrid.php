@@ -2918,6 +2918,7 @@ class Bvb_Grid_DataGrid {
         $this->_selectCount->reset ( Zend_Db_Select::COLUMNS );
         $this->_selectCount->reset ( Zend_Db_Select::LIMIT_OFFSET );
         $this->_selectCount->reset ( Zend_Db_Select::LIMIT_COUNT );
+        $this->_selectCount->reset ( Zend_Db_Select::ORDER );
         
         $this->_selectCount->columns ( new Zend_Db_Expr ( 'COUNT(*) AS TOTAL ' ) );
         
@@ -2957,8 +2958,7 @@ class Bvb_Grid_DataGrid {
             $this->buildColumns ();
             
 
-            if ($this->cache ['use'] == 1) {
-                
+            if ($this->cache ['use'] == 1) {                
                 $cache = $this->cache ['instance'];
                 
                 if (! $result = $cache->load ( md5 ( $this->_select->__toString () ) )) {
@@ -3398,7 +3398,7 @@ class Bvb_Grid_DataGrid {
         return $this->query ( $select );
     }
 
-
+    
     /**
      * Define the query using Zend_Db_Select instance
      *
