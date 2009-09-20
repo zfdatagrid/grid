@@ -1184,17 +1184,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
 
         //Get table desc to known to field type
-        
-
-
-
         $table = parent::getDescribeTable ( $this->data ['table'], $fieldRaw );
         
 
         $field = end ( explode ( '.', $field ) );
         
-
-        $tipo = $table [$field];
+        @$tipo = $table [$field];
         
 
         $tipo = $tipo ['DATA_TYPE'];
@@ -1221,7 +1216,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             $tipo = $options ['attributes'] ['type'];
         }
         
-
         if (! is_array ( @$options ['attributes'] )) {
             $options ['attributes'] = array ();
             
@@ -2067,6 +2061,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
         
         $images = $this->temp ['table']->images ( $this->imagesUrl );
         
+        
+        if($this->allowDelete==1 || $this->allowEdit==1)
+        {
+        	 $pkUrl = $this->getPrimaryKey ();
+            $urlFinal = '';
+            foreach ( $pkUrl as $value ) {
+                $urlFinal .= $value . ':{{' . $value . '}}-';
+            }
+            
+            $urlFinal = trim ( $urlFinal, '-' );
+            
+        }
 
         if ($this->allowEdit == 1) {
             if (! is_array ( $this->extra_fields )) {
@@ -2082,14 +2088,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
             }
             $url = parent::getUrl ( $removeParams );
             
-            $pkUrl = $this->getPrimaryKey ();
-            $urlFinal = '';
-            foreach ( $pkUrl as $value ) {
-                $urlFinal .= $value . ':{{' . $value . '}}-';
-            }
-            
-            $urlFinal = trim ( $urlFinal, '-' );
-            
+           
 
             array_unshift ( $this->extra_fields, array ('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$url/edit/1/comm/" . "mode:edit;[" . $urlFinal . "]\" > " . $images ['edit'] . "</a>", 'edit' => true ) );
         
