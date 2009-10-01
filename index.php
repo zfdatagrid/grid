@@ -12,6 +12,7 @@ set_include_path ( '.' . PATH_SEPARATOR . './library/'
 
 
 include "Zend/Loader/Autoloader.php";
+
 $autoloader = Zend_Loader_Autoloader::getInstance();
 $autoloader->registerNamespace('Bvb_');
 $autoloader->registerNamespace('My_');
