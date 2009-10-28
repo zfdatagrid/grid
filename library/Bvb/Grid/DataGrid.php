@@ -1340,6 +1340,8 @@ class Bvb_Grid_DataGrid {
         if (is_array ( $filters )) {
             foreach ( $filters as $key => $filtro ) {
                 $key = str_replace ( "bvbdot", ".", $key );
+                
+                
                 if (strlen ( $filtro ) == 0 || ! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) )) {
                     unset ( $filters [$key] );
                 } else {
@@ -1355,6 +1357,7 @@ class Bvb_Grid_DataGrid {
                         $valor_filters [$key] = $filtro;
                     }
                 }
+              
             }
         }
         
@@ -2140,7 +2143,8 @@ class Bvb_Grid_DataGrid {
                         $final = $dados;
                     }
                     
-                    if (isset ( $final [$campos] ) && ! is_array ( $final [$campos] )) {
+                    if ( array_key_exists( $campos, $final ) && ! is_array( $final [$campos] )) {
+                    
                         $new_value = $final [$campos];
                     }
                 }
