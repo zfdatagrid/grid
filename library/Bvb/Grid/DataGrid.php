@@ -2149,7 +2149,6 @@ class Bvb_Grid_DataGrid {
                     }
                 }
                 
-
                 if ($this->escapeOutput === true) {
                     $new_value = htmlspecialchars ( $new_value );
                 }

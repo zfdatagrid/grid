@@ -1,3 +1,2 @@
-
-RewriteEngine on 
-RewriteRule .* index.php 
+RewriteEngine on
+RewriteRule .* index.php

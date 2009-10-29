@@ -15,8 +15,7 @@ class SiteController extends Zend_Controller_Action
         $this->_redirect ( 'default/site/basic', array ('exit' => 1 ) );
         return false;
     }
-
-
+    
     /**
      * [EN] I think this is needed for something. can't remember
      *
@@ -161,7 +160,7 @@ class SiteController extends Zend_Controller_Action
         ->addColumn ( 'id' )
         ->addColumn ( 'firstname' )
         ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
-        ->addColumn ( 'age', array ('sqlexp' => 'ROUND(AVG(age))', 'title' => 'Age Average', 'class' => 'center' ) )
+        ->addColumn ( 'age', array ('sqlexp' => 'ROUND(AVG(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )
         ->groupby ( 'lastname' )
         ->noFilters ( 1 )
         ->setTemplate ( 'select' );
@@ -230,7 +229,7 @@ class SiteController extends Zend_Controller_Action
         ->addColumn('ct.ID',array('hide'=>1))
         ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
         ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )
-        ->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
+        ->addColumn ( 'c.LifeExpectancy', array ('sqlexp' => 'ROUND(LifeExpectancy)','title' => 'Life E.', 'class' => 'width_50' ) )
         ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
         ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
@@ -418,7 +417,6 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addFilters ( $filters );
         
-
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
@@ -504,10 +502,10 @@ class SiteController extends Zend_Controller_Action
         $grid->setTemplate ( 'word', 'word', $pdf );
         $grid->setTemplate ( 'wordx', 'wordx', $pdf );
         $grid->setTemplate ( 'ods', 'ods', $pdf );
-        $grid->sqlexp ( array ('Population' => array('AVG'), 'ID' => 'COUNT' ) );
         
+        $grid->setPrimary(false);
         
-        //$grid->setPrimaryGrid(false);
+                
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
