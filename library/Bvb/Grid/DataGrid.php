@@ -2105,7 +2105,7 @@ class Bvb_Grid_DataGrid {
             if (is_array ( $extra_fields )) {
                 foreach ( $extra_fields as $value ) {
                     if ($value ['position'] == 'left') {
-                        $fi = get_object_vars ( $dados );
+                    	$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
                         $new_value = str_replace ( $search, $fi, $value ['decorator'] );
                         if (isset ( $value ['eval'] )) {
                             $evalf = str_replace ( $search, $fi, $value ['eval'] );
@@ -2184,7 +2184,7 @@ class Bvb_Grid_DataGrid {
             if (is_array ( $extra_fields )) {
                 foreach ( $extra_fields as $value ) {
                     if ($value ['position'] == 'right') {
-                        $fi = get_object_vars ( $dados );
+                        $fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
                         $new_value = str_replace ( $search, $fi, $value ['decorator'] );
                         if (isset ( $value ['eval'] )) {
                             $evalf = str_replace ( $search, $fi, $value ['eval'] );
