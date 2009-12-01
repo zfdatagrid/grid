@@ -2448,6 +2448,26 @@ class Bvb_Grid_DataGrid {
         }
         
         $titulos = null;
+
+
+		if(!isset($this->data['table']))
+		{
+			
+			$from = $this->_select->getPart('from');
+			
+			foreach($from as $key => $possibleTable)
+			{
+				if($possibleTable['joinType']=='from')
+				{
+					$this->data['table'] = $key;
+					break;
+					
+				}
+			}
+			
+			self::validateFilters($filters);
+		}
+		
         
         if (is_array ( $filters )) {
             return $filters;
@@ -2952,6 +2972,7 @@ class Bvb_Grid_DataGrid {
         }
         
 
+		
         if ($this->_adapter == 'db') {
             
 
