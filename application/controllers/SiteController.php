@@ -3,6 +3,8 @@
 
 class SiteController extends Zend_Controller_Action
 {
+	
+	private $_db;
 
     /**
      * [EN]If a action don't exist, just redirect to the basic
@@ -24,6 +26,8 @@ class SiteController extends Zend_Controller_Action
     { 
 
         $this->view->url = Zend_Registry::get ( 'config' )->site->url;
+        $this->_db = Zend_Registry::get('db');
+        
     }
 
 
@@ -68,38 +72,38 @@ class SiteController extends Zend_Controller_Action
         switch ($export)
         {
             case 'odt' :
-                $grid = "Bvb_Grid_Deploy_Odt";
+            	 $grid = new Bvb_Grid_Deploy_Odt ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'ods' :
-                $grid = "Bvb_Grid_Deploy_Ods";
+                 $grid = new Bvb_Grid_Deploy_Ods ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'xml' :
-                $grid = "Bvb_Grid_Deploy_Xml";
+                 $grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'csv' :
-                $grid = "Bvb_Grid_Deploy_Csv";
+                 $grid = new Bvb_Grid_Deploy_Csv ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'excel' :
-                $grid = "Bvb_Grid_Deploy_Excel";
+                 $grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'word' :
-                $grid = "Bvb_Grid_Deploy_Word";
+                 $grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'wordx' :
-                $grid = "Bvb_Grid_Deploy_Wordx";
+                 $grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'pdf' :
-                $grid = "Bvb_Grid_Deploy_Pdf";
+                 $grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             case 'print' :
-                $grid = "Bvb_Grid_Deploy_Print";
+                 $grid = new Bvb_Grid_Deploy_Print ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
             default :
-                $grid = "Bvb_Grid_Deploy_Table";
+                 $grid = new Bvb_Grid_Deploy_Table ( $db, 'Grid Example', 'media/temp', array ('download' ) );
                 break;
         }
         
-        $grid = new $grid ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+       
         $grid->escapeOutput ( false );
         $grid->addTemplateDir ( 'My/Template/Table', 'My_Template_Table', 'table' );
         $grid->addElementDir ( 'My/Validate', 'My_Validate', 'validator' );
@@ -147,6 +151,23 @@ class SiteController extends Zend_Controller_Action
         $this->render ( 'index' );
     }
 
+	
+    function vincentAction()
+    {
+
+		$db  = Zend_Registry::get('db');
+
+        $grid = $this->grid ( 'table' );
+
+		$select = $db->select ()->distinct()
+		        ->from (array('p1'=>'ProjetClient1'), array('p1.id','p1.cp','p1.ville') );
+		$grid->query( $select );
+			
+        
+        $this->view->pages = $grid->deploy ();
+        $this->render ( 'index' );
+    }
+
 
     /**
      * An example of a group grid
@@ -158,9 +179,9 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid ( 'table' );
         $grid->from ( 'crud' )
         ->addColumn ( 'id' )
-        ->addColumn ( 'firstname' )
-        ->addColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
-        ->addColumn ( 'age', array ('sqlexp' => 'ROUND(AVG(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )
+        ->updateColumn ( 'firstname' )
+        ->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
+        ->updateColumn ( 'age', array ('sqlexp' => 'ROUND(AVG(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )
         ->groupby ( 'lastname' )
         ->noFilters ( 1 )
         ->setTemplate ( 'select' );
@@ -183,15 +204,15 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         
-        $grid->from ( 'Country ' )
-        ->order ( 'name ASC' )
-        ->addColumn ( 'Name', array ('title' => 'Country', 'class' => 'width_200' ) )
-        ->addColumn ( 'Continent', array ('title' => 'Continent' ) )
-        ->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80', 'eval' => "number_format('{{Population}}');" ) )
-        ->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
-        ->addColumn ( 'GovernmentForm', array ('title' => 'Government Form', 'searchType' => '=' ) )
-        ->addColumn ( 'HeadOfState', array ('title' => 'Head Of State', 'searchType' => '=' ) )
-        ->sqlexp ( array ('LifeExpectancy' => 'AVG', 'Population' => 'SUM' ) );
+        
+        $grid->query($this->_db->select()->from('Country',array('Name','Continent','Population','LifeExpectancy','GovernmentForm','HeadOfState')));
+        
+        $grid->updateColumn ( 'Name', array ('title' => 'Country', 'class' => 'width_200' ) )
+        ->updateColumn ( 'Continent', array ('title' => 'Continent' ) )
+        ->updateColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80') )
+        ->updateColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) )
+        ->updateColumn ( 'GovernmentForm', array ('title' => 'Government Form', 'searchType' => '=' ) )
+        ->updateColumn ( 'HeadOfState', array ('title' => 'Head Of State', 'searchType' => '=' ) );
         
         $filters = new Bvb_Grid_Filters ( );
         $filters->addFilter ( 'Name', array ('distinct' => array ('field' => 'Name', 'name' => 'Name' ) ) )
@@ -219,19 +240,22 @@ class SiteController extends Zend_Controller_Action
     function joinsAction()
     {
         $grid = $this->grid ( 'table' );
-       $grid->from ( 'Country as c INNER JOIN City as ct ON c.Capital=ct.ID ' )
-        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
-        ->order ( 'c.Continent' );
+        
+        $grid->query($this->_db->select()
+             ->from(array('c' => 'Country'),
+                    array('Name', 'Continent','Population','LifeExpectancy','GovernmentForm','HeadOfState'))
+             ->join(array('ct' => 'City'),
+                    'c.Capital = ct.ID',array()
+                )
+             );
         
         
-        $grid->addColumn ( 'c.Name AS Country', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) )
-        ->addColumn ( 'ct.Name', array ('title' => 'District', 'hide' => 1 ) )
-        ->addColumn('ct.ID',array('hide'=>1))
-        ->addColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
-        ->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )
-        ->addColumn ( 'c.LifeExpectancy', array ('sqlexp' => 'ROUND(LifeExpectancy)','title' => 'Life E.', 'class' => 'width_50' ) )
-        ->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
-        ->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
+        $grid->updateColumn ( 'c.Name', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}}' ) )
+        ->updateColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )
+        ->updateColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )
+        ->updateColumn ( 'c.LifeExpectancy', array ('sqlexp' => 'ROUND(LifeExpectancy)','title' => 'Life E.', 'class' => 'width_50' ) )
+        ->updateColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )
+        ->updateColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
         
         
         $this->view->pages = $grid->deploy ();
@@ -248,12 +272,12 @@ class SiteController extends Zend_Controller_Action
         ->table ( array ('c' => 'crud', 'b' => 'bugs' ) )
         ->order ( 'c.id' );
         
-        $grid->addColumn ( 'c.id', array ('title' => 'ID',  ) )
-        ->addColumn ( 'c.firstname', array ('title' => 'First Name', 'class' => 'width_120' ) )
-        ->addColumn ( 'c.lastname', array ('title' => 'Last Name') )
-        ->addColumn ( 'c.age', array ('title' => 'Age', 'class' => 'width_50' ) )
-        ->addColumn ( 'c.email', array ('title' => 'Email' ) )
-        ->addColumn ( 'b.bug_description', array ('title' => 'Bug Description' , 'class' => 'width_100', ) );
+        $grid->updateColumn ( 'c.id', array ('title' => 'ID',  ) )
+        ->updateColumn ( 'c.firstname', array ('title' => 'First Name', 'class' => 'width_120' ) )
+        ->updateColumn ( 'c.lastname', array ('title' => 'Last Name') )
+        ->updateColumn ( 'c.age', array ('title' => 'Age', 'class' => 'width_50' ) )
+        ->updateColumn ( 'c.email', array ('title' => 'Email' ) )
+        ->updateColumn ( 'b.bug_description', array ('title' => 'Bug Description' , 'class' => 'width_100', ) );
         
         
         $form = new Bvb_Grid_Form ( );
@@ -294,17 +318,24 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country as c INNER JOIN City as ct ON c.Capital=ct.ID ' )
-        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
-        ->noFilters ( 1 );
         
-        $grid->addColumn ( 'c.name', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.name}} <em>({{ct.Name}})</em>' ) );
-        $grid->addColumn ( 'ct.Name', array ('title' => 'Capital', 'hide' => 1 ) );
-        $grid->addColumn ( 'c.continent', array ('title' => 'Continent' ) );
-        $grid->addColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'eval' => "number_format('{{c.Population}}');" ) );
-        $grid->addColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) );
-        $grid->addColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) );
-        $grid->addColumn ( 'c.HeadOfState', array ('title' => 'Head Of State', 'hide' => 1 ) );
+        
+        $grid->query($this->_db->select()
+             ->from(array('c' => 'Country'),
+                    array('Name', 'Continent','Population','LifeExpectancy','GovernmentForm','HeadOfState'))
+             ->join(array('ct' => 'City'),
+                    'c.Capital = ct.ID',array('Name')
+                )
+             );
+        
+             
+        $grid->updateColumn ( 'c.Name', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>' ) );
+        $grid->updateColumn ( 'ct.Name', array ('title' => 'Capital', 'hide' => 1 ) );
+        $grid->updateColumn ( 'c.Continent', array ('title' => 'Continent' ) );
+        $grid->updateColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80' ) );
+        $grid->updateColumn ( 'c.LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50' ) );
+        $grid->updateColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) );
+        $grid->updateColumn ( 'c.HeadOfState', array ('title' => 'Head Of State', 'hide' => 1 ) );
         
 
         $extra = new Bvb_Grid_ExtraColumns ( );
@@ -338,20 +369,20 @@ class SiteController extends Zend_Controller_Action
         
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )
-        ->order ( 'id DESC ' );
+        $grid->query($this->_db->select()->from('crud'));
+        $grid->order ( 'id DESC ' );
         
         $paises = $db->fetchCol ( "SELECT DISTINCT(Name) FROM Country ORDER BY Name ASC " );
         $language = $db->fetchCol ( "SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC" );
         
-        $grid->addColumn ( 'id', array ('title' => 'ID', 'hide' => 1 ) );
-        $grid->addColumn ( 'firstname', array ('title' => 'First Name' ) );
-        $grid->addColumn ( 'lastname', array ('title' => 'Last Name' ) );
-        $grid->addColumn ( 'email', array ('title' => 'Email' ) );
-        $grid->addColumn ( 'age', array ('title' => 'Age' ) );
-        $grid->addColumn ( 'language', array ('title' => 'Language' ) );
-        $grid->addColumn ( 'date_added', array ('title' => 'Updated', 'format' => array ('date', 'en_US' ), 'class' => 'width_150' ) );
-        $grid->addColumn ( 'country', array ('title' => 'Country' ) );
+        $grid->updateColumn ( 'id', array ('title' => 'ID', 'hide' => 1 ) );
+        $grid->updateColumn ( 'firstname', array ('title' => 'First Name' ) );
+        $grid->updateColumn ( 'lastname', array ('title' => 'Last Name' ) );
+        $grid->updateColumn ( 'email', array ('title' => 'Email' ) );
+        $grid->updateColumn ( 'age', array ('title' => 'Age' ) );
+        $grid->updateColumn ( 'language', array ('title' => 'Language' ) );
+        $grid->updateColumn ( 'date_added', array ('title' => 'Updated', 'format' => array ('date', 'en_US' ), 'class' => 'width_150' ) );
+        $grid->updateColumn ( 'country', array ('title' => 'Country' ) );
         
 
         $form = new Bvb_Grid_Form ( );
@@ -369,7 +400,6 @@ class SiteController extends Zend_Controller_Action
         $fAdd->title ( 'First name' )
         ->validators ( array ('StringLength' => array (3, 10 ) ) )
         ->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )
-        ->attributes(array('type'=>'password'))
         ->description ( 'Insert your first name. (password type...)' );
         
         $lastName = new Bvb_Grid_Form_Column ( 'lastname' );
@@ -480,8 +510,8 @@ class SiteController extends Zend_Controller_Action
     /**
      * The 'most' basic example.
      * 
-     * Please check the $pdf array to see how we can configure the templates header and footer. 
-     * If you are exporting to PDF you can even choose between  a letter format or A4 format, and set the page orientation
+     * Please check the $pdf array to see how we can configure the template header and footer. 
+     * If you are exporting to PDF you can even choose between a letter format or A4 format and set the page orientation
      * landascape or '' (empty) for vertical
      *
      */
@@ -489,23 +519,9 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'City' );
         
-
-        $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
-'orientation' => 'landscape', # || ''
-'page' => 'Page N.' );
+        $grid->query($this->_db->select()->from('City'));
         
-
-        $grid->setTemplate ( 'print', 'print', $pdf );
-        $grid->setTemplate ( 'pdf', 'pdf', $pdf );
-        $grid->setTemplate ( 'word', 'word', $pdf );
-        $grid->setTemplate ( 'wordx', 'wordx', $pdf );
-        $grid->setTemplate ( 'ods', 'ods', $pdf );
-        
-        $grid->setPrimary(false);
-        
-                
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
@@ -538,8 +554,11 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
+        
+        $grid->query($this->_db->select()->from('City'));
+        
         $grid->noFilters ( 1 )
-        ->from ( 'City' )
+        ->setPagination(14)
         ->setTemplate ( 'outside', 'table' );
         
         $this->view->pages = $grid->deploy ();
@@ -555,19 +574,18 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country' )
-        ->table ( array ('c' => 'Country', 'ct' => 'City' ) );
+        $grid->query($this->_db->select()->from('Country',array('Name','Continent','Population','LifeExpectancy','GovernmentForm','HeadOfState')));
         #->noFilters(1);
         #->noOrder(1);
 
         $grid->setPagination ( 1200 );
         
-        $grid->addColumn ( 'Name', array ('title' => 'Country') );
-        $grid->addColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
-        $grid->addColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80' ) );
-        $grid->addColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50','format'=>'number' ) );
-        $grid->addColumn ( 'GovernmentForm', array ('title' => 'Government Form' ) );
-        $grid->addColumn ( 'HeadOfState', array ('title' => 'Head Of State' ) );
+        $grid->updateColumn ( 'Name', array ('title' => 'Country') );
+        $grid->updateColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
+        $grid->updateColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80' ) );
+        $grid->updateColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50','format'=>'number' ) );
+        $grid->updateColumn ( 'GovernmentForm', array ('title' => 'Government Form' ) );
+        $grid->updateColumn ( 'HeadOfState', array ('title' => 'Head Of State' ) );
         
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
@@ -582,16 +600,19 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'Country as c INNER JOIN City as ct ON c.Capital=ct.ID ' )
-        ->table ( array ('c' => 'Country', 'ct' => 'City' ) )
-        ->order ( 'c.Continent, c.Name' )
-        ->setPagination ( 20 );
+        $grid->query($this->_db->select()
+             ->from(array('c' => 'Country'),
+                    array('Name', 'Continent','Population','LifeExpectancy','GovernmentForm','HeadOfState'))
+             ->join(array('ct' => 'City'),
+                    'c.Capital = ct.ID',array('Name')
+                )
+             );
+        $grid->setPagination ( 15 );
         #->noFilters(1);
         #->noOrder(1);
-        
 
 
-        $cap = new Bvb_Grid_Column ( 'c.Name AS cap' );
+        $cap = new Bvb_Grid_Column ( 'c.Name' );
         $cap->title ( 'Country (Capital)' )
         ->decorator ( '{{c.Name}} <em>({{ct.Name}})</em>' );
         
@@ -616,11 +637,11 @@ class SiteController extends Zend_Controller_Action
         $headState = new Bvb_Grid_Column ( 'c.HeadOfState' );
         $headState->title ( 'Head Of State' );
         
-        $grid->addColumns ( $cap, $name, $continent, $population, $lifeExpectation, $governmentForm, $headState );
+        $grid->updateColumns ( $cap, $name, $continent, $population, $lifeExpectation, $governmentForm, $headState );
         
 
         $filters = new Bvb_Grid_Filters ( );
-        $filters->addFilter ( 'c.Name', array ('distinct' => array ('field' => 'c.Name AS cap', 'name' => 'c.Name AS cap' ) ) )
+        $filters->addFilter ( 'c.Name', array ('distinct' => array ('field' => 'c.Name', 'name' => 'c.Name' ) ) )
         ->addFilter ( 'ct.Name', array ('distinct' => array ('field' => 'ct.Name', 'name' => 'ct.Name' ) ) )
         ->addFilter ( 'c.Continent', array ('distinct' => array ('field' => 'c.Continent', 'name' => 'c.Continent' ) ) )
         ->addFilter ( 'c.LifeExpectancy', array ('distinct' => array ('field' => 'c.LifeExpectancy', 'name' => 'c.LifeExpectancy' ) ) )
