@@ -268,9 +268,14 @@ class SiteController extends Zend_Controller_Action
         
          
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud c LEFT JOIN bugs b ON c.id_bug=b.bug_id ' )
-        ->table ( array ('c' => 'crud', 'b' => 'bugs' ) )
-        ->order ( 'c.id' );
+        
+        $grid->query(
+                    $this->_db->select()
+                     ->from(array('c'=>'crud'),array('id','firstname','lastname','age','email'))
+                     ->join(array('b'=>'bugs'),'c.id_bug=b.bug_id',array('bug_description'))
+                    );
+        
+        $grid->order ( 'c.id' );
         
         $grid->updateColumn ( 'c.id', array ('title' => 'ID',  ) )
         ->updateColumn ( 'c.firstname', array ('title' => 'First Name', 'class' => 'width_120' ) )
@@ -283,7 +288,6 @@ class SiteController extends Zend_Controller_Action
         $form = new Bvb_Grid_Form ( );
         $form->add ( 1 )
         ->edit ( 1 )
-        ->primaryKey('c.id')
         ->button ( 1 )
         ->delete ( 1 );
         
@@ -297,10 +301,8 @@ class SiteController extends Zend_Controller_Action
         $continent = new Bvb_Grid_Form_Column('c.age');
         $continent->title('Age');
         
-        $region = new Bvb_Grid_Form_Column('b.bug_description');
-        $region->title('Bug Description');
-        
-        $form->addColumns ( $lang,$nome,$continent, $region);
+       
+        $form->addColumns ( $lang,$nome,$continent);
         
 
         $grid->addForm ( $form );

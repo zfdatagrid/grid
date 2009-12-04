@@ -49,7 +49,7 @@ class Bvb_Grid_DataGrid {
 	 *
 	 * @var Zend_Db_Select
 	 */
-	private $_select = false;
+	protected  $_select = false;
 	
 	/**
 	 * Bool to check if the query has already been executed
@@ -735,23 +735,7 @@ class Bvb_Grid_DataGrid {
 	 * @param string $value
 	 */
 	function __set($var, $value) {
-		
-		// The data variavel contains options related to the query,
-		// because of thatm they need to go to a separate Array
-		$data = array ('from', 'order', 'where', 'primaryKey', 'table', 'fields', 'hide' );
-		if (in_array ( $var, $data )) {
-			
-			if ($var == 'from' && ! strpos ( " ", trim ( $value ) )) {
-				$this->data ['from'] = trim ( $value );
-				$this->data ['table'] = trim ( $value );
-				$this->setAdapter ( 'db' );
-			
-			} else {
-				$this->data [$var] = $value;
-			}
-		} else {
-			$this->info [$var] = $value;
-		}
+		$this->info [$var] = $value;
 	}
 	
 	/**
@@ -791,12 +775,12 @@ class Bvb_Grid_DataGrid {
 	
 	function updateColumn($field, $options = array()) {
 		
-		if (! isset ( $this->data ['from'] ) && $this->_selectZendDb == false) {
+		if (! isset ( $this->data ['table'] ) && $this->_selectZendDb == false) {
 			throw new Exception ( 'You must specify the query first and only then, you can update the column' );
 		}
 		
 		if (strpos ( $field, '.' ) === false) {
-			$field = $this->data ['from'] . '.' . $field;
+			$field = $this->data ['tableAlias'] . '.' . $field;
 		}
 		
 		if (isset ( $this->data ['fields'] ) && is_array ( $this->data ['fields'] )) {
@@ -890,21 +874,6 @@ class Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  All information related with database.
-	 * Filters, extra fields, etc, etc
-	 * @param string $data
-	 * 
-	 * */
-	function setData($data) {
-		
-		$this->data = $data ['data'];
-		$this->info = $data;
-		if (! isset ( $this->data ['table'] ) || ! is_array ( $this->data ['table'] )) {
-			$this->data ['table'] = $this->data ['from'];
-		}
-	}
-	
-	/**
 	 * Create a grid using XML
 	 * 
 	 * ALPHA!!!!!!!
@@ -983,15 +952,11 @@ class Bvb_Grid_DataGrid {
 		$a = 0;
 		$i = 0;
 		foreach ( $this->data ['fields'] as $value ) {
-			if (isset ( $value ['hide'] )) {
-				if ($value ['hide'] == 1) {
-					$i ++;
-				}
+			if (isset ( $value ['hide'] ) && $value ['hide'] == 1) {
+				$i ++;
 			}
-			if (isset ( $value ['hRow'] )) {
-				if ($value ['hRow'] == 1) {
-					$totalFields --;
-				}
+			if (isset ( $value ['hRow'] ) && $value ['hRow'] == 1) {
+				$totalFields --;
 			}
 		}
 		
@@ -1000,14 +965,14 @@ class Bvb_Grid_DataGrid {
 			$a ++;
 		}
 		
-		if (@$this->info ['edit'] ['allow'] == 1) {
+		if (isset ( $this->info ['edit'] ['allow'] ) && $this->info ['edit'] ['allow'] == 1) {
 			$a ++;
 		}
 		
 		$totalFields = $totalFields + $a;
 		$colspan = $totalFields + count ( $this->extra_fields );
 		
-		if (@is_object ( $this->temp [$this->output] )) {
+		if (isset ( $this->temp [$this->output] ) && is_object ( $this->temp [$this->output] )) {
 			$this->temp [$this->output]->colSpan = $colspan;
 		}
 		return $colspan;
@@ -1579,26 +1544,44 @@ class Bvb_Grid_DataGrid {
 		$this->_resultRaw = $data;
 		return $this;
 	}
-	
-	/**
-	 * remove the word 'as' from fields
-	 *
-	 * @return unknown
-	 */
-	function removeAsFromFields() {
-		
-		$fieldsSemAs = $this->data ['fields'];
-		if (is_array ( $fieldsSemAs )) {
-			foreach ( $fieldsSemAs as $key => $value ) {
-				if (strpos ( $key, ' ' ) === false) {
-					$fieldsSemAsFinal [$key] = $value;
-				} else {
-					$fieldsSemAsFinal [substr ( $key, 0, strpos ( $key, ' ' ) )] = $value;
-				}
-			}
-		}
-		return $fieldsSemAsFinal;
-	}
+
+    /**
+     * remove the word 'as' from fields
+     *
+     * @return unknown
+     */
+    function removeAsFromFields() {
+        
+        $fieldsSemAs = $this->data ['fields'];
+        if (is_array ( $fieldsSemAs )) {
+            foreach ( $fieldsSemAs as $key => $value ) {
+                if (strpos ( $key, ' ' ) === false) {
+                    $fieldsSemAsFinal [$key] = $value;
+                } else {
+                    $fieldsSemAsFinal [substr ( $key, 0, strpos ( $key, ' ' ) )] = $value;
+                }
+            }
+        }
+        return $fieldsSemAsFinal;
+    }
+    
+    /**
+     * remove the word '.' from fields
+     *
+     * @return unknown
+     */
+    function removeTablePrefixFromFields($fields) {
+        
+        if (is_array ( $fields )) {
+        	
+            foreach ( $fields as $value ) {
+                    $fieldsFinal [] = end(explode('.',$value));
+            }
+            
+        }
+        
+        return $fieldsFinal;
+    }
 	
 	/**
 	 *Replace dots to avoid JS error
@@ -1806,7 +1789,6 @@ class Bvb_Grid_DataGrid {
 	function repalceSpecialTags(&$item, $key, $text) {
 		$item = str_replace ( $text ['find'], $text ['replace'], $item );
 	}
-
 	
 	/**
 	 *  The loop for the results.
@@ -1882,23 +1864,21 @@ class Bvb_Grid_DataGrid {
 				//[PT]Aplicar o formato da célula
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] )) {
 					
-					$alias = $this->data ['fields'] [$fields_duble [$is]] ['format'] ;
+					$alias = $this->data ['fields'] [$fields_duble [$is]] ['format'];
 					
-					if(is_array($alias))
-					{
-                        $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
-	                    $replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
-	                    array_walk_recursive($alias, array($this,'repalceSpecialTags'),array('find'=>$search,'replace'=>$replace));
+					if (is_array ( $alias )) {
+						$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
+						array_walk_recursive ( $alias, array ($this, 'repalceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
 					}
-                    
-					 $new_value = $this->applyFormat ( $new_value, $alias );
 					
+					$new_value = $this->applyFormat ( $new_value, $alias );
+				
 				}
 				
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] )) {
 					
-                    
-                    $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
@@ -1921,7 +1901,7 @@ class Bvb_Grid_DataGrid {
 						$new_value = str_replace ( $search, $fi, $value ['decorator'] );
 						
 						if (isset ( $value ['format'] )) {
-							$new_value = $this->applyFormat ( $new_value, $value ['format']);
+							$new_value = $this->applyFormat ( $new_value, $value ['format'] );
 						}
 						
 						$finalClass = isset ( $value ['class'] ) ? $value ['class'] : '';
@@ -2169,7 +2149,7 @@ class Bvb_Grid_DataGrid {
 				foreach ( $titulos as $key => $value ) {
 					
 					if (strpos ( $key, '.' ) === false) {
-						$key = $this->data ['from'] . '.' . $key;
+						$key = $this->data ['tableAlias'] . '.' . $key;
 					}
 					
 					if (! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) )) {
@@ -2192,7 +2172,7 @@ class Bvb_Grid_DataGrid {
 	function getPrimaryKey($table = null) {
 		
 		if (null === $table) {
-			$table = $this->data ['from'];
+			$table = $this->data ['table'];
 		}
 		
 		if (isset ( $this->_primaryKey [$table] )) {
@@ -2201,15 +2181,27 @@ class Bvb_Grid_DataGrid {
 		
 		$pk = $this->getDescribeTable ( $table );
 		
-		$keys = array();
+		$tableLists = $this->_select->getPart(Zend_Db_Select::FROM);
 		
-		foreach ( $pk as $pkk => $primary ) {
-			if ($primary ['PRIMARY'] == 1) {
-				$keys[] = $table.'.'.$pkk;
+		
+		foreach ($tableLists as $key=>$value)
+		{
+			if($value['tableName']==$table)
+			{
+				$tableAlias = $key;
+				break;
 			}
 		}
 		
-		$this->_primaryKey[$table] = $keys;
+		$keys = array ();
+		
+		foreach ( $pk as $pkk => $primary ) {
+			if ($primary ['PRIMARY'] == 1) {
+				$keys [] = $tableAlias . '.' . $pkk;
+			}
+		}
+		
+		$this->_primaryKey [$table] = $keys;
 		
 		return $this->_primaryKey [$table];
 	}
@@ -2349,7 +2341,7 @@ class Bvb_Grid_DataGrid {
 		
 		$select_fields = $this->buildSelectFields ( $this->_fields );
 		
-		$from = trim ( $this->data ['from'] );
+		$from = trim ( $this->data ['table'] );
 		
 		/**
 		 * This menas that the user set an alias for the table withou the 'as'
@@ -2971,19 +2963,19 @@ class Bvb_Grid_DataGrid {
 		foreach ( $filters as $key => $filter ) {
 			
 			if (strpos ( $key, '.' ) === false) {
-				$nkey = $this->data ['from'] . '.' . $key;
+				$nkey = $this->data ['tableAlias'] . '.' . $key;
 			} else {
 				$nkey = $key;
 			}
 			
 			if (isset ( $filters [$key] ['distinct'] ['field'] ) && strpos ( $filters [$key] ['distinct'] ['field'], '.' ) === false) {
-				$nf = $this->data ['from'] . '.' . $filters [$key] ['distinct'] ['field'];
+				$nf = $this->data ['tableAlias'] . '.' . $filters [$key] ['distinct'] ['field'];
 			} else {
 				$nf = $key;
 			}
 			
 			if (isset ( $filters [$key] ['distinct'] ['name'] ) && strpos ( $filters [$key] ['distinct'] ['name'], '.' ) === false) {
-				$nn = $this->data ['from'] . '.' . $filters [$key] ['distinct'] ['name'];
+				$nn = $this->data ['tableAlias'] . '.' . $filters [$key] ['distinct'] ['name'];
 			} else {
 				$nn = $key;
 			}
@@ -3111,9 +3103,10 @@ class Bvb_Grid_DataGrid {
 		$from = $this->_select->getPart ( Zend_Db_Select::FROM );
 		
 		foreach ( $from as $key => $tables ) {
+			
 			if ($tables ['joinType'] == 'from') {
-				$this->data ['from'] = $tables ['tableName'];
 				$this->data ['table'] = $tables ['tableName'];
+				$this->data ['tableAlias'] = $key;
 				break;
 			}
 		}

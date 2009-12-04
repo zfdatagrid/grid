@@ -30,13 +30,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	public $templateInfo;
 	
 	/**
-	 * A bool value to check if there is a form when perfoming crud with joins
-	 *
-	 * @var bool
-	 */
-	protected $_crudJoin = false;
-	
-	/**
 	 * Check if the message has already been set
 	 *
 	 * @var bool
@@ -190,19 +183,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function getFieldType($type, $table) {
 		
-		if ($this->_crudJoin) {
-			
-			$explode = explode ( '_', $type );
-			
-			$table = array_shift ( explode ( '_', $type ) );
-			$table = $this->data ['table'] [$table];
-			
-			unset ( $explode [0] );
-			
-			$type = implode ( '_', $explode );
-		
-		}
-		
 		$fields = $this->getDescribeTable ( $table );
 		
 		return $fields [$type] ['DATA_TYPE'];
@@ -274,30 +254,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$fields = parent::getFields ( $mode, $this->data ['table'] );
 			}
 			
-			if ($this->_crudJoin) {
-				
-				//Array containg all tables used in this form
-				$tables = array ();
-				$tablesFields = array ();
-				
-				foreach ( $fields as $name ) {
-					$abv = reset ( explode ( '.', $name ) );
-					array_push ( $tables, $this->data ['table'] [$abv] );
-				}
-				
-				$tables = array_unique ( $tables );
-				
-				//associate fields to tables
-				foreach ( $fields as $name ) {
-					$abv = reset ( explode ( '.', $name ) );
-					
-					$fieldName = substr ( $name, strpos ( $name, '.' ) + 1 );
-					
-					$tablesFields [$this->data ['table'] [$abv]] [] = $fieldName;
-				
-				}
+			$fields = array_combine($this->removeTablePrefixFromFields($fields),$this->removeTablePrefixFromFields($fields));
 			
-			}
+		
 			
 			$queryUrl = $this->getPkFromUrl ();
 			
@@ -308,7 +267,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				
 				$this->_formValues [$value] = $param->getPost ( $value );
 				
-				$fieldType = $this->getFieldType ( $value, $this->data ['from'] );
+				$fieldType = $this->getFieldType ( $value, $this->data ['table'] );
 				
 				if (substr ( $fieldType, 0, 3 ) != 'set') {
 					
@@ -337,6 +296,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$final [$value] = $result;
 			
 			}
+			
+			
+			
+			
 			
 			// If pass validation
 			if ($this->_failedValidation !== true) {
@@ -385,19 +348,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				if ($mode == 'add' && is_array ( $final_values )) {
 					
 					try {
-						if ($this->_crudJoin) {
-							
-							foreach ( $tablesFields as $key => $fieldName ) {
-								
-								$dataToInsert = $this->getFieldsToTable ( $final_values, array_search ( $key, $this->data ['table'] ) );
-								
-								$this->_db->insert ( $key, $dataToInsert );
-							}
-						
-						} else {
-							
-							$this->_db->insert ( $this->data ['table'], $final_values );
-						}
+						$this->_db->insert ( $this->data ['table'], $final_values );
 						
 						$this->message = $this->__ ( 'Record saved' );
 						$this->messageOk = true;
@@ -415,32 +366,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					$where = isset ( $this->info ['edit'] ['where'] ) ? " AND " . $this->info ['edit'] ['where'] : '';
 					
 					try {
-						
-						if ($this->_crudJoin) {
-							
-							$tableAbv = substr ( $pk2 [0], 0, strpos ( $pk2 [0], '.' ) );
-							
-							$valuesForUpdate = array ();
-							
-							foreach ( $final_values as $key => $value ) {
-								
-								if (substr ( $key, 0, strpos ( $key, '_' ) ) == $tableAbv) {
-									
-									$valuesForUpdate [substr ( $key, strpos ( $key, '_' ) + 1 )] = $value;
-								
-								}
-							
-							}
-							
-							$pk = substr ( $pk2 [0], strpos ( $pk2 [0], '.' ) + 1 );
-							
-							$this->_db->update ( $this->data ['table'] [$tableAbv], $valuesForUpdate, " $pk=" . $this->_db->quote ( $op_query ['id'] ) . " $where " );
-						
-						} else {
-							
-							$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
-						
-						}
+
+						echo "<pre>";
+						print_r($final_values);
+						die();
+						$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
 						
 						$this->message = $this->__ ( 'Record saved' );
 						$this->messageOk = true;
@@ -525,9 +455,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function applyFilters($value, $field, $mode) {
 		
-		if ($this->_crudJoin) {
-			$field = preg_replace ( "/_/", '.', $field, 1 );
-		}
 		
 		$filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
 		
@@ -552,10 +479,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @return string
 	 */
 	function Validate($value, $field, $mode = 'edit') {
-		
-		if ($this->_crudJoin) {
-			$field = preg_replace ( "/_/", '.', $field, 1 );
-		}
 		
 		//Array with allowed values
 		$values = isset ( $this->info [$mode] ['fields'] [$field] ['values'] ) ? $this->info [$mode] ['fields'] [$field] ['values'] : '';
@@ -681,9 +604,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				}
 			}
 			
-			if ($this->_crudJoin) {
-				$id = substr ( $id, strpos ( $id, '.' ) + 1 );
-			}
 			
 			$this->_db->delete ( $this->getMainTableName (), $this->getPkFromUrl ( false ) . $where );
 			
@@ -1327,7 +1247,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		$fields = $this->_fields;
 		
 		if (is_array ( @$this->info ['add'] ['fields'] )) {
-			unset ( $fields_to );
 			
 			foreach ( $this->info ['add'] ['fields'] as $value ) {
 				
@@ -1354,26 +1273,29 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			if ($final ['mode'] == 'edit' && ! $this->_editNoForm) {
 				
-				$select = $this->_db->select ();
-				$select->from ( $this->data ['from'], array_map ( 'trim', explode ( ',', $select_fields ) ) );
+				$select = clone  $this->_select;
 				
 				foreach ( $this->getPkFromUrl ( true ) as $key => $value ) {
 					$select->where ( "$key = ?", $value );
 				}
+			
+				$select->reset(Zend_Db_Select::COLUMNS);
+				$select->reset(Zend_Db_Select::LIMIT_COUNT);
+				$select->reset(Zend_Db_Select::LIMIT_OFFSET);
+				
+				$select->columns(array_keys($this->info['edit']['fields']));
 				
 				$stmt = $select->query ();
 				$result = $stmt->fetchAll ();
+				
 				
 				$fields = array ();
 				
 				foreach ( $result [0] as $key => $value ) {
 					$fields [$key] = $value;
 				}
-				
-				if ($this->_crudJoin) {
-					$fields = $this->convertOutputNamesFromSqlToUserDefined ( $fields );
-				}
-				
+			
+			
 				$button_name = $this->__ ( 'Edit' );
 				
 				$mod = 'edit';
@@ -1787,11 +1709,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function removeAutoIncrement($fields, $table) {
 		
-		if ($this->_crudJoin) {
-			
-			$table = $this->data ['table'] [reset ( explode ( '.', $this->info ['crud'] ['primaryKey'] ) )];
-		
-		}
 		
 		$table = $this->getDescribeTable ( $table );
 		
@@ -2106,13 +2023,18 @@ function gridChangeFilters(fields,url,Ajax)
 			}
 		}
 		
-		$options = $form ['options'];
+		$checkFields = array_keys($fields);
 		
-		if (is_array ( $this->data ['table'] )) {
-			$this->_crudJoin = true;
+		
+		foreach ($checkFields as $field)
+		{
+			if(strpos($field,'.')!==false && reset(explode('.',$field))!=$this->data['tableAlias'])
+			{
+				throw new Exception('You can only add/update fields from your main table');
+			}
 		}
 		
-		@$this->info ['crud'] = array ('primaryKey' => $options ['primaryKey'], 'relations' => $options ['relations'] );
+		$options = $form ['options'];
 		
 		$this->info ['double_tables'] = isset ( $options ['double_tables'] ) ? $options ['double_tables'] : '';
 		
