@@ -177,12 +177,17 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'crud' )
-        ->addColumn ( 'id' )
+        
+        $grid->query(
+
+            $this->_db->select()->from('crud',array('id','firstname','lastname','age'))
+        
+        );
+        
+        $grid->addColumn ( 'id' )
         ->updateColumn ( 'firstname' )
         ->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )
-        ->updateColumn ( 'age', array ('sqlexp' => 'ROUND(AVG(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )
-        ->groupby ( 'lastname' )
+        ->updateColumn ( 'age', array ('sqlexp' => 'ROUND(SUM(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )
         ->noFilters ( 1 )
         ->setTemplate ( 'select' );
         
@@ -482,17 +487,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         $grid->setDataFromCsv ( 'media/files/grid.csv' );
-        $this->view->pages = $grid->deploy ();
-        $this->render ( 'index' );
-    }
-
-
-    function sapoAction()
-    {
-
-        $grid = $this->grid ( 'table' );
-        $grid->setDataFromJson('http://services.sapo.pt/JobOffers/JSON',true,'rss,channel,item');
-        $grid->setPagination(10);
         $this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
