@@ -128,28 +128,12 @@ class SiteController extends Zend_Controller_Action
 			       ->union(array($select1, $select2));
 		    		
 		$grid = $this->grid ( 'table' );
-		$grid->queryFromZendDbSelect ( $select, $db );
-		    	 $this->view->pages = $grid->deploy ();
+		$grid->query( $select);
+		
+		$this->view->pages = $grid->deploy ();
         $this->render ( 'index' );
     }
 
-    /**
-     * A simple action that shows pictures in a complete diferent template
-     *
-     */
-    function imagesAction()
-    {
-
-        $grid = $this->grid ( 'table' );
-        $grid->from ( 'images' )
-        ->addColumn ( 'url', array ('decorator' => '<a href="{{url}}"><img src="{{url}}" border="0"></a>', 'title' => 'Katie Melua - Image Gallery' ) )
-        ->noOrder ( 1 )
-        ->setPagination ( 10000 )
-        ->setTemplate ( 'images' );
-        
-        $this->view->pages = $grid->deploy ();
-        $this->render ( 'index' );
-    }
 
 	
     function vincentAction()
@@ -469,8 +453,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid ( 'table' );
         
-        $db = Zend_Registry::get ( 'db' );
-        $select = $db->select ()
+        $select = $this->_db->select ()
         ->from ( 'products', array ('id'=>'product_id', 'product_name', 'price' ) )
         ->where ( 'price > 100.00' );
         $grid->query ( $select);
@@ -505,11 +488,6 @@ class SiteController extends Zend_Controller_Action
 
     /**
      * The 'most' basic example.
-     * 
-     * Please check the $pdf array to see how we can configure the template header and footer. 
-     * If you are exporting to PDF you can even choose between a letter format or A4 format and set the page orientation
-     * landascape or '' (empty) for vertical
-     *
      */
     function basicAction()
     {
@@ -524,11 +502,18 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    
+    /**
+     * Please check the $pdf array to see how we can configure the template header and footer. 
+     * If you are exporting to PDF you can even choose between a letter format or A4 format and set the page orientation
+     * landascape or '' (empty) for vertical
+     *
+     */
     function pdfAction()
     {
 
         $grid = $this->grid ( 'table' );
-        $grid->from ( 'pdf' );
+          $grid->query($this->_db->select()->from('pdf'));
         
 
         $pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
@@ -664,31 +649,4 @@ class SiteController extends Zend_Controller_Action
         $this->render ( 'index' );
     }
 
-
-    /**
-     * @param object $object
-     * @return array
-     */
-    function object2array($object)
-    {
-
-        $return = NULL;
-        if (is_array ( $object ))
-        {
-            foreach ( $object as $key => $value )
-                $return [$key] = self::object2array ( $value );
-        } else
-        {
-            $var = get_object_vars ( $object );
-            if ($var)
-            {
-                foreach ( $var as $key => $value )
-                    $return [$key] = self::object2array ( $value );
-            } else
-            {
-                return strval ( $object );
-            }
-        }
-        return $return;
-    }
 }
