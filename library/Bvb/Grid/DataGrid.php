@@ -1803,6 +1803,11 @@ class Bvb_Grid_DataGrid {
 		return $this;
 	}
 	
+	function repalceSpecialTags(&$item, $key, $text) {
+		$item = str_replace ( $text ['find'], $text ['replace'], $item );
+	}
+
+	
 	/**
 	 *  The loop for the results.
 	 *  Check the extra-fields,
@@ -1877,13 +1882,23 @@ class Bvb_Grid_DataGrid {
 				//[PT]Aplicar o formato da célula
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] )) {
 					
-					$new_value = $this->applyFormat ( $new_value, $this->data ['fields'] [$fields_duble [$is]] ['format'], $this->data ['fields'] [$fields_duble [$is]] ['format'] [1] );
+					$alias = $this->data ['fields'] [$fields_duble [$is]] ['format'] ;
+					
+					if(is_array($alias))
+					{
+                        $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+	                    $replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
+	                    array_walk_recursive($alias, array($this,'repalceSpecialTags'),array('find'=>$search,'replace'=>$replace));
+					}
+                    
+					 $new_value = $this->applyFormat ( $new_value, $alias );
+					
 				}
 				
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] )) {
 					
-					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
-					
+                    
+                    $finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
@@ -1906,7 +1921,7 @@ class Bvb_Grid_DataGrid {
 						$new_value = str_replace ( $search, $fi, $value ['decorator'] );
 						
 						if (isset ( $value ['format'] )) {
-							$new_value = $this->applyFormat ( $new_value, $value ['format'], $value ['format'] );
+							$new_value = $this->applyFormat ( $new_value, $value ['format']);
 						}
 						
 						$finalClass = isset ( $value ['class'] ) ? $value ['class'] : '';
