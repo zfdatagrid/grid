@@ -49,7 +49,7 @@ class Bvb_Grid_DataGrid {
 	 *
 	 * @var Zend_Db_Select
 	 */
-	protected  $_select = false;
+	protected $_select = false;
 	
 	/**
 	 * Bool to check if the query has already been executed
@@ -348,6 +348,12 @@ class Bvb_Grid_DataGrid {
 	 * @var bool
 	 */
 	protected $_isPrimaryGrid = true;
+	
+	/**
+	 * Check if all columns have been added by ->query()
+	 * @var bool
+	 */
+	private $_allFieldsAdded = false;
 	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
@@ -783,33 +789,32 @@ class Bvb_Grid_DataGrid {
 			$field = $this->data ['tableAlias'] . '.' . $field;
 		}
 		
-		if (isset ( $this->data ['fields'] ) && is_array ( $this->data ['fields'] )) {
+		if ($this->_allFieldsAdded == false) {
 			
-			if (! array_key_exists ( $field, $this->data ['fields'] )) {
-				
-				$this->data ['fields'] [$field] = $options;
-				
-				if (isset ( $options ['hRow'] )) {
-					
-					if ($options ['hRow'] == 1) {
-						$this->fieldHorizontalRow = $field;
-						$this->info ['hRow'] = array ('field' => $field, 'title' => $options ['title'] );
-					}
-				}
-			
-			} else {
-				
-				if (isset ( $options ['hRow'] ) && $options ['hRow'] == 1) {
-					$this->fieldHorizontalRow = $field;
-					$this->info ['hRow'] = array ('field' => $field, 'title' => $options ['title'] );
-				}
-				
-				$this->data ['fields'] [$field] = array_merge ( $this->data ['fields'] [$field], $options );
-			
-			}
-		
-		} else {
 			$this->data ['fields'] [$field] = $options;
+		
+		} elseif (array_key_exists($field,$this->data ['fields'] )) {
+			
+			if (isset ( $options ['hRow'] ) && $options ['hRow'] == 1) {
+				$this->fieldHorizontalRow = $field;
+				$this->info ['hRow'] = array ('field' => $field, 'title' => $options ['title'] );
+			}
+			
+			$this->data ['fields'] [$field] = array_merge ( $this->data ['fields'] [$field], $options );
+		
+		}else{
+			
+			
+			foreach (array_keys($this->data['fields']) as $value)
+			{
+				
+				if(reset(explode(' ',trim($value)))==$field)
+				{
+					$this->updateColumn($value,$options);
+				}
+				
+			}
+		      
 		}
 		
 		return $this;
@@ -1544,49 +1549,49 @@ class Bvb_Grid_DataGrid {
 		$this->_resultRaw = $data;
 		return $this;
 	}
-
-    /**
-     * remove the word 'as' from fields
-     *
-     * @return unknown
-     */
-    function removeAsFromFields() {
-        
-        $fieldsSemAs = $this->data ['fields'];
-        if (is_array ( $fieldsSemAs )) {
-            foreach ( $fieldsSemAs as $key => $value ) {
-                if (strpos ( $key, ' ' ) === false) {
-                    $fieldsSemAsFinal [$key] = $value;
-                } else {
-                    $fieldsSemAsFinal [substr ( $key, 0, strpos ( $key, ' ' ) )] = $value;
-                }
-            }
-        }
-        return $fieldsSemAsFinal;
-    }
-    
-    /**
-     * remove the word '.' from fields
-     *
-     * @return unknown
-     */
-    function removeTablePrefixFromFields($fields) {
-        
-        if (is_array ( $fields )) {
-        	
-            foreach ( $fields as $value ) {
-                    $fieldsFinal [] = end(explode('.',$value));
-            }
-            
-        }
-        
-        return $fieldsFinal;
-    }
+	
+	/**
+	 * remove the word 'as' from fields
+	 *
+	 * @return unknown
+	 */
+	function removeAsFromFields() {
+		
+		$fieldsSemAs = $this->data ['fields'];
+		if (is_array ( $fieldsSemAs )) {
+			foreach ( $fieldsSemAs as $key => $value ) {
+				if (strpos ( $key, ' ' ) === false) {
+					$fieldsSemAsFinal [$key] = $value;
+				} else {
+					$fieldsSemAsFinal [substr ( $key, 0, strpos ( $key, ' ' ) )] = $value;
+				}
+			}
+		}
+		return $fieldsSemAsFinal;
+	}
+	
+	/**
+	 * remove the word '.' from fields
+	 *
+	 * @return array
+	 */
+	function removeTablePrefixFromFields($fields) {
+		
+		if (is_array ( $fields )) {
+			
+			foreach ( $fields as $value ) {
+				$fieldsFinal [] = end ( explode ( '.', $value ) );
+			}
+		
+		}
+		
+		return $fieldsFinal;
+	}
 	
 	/**
 	 *Replace dots to avoid JS error
 	 * @param string $string
-	 * @return unknown
+	 * @return string
 	 */
 	function replaceDots($string) {
 		
@@ -1891,6 +1896,7 @@ class Bvb_Grid_DataGrid {
 				$is ++;
 			
 			}
+			
 			/**
 			 * Deal with extra fields from the right
 			 */
@@ -2181,13 +2187,10 @@ class Bvb_Grid_DataGrid {
 		
 		$pk = $this->getDescribeTable ( $table );
 		
-		$tableLists = $this->_select->getPart(Zend_Db_Select::FROM);
+		$tableLists = $this->_select->getPart ( Zend_Db_Select::FROM );
 		
-		
-		foreach ($tableLists as $key=>$value)
-		{
-			if($value['tableName']==$table)
-			{
+		foreach ( $tableLists as $key => $value ) {
+			if ($value ['tableName'] == $table) {
 				$tableAlias = $key;
 				break;
 			}
@@ -2209,7 +2212,7 @@ class Bvb_Grid_DataGrid {
 	function setPrimaryKey($table, $key) {
 		
 		if (! is_string ( $key )) {
-			throw new Exception ( 'Primary key must be a string.');
+			throw new Exception ( 'Primary key must be a string.' );
 		}
 		
 		$this->_primaryKey [$table] = $key;
@@ -3084,6 +3087,8 @@ class Bvb_Grid_DataGrid {
 				}
 			}
 		}
+		
+		$this->_allFieldsAdded = true;
 	}
 	
 	/**
