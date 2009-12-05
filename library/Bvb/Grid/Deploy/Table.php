@@ -367,9 +367,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					
 					try {
 
-						echo "<pre>";
-						print_r($final_values);
-						die();
 						$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
 						
 						$this->message = $this->__ ( 'Record saved' );

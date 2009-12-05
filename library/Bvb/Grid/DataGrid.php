@@ -2209,7 +2209,7 @@ class Bvb_Grid_DataGrid {
 	function setPrimaryKey($table, $key) {
 		
 		if (! is_string ( $key )) {
-			throw new Exception ( 'Primary key must be a string. ' . ucfirst ( gettype ( $key ) ) . ' given' );
+			throw new Exception ( 'Primary key must be a string.');
 		}
 		
 		$this->_primaryKey [$table] = $key;
