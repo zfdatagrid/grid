@@ -766,7 +766,8 @@ class Bvb_Grid_DataGrid {
 	 */
 	function getTableNameFromField($field) {
 		
-		$tableAb = reset ( explode ( '.', $field ) );
+		$tableAb =  explode ( '.', $field ) ;
+		$tableAb = reset ( $tableAb );
 		
 		return $this->data ['table'] [$tableAb];
 	}
@@ -807,8 +808,9 @@ class Bvb_Grid_DataGrid {
 			
 			foreach (array_keys($this->data['fields']) as $value)
 			{
+				$aux = explode(' ',trim($value));
 				
-				if(reset(explode(' ',trim($value)))==$field)
+				if(reset($aux)==$field)
 				{
 					$this->updateColumn($value,$options);
 				}
@@ -1466,7 +1468,8 @@ class Bvb_Grid_DataGrid {
 		
 		for($i = 0; $i < $tcampos; $i ++) {
 			if (isset ( $this->ctrlParams ['order'] )) {
-				$this->order [reset ( explode ( '_', $this->ctrlParams ['order'] ) )] = strtoupper ( end ( explode ( '_', $this->ctrlParams ['order'] ) ) ) == 'ASC' ? 'DESC' : 'ASC';
+				$explode =  explode ( '_', $this->ctrlParams ['order'] ) ;
+				$this->order [reset ($explode)] = strtoupper ( end ( $explode ) ) == 'ASC' ? 'DESC' : 'ASC';
 			}
 			$fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
 			
@@ -1580,7 +1583,8 @@ class Bvb_Grid_DataGrid {
 		if (is_array ( $fields )) {
 			
 			foreach ( $fields as $value ) {
-				$fieldsFinal [] = end ( explode ( '.', $value ) );
+				$aux = explode ( '.', $value );
+				$fieldsFinal [] = end ( $aux );
 			}
 		
 		}
@@ -2487,7 +2491,9 @@ class Bvb_Grid_DataGrid {
 						
 						$sqlexp = trim ( $this->data ['fields'] [$field] ['sqlexp'] );
 						
-						$this->_select->columns ( new Zend_Db_Expr ( $sqlexp . ' as ' . $this->_db->quote ( end ( explode ( '.', $finalField ) ) ) ) );
+						$explode = explode ( '.', $finalField ) ;
+						
+						$this->_select->columns ( new Zend_Db_Expr ( $sqlexp . ' as ' . $this->_db->quote ( end ( $explode) ) ) );
 					
 					} else {
 						$this->_select->columns ( $finalField );
@@ -2650,7 +2656,8 @@ class Bvb_Grid_DataGrid {
 			if (is_array ( $filters )) {
 				
 				foreach ( $filters as $key => $filter ) {
-					$key = end ( explode ( '_', $key ) );
+					$explode = explode ( '_', $key ) ;
+					$key = end ( $explode);
 					$filterValue [$key] = $filter;
 				}
 				
@@ -2673,8 +2680,10 @@ class Bvb_Grid_DataGrid {
 				
 				if (strlen ( $this->data ['order'] ) > 3 && ! isset ( $this->ctrlParams ['order'] )) {
 					
-					$order = reset ( explode ( ' ', $this->data ['order'] ) );
-					$orderType = end ( explode ( ' ', $this->data ['order'] ) );
+					$explode = explode ( ' ', $this->data ['order'] ) ;
+					
+					$order = reset ( $explode );
+					$orderType = end ( $explode );
 					if (strtoupper ( $orderType ) != 'ASC' && strtoupper ( $orderType ) != 'DESC') {
 						$orderType = 'ASC';
 					}
@@ -2682,8 +2691,10 @@ class Bvb_Grid_DataGrid {
 					$orderType = strtoupper ( $orderType ) == 'ASC' ? SORT_ASC : SORT_DESC;
 				
 				} else {
-					$order = reset ( explode ( '_', $this->ctrlParams ['order'] ) );
-					$orderType = end ( explode ( '_', $this->ctrlParams ['order'] ) );
+					
+                    $explode = explode ( '_', $this->data ['order'] ) ;
+					$order = reset ($explode );
+					$orderType = end ($explode);
 					
 					$orderType = strtoupper ( $orderType ) == 'ASC' ? SORT_ASC : SORT_DESC;
 				}
@@ -3027,7 +3038,8 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-		$table = reset ( explode ( ' ', $table ) );
+		$explode = explode ( ' ', $table ) ;
+		$table = reset ( $explode );
 		
 		if (! isset ( $this->_describeTables [$table] ) || ! @is_array ( $this->_describeTables [$table] )) {
 			
@@ -3075,7 +3087,8 @@ class Bvb_Grid_DataGrid {
 			
 			} else {
 				
-				$title = ucwords ( str_replace ( "_", ' ', end ( explode ( '.', $value [1] ) ) ) );
+				$explode = explode ( '.', $value [1] );
+				$title = ucwords ( str_replace ( "_", ' ', end ( $explode ) ) );
 				
 				if (strlen ( $value [2] ) > 0) {
 					$title = $value [2];

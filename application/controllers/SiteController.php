@@ -123,14 +123,41 @@ class SiteController extends Zend_Controller_Action {
 	function vincentAction() {
 		
 		$db = Zend_Registry::get ( 'db' );
+		$select = $db->select ()
+		      ->distinct ()
+		      ->from ( array('p1'=>'ProjetClient1'), array ('p1.id', 'p1.cp', 'p1.ville' ) )
+		      ->joinLeft (array('f1'=> 'FicheClient1'), 'p1.id_client = f1.id', array ('f1_id'=> 'f1.id', 'f1.email', 'nom'=> 'f1.nom' ) )
+		      ->joinLeft (array('tc' => 'TypeClient'), 'f1.id_type_client = tc.id', array ('type'=>'tc.nom' ) );
 		
 		$grid = $this->grid ( 'table' );
 		
-		$select = $db->select ()->distinct ()->from ( array ('p1' => 'ProjetClient1' ), array ('p1.id', 'p1.cp', 'p1.ville' ) );
 		$grid->query ( $select );
+		$grid->setTemplate ( 'outside', 'table' );
+		
+		$grid->updateColumn ( 'f1.id', array ('hide' => 1 ) );
+		$grid->updateColumn ( 'p1.id', array ('hide' => 1 ) );
+		$grid->updateColumn ( 'p1.cp', array ('hide' => 1 ) );
+		
+		$btnVoir = new Bvb_Grid_ExtraColumns ( );
+		$btnVoir->position ( 'right' )->name ( 'Voir' )->decorator ( "<a href=\"/fiche/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"                    class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>voir</a>" );
+		
+		$btnEdit = new Bvb_Grid_ExtraColumns ( );
+		$btnEdit->position ( 'right' )->name ( 'Editer' )->decorator ( "<a href=\"/projet/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"                   class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>modifier</a>" );
+		
+		$btnNewProjet = new Bvb_Grid_ExtraColumns ( );
+		$btnNewProjet->position ( 'right' )->name ( 'Simu' )->decorator ( "<a href=\"simulation/create/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"               class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>+</a>" );
+		
+		$grid->addExtraColumns ( $btnVoir, $btnEdit, $btnNewProjet );
+		
+		$filters = new Bvb_Grid_Filters ( );
+		$filters->addFilter ( 'p1.ville' )
+		          ->addFilter ( 'f1.email' )
+		          ->addFilter ( 'f1.nom' );
+		
+		$grid->addFilters ( $filters );
 		
 		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
+        $this->render ( 'index' );
 	}
 	
 	/**
@@ -359,7 +386,7 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid = $this->grid ( 'table' );
 		
-		$grid->query ( $this->_db->select ()->from ( 'City') );
+		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
@@ -410,10 +437,9 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid = $this->grid ( 'table' );
 		$grid->query ( $this->_db->select ()->from ( 'Country', array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) ) );
-		$grid->noFilters(1);
-		$grid->noOrder(1);
+		$grid->noFilters ( 1 );
+		$grid->noOrder ( 1 );
 		
-
 		$grid->setPagination ( 1200 );
 		
 		$grid->updateColumn ( 'Name', array ('title' => 'Country' ) );

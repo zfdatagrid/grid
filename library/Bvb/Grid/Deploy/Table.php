@@ -254,9 +254,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$fields = parent::getFields ( $mode, $this->data ['table'] );
 			}
 			
-			$fields = array_combine($this->removeTablePrefixFromFields($fields),$this->removeTablePrefixFromFields($fields));
-			
-		
+			$fields = array_combine ( $this->removeTablePrefixFromFields ( $fields ), $this->removeTablePrefixFromFields ( $fields ) );
 			
 			$queryUrl = $this->getPkFromUrl ();
 			
@@ -296,10 +294,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$final [$value] = $result;
 			
 			}
-			
-			
-			
-			
 			
 			// If pass validation
 			if ($this->_failedValidation !== true) {
@@ -366,7 +360,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					$where = isset ( $this->info ['edit'] ['where'] ) ? " AND " . $this->info ['edit'] ['where'] : '';
 					
 					try {
-
+						
 						$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
 						
 						$this->message = $this->__ ( 'Record saved' );
@@ -451,7 +445,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @return string
 	 */
 	function applyFilters($value, $field, $mode) {
-		
 		
 		$filters = isset ( $this->info [$mode] ['fields'] [$field] ['filters'] ) ? $this->info [$mode] ['fields'] [$field] ['filters'] : '';
 		
@@ -601,7 +594,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				}
 			}
 			
-			
 			$this->_db->delete ( $this->getMainTableName (), $this->getPkFromUrl ( false ) . $where );
 			
 			$this->messageOk = true;
@@ -633,7 +625,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	function getMainTableName() {
 		
 		if (is_array ( $this->data ['table'] )) {
-			return $this->data ['table'] [reset ( explode ( '.', $this->info ['crud'] ['primaryKey'] ) )];
+			$data = explode ( '.', $this->info ['crud'] ['primaryKey'] );
+			return $this->data ['table'] [reset ( $data )];
 		} else {
 			return $this->data ['table'];
 		}
@@ -1008,7 +1001,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		//Get table desc to known to field type
 		$table = parent::getDescribeTable ( $this->data ['table'], $fieldRaw );
 		
-		$field = end ( explode ( '.', $field ) );
+		$field = explode ( '.', $field );
+		$field = end ( $field );
 		
 		@$tipo = $table [$field];
 		
@@ -1203,7 +1197,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		}
 		
 		$param = $this->ctrlParams ['comm'];
-		$param = end ( explode ( ';', $param ) );
+		$explode = explode ( ';', $param );
+		$param = end ( $explode );
 		$param = substr ( $param, 1, - 1 );
 		
 		$paramF = explode ( '-', $param );
@@ -1270,29 +1265,27 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			if ($final ['mode'] == 'edit' && ! $this->_editNoForm) {
 				
-				$select = clone  $this->_select;
+				$select = clone $this->_select;
 				
 				foreach ( $this->getPkFromUrl ( true ) as $key => $value ) {
 					$select->where ( "$key = ?", $value );
 				}
-			
-				$select->reset(Zend_Db_Select::COLUMNS);
-				$select->reset(Zend_Db_Select::LIMIT_COUNT);
-				$select->reset(Zend_Db_Select::LIMIT_OFFSET);
 				
-				$select->columns(array_keys($this->info['edit']['fields']));
+				$select->reset ( Zend_Db_Select::COLUMNS );
+				$select->reset ( Zend_Db_Select::LIMIT_COUNT );
+				$select->reset ( Zend_Db_Select::LIMIT_OFFSET );
+				
+				$select->columns ( array_keys ( $this->info ['edit'] ['fields'] ) );
 				
 				$stmt = $select->query ();
 				$result = $stmt->fetchAll ();
-				
 				
 				$fields = array ();
 				
 				foreach ( $result [0] as $key => $value ) {
 					$fields [$key] = $value;
 				}
-			
-			
+				
 				$button_name = $this->__ ( 'Edit' );
 				
 				$mod = 'edit';
@@ -1706,7 +1699,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function removeAutoIncrement($fields, $table) {
 		
-		
 		$table = $this->getDescribeTable ( $table );
 		
 		foreach ( $table as $value ) {
@@ -2020,14 +2012,12 @@ function gridChangeFilters(fields,url,Ajax)
 			}
 		}
 		
-		$checkFields = array_keys($fields);
+		$checkFields = array_keys ( $fields );
 		
-		
-		foreach ($checkFields as $field)
-		{
-			if(strpos($field,'.')!==false && reset(explode('.',$field))!=$this->data['tableAlias'])
-			{
-				throw new Exception('You can only add/update fields from your main table');
+		foreach ( $checkFields as $field ) {
+			$explode = explode ( '.', $field );
+			if (strpos ( $field, '.' ) !== false && reset ( $explode ) != $this->data ['tableAlias']) {
+				throw new Exception ( 'You can only add/update fields from your main table' );
 			}
 		}
 		

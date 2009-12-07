@@ -224,7 +224,8 @@ class Bvb_Grid_Template_Odt_Odt
         if (@file_exists ( $this->odtOptions ['logo'] ))
         {
             
-
+            $arrayLogo = explode("/",@$this->odtOptions['logo']);
+            
             $header = '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles
 	xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
@@ -560,7 +561,7 @@ class Bvb_Grid_Template_Odt_Odt
 					<draw:frame draw:style-name="Mfr1" draw:name="graphics2"
 						text:anchor-type="paragraph" svg:x="0cm" svg:y="-0.025cm"
 						svg:width="2.131cm" svg:height="2.249cm" draw:z-index="0">
-						<draw:image xlink:href="Pictures/'.end(explode("/",@$this->odtOptions['logo'])).'"
+						<draw:image xlink:href="Pictures/'.end($arrayLogo).'"
 							xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad" />
 					</draw:frame><![CDATA[{{title}}]]>
 				</text:p>

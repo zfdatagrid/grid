@@ -138,7 +138,9 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
                         } elseif (is_file ( $path ))
                         {
                             // get the file extension by taking everything after the last dot
-                            $extension = end ( explode ( '.', end ( $subdirectories ) ) );
+                            $extension =  end ( $subdirectories  );
+                            $extension = explode ( '.', $subdirectories  );
+                            $extension = end (  $subdirectories);
                             
                             // if there is no filter set or the filter is set and matches
                             if ($filter === FALSE || $filter == $extension)
@@ -316,7 +318,8 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
 
         if (file_exists ( $this->wordInfo ['logo'] ))
         {
-            copy ( $this->wordInfo ['logo'], $this->dir . 'Pictures/' . end ( explode ( "/", $this->wordInfo ['logo'] ) ) );
+        	$explode = explode ( "/", $this->wordInfo ['logo'] ) ;
+            copy ( $this->wordInfo ['logo'], $this->dir . 'Pictures/' . end ( $explode) );
         }
         
 
