@@ -26,6 +26,8 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
     public $title;
 
     protected  $output = 'print';
+    
+    public $templateInfo;
 
 
     function __construct ($db,$title)
@@ -43,7 +45,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         if(!is_object($this->temp['print']))
         {
-            $this->setTemplate('print','print',array('title'=>$title));
+            $this->setTemplate('print','print',array('title'=>$title,'charEncoding'=>$this->charEncoding));
         }
     }
 
@@ -79,15 +81,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         $wsData = parent::buildGrid();
         $sql = parent::buildSqlExp();
 
-        /*
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')  )
-        {
-        @array_shift($titles);
-        @array_shift($sql);
-
-        $remove = true;
-        }
-        */
+     
 
         $xml = $this->temp['print']->globalStart();
         $xml .= $this->temp['print']->header();

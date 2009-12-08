@@ -2933,7 +2933,7 @@ class Bvb_Grid_DataGrid {
 		$this->temp [$output] = new $class ( $options );
 		$this->activeTemplates [] = $output;
 		
-		$this->temp [$output]->templateInfo = array ('name' => $template, 'dir' => $this->_templates [$output]->getClassPath ( $template, $output ), 'class' => $this->_templates [$output]->getClassName ( $template, $output ), 'options' => $options );
+		$this->temp [$output]->templateInfo = array ('charEncoding'=>$this->charEncoding,'name' => $template, 'dir' => $this->_templates [$output]->getClassPath ( $template, $output ), 'class' => $this->_templates [$output]->getClassName ( $template, $output ), 'options' => $options );
 		
 		return $this->temp [$output];
 	

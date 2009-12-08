@@ -27,6 +27,8 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
     public $title;
 
     public $dir;
+    
+    public $templateInfo;
 
     protected $options = array ();
 

@@ -297,19 +297,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
             $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
         }
         
-        $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70 );
+        $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
         $page->setFont ( $font, $cellFontSize );
         
-        $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 );
+        $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 , $this->charEncoding);
         
         //Iniciar a contagem de páginas
         $pagina = 1;
         
 
-        $page->drawText ( $this->pdfInfo ['footer'], 40, 40 );
+        $page->drawText ( $this->pdfInfo ['footer'], 40, 40 , $this->charEncoding);
         if (@$this->pdfInfo ['noPagination'] != 1)
         {
-            $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 );
+            $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40, $this->charEncoding );
         }
         
 
@@ -356,7 +356,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 $page->setStyle ( $topo );
                 $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
                 $page->setStyle ( $styleText );
-                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
+                $page->drawText ( $value ['value'], $largura1 + 2, $altura , $this->charEncoding);
                 $la = $largura1;
                 
                 $i ++;
@@ -446,19 +446,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                         $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
                     }
                     
-                    $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70 );
+                    $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
                     $page->setFont ( $font, $cellFontSize );
                     
-                    $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 );
+                    $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80, $this->charEncoding );
                     
 
                     //set font
                     $altura = $page->getHeight () - 120;
                     
-                    $page->drawText ( $this->pdfInfo ['footer'], 40, 40 );
+                    $page->drawText ( $this->pdfInfo ['footer'], 40, 40, $this->charEncoding);
                     if ($this->pdfInfo ['noPagination'] != 1)
                     {
-                        $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 );
+                        $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 , $this->charEncoding);
                     }
                     
 
@@ -484,7 +484,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                             $page->setStyle ( $topo );
                             $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
                             $page->setStyle ( $style );
-                            $page->drawText ( $title ['value'], $largura1 + 2, $altura );
+                            $page->drawText ( $title ['value'], $largura1 + 2, $altura, $this->charEncoding );
                             $la = $largura1;
                             
                             $i ++;
@@ -545,7 +545,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                         $page->setStyle ( $hRowStyle );
                         $page->drawRectangle ( $largura1, $altura - 4, $page->getWidth () - 40, $altura + 12 );
                         $page->setStyle ( $styleText );
-                        $page->drawText ( $bar [$aa] [$hRowIndex] ['value'], $centrar, $altura );
+                        $page->drawText ( $bar [$aa] [$hRowIndex] ['value'], $centrar, $altura , $this->charEncoding);
                         $la = 0;
                         $altura = $altura - 16;
                     
@@ -578,7 +578,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                         $page->setStyle ( $tdf );
                         $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i] + 1, $altura + 12 );
                         $page->setStyle ( $styleText );
-                        $page->drawText ( $value1 ['value'], $largura1 + 2, $altura );
+                        $page->drawText ( $value1 ['value'], $largura1 + 2, $altura , $this->charEncoding);
                         
                         $la = $largura1;
                         $i ++;
@@ -617,7 +617,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 $page->setStyle ( $styleSql );
                 $page->drawRectangle ( $largura1, $altura - 4, $largura1 + $cell [$i], $altura + 12 );
                 $page->setStyle ( $styleText );
-                $page->drawText ( $value ['value'], $largura1 + 2, $altura );
+                $page->drawText ( $value ['value'], $largura1 + 2, $altura, $this->charEncoding );
                 $la = $largura1;
                 
                 $la = $largura1;
