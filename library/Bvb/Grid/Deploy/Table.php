@@ -1976,7 +1976,7 @@ function gridChangeFilters(fields,url,Ajax)
 
     for (var i = 0; i < fieldsArray.length -1; i++)
     {
-        filtro[i] = '\"'+escape(fieldsArray[i])+'\":\"'+escape(document.getElementById(fieldsArray[i]).value)+'\"';
+        filtro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).value)+'\"';
     }
 
     filtro = \"{\"+filtro+\"}\";
