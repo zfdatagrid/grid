@@ -139,8 +139,8 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
                         {
                             // get the file extension by taking everything after the last dot
                             $extension =  end ( $subdirectories  );
-                            $extension = explode ( '.', $subdirectories  );
-                            $extension = end (  $subdirectories);
+                            $extension = explode ( '.', $extension  );
+                            $extension = end (  $extension);
                             
                             // if there is no filter set or the filter is set and matches
                             if ($filter === FALSE || $filter == $extension)
