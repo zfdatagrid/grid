@@ -19,51 +19,73 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
  */
 
-
-
-class Bvb_Grid_Form
-{
-    public  $options;
-
-    public $fields;
-    
-    public $cascadeDelete;
-
-
-    function __call($name,$args)
-    {
-        $this->options[$name] = $args[0];
-        return $this;
-    }
-    
-    function onDeleteCascade($options)
-    {
-        $this->cascadeDelete[] = $options;
-        return $this;
-        
-    }
-
-
-    function addColumns()
-    {
-        $columns = func_get_args();
-
-        $final = array();
-
-        foreach ( $columns as $value ) {
-
-            if($value instanceof Bvb_Grid_Form_Column )
-            {
-                array_push($final,$value);
-            }
-        }
-
-        $this->fields = $final;
-        
-
-        return $this;
-
-    }
-
+class Bvb_Grid_Form {
+	public $options;
+	
+	public $fields;
+	
+	public $cascadeDelete;
+	
+	function __call($name, $args) {
+		$this->options [$name] = $args [0];
+		return $this;
+	}
+	
+	function setCallbackAfterDelete($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackAfterDelete'] = $callback;
+		
+		return $this;
+	}
+	
+	function setCallbackAfterUpdate($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackAfterUpdate'] = $callback;
+		
+		return $this;
+	}
+	
+	function setCallbackAfterInsert($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackAfterInsert'] = $callback;
+		
+		return $this;
+	}
+	
+	function onDeleteCascade($options) {
+		$this->cascadeDelete [] = $options;
+		return $this;
+	
+	}
+	
+	function addColumns() {
+		$columns = func_get_args ();
+		
+		$final = array ();
+		
+		foreach ( $columns as $value ) {
+			
+			if ($value instanceof Bvb_Grid_Form_Column) {
+				array_push ( $final, $value );
+			}
+		}
+		
+		$this->fields = $final;
+		
+		return $this;
+	
+	}
 
 }

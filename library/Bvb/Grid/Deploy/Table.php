@@ -148,6 +148,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	public $temp;
 	
 	/**
+	 * Callback to be called after crud operation update
+	 * @var unknown_type
+	 */
+	protected $_callbackAfterUpdate = null;
+	
+	/**
+     * Callback to be called after crud operation delete
+     * @var unknown_type
+     */
+	protected $_callbackAfterDelete = null;
+	
+	/**
+     * Callback to be called after crud operation insert
+     * @var unknown_type
+     */
+	protected $_callbackAfterInsert = null;
+	
+	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
 	 *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
@@ -342,7 +360,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				if ($mode == 'add' && is_array ( $final_values )) {
 					
 					try {
+						
 						$this->_db->insert ( $this->data ['table'], $final_values );
+						
+						if (null !== $this->_callbackAfterInsert) {
+							call_user_func_array ( $this->_callbackAfterInsert, $final_values );
+						}
 						
 						$this->message = $this->__ ( 'Record saved' );
 						$this->messageOk = true;
@@ -362,7 +385,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					try {
 						
 						$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
-						
+						if (null !== $this->_callbackAfterUpdate) {
+							call_user_func_array ( $this->_callbackAfterUpdate, $final_values );
+						}
 						$this->message = $this->__ ( 'Record saved' );
 						$this->messageOk = true;
 					
@@ -590,11 +615,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 						$finalValue = $final ['id'];
 					}
 					
-					$this->_db->delete ( $value ['table'], $this->_db->quoteIdentifier ( $value ['childField'] ) . $operand . $this->_db->quote ( $finalValue ) );
+					$resultDelete = $this->_db->delete ( $value ['table'], $this->_db->quoteIdentifier ( $value ['childField'] ) . $operand . $this->_db->quote ( $finalValue ) );
+				
 				}
 			}
 			
-			$this->_db->delete ( $this->getMainTableName (), $this->getPkFromUrl ( false ) . $where );
+			$resultDelete = $this->_db->delete ( $this->data ['table'], $this->getPkFromUrl ( false ) . $where );
+			
+			if ($resultDelete == 1) {
+				if (null !== $this->_callbackAfterDelete) {
+					call_user_func_array ( $this->_callbackAfterDelete,  $this->getPkFromUrl ( false ) . $where );
+				}
+			}
 			
 			$this->messageOk = true;
 			$this->message = $this->__ ( 'Record deleted' );
@@ -614,24 +646,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	}
 	
-	/**
-	 * Get the main table name.
-	 * This ius used to get the table when using crud operations with joins.
-	 * 
-	 * Otherwise the defined table will be fetched
-	 *
-	 * @return string
-	 */
-	function getMainTableName() {
-		
-		if (is_array ( $this->data ['table'] )) {
-			$data = explode ( '.', $this->info ['crud'] ['primaryKey'] );
-			return $this->data ['table'] [reset ( $data )];
-		} else {
-			return $this->data ['table'];
-		}
 	
-	}
 	
 	/**
 	 *  Field type on the filters area. If the field type is enum, build the options
@@ -2005,6 +2020,18 @@ function gridChangeFilters(fields,url,Ajax)
 		
 		$fieldsGet = $form ['fields'];
 		$fields = array ();
+		
+		if (isset ( $form ['options'] ['callbackAfterDelete'] )) {
+			$this->_callbackAfterDelete = $form ['options'] ['callbackAfterDelete'];
+		}
+		
+		if (isset ( $form ['options'] ['callbackAfterInsert'] )) {
+			$this->_callbackAfterInsert = $form ['options'] ['callbackAfterInsert'];
+		}
+		
+		if (isset ( $form ['options'] ['callbackAfterUpdate'] )) {
+			$this->_callbackAfterUpdate = $form ['options'] ['callbackAfterUpdate'];
+		}
 		
 		if (is_array ( $fieldsGet )) {
 			foreach ( $fieldsGet as $value ) {
