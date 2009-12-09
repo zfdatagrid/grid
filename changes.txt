@@ -1,0 +1,12 @@
+
+[224 - 9-12-2009]
+Support to user's callback functions on crud operations: 
+
+$form->setCallbackAfterInsert('my_function'); OR $form->setCallbackAfterInsert(array('my_class','my_method')); 
+The inserted values will be passed as function args 
+
+$form->setCallbackAfterUpdate('my_function'); OR $form->setCallbackAfterUpdate(array('my_class','my_method')); 
+The updated values will be passed as function args 
+
+$form->setCallbackAfterDelete('my_function'); OR $form->setCallbackAfterDelete(array('my_class','my_method')); 
+The condition where will be passed as function args
