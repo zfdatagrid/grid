@@ -782,7 +782,7 @@ class Bvb_Grid_DataGrid {
 	
 	function updateColumn($field, $options = array()) {
 		
-		if (! isset ( $this->data ['table'] ) && $this->_selectZendDb == false) {
+		if (! isset ( $this->data ['table'] ) && $this->_selectZendDb == false && $this->getAdapter()=='db') {
 			throw new Exception ( 'You must specify the query first and only then, you can update the column' );
 		}
 		
