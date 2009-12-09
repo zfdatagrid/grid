@@ -786,7 +786,7 @@ class Bvb_Grid_DataGrid {
 			throw new Exception ( 'You must specify the query first and only then, you can update the column' );
 		}
 		
-		if (strpos ( $field, '.' ) === false) {
+		if (strpos ( $field, '.' ) === false && $this->getAdapter()=='db') {
 			$field = $this->data ['tableAlias'] . '.' . $field;
 		}
 		
@@ -1861,10 +1861,13 @@ class Bvb_Grid_DataGrid {
 					$final = $dados;
 				}
 				
+				
 				if (array_key_exists ( $campos, $final ) && ! is_array ( $final [$campos] )) {
 					
 					$new_value = $final [$campos];
+
 				}
+				
 				
 				if ($this->escapeOutput === true) {
 					$new_value = htmlspecialchars ( $new_value );
@@ -1891,6 +1894,8 @@ class Bvb_Grid_DataGrid {
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
+				
+				
 				if (! isset ( $this->data ['fields'] [$fields_duble [$is]] ['hide'] )) {
 					$fieldClass = isset ( $this->data ['fields'] [$fields_duble [$is]] ['class'] ) ? $this->data ['fields'] [$fields_duble [$is]] ['class'] : '';
 					$class = isset ( $class ) ? $class : '';
@@ -1900,6 +1905,7 @@ class Bvb_Grid_DataGrid {
 				$is ++;
 			
 			}
+			
 			
 			/**
 			 * Deal with extra fields from the right
@@ -2728,6 +2734,7 @@ class Bvb_Grid_DataGrid {
 			}
 			
 			$this->_result = $result;
+			
 		}
 		
 		return;
