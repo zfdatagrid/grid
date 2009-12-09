@@ -45,7 +45,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopLoop()
+    function loopLoop($values)
     {
 
         $class = $this->i % 2 ? "alt" : "";
