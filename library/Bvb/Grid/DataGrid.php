@@ -2906,7 +2906,7 @@ class Bvb_Grid_DataGrid {
 		if (is_object ( $data ))
 			$data = get_object_vars ( $data );
 		
-		return array_map ( array ('self', 'object2array' ), $data );
+		return array_map ( array ($this, 'object2array' ), $data );
 	
 	}
 	

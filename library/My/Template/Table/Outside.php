@@ -38,7 +38,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopStart()
+    function loopStart($values)
     {
         $this->i++;
         return "<tr  >";
