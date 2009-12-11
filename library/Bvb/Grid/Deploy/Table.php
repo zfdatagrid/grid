@@ -681,7 +681,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		foreach ( array_keys ( $this->filters ) as $value ) {
 			
-			if (! $this->data ['fields'] [$value] ['hide']) {
+			if (! $this->data ['fields'] [$value] ['hide'] || $this->data ['fields'] [$value] ['hide']==0) {
 				$help_javascript .= "filter_" . $value . ",";
 			}
 		}
