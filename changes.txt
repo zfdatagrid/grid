@@ -1,4 +1,4 @@
-[226 - 12-12-2009]
+[227 - 12-12-2009]
 FIX: Once you set a field as hidden, you can not change it back
 
 [225 - 11-12-2009]
