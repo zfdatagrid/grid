@@ -1478,7 +1478,7 @@ class Bvb_Grid_DataGrid {
 			
 			$order = $orderFinal == @key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
 			
-			if (! isset ( $novaData [$titles [$i]] ['hide'] )) {
+			if (! isset ( $novaData [$titles [$i]] ['hide'] ) || $novaData [$titles[$i]] ['hide'] == 0) {
 				
 				if ($titles [$i] == @key ( $this->order )) {
 					if ($order == 'ASC') {
