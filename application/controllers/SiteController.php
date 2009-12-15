@@ -123,7 +123,11 @@ class SiteController extends Zend_Controller_Action {
 	function vincentAction() {
 		
 		$db = Zend_Registry::get ( 'db' );
-		$select = $db->select ()->distinct ()->from ( array ('p1' => 'ProjetClient1' ), array ('p1.id', 'p1.cp', 'p1.ville' ) )->joinLeft ( array ('f1' => 'FicheClient1' ), 'p1.id_client = f1.id', array ('f1_id' => 'f1.id', 'f1.email', 'nom' => 'f1.nom' ) )->joinLeft ( array ('tc' => 'TypeClient' ), 'f1.id_type_client = tc.id', array ('type' => 'tc.nom' ) );
+		$select = $db->select ()
+		      ->distinct ()
+		      ->from ( array('p1'=>'ProjetClient1'), array ('p1.id', 'p1.cp', 'p1.ville' ) )
+		      ->joinLeft (array('f1'=> 'FicheClient1'), 'p1.id_client = f1.id', array ('f1_id'=> 'f1.id', 'f1.email', 'nom'=> 'f1.nom' ) )
+		      ->joinLeft (array('tc' => 'TypeClient'), 'f1.id_type_client = tc.id', array ('type'=>'tc.nom' ) );
 		
 		$grid = $this->grid ( 'table' );
 		
@@ -146,12 +150,14 @@ class SiteController extends Zend_Controller_Action {
 		$grid->addExtraColumns ( $btnVoir, $btnEdit, $btnNewProjet );
 		
 		$filters = new Bvb_Grid_Filters ( );
-		$filters->addFilter ( 'p1.ville' )->addFilter ( 'f1.email' )->addFilter ( 'f1.nom' );
+		$filters->addFilter ( 'p1.ville' )
+		          ->addFilter ( 'f1.email' )
+		          ->addFilter ( 'f1.nom' );
 		
 		$grid->addFilters ( $filters );
 		
 		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
+        $this->render ( 'index' );
 	}
 	
 	/**
@@ -303,6 +309,8 @@ class SiteController extends Zend_Controller_Action {
 		$form = new Bvb_Grid_Form ( );
 		$form->add ( 1 )->edit ( 1 )->button ( 1 )->delete ( 1 )->onAddForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) )->onEditForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) );
 		
+		
+        
 		#->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
 		
 
@@ -380,14 +388,7 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid = $this->grid ( 'table' );
 		
-		$grid->query ( $this->_db->select ()->from ( 'City' )->order ( 'id desc' ) );
-		
-		$lastName = new Bvb_Grid_Form_Column ( 'name' );
-		$lastName->title ( 'Name' );
-		$form = new Bvb_Grid_Form ( );
-		$form->add ( 0 )->button ( 1 )->edit ( 1 )->delete ( 1 );
-		$form->addColumns ( $lastName );
-		$grid->addForm ( $form );
+		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
