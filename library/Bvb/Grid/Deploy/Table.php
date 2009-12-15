@@ -1838,7 +1838,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			#$removeParams = array ('filters', 'add' );
 			$removeParams = array ('filters', 'add', 'edit', 'comm' );
 			
-			foreach ( array_keys ( $this->info ['add'] ['fields'] ) as $key ) {
+			foreach ( array_keys ( $this->info ['edit'] ['fields'] ) as $key ) {
 				array_push ( $removeParams, $key );
 			}
 			$url = parent::getUrl ( $removeParams );
@@ -1874,7 +1874,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 
 				$removeParams = array ('filters', 'add' );
 				
-				foreach ( array_keys ( $this->info ['add'] ['fields'] ) as $key ) {
+				foreach ( array_keys ( $this->info ['edit'] ['fields'] ) as $key ) {
 					array_push ( $removeParams, $key );
 				}
 				
@@ -2070,10 +2070,8 @@ function gridChangeFilters(fields,url,Ajax)
 			$this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onAddForce'] );
 		}
 		
-		if (isset ( $options ['edit'] )) {
-			if ($options ['edit'] == 1) {
-				@$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => $options ['onEditForce'] );
-			}
+		if (isset ( $options ['edit'] ) && $options ['edit'] == 1) {
+				$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onEditForce'] );
 		}
 		if (isset ( $options ['onUpdateAddWhere'] )) {
 			$this->info ['edit'] ['where'] = $options ['onUpdateAddWhere'];
