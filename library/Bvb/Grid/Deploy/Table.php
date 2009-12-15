@@ -154,15 +154,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	protected $_callbackAfterUpdate = null;
 	
 	/**
-     * Callback to be called after crud operation delete
-     * @var unknown_type
-     */
+	 * Callback to be called after crud operation delete
+	 * @var unknown_type
+	 */
 	protected $_callbackAfterDelete = null;
 	
 	/**
-     * Callback to be called after crud operation insert
-     * @var unknown_type
-     */
+	 * Callback to be called after crud operation insert
+	 * @var unknown_type
+	 */
 	protected $_callbackAfterInsert = null;
 	
 	/**
@@ -624,7 +624,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			if ($resultDelete == 1) {
 				if (null !== $this->_callbackAfterDelete) {
-					call_user_func_array ( $this->_callbackAfterDelete,  $this->getPkFromUrl ( false ) . $where );
+					call_user_func_array ( $this->_callbackAfterDelete, $this->getPkFromUrl ( false ) . $where );
 				}
 			}
 			
@@ -645,8 +645,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		return true;
 	
 	}
-	
-	
 	
 	/**
 	 *  Field type on the filters area. If the field type is enum, build the options
@@ -681,7 +679,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		foreach ( array_keys ( $this->filters ) as $value ) {
 			
-			if (! $this->data ['fields'] [$value] ['hide'] || $this->data ['fields'] [$value] ['hide']==0) {
+			if (! $this->data ['fields'] [$value] ['hide'] || $this->data ['fields'] [$value] ['hide'] == 0) {
 				$help_javascript .= "filter_" . $value . ",";
 			}
 		}
@@ -1077,10 +1075,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					
 					//check for select value
 					if ($mod == 'edit') {
-						$selected = $inicial_value == $value ? "selected" : "";
+						$selected = $inicial_value == $key ? "selected" : "";
+					} elseif (key_exists ( 'value', $options )) {
+						$selected = $options ['value'] == $key ? "selected" : "";
 					} else {
 						$selected = null;
+					
 					}
+					
 					$valor .= "<option value=\"{$key}\" $selected >" . ucfirst ( $value ) . "</option>";
 				}
 				

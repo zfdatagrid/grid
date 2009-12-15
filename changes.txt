@@ -1,3 +1,6 @@
+[229 - 12-12-2009]
+NEW: Allow to set a form select item as selected when not editing
+
 [227 - 12-12-2009]
 FIX: Once you set a field as hidden, you can not change it back
 
