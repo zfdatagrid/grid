@@ -3000,7 +3000,13 @@ class Bvb_Grid_DataGrid {
 	function addExtraColumns() {
 		
 		$extra_fields = func_get_args ();
-		$final = array ();
+		
+		if (is_array ( $this->extra_fields )) {
+			$final = $this->extra_fields;
+		} else {
+			$final = array ();
+		}
+		
 		foreach ( $extra_fields as $value ) {
 			if ($value instanceof Bvb_Grid_ExtraColumns) {
 				$value = $this->object2array ( $value );
