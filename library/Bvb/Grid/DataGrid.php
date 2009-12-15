@@ -1168,26 +1168,14 @@ class Bvb_Grid_DataGrid {
 		$order1 = explode ( "_", $order );
 		$orderf = strtoupper ( end ( $order1 ) );
 		
-		if ($orderf != 'DESC' and $orderf != 'ASC') {
-			
-			$orderf = 'ASC';
-			$order_field = $order;
-			$query_order = $order_field . " $orderf ";
-			$this->_select->order ( $query_order );
-		} else {
+		if ($orderf == 'DESC' || $orderf == 'ASC') {
 			array_pop ( $order1 );
 			$order_field = implode ( "_", $order1 );
 			$query_order = $order_field . " $orderf ";
-			$this->_select->order ( $query_order );
-		}
-		
-		$this->order [$order_field] = $orderf == 'ASC' ? 'DESC' : 'ASC';
-		
-		if (! in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) )) {
-			$this->_select->reset ( Zend_Db_Select::ORDER );
-			$query_order = '';
-			if (@strlen ( $this->data ['order'] ) > 0) {
-				$this->_select->order ( array_map ( 'trim', explode ( ',', $this->data ['order'] ) ) );
+			
+			if (in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) )) {
+				$this->_select->reset ( 'order' );
+				$this->_select->order ( $query_order );
 			}
 		}
 		
@@ -1478,7 +1466,7 @@ class Bvb_Grid_DataGrid {
 			
 			$order = $orderFinal == @key ( $this->order ) ? $this->order [$orderFinal] : 'ASC';
 			
-			if (! isset ( $novaData [$titles [$i]] ['hide'] ) || $novaData [$titles[$i]] ['hide'] == 0) {
+			if (! isset ( $novaData [$titles [$i]] ['hide'] ) || $novaData [$titles [$i]] ['hide'] == 0) {
 				
 				if ($titles [$i] == @key ( $this->order )) {
 					if ($order == 'ASC') {
