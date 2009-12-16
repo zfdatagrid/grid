@@ -2624,7 +2624,11 @@ class Bvb_Grid_DataGrid {
 				
 				$resultZendDb = $stmt->fetchAll ();
 				
-				$resultCount = $resultZendDb [0]->TOTAL;
+				if (count ( $resultZendDb ) == 1) {
+					$resultCount = $resultZendDb [0]->TOTAL;
+				} else {
+					$resultCount = count ( $resultZendDb );
+				}
 			
 			}
 			
