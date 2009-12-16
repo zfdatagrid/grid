@@ -1224,8 +1224,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		$returnArray = array ();
 		foreach ( $paramF as $value ) {
 			$f = explode ( ':', $value );
+			$field_explode = explode('.',$f[0]);
+			$field = end($field_explode);
 			
-			$param .= " AND  " . $this->_db->quoteIdentifier ( $f [0] ) . '=' . $this->_db->quote ( $f [1] );
+			$param .= " AND  " . $this->_db->quoteIdentifier ( $field ) . '=' . $this->_db->quote ( $f [1] );
 			
 			$returnArray [$f [0]] = $f [1];
 		}
