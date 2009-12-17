@@ -1454,8 +1454,10 @@ class Bvb_Grid_DataGrid {
 		for($i = 0; $i < $tcampos; $i ++) {
 			if (isset ( $this->ctrlParams ['order'] )) {
 				$explode = explode ( '_', $this->ctrlParams ['order'] );
-				$this->order [reset ( $explode )] = strtoupper ( end ( $explode ) ) == 'ASC' ? 'DESC' : 'ASC';
+				$name = str_replace ( '_' . end ( $explode ), '', $this->ctrlParams ['order'] );
+				$this->order [$name] = strtoupper ( end ( $explode ) ) == 'ASC' ? 'DESC' : 'ASC';
 			}
+
 			$fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
 			
 			if (isset ( $fieldsToOrder [$i] ['orderField'] ) && strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0) {
