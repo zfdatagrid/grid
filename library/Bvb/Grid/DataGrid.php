@@ -2618,17 +2618,14 @@ class Bvb_Grid_DataGrid {
 				$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
 				$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
 				$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
+				$selectZendDb->reset ( Zend_Db_Select::GROUP );
 				$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 				
 				$stmt = $selectZendDb->query ();
 				
 				$resultZendDb = $stmt->fetchAll ();
 				
-				if (count ( $resultZendDb ) == 1) {
-					$resultCount = $resultZendDb [0]->TOTAL;
-				} else {
-					$resultCount = count ( $resultZendDb );
-				}
+				$resultCount = $resultZendDb [0]->TOTAL;
 			
 			}
 			
