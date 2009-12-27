@@ -2050,9 +2050,6 @@ class Bvb_Grid_DataGrid {
 				}
 			}
 		}
-		echo "<pre>";
-		print_r($return);
-        die();
 		return $return;
 	}
 	
