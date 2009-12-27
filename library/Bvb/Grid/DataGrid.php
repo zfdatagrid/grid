@@ -1982,7 +1982,19 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-		$final = $exp;
+        foreach ($exp as $key=>$value)
+        {
+        	if(strpos($key,'.')===false)
+        	{
+        		$exp_final[$this->data['table'].'.'.$key] = $value;
+        	}else{
+        		$exp_final[$key] = $value;
+        	}
+        	
+        }
+        
+		
+		$final = $exp_final;
 		
 		if ($this->_adapter == 'array') {
 			
@@ -2038,6 +2050,9 @@ class Bvb_Grid_DataGrid {
 				}
 			}
 		}
+		echo "<pre>";
+		print_r($return);
+        die();
 		return $return;
 	}
 	
