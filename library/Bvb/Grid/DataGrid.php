@@ -1712,13 +1712,14 @@ class Bvb_Grid_DataGrid {
 			$tipo = 'enum';
 		}
 		
-		foreach ( array_keys ( $this->filters ) as $value ) {
-			
-			$hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
-			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$this->_fields [$i]] ['hide']) && $hRow != 1) {
-				$help_javascript .= "filter_" . $value . ",";
-			}
-		}
+		$i = 0;
+    	foreach ( array_keys ( $this->filters ) as $value ) {
+            
+            $hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
+            if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || ( isset($this->data ['fields'] [$this->_fields [$i]] ['hide']) && $this->data ['fields'] [$this->_fields [$i]] ['hide']==1) ) && $hRow != 1) {
+                $help_javascript .= "filter_" . $value . ",";
+            }
+        }
 		
 		if (@$options ['noFilters'] != 1) {
 			$help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
