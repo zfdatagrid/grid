@@ -356,6 +356,12 @@ class Bvb_Grid_DataGrid {
 	private $_allFieldsAdded = false;
 	
 	/**
+	 * If the user manually sets the query limit
+	 * @var int|bool
+	 */
+	protected $_forceLimit = false;
+	
+	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
 	 * 
@@ -1457,7 +1463,7 @@ class Bvb_Grid_DataGrid {
 				$name = str_replace ( '_' . end ( $explode ), '', $this->ctrlParams ['order'] );
 				$this->order [$name] = strtoupper ( end ( $explode ) ) == 'ASC' ? 'DESC' : 'ASC';
 			}
-
+			
 			$fieldsToOrder = $this->reset_keys ( $this->data ['fields'] );
 			
 			if (isset ( $fieldsToOrder [$i] ['orderField'] ) && strlen ( $fieldsToOrder [$i] ['orderField'] ) > 0) {
@@ -1982,17 +1988,14 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-        foreach ($exp as $key=>$value)
-        {
-        	if(strpos($key,'.')===false)
-        	{
-        		$exp_final[$this->data['table'].'.'.$key] = $value;
-        	}else{
-        		$exp_final[$key] = $value;
-        	}
-        	
-        }
-        
+		foreach ( $exp as $key => $value ) {
+			if (strpos ( $key, '.' ) === false) {
+				$exp_final [$this->data ['table'] . '.' . $key] = $value;
+			} else {
+				$exp_final [$key] = $value;
+			}
+		
+		}
 		
 		$final = $exp_final;
 		
@@ -2611,9 +2614,26 @@ class Bvb_Grid_DataGrid {
 					$stmt = $this->_db->query ( $this->_select );
 					$result = $stmt->fetchAll ();
 					
-					$stmt = $this->_db->query ( $this->_selectCount );
-					$resultCount = $stmt->fetchAll ();
-					$resultCount = $resultCount [0]->TOTAL;
+					$selectZendDb = clone $this->_select;
+					$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
+					$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
+					$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
+					$selectZendDb->reset ( Zend_Db_Select::GROUP );
+					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
+					
+					$stmt = $selectZendDb->query ();
+					
+					$resultZendDb = $stmt->fetchAll ();
+					
+					if (count ( $resultZendDb ) == 1) {
+						$resultCount = $resultZendDb [0]->TOTAL;
+					} else {
+						$resultCount = count ( $resultZendDb );
+					}
+					
+					if ($this->_forceLimit !== false && $resultCount > $this->_forceLimit) {
+						$resultCount = $this->_forceLimit;
+					}
 					
 					$cache->save ( $result, md5 ( $this->_select->__toString () ), array ($this->cache ['tag'] ) );
 					$cache->save ( $resultCount, md5 ( $this->_selectCount->__toString () ), array ($this->cache ['tag'] ) );
@@ -2639,8 +2659,15 @@ class Bvb_Grid_DataGrid {
 				
 				$resultZendDb = $stmt->fetchAll ();
 				
-				$resultCount = $resultZendDb [0]->TOTAL;
-			
+				if (count ( $resultZendDb ) == 1) {
+					$resultCount = $resultZendDb [0]->TOTAL;
+				} else {
+					$resultCount = count ( $resultZendDb );
+				}
+				
+				if ($this->_forceLimit !== false && $resultCount > $this->_forceLimit) {
+					$resultCount = $this->_forceLimit;
+				}
 			}
 			
 			//Total records found
@@ -3125,6 +3152,10 @@ class Bvb_Grid_DataGrid {
 		$this->getFieldsFromQuery ( $this->_select->getPart ( Zend_Db_Select::COLUMNS ), $this->_select->getPart ( Zend_Db_Select::FROM ) );
 		
 		$from = $this->_select->getPart ( Zend_Db_Select::FROM );
+		
+		if ($this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT ) > 0) {
+			$this->_forceLimit = $this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT );
+		}
 		
 		foreach ( $from as $key => $tables ) {
 			
