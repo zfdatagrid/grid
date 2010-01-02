@@ -2068,7 +2068,7 @@ function gridChangeFilters(fields,url,Ajax)
 		
 		@$this->info ['delete'] ['cascadeDelete'] = $form ['cascadeDelete'];
 		
-		if ($options ['add'] == 1) {
+		if ($options ['add'] == 1 && $options ['add'] == 1) {
 			$this->add = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onAddForce'] );
 		}
 		
