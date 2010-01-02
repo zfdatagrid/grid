@@ -885,7 +885,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @param array $titles
 	 * @return string
 	 */
-	function buildTitltesTable($titles) {
+	function buildTitlesTable($titles) {
 		
 		//We must now the field that is being ordered. So we can grab the image
 		$order = @array_keys ( $this->order );
@@ -1894,7 +1894,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			if (($this->formPost == 1 && $this->formSuccess == 1) || $this->formPost == 0) {
 				
 				$grid .= self::buildHeader ();
-				$grid .= self::buildTitltesTable ( parent::buildTitles () );
+				$grid .= self::buildTitlesTable ( parent::buildTitles () );
 				$grid .= self::buildFiltersTable ( parent::buildFilters () );
 				$grid .= self::buildGridTable ( parent::buildGrid () );
 				$grid .= self::buildSqlexpTable ( parent::buildSqlExp () );
