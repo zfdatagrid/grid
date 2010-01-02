@@ -1179,6 +1179,12 @@ class Bvb_Grid_DataGrid {
 			$order_field = implode ( "_", $order1 );
 			$query_order = $order_field . " $orderf ";
 			
+			foreach ( $this->_select->getPart ( Zend_Db_Select::COLUMNS ) as $col ) {
+				if (($col [0] . '.' . $col [2] == $order_field) and is_object ( $col [1] )) {
+					$query_order = $col [2] . " $orderf ";
+				}
+			}
+			
 			if (in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) )) {
 				$this->_select->reset ( 'order' );
 				$this->_select->order ( $query_order );
