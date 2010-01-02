@@ -356,6 +356,12 @@ class Bvb_Grid_DataGrid {
 	private $_allFieldsAdded = false;
 	
 	/**
+	 * Fields names without alias
+	 * @var array
+	 */
+	private $_fieldsNoAs = array ();
+	
+	/**
 	 * If the user manually sets the query limit
 	 * @var int|bool
 	 */
@@ -1322,7 +1328,8 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-		$data = $this->map_array ( $this->_fields, 'replace_AS' );
+		#$data = $this->map_array ( $this->_fields, 'replace_AS' );
+		$data = array_keys ( $this->_fieldsNoAs );
 		$tcampos = count ( $data );
 		
 		for($i = 0; $i < count ( $this->extra_fields ); $i ++) {
@@ -1351,7 +1358,6 @@ class Bvb_Grid_DataGrid {
 				$return [] = array ('type' => 'extraField', 'class' => $this->template ['classes'] ['filter'], 'position' => 'right' );
 			}
 		}
-		
 		return $return;
 	}
 	
@@ -1441,7 +1447,7 @@ class Bvb_Grid_DataGrid {
 		
 		$return = array ();
 		$url = $this->getUrl ( array ('order', 'start', 'comm' ) );
-		$tcampos = count ( $this->_fields );
+		$tcampos = count ( $this->_fieldsNoAs );
 		
 		for($i = 0; $i < count ( $this->extra_fields ); $i ++) {
 			if ($this->extra_fields [$i] ['position'] == 'left') {
@@ -1800,7 +1806,7 @@ class Bvb_Grid_DataGrid {
 		
 		$search = $this->map_array ( $this->_fields, 'prepare_replace' );
 		
-		foreach ( $this->_fields as $field ) {
+		foreach ( array_keys ( $this->_fieldsNoAs ) as $field ) {
 			$fields_duble [] = $field;
 			if (strpos ( $field, "." )) {
 				$fields [] = substr ( $field, strpos ( $field, "." ) + 1 );
@@ -1808,6 +1814,8 @@ class Bvb_Grid_DataGrid {
 				$fields [] = $field;
 			}
 		}
+		
+		$fields = $this->_fieldsNoAs;
 		
 		$i = 0;
 		
@@ -3162,6 +3170,14 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
+		$fieldsNoAS = array ();
+		foreach ( array_keys ( $this->data ['fields'] ) as $key ) {
+			$reset = explode ( ' ', trim ( $key ) );
+			$alias = explode ( '.', trim ( end ( $reset ) ) );
+			$fieldsNoAS [reset ( $reset )] = end ( $alias );
+		}
+		
+		$this->_fieldsNoAs = $fieldsNoAS;
 		$this->_allFieldsAdded = true;
 	}
 	
