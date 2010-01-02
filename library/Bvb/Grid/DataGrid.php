@@ -2086,10 +2086,16 @@ class Bvb_Grid_DataGrid {
 				}
 				
 				if (isset ( $value ['order'] )) {
-					if (@$value ['order'] > - 1) {
+					if ($value ['order'] > - 1) {
 						$fields_final [( int ) $value ['order']] = $key;
 					}
 				} else {
+					
+					if(array_key_exists($i,$fields_final))
+					{
+						$i++;
+					}
+					
 					$fields_final [$i] = $key;
 				}
 				
@@ -2100,6 +2106,7 @@ class Bvb_Grid_DataGrid {
 			}
 			
 			ksort ( $fields_final );
+			
 			$fields_final = $this->reset_keys ( $fields_final );
 		
 		}
