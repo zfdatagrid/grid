@@ -903,6 +903,27 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		//Iniciate titles template
 		$grid = $this->temp ['table']->titlesStart ();
 		
+		if ($orderField === null) {
+			//Lets get the default order using in the query (Zend_Db)
+			$queryOrder = $this->_select->getPart ( 'order' );
+			if (is_array ( $queryOrder )) {
+				$finalQueryOrder = array ();
+				foreach ( $queryOrder as $value ) {
+					
+					if (strpos ( $value [1], '.' === false )) {
+						$finalQueryOrder = array ($value [0], $this->data ['table'] . '.' . $value [1] );
+					} else {
+						$finalQueryOrder = $value;
+					}
+					
+					$order = strtolower($value[1])=='asc'?'desc':'asc';
+					$orderField = $finalQueryOrder[0];
+					
+					break;
+				}
+			}
+		}
+		
 		foreach ( $titles as $title ) {
 			
 			if (isset ( $title ['field'] )) {
@@ -1224,8 +1245,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		$returnArray = array ();
 		foreach ( $paramF as $value ) {
 			$f = explode ( ':', $value );
-			$field_explode = explode('.',$f[0]);
-			$field = end($field_explode);
+			$field_explode = explode ( '.', $f [0] );
+			$field = end ( $field_explode );
 			
 			$param .= " AND  " . $this->_db->quoteIdentifier ( $field ) . '=' . $this->_db->quote ( $f [1] );
 			
@@ -2073,7 +2094,7 @@ function gridChangeFilters(fields,url,Ajax)
 		}
 		
 		if (isset ( $options ['edit'] ) && $options ['edit'] == 1) {
-				$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onEditForce'] );
+			$this->edit = array ('allow' => 1, 'button' => $options ['button'], 'fields' => $fields, 'force' => @$options ['onEditForce'] );
 		}
 		if (isset ( $options ['onUpdateAddWhere'] )) {
 			$this->info ['edit'] ['where'] = $options ['onUpdateAddWhere'];

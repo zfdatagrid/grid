@@ -1455,6 +1455,7 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
+		
 		$links = $this->_fields;
 		
 		for($i = 0; $i < $tcampos; $i ++) {
@@ -1476,24 +1477,13 @@ class Bvb_Grid_DataGrid {
 			
 			if (! isset ( $novaData [$titles [$i]] ['hide'] ) || $novaData [$titles [$i]] ['hide'] == 0) {
 				
-				if ($titles [$i] == @key ( $this->order )) {
-					if ($order == 'ASC') {
-						$order_img = 'desc';
-					} else {
-						$order_img = 'asc';
-					}
-					$img = @$this->template ['images'] [$order_img];
-				
-				} else {
-					$img = "";
-				}
 				
 				$noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
 				
 				if ($noOrder == 1 || $this->_isPrimaryGrid == false) {
 					$return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
 				} else {
-					$return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'img' => $img, 'value' => $this->_titles [$links [$i]] );
+					$return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order",  'value' => $this->_titles [$links [$i]] );
 				}
 			}
 		}
@@ -1879,14 +1869,13 @@ class Bvb_Grid_DataGrid {
 					$new_value = $this->applyFormat ( $new_value, $alias );
 				}
 				
-				
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] )) {
 					
 					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
-
-					$end = explode('.',$fields_duble [$is]);
 					
-					$finalDados[end($end)] = $new_value;
+					$end = explode ( '.', $fields_duble [$is] );
+					
+					$finalDados [end ( $end )] = $new_value;
 					
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
@@ -2044,7 +2033,7 @@ class Bvb_Grid_DataGrid {
 				if (isset ( $value ['format'] )) {
 					$finalResult = $this->applyFormat ( $result1 [0]->TOTAL, $value ['format'] );
 				} else {
-					$finalResult =   $result1 [0]->TOTAL ;
+					$finalResult = $result1 [0]->TOTAL;
 				}
 				
 				$result [$key] = $finalResult;
