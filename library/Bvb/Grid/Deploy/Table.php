@@ -1411,7 +1411,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			$i ++;
 		}
 		
-		if (isset ( $this->info ['hRow'] ['title'] )) {
+		if (isset ( $this->info ['hRow'] ['title'] )  && $this->_totalRecords > 0) {
 			
 			$bar = $grids;
 			
