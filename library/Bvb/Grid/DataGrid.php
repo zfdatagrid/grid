@@ -1713,13 +1713,13 @@ class Bvb_Grid_DataGrid {
 		}
 		
 		$i = 0;
-    	foreach ( array_keys ( $this->filters ) as $value ) {
-            
-            $hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
-            if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || ( isset($this->data ['fields'] [$this->_fields [$i]] ['hide']) && $this->data ['fields'] [$this->_fields [$i]] ['hide']==1) ) && $hRow != 1) {
-                $help_javascript .= "filter_" . $value . ",";
-            }
-        }
+		foreach ( array_keys ( $this->filters ) as $value ) {
+			
+			$hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
+			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || (isset ( $this->data ['fields'] [$this->_fields [$i]] ['hide'] ) && $this->data ['fields'] [$this->_fields [$i]] ['hide'] == 1)) && $hRow != 1) {
+				$help_javascript .= "filter_" . $value . ",";
+			}
+		}
 		
 		if (@$options ['noFilters'] != 1) {
 			$help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
@@ -2014,13 +2014,13 @@ class Bvb_Grid_DataGrid {
 				
 				if (is_array ( $value )) {
 					$valor = '';
-					foreach ( $value as $final ) {
+					foreach ( $value ['functions'] as $final ) {
 						$valor .= $final . '(';
 					}
 					
-					$valor .= $key . str_repeat ( ')', count ( $value ) );
+					$valor .= $value ['value'] . str_repeat ( ')', count ( $value ['functions'] ) );
 				} else {
-					$valor = "$value($key)";
+					$valor = "$value(" . $value ['value'] . ")";
 				}
 				
 				$select = clone $this->_select;
@@ -2036,7 +2036,13 @@ class Bvb_Grid_DataGrid {
 				
 				$result1 = $final->fetchAll ();
 				
-				$result [$key] = $result1 [0]->TOTAL;
+				if (isset ( $value ['format'] )) {
+					$finalResult = $this->applyFormat ( $result1 [0]->TOTAL, $value ['format'] );
+				} else {
+					$finalResult =   $result1 [0]->TOTAL ;
+				}
+				
+				$result [$key] = $finalResult;
 			
 			}
 		
