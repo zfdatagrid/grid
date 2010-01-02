@@ -1831,6 +1831,8 @@ class Bvb_Grid_DataGrid {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
 						if (isset ( $value ['eval'] )) {
+							$value ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['eval'] );
+							
 							$evalf = str_replace ( $search, $fi, $value ['eval'] );
 							$new_value = eval ( 'return ' . $evalf );
 						}
@@ -1880,6 +1882,8 @@ class Bvb_Grid_DataGrid {
 				}
 				
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
+					
+					$this->data ['fields'] [$fields_duble [$is]] ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
 					
 					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
 					$new_value = eval ( 'return ' . $evalf . ';' );
@@ -1932,6 +1936,7 @@ class Bvb_Grid_DataGrid {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
 						if (isset ( $value ['eval'] )) {
+							$value ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['eval'] );
 							$evalf = str_replace ( $search, $fi, $value ['eval'] );
 							$new_value = eval ( 'return ' . $evalf );
 						}
