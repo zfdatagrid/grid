@@ -1877,12 +1877,17 @@ class Bvb_Grid_DataGrid {
 					}
 					
 					$new_value = $this->applyFormat ( $new_value, $alias );
-				
 				}
+				
 				
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] )) {
 					
 					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+
+					$end = explode('.',$fields_duble [$is]);
+					
+					$finalDados[end($end)] = $new_value;
+					
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
