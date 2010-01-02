@@ -1830,11 +1830,17 @@ class Bvb_Grid_DataGrid {
 					if ($value ['position'] == 'left') {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
+						if (isset ( $value ['eval'] )) {
+							$evalf = str_replace ( $search, $fi, $value ['eval'] );
+							$new_value = eval ( 'return ' . $evalf );
+						}
+						
 						if (isset ( $value ['decorator'] )) {
 							$value ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['decorator'] );
 						} else {
 							$value ['decorator'] = '';
 						}
+						
 						$new_value = str_replace ( $search, $fi, $value ['decorator'] );
 						
 						if (isset ( $value ['format'] )) {
@@ -1851,6 +1857,8 @@ class Bvb_Grid_DataGrid {
 			$integralFields = array_keys ( $this->removeAsFromFields () );
 			
 			foreach ( $fields as $campos ) {
+				
+				$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 				
 				$campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
 				$campos = trim ( $campos );
@@ -1871,13 +1879,19 @@ class Bvb_Grid_DataGrid {
 					$new_value = htmlspecialchars ( $new_value );
 				}
 				
+				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
+					
+					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
+					$new_value = eval ( 'return ' . $evalf . ';' );
+				
+				}
+				
 				//[PT]Aplicar o formato da célula
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] )) {
 					
 					$alias = $this->data ['fields'] [$fields_duble [$is]] ['format'];
 					
 					if (is_array ( $alias )) {
-						$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
 						array_walk_recursive ( $alias, array ($this, 'repalceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
 					}
@@ -1916,6 +1930,11 @@ class Bvb_Grid_DataGrid {
 				foreach ( $extra_fields as $value ) {
 					if ($value ['position'] == 'right') {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
+						
+						if (isset ( $value ['eval'] )) {
+							$evalf = str_replace ( $search, $fi, $value ['eval'] );
+							$new_value = eval ( 'return ' . $evalf );
+						}
 						
 						if (isset ( $value ['decorator'] )) {
 							$value ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['decorator'] );
