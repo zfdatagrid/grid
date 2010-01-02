@@ -1223,7 +1223,6 @@ class Bvb_Grid_DataGrid {
 			}
 		} elseif ($this->pagination > 0) {
 			$this->_select->limit ( $this->pagination, $inicio );
-		} else {
 		}
 		
 		return true;
@@ -1455,7 +1454,6 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
-		
 		$links = $this->_fields;
 		
 		for($i = 0; $i < $tcampos; $i ++) {
@@ -1477,13 +1475,12 @@ class Bvb_Grid_DataGrid {
 			
 			if (! isset ( $novaData [$titles [$i]] ['hide'] ) || $novaData [$titles [$i]] ['hide'] == 0) {
 				
-				
 				$noOrder = isset ( $this->info ['noOrder'] ) ? $this->info ['noOrder'] : '';
 				
 				if ($noOrder == 1 || $this->_isPrimaryGrid == false) {
 					$return [$titles [$i]] = array ('type' => 'field', 'name' => $links [$i], 'field' => $links [$i], 'value' => $this->_titles [$links [$i]] );
 				} else {
-					$return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order",  'value' => $this->_titles [$links [$i]] );
+					$return [$titles [$i]] = array ('type' => 'field', 'name' => $titles [$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'value' => $this->_titles [$links [$i]] );
 				}
 			}
 		}
@@ -1874,9 +1871,13 @@ class Bvb_Grid_DataGrid {
 					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 					
 					$end = explode ( '.', $fields_duble [$is] );
+					$varEnd = end ( $end );
 					
-					$finalDados [end ( $end )] = $new_value;
+					$finalDados [$varEnd] = $new_value;
 					
+					if (strpos ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'], "{{" . $varEnd . "}}" ) !== false) {
+						$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{" . $varEnd . "}}/si", "{{" . $this->data ['table'] . '.' . $varEnd . "}}", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
+					}
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
@@ -2091,9 +2092,8 @@ class Bvb_Grid_DataGrid {
 					}
 				} else {
 					
-					if(array_key_exists($i,$fields_final))
-					{
-						$i++;
+					if (array_key_exists ( $i, $fields_final )) {
+						$i ++;
 					}
 					
 					$fields_final [$i] = $key;
@@ -3131,14 +3131,17 @@ class Bvb_Grid_DataGrid {
 				$explode = explode ( '.', $value [1] );
 				$title = ucwords ( str_replace ( "_", ' ', end ( $explode ) ) );
 				
-				if (strlen ( $value [2] ) > 0) {
+				if (is_object ( $value [1] )) {
 					$title = $value [2];
-					
+					$this->updateColumn ( $value [0] . '.' . $value [2] . ' as ' . $value [2], array ('title' => $title ) );
+				} elseif (strlen ( $value [2] ) > 0) {
+					$title = $value [2];
 					$this->updateColumn ( $value [0] . '.' . $value [1] . ' as ' . $value [2], array ('title' => $title ) );
 				} else {
 					$title = ucfirst ( $value [1] );
 					$this->updateColumn ( $value [0] . '.' . $value [1], array ('title' => $title ) );
 				}
+			
 			}
 		}
 		
