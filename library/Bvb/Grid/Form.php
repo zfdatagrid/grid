@@ -71,9 +71,14 @@ class Bvb_Grid_Form {
 	}
 	
 	function addColumns() {
+		
 		$columns = func_get_args ();
 		
 		$final = array ();
+		
+		if (is_array ( $columns [0] )) {
+			$columns = $columns [0];
+		}
 		
 		foreach ( $columns as $value ) {
 			
