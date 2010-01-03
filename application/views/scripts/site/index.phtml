@@ -26,6 +26,7 @@ text-decoration:none;
 Examples:
 <select onchange="window.location=this.value" style="width:100%; padding:2px;font-size:12px;">
        <option value="<?php echo $this->url ?>default/site/basic" <?php if($this->action=='basic'){echo " selected ";}?>>Basic example - $db->select()->from('table');</option>
+       <option value="<?php echo $this->url ?>default/site/ajax" <?php if($this->action=='ajax'){echo " selected ";}?>>Basic example with AJAX;</option>
         <option value="<?php echo $this->url ?>default/site/joins" <?php if($this->action=='joins'){echo " selected ";}?>>Example with Joins - Several JOINS</option>
         <option value="<?php echo $this->url ?>default/site/extra" <?php if($this->action=='extra'){echo " selected ";}?>>Extra Fields - Extra Fields with custom content</option>
         <option value="<?php echo $this->url ?>default/site/filters" <?php if($this->action=='filters'){echo " selected ";}?>>Advanced Filters - Auto Filters</option>

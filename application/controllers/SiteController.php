@@ -321,7 +321,22 @@ class SiteController extends Zend_Controller_Action {
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
+		$this->view->pages = $grid->deploy ();
+		$this->render ( 'index' );
+	}
+	
+	/**
+	 * The 'most' basic example.
+	 */
+	function ajaxAction() {
 		
+		$grid = $this->grid ( );
+		
+		$grid->query ( $this->_db->select ()->from ( 'City' ) );
+		
+		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
+		$grid->ajax(true);
+		$grid->ajaxId('grid');
 
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
