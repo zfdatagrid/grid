@@ -21,6 +21,8 @@
 
 class Bvb_Grid_DataGrid {
 	
+	const VERSION = 0.5;
+	
 	/**
 	 * Char encoding
 	 *
@@ -1322,8 +1324,11 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-		#$data = $this->map_array ( $this->_fields, 'replace_AS' );
-		$data = array_keys ( $this->_fieldsNoAs );
+		if ($this->getAdapter () != 'db') {
+			$data = $this->map_array ( $this->_fields, 'replace_AS' );
+		} else {
+			$data = array_keys ( $this->_fieldsNoAs );
+		}
 		$tcampos = count ( $data );
 		
 		for($i = 0; $i < count ( $this->extra_fields ); $i ++) {
@@ -1441,8 +1446,12 @@ class Bvb_Grid_DataGrid {
 		
 		$return = array ();
 		$url = $this->getUrl ( array ('order', 'start', 'comm' ) );
-		$tcampos = count ( $this->_fieldsNoAs );
 		
+		if ($this->getAdapter () != 'db') {
+			$tcampos = count ( $this->_fields );
+		} else {
+			$tcampos = count ( $this->_fieldsNoAs );
+		}
 		for($i = 0; $i < count ( $this->extra_fields ); $i ++) {
 			if ($this->extra_fields [$i] ['position'] == 'left') {
 				$return [$this->extra_fields [$i] ['name']] = array ('type' => 'extraField', 'value' => $this->extra_fields [$i] ['name'], 'position' => 'left' );
@@ -1805,16 +1814,21 @@ class Bvb_Grid_DataGrid {
 		
 		$search = $this->map_array ( $this->_fields, 'prepare_replace' );
 		
-		foreach ( array_keys ( $this->_fieldsNoAs ) as $field ) {
-			$fields_duble [] = $field;
-			if (strpos ( $field, "." )) {
-				$fields [] = substr ( $field, strpos ( $field, "." ) + 1 );
-			} else {
-				$fields [] = $field;
-			}
+		if ($this->getAdapter () != 'db') {
+			$foreach = array_keys ( $this->_fields );
+		} else {
+			$foreach = array_keys ( $this->_fieldsNoAs );
 		}
 		
-		$fields = $this->_fieldsNoAs;
+		foreach ( $foreach as $field ) {
+			$fields_duble [] = $field;
+		}
+		
+		if ($this->getAdapter () != 'db') {
+			$fields = $this->_fields;
+		} else {
+			$fields = $this->_fieldsNoAs;
+		}
 		
 		$i = 0;
 		
@@ -1831,20 +1845,22 @@ class Bvb_Grid_DataGrid {
 						
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
-						if (isset ( $value ['eval'] )) {
+						if (isset ( $value ['eval'] ) && $this->getAdapter () == 'db') {
 							$value ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['eval'] );
-							
+						}
+						
+						if (isset ( $value ['eval'] )) {
 							$evalf = str_replace ( $search, $fi, $value ['eval'] );
 							$new_value = eval ( 'return ' . $evalf );
 						}
 						
-						if (isset ( $value ['decorator'] )) {
+						if (isset ( $value ['decorator'] ) && $this->getAdapter () == 'db') {
 							$value ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['decorator'] );
-						} else {
-							$value ['decorator'] = '';
 						}
 						
-						$new_value = str_replace ( $search, $fi, $value ['decorator'] );
+						if (isset ( $value ['decorator'] )) {
+							$new_value = str_replace ( $search, $fi, $value ['decorator'] );
+						}
 						
 						if (isset ( $value ['format'] )) {
 							$new_value = $this->applyFormat ( $new_value, $value ['format'], $value ['format'] );
@@ -1868,7 +1884,7 @@ class Bvb_Grid_DataGrid {
 						
 						}*/
 						
-						$return [$i] [] = @array ('class' => $class . ' ' . $value ['class'], 'value' => $new_value );
+						$return [$i] [] = @array ('class' => $value ['class'], 'value' => $new_value );
 					}
 				}
 			}
@@ -1901,9 +1917,12 @@ class Bvb_Grid_DataGrid {
 					$new_value = htmlspecialchars ( $new_value );
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
+				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ) && $this->getAdapter () == 'db') {
 					
 					$this->data ['fields'] [$fields_duble [$is]] ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
+				
+				}
+				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
 					
 					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
 					$new_value = eval ( 'return ' . $evalf . ';' );
@@ -1951,8 +1970,9 @@ class Bvb_Grid_DataGrid {
 					
 					$finalDados [$varEnd] = $new_value;
 					
-					$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
-					
+					if ($this->getAdapter () == 'db') {
+						$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
+					}
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
 				
@@ -1974,19 +1994,22 @@ class Bvb_Grid_DataGrid {
 					if ($value ['position'] == 'right') {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
-						if (isset ( $value ['eval'] )) {
+						if (isset ( $value ['eval'] ) && $this->getAdapter () == 'db') {
 							$value ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['eval'] );
+						}
+						
+						if (isset ( $value ['eval'] )) {
 							$evalf = str_replace ( $search, $fi, $value ['eval'] );
 							$new_value = eval ( 'return ' . $evalf );
 						}
 						
-						if (isset ( $value ['decorator'] )) {
+						if (isset ( $value ['decorator'] ) && $this->getAdapter () == 'db') {
 							$value ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['decorator'] );
-						} else {
-							$value ['decorator'] = '';
 						}
 						
-						$new_value = str_replace ( $search, $fi, $value ['decorator'] );
+						if (isset ( $value ['decorator'] )) {
+							$new_value = str_replace ( $search, $fi, $value ['decorator'] );
+						}
 						
 						if (isset ( $value ['format'] )) {
 							$new_value = $this->applyFormat ( $new_value, $value ['format'] );
@@ -2833,7 +2856,7 @@ class Bvb_Grid_DataGrid {
 				
 				} else {
 					
-					$explode = explode ( '_', $this->data ['order'] );
+					$explode = explode ( '_', $this->ctrlParams ['order'] );
 					$order = reset ( $explode );
 					$orderType = end ( $explode );
 					
@@ -3293,6 +3316,14 @@ class Bvb_Grid_DataGrid {
 		}
 		
 		return $this;
+	}
+	
+	/**
+	 * Returns the grid version
+	 * @return string
+	 */
+	function getVersion() {
+		return self::VERSION;
 	}
 
 }
