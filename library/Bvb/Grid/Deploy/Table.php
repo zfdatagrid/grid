@@ -166,6 +166,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	protected $_callbackAfterInsert = null;
 	
 	/**
+	 * Callback to be called Before crud operation update
+	 * @var unknown_type
+	 */
+	protected $_callbackBeforeUpdate = null;
+	
+	/**
+	 * Callback to be called Before crud operation delete
+	 * @var unknown_type
+	 */
+	protected $_callbackBeforeDelete = null;
+	
+	/**
+	 * Callback to be called Before crud operation insert
+	 * @var unknown_type
+	 */
+	protected $_callbackBeforeInsert = null;
+	
+	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
 	 *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
@@ -361,6 +379,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					
 					try {
 						
+						if (null !== $this->_callbackBeforeInsert) {
+							call_user_func_array ( $this->_callbackBeforeInsert, $final_values );
+						}
 						$this->_db->insert ( $this->data ['table'], $final_values );
 						
 						if (null !== $this->_callbackAfterInsert) {
@@ -384,10 +405,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					
 					try {
 						
+						if (null !== $this->_callbackBeforeUpdate) {
+							call_user_func_array ( $this->_callbackBeforeUpdate, $final_values );
+						}
+						
 						$this->_db->update ( $this->data ['table'], $final_values, $queryUrl . $where );
+						
 						if (null !== $this->_callbackAfterUpdate) {
 							call_user_func_array ( $this->_callbackAfterUpdate, $final_values );
 						}
+						
 						$this->message = $this->__ ( 'Record saved' );
 						$this->messageOk = true;
 					
@@ -618,6 +645,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 					$resultDelete = $this->_db->delete ( $value ['table'], $this->_db->quoteIdentifier ( $value ['childField'] ) . $operand . $this->_db->quote ( $finalValue ) );
 				
 				}
+			}
+			
+			if (null !== $this->_callbackBeforeDelete) {
+				call_user_func_array ( $this->_callbackBeforeDelete, $this->getPkFromUrl ( false ) . $where );
 			}
 			
 			$resultDelete = $this->_db->delete ( $this->data ['table'], $this->getPkFromUrl ( false ) . $where );
@@ -916,8 +947,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 						$finalQueryOrder = $value;
 					}
 					
-					$order = strtolower($value[1])=='asc'?'desc':'asc';
-					$orderField = $finalQueryOrder[0];
+					$order = strtolower ( $value [1] ) == 'asc' ? 'desc' : 'asc';
+					$orderField = $finalQueryOrder [0];
 					
 					break;
 				}
@@ -1411,7 +1442,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			$i ++;
 		}
 		
-		if (isset ( $this->info ['hRow'] ['title'] )  && $this->_totalRecords > 0) {
+		if (isset ( $this->info ['hRow'] ['title'] ) && $this->_totalRecords > 0) {
 			
 			$bar = $grids;
 			
@@ -2045,6 +2076,18 @@ function gridChangeFilters(fields,url,Ajax)
 		
 		$fieldsGet = $form ['fields'];
 		$fields = array ();
+		
+		if (isset ( $form ['options'] ['callbackBeforeDelete'] )) {
+			$this->_callbackBeforeDelete = $form ['options'] ['callbackBeforeDelete'];
+		}
+		
+		if (isset ( $form ['options'] ['callbackBeforeInsert'] )) {
+			$this->_callbackBeforeInsert = $form ['options'] ['callbackBeforeInsert'];
+		}
+		
+		if (isset ( $form ['options'] ['callbackBeforeUpdate'] )) {
+			$this->_callbackBeforeUpdate = $form ['options'] ['callbackBeforeUpdate'];
+		}
 		
 		if (isset ( $form ['options'] ['callbackAfterDelete'] )) {
 			$this->_callbackAfterDelete = $form ['options'] ['callbackAfterDelete'];

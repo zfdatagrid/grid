@@ -31,6 +31,40 @@ class Bvb_Grid_Form {
 		return $this;
 	}
 	
+	function setCallbackBeforeDelete($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackBeforeDelete'] = $callback;
+		
+		return $this;
+	}
+	
+	function setCallbackBeforeUpdate($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackBeforeUpdate'] = $callback;
+		
+		return $this;
+	}
+	
+	function setCallbackBeforeInsert($callback) {
+		
+		if (! is_callable ( $callback )) {
+			throw new Exception ( $callback . ' not callable' );
+		}
+		
+		$this->options ['callbackBeforeInsert'] = $callback;
+		
+		return $this;
+	}
+	
+	
 	function setCallbackAfterDelete($callback) {
 		
 		if (! is_callable ( $callback )) {
