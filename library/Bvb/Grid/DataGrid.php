@@ -368,12 +368,6 @@ class Bvb_Grid_DataGrid {
 	protected $_forceLimit = false;
 	
 	/**
-	 * If the user manually sets the query limit
-	 * @var int|bool
-	 */
-	protected $_forceLimitOffset = false;
-	
-	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
 	 * 
@@ -3287,7 +3281,6 @@ class Bvb_Grid_DataGrid {
 		
 		if ($this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT ) > 0) {
 			$this->_forceLimit = $this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT );
-			$this->_forceLimitOffset = ( int ) $this->_select->getPart ( Zend_Db_Select::LIMIT_OFFSET );
 		}
 		
 		foreach ( $from as $key => $tables ) {
