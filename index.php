@@ -52,7 +52,6 @@ Zend_Registry::set('cache',$cache);
 $locale = new Zend_Locale ( 'en_US' );
 Zend_Registry::set ( 'locale', $locale );
 
-
 $frontController = Zend_Controller_Front::getInstance();
 $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');

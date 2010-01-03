@@ -55,10 +55,11 @@ class SiteController extends Zend_Controller_Action {
 	 *
 	 * @return $grid
 	 */
-	function grid() {
+	function grid($export=null) {
 		
-		$export = $this->getRequest ()->getParam ( 'export' );
-		
+		if (null === $export) {
+			$export = $this->getRequest ()->getParam ( 'export' );
+		}
 		$db = Zend_Registry::get ( 'db' );
 		
 		switch ($export) {
@@ -85,6 +86,9 @@ class SiteController extends Zend_Controller_Action {
 				break;
 			case 'pdf' :
 				$grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+				break;
+			case 'graph' :
+				$grid = new Bvb_Grid_Deploy_Graph ( $db, 'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'print' :
 				$grid = new Bvb_Grid_Deploy_Print ( $db, 'Grid Example', 'media/temp', array ('download' ) );
@@ -123,11 +127,7 @@ class SiteController extends Zend_Controller_Action {
 	function vincentAction() {
 		
 		$db = Zend_Registry::get ( 'db' );
-		$select = $db->select ()
-		      ->distinct ()
-		      ->from ( array('p1'=>'ProjetClient1'), array ('p1.id', 'p1.cp', 'p1.ville' ) )
-		      ->joinLeft (array('f1'=> 'FicheClient1'), 'p1.id_client = f1.id', array ('f1_id'=> 'f1.id', 'f1.email', 'nom'=> 'f1.nom' ) )
-		      ->joinLeft (array('tc' => 'TypeClient'), 'f1.id_type_client = tc.id', array ('type'=>'tc.nom' ) );
+		$select = $db->select ()->distinct ()->from ( array ('p1' => 'ProjetClient1' ), array ('p1.id', 'p1.cp', 'p1.ville' ) )->joinLeft ( array ('f1' => 'FicheClient1' ), 'p1.id_client = f1.id', array ('f1_id' => 'f1.id', 'f1.email', 'nom' => 'f1.nom' ) )->joinLeft ( array ('tc' => 'TypeClient' ), 'f1.id_type_client = tc.id', array ('type' => 'tc.nom' ) );
 		
 		$grid = $this->grid ( 'table' );
 		
@@ -150,14 +150,12 @@ class SiteController extends Zend_Controller_Action {
 		$grid->addExtraColumns ( $btnVoir, $btnEdit, $btnNewProjet );
 		
 		$filters = new Bvb_Grid_Filters ( );
-		$filters->addFilter ( 'p1.ville' )
-		          ->addFilter ( 'f1.email' )
-		          ->addFilter ( 'f1.nom' );
+		$filters->addFilter ( 'p1.ville' )->addFilter ( 'f1.email' )->addFilter ( 'f1.nom' );
 		
 		$grid->addFilters ( $filters );
 		
 		$this->view->pages = $grid->deploy ();
-        $this->render ( 'index' );
+		$this->render ( 'index' );
 	}
 	
 	/**
@@ -309,8 +307,6 @@ class SiteController extends Zend_Controller_Action {
 		$form = new Bvb_Grid_Form ( );
 		$form->add ( 1 )->edit ( 1 )->button ( 1 )->delete ( 1 )->onAddForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) )->onEditForce ( array ('date_added' => date ( 'Y-m-d H:i:s' ) ) );
 		
-		
-        
 		#->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
 		
 
@@ -381,6 +377,12 @@ class SiteController extends Zend_Controller_Action {
 		$this->render ( 'index' );
 	}
 	
+	function teste() {
+		
+		return func_get_arg ( 1 ) * 3;
+	
+	}
+	
 	/**
 	 * The 'most' basic example.
 	 */
@@ -390,7 +392,23 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
+		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
+		
 		$this->view->pages = $grid->deploy ();
+		$this->render ( 'index' );
+	}
+	
+	/**
+	 * The 'most' basic example.
+	 */
+	function graphAction() {
+		
+		$grid = $this->grid (  );
+		
+		$grid->query ( $this->_db->select ()->from ( 'City', array ('Name', 'Population' ) ) );
+		
+		$this->view->pages = $grid->deploy ();
+		
 		$this->render ( 'index' );
 	}
 	
@@ -442,12 +460,12 @@ class SiteController extends Zend_Controller_Action {
 		$grid->noFilters ( 1 );
 		$grid->noOrder ( 1 );
 		
-		$grid->setPagination ( 1200 );
+		$grid->setPagination ( 10 );
 		
 		$grid->updateColumn ( 'Name', array ('title' => 'Country' ) );
 		$grid->updateColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
 		$grid->updateColumn ( 'Population', array ('title' => 'Population', 'class' => 'width_80' ) );
-		$grid->updateColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50', 'format' => 'number' ) );
+		$grid->updateColumn ( 'LifeExpectancy', array ('title' => 'Life E.', 'class' => 'width_50', 'decorator' => '<b>{{Country.LifeExpectancy}}</b>', 'format' => 'number' ) );
 		$grid->updateColumn ( 'GovernmentForm', array ('title' => 'Government Form' ) );
 		$grid->updateColumn ( 'HeadOfState', array ('title' => 'Head Of State' ) );
 		

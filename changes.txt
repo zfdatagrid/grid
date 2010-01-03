@@ -1,3 +1,96 @@
+[259 - 03-01-2010]
+code cleanup
+
+[258 - 03-01-2010]
+The grid now respects the query limit clause
+
+[257 - 03-01-2010]
+Callback Option for columns:
+[CODE]
+$grid->updateColumn('ID',array('callback'=>array('function'=>array($this,'function'),'params'=>array('{{Name}}','{{ID}}'))));
+[/CODE]
+
+[255 - 02-01-2010]
+Added callbacks for: BeforUpdate, BeforeInsert and BeforeDelete
+
+[254 - 02-01-2010]
+Revert to support eval option - FIX
+
+[254 - 02-01-2010]
+Revert to support eval option
+
+[253 - 02-01-2010]
+FIXES-70: Problems when using filters and joins with columns with the same name
+
+[252 - 02-01-2010]
+FIXES-70: Some issues when using joins (Kleina)
+
+[251 - 02-01-2010]
+FIXES: When using a single table we don't have to prefix the field with the table name or alias. (Fixes extra-columns)
+
+[250 - 02-01-2010]
+FIXES: When using a single table we don0t have to prefix the field with the table name or alias.
+
+[249 - 02-01-2010]
+FIXES: We can now set the fields presentation order manually
+
+[248 - 02-01-2010]
+FIXES-37: horizontal rows were throwing a foreach error if the table was empty [duckedtapedemon]
+
+[247 - 02-01-2010]
+FIXES:When we set the default order with Zend_Db the image now appears on the title
+
+[246 - 02-01-2010]
+FIXES-78: Bug that won't allow the use of format and decorator at the same time
+
+[245 - 02-01-2010]
+FIXES-79: Now SQLExpr should be set like this:
+
+[CODE]
+$grid->sqlexp (array(
+            'o.summe'=>array(
+                'functions' => array('SUM'),
+                'value' => 'o.price*o.number',
+                'format'=>'numer' //Format is optional
+            )
+        ));
+[/CODE]
+
+Thans kleina
+
+[244 - 02-01-2010]
+FIXES: Notice fixe [trueorfalse]
+
+[243 - 02-01-2010]
+FIXES: Array to set forms elements [trueorfalse]
+
+[242 - 02-01-2010]
+FIXES: misspelling of a function name [DaveWRowe]
+
+[241 - 29-12-2009]
+FIXES: Some notices...
+
+[240 - 29-12-2009]
+FIXES: LIMIT Clause not being respected...
+
+[238 - 27-12-2009]
+FIXES: Sql expressions not working.
+
+[237 - 17-12-2009]
+FIXES-80: Not ordering tables with _ on the name
+
+[236 - 17-12-2009]
+FIXED-73: Row counting
+
+[235 - 16-12-2009]
+FIXED-73: Deleting records with joins
+
+[231 - 16-12-2009]
+FIXED-76: Row counting
+
+[230 - 12-12-2009]
+FIXED-77: Default Order
+
 [229 - 12-12-2009]
 NEW: Allow to set a form select item as selected when not editing
 
