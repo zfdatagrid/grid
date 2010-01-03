@@ -26,6 +26,7 @@ class SiteController extends Zend_Controller_Action {
 	function init() {
 		
 		$this->view->url = Zend_Registry::get ( 'config' )->site->url;
+		$this->view->action = $this->getRequest()->getActionName();
 		$this->_db = Zend_Registry::get ( 'db' );
 	
 	}
@@ -55,7 +56,7 @@ class SiteController extends Zend_Controller_Action {
 	 *
 	 * @return $grid
 	 */
-	function grid($export=null) {
+	function grid($export = null) {
 		
 		if (null === $export) {
 			$export = $this->getRequest ()->getParam ( 'export' );
@@ -109,55 +110,6 @@ class SiteController extends Zend_Controller_Action {
 		return $grid;
 	}
 	
-	function unionAction() {
-		$db = Zend_Registry::get ( 'db' );
-		
-		$select1 = "SELECT bug_id as id FROM bugs";
-		$select2 = "SELECT price as id from products";
-		
-		$select = $db->select ()->order ( 'id' )->union ( array ($select1, $select2 ) );
-		
-		$grid = $this->grid ( 'table' );
-		$grid->query ( $select );
-		
-		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
-	}
-	
-	function vincentAction() {
-		
-		$db = Zend_Registry::get ( 'db' );
-		$select = $db->select ()->distinct ()->from ( array ('p1' => 'ProjetClient1' ), array ('p1.id', 'p1.cp', 'p1.ville' ) )->joinLeft ( array ('f1' => 'FicheClient1' ), 'p1.id_client = f1.id', array ('f1_id' => 'f1.id', 'f1.email', 'nom' => 'f1.nom' ) )->joinLeft ( array ('tc' => 'TypeClient' ), 'f1.id_type_client = tc.id', array ('type' => 'tc.nom' ) );
-		
-		$grid = $this->grid ( 'table' );
-		
-		$grid->query ( $select );
-		$grid->setTemplate ( 'outside', 'table' );
-		
-		$grid->updateColumn ( 'f1.id', array ('hide' => 1 ) );
-		$grid->updateColumn ( 'p1.id', array ('hide' => 1 ) );
-		$grid->updateColumn ( 'p1.cp', array ('hide' => 1 ) );
-		
-		$btnVoir = new Bvb_Grid_ExtraColumns ( );
-		$btnVoir->position ( 'right' )->name ( 'Voir' )->decorator ( "<a href=\"/fiche/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"                    class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>voir</a>" );
-		
-		$btnEdit = new Bvb_Grid_ExtraColumns ( );
-		$btnEdit->position ( 'right' )->name ( 'Editer' )->decorator ( "<a href=\"/projet/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"                   class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>modifier</a>" );
-		
-		$btnNewProjet = new Bvb_Grid_ExtraColumns ( );
-		$btnNewProjet->position ( 'right' )->name ( 'Simu' )->decorator ( "<a href=\"simulation/create/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\"               class='fg-button ui-state-default ui-state-default ui-priority-primary ui-corner-all' id=''>+</a>" );
-		
-		$grid->addExtraColumns ( $btnVoir, $btnEdit, $btnNewProjet );
-		
-		$filters = new Bvb_Grid_Filters ( );
-		$filters->addFilter ( 'p1.ville' )->addFilter ( 'f1.email' )->addFilter ( 'f1.nom' );
-		
-		$grid->addFilters ( $filters );
-		
-		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
-	}
-	
 	/**
 	 * An example of a group grid
 	 *
@@ -166,9 +118,9 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid = $this->grid ( 'table' );
 		
-		$grid->query ( $this->_db->select ()->from ( 'crud', array ('id', 'firstname', 'lastname', 'age' ) ) );
+		$grid->query ( $this->_db->select ()->from ( 'crud', array ('id', 'firstname', 'lastname', 'age' ) )->group('age') );
 		
-		$grid->addColumn ( 'id' )->updateColumn ( 'firstname' )->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->updateColumn ( 'age', array ('sqlexp' => 'ROUND(SUM(age))', 'title' => 'Age AVG', 'class' => 'center width_50' ) )->noFilters ( 1 )->setTemplate ( 'select' );
+		$grid->addColumn ( 'id' )->updateColumn ( 'firstname' )->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->updateColumn ( 'age', array ( 'title' => 'Age AVG', 'class' => 'center width_50' ) )->noFilters ( 1 )->setTemplate ( 'select' );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
@@ -342,24 +294,6 @@ class SiteController extends Zend_Controller_Action {
 		$this->render ( 'index' );
 	}
 	
-	/**
-	 * This example shows you how to use a Zend_Db_Select instance to build the grid.
-	 * 
-	 *
-	 */
-	function selectAction() {
-		
-		$grid = $this->grid ( 'table' );
-		
-		$select = $this->_db->select ()->from ( 'products', array ('id' => 'product_id', 'product_name', 'price' ) )->where ( 'price > 100.00' );
-		$grid->query ( $select );
-		$grid->noFilters ( 1 );
-		
-		$this->view->pages = $grid->deploy ();
-		$this->view->action = 'basic';
-		$this->render ( 'index' );
-	}
-	
 	function csvAction() {
 		
 		$grid = $this->grid ( 'table' );
@@ -377,38 +311,19 @@ class SiteController extends Zend_Controller_Action {
 		$this->render ( 'index' );
 	}
 	
-	function teste() {
-		
-		return func_get_arg ( 1 ) * 3;
-	
-	}
-	
 	/**
 	 * The 'most' basic example.
 	 */
 	function basicAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid ( );
 		
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
 		
+
 		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
-	}
-	
-	/**
-	 * The 'most' basic example.
-	 */
-	function graphAction() {
-		
-		$grid = $this->grid (  );
-		
-		$grid->query ( $this->_db->select ()->from ( 'City', array ('Name', 'Population' ) ) );
-		
-		$this->view->pages = $grid->deploy ();
-		
 		$this->render ( 'index' );
 	}
 	
@@ -420,7 +335,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function pdfAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		$grid->query ( $this->_db->select ()->from ( 'pdf' ) );
 		
 		$pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
@@ -439,7 +354,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function templateAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
@@ -455,7 +370,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function hrowAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		$grid->query ( $this->_db->select ()->from ( 'Country', array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) ) );
 		$grid->noFilters ( 1 );
 		$grid->noOrder ( 1 );
@@ -479,7 +394,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function columnAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		$grid->query ( $this->_db->select ()->from ( array ('c' => 'Country' ), array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) )->join ( array ('ct' => 'City' ), 'c.Capital = ct.ID', array ('Name' ) ) );
 		$grid->setPagination ( 15 );
 		#->noFilters(1);
@@ -515,17 +430,6 @@ class SiteController extends Zend_Controller_Action {
 		$grid->addFilters ( $filters );
 		
 		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
-	}
-	
-	function xmlAction() {
-		
-		$grid = $this->grid ( 'table' );
-		
-		$grid->setGridFromXMl ( 'application/grids/Basic' );
-		
-		$this->view->pages = $grid->deploy ();
-		$this->view->action = 'basic';
 		$this->render ( 'index' );
 	}
 

@@ -10,34 +10,38 @@ width:330px;
 line-height:100%;
 left:30px;
 }
+
+#menu a,#menu a:hover{
+	color:#333;
+text-decoration:none;
+}
 </style>
 </head>
 <body>
-<table style="width:890px; margin-top:10px;" align="center" cellpadding="0" cellspacing="0">
+<table style="width:900px; margin-top:10px;" align="center" cellpadding="0" cellspacing="0">
 <tr>
 <td style="background-color:#F2F2F2; border:0px;">
-
-<div style="position:relative; background-image:url(<?php echo $this->url; ?>public/images/grid.jpg); height:180px;width:900px;">
-
-	<div style="float:left; width:250px; text-align:center;border:1px dotted orange; font-size:10px; position:relative;top:60px; left:20px;padding:4px; background-color:#DEDEDE; "><a style="text-decoration:none;" target="_blank" href="http://www.petala-azul.com/blog">Check the Blog for the latests updates</a><hr><a href="http://www.petala-azul.com/grid/default/site/code" target="_blank">Check the source code for this controller</a></div>
-
-    <div class="topo" style="width:335px;top:15px;height:125px;position:relative;float:right; margin-right:10px;" >
-    <ul style="list-style:none;padding:0px;font-size:10px;left:30px;">
-        <li><span><a href="<?php echo $this->url ?>default/site/basic">Basic example</a></span> - $grid->from('table');</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/joins">Example with Joins</a></span> - Several JOINS</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/extra">Extra Fields</a></span> - Extra Fields with custom content</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/filters">Advanced Filters</a></span> - Auto Filters</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/crud">CRUD operations</a></span> - Create, Read, Update and delete operations</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/column">Columns</a></span> - Build Using Bvb_Grid_Column</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/hrow">Horizontal Row</a></span> - Split the grid by sections</li>
-        <li><span><a href="<?php echo $this->url ?>default/site/template">Custom Template</a></span> - Outside the Grid Path</li>
-    </ul>
-    
-    </div>
+<div style="position:relative; background-image:url(<?php echo $this->url; ?>public/images/grid.jpg); height:100px;width:900px;">
+<div id="menu" style="border:0;position:relative; top:20px;margin-left:300px;margin-right:200px;font-size:12px;">
+Examples:
+<select onchange="window.location=this.value" style="width:100%; padding:2px;font-size:12px;">
+       <option value="<?php echo $this->url ?>default/site/basic" <?php if($this->action=='basic'){echo " selected ";}?>>Basic example - $db->select()->from('table');</option>
+        <option value="<?php echo $this->url ?>default/site/joins" <?php if($this->action=='joins'){echo " selected ";}?>>Example with Joins - Several JOINS</option>
+        <option value="<?php echo $this->url ?>default/site/extra" <?php if($this->action=='extra'){echo " selected ";}?>>Extra Fields - Extra Fields with custom content</option>
+        <option value="<?php echo $this->url ?>default/site/filters" <?php if($this->action=='filters'){echo " selected ";}?>>Advanced Filters - Auto Filters</option>
+        <option value="<?php echo $this->url ?>default/site/crud" <?php if($this->action=='crud'){echo " selected ";}?>>CRUD operations - Create, Read, Update and delete operations</option>
+        <option value="<?php echo $this->url ?>default/site/column" <?php if($this->action=='column'){echo " selected ";}?>>Columns - Build Using Bvb_Grid_Column</option>
+        <option value="<?php echo $this->url ?>default/site/hrow" <?php if($this->action=='hrow'){echo " selected ";}?>>Horizontal Row - Split the grid by sections</option>
+        <option value="<?php echo $this->url ?>default/site/template" <?php if($this->action=='template'){echo " selected ";}?>>Custom Template - Outside the Grid Path</option>
+        <option value="<?php echo $this->url ?>default/site/feed" <?php if($this->action=='feed'){echo " selected ";}?>>Feed - Using RSS as datasource</option>
+        <option value="<?php echo $this->url ?>default/site/csv" <?php if($this->action=='csv'){echo " selected ";}?>>CSV - Using CSV file as datasource</option>
+</select>
+<a target="_blank" href="<?php echo $this->url ?>default/site/code">Source code for this controller</a> | 
+<a href="http://www.zfdatagrid.com/blog">Back to blog</a>
+</div>
 
 </div>
 
-<div>
 </td>
 </tr>
 
@@ -46,11 +50,7 @@ left:30px;
 <div id="grid">
 <?php echo $this->pages; ?>
 </div>
-<br />
 
-<div style="width:900px; display:none; min-height:120px;  border:1px solid #999; background-color:#FFF" ><img style="max-width:100%;" src="<?php echo $this->url;?>public/images/grid/<?php echo $this->action; ?>.jpg"></div>
-
-</div>
 </td>
 </tr>
 </table>

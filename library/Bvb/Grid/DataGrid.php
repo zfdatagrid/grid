@@ -891,32 +891,6 @@ class Bvb_Grid_DataGrid {
 		return $return;
 	}
 	
-	/**
-	 * Create a grid using XML
-	 * 
-	 * ALPHA!!!!!!!
-	 *
-	 */
-	function setGridFromXml($file) {
-		
-		$t2 = '';
-		$file = rtrim ( $file, ".xml" ) . ".xml";
-		$xml = $this->object2array ( simplexml_load_file ( $file ) );
-		
-		if (isset ( $xml ['data'] ['where'] ) && strlen ( $xml ['data'] ['where'] ) > 0) {
-			$xml ['data'] ['where'] = $final;
-		}
-		
-		foreach ( $xml ['data'] ['fields'] as $key => $final ) {
-			if (isset ( $final ['@attributes'] ) && is_array ( $final ['@attributes'] )) {
-				unset ( $xml ['data'] ['fields'] [$key] );
-				$xml ['data'] ['fields'] [$key . " AS " . $final ['@attributes'] ['as']] = $final;
-			}
-		}
-		
-		self::setData ( $xml );
-	
-	}
 	
 	/**
 	 *  The allowed fields from a table

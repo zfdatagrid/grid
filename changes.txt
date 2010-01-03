@@ -1,3 +1,12 @@
+[262 - 03-01-2010]
+Getting ready for launch
+
+[261 - 03-01-2010]
+Version 0.5 (2) :)
+
+[260 - 03-01-2010]
+Version 0.5
+
 [259 - 03-01-2010]
 code cleanup
 
