@@ -368,6 +368,12 @@ class Bvb_Grid_DataGrid {
 	protected $_forceLimit = false;
 	
 	/**
+	 * If the user manually sets the query limit
+	 * @var int|bool
+	 */
+	protected $_forceLimitOffset = false;
+	
+	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
 	 * 
@@ -1227,13 +1233,7 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
-		if (isset ( $this->info ['limit'] ) && ((@is_array ( $this->info ['limit'] ) || strlen ( $this->info ['limit'] ) > 0))) {
-			if (is_array ( $this->info ['limit'] )) {
-				$this->_select->limit ( $this->info ['limit'] [1], $this->info ['limit'] [0] );
-			} else {
-				$this->_select->limit ( $this->info ['limit'] );
-			}
-		} elseif ($this->pagination > 0) {
+		if (false === $this->_forceLimit) {
 			$this->_select->limit ( $this->pagination, $inicio );
 		}
 		
@@ -2006,6 +2006,7 @@ class Bvb_Grid_DataGrid {
 			}
 			$i ++;
 		}
+		
 		return $return;
 	}
 	
@@ -2716,25 +2717,34 @@ class Bvb_Grid_DataGrid {
 					$stmt = $this->_db->query ( $this->_select );
 					$result = $stmt->fetchAll ();
 					
-					$selectZendDb = clone $this->_select;
-					$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
-					$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
-					$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
-					$selectZendDb->reset ( Zend_Db_Select::GROUP );
-					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
+					if ($this->_forceLimit === false) {
+						
+						$selectZendDb = clone $this->_select;
+						if ($this->_forceLimit == false) {
+							$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
+							$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
+						}
+						$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
+						$selectZendDb->reset ( Zend_Db_Select::GROUP );
+						$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
+						
+						$stmt = $selectZendDb->query ();
+						
+						$resultZendDb = $stmt->fetchAll ();
+						
+						if (count ( $resultZendDb ) == 1) {
+							$resultCount = $resultZendDb [0]->TOTAL;
+						} else {
+							$resultCount = count ( $resultZendDb );
+						}
 					
-					$stmt = $selectZendDb->query ();
-					
-					$resultZendDb = $stmt->fetchAll ();
-					
-					if (count ( $resultZendDb ) == 1) {
-						$resultCount = $resultZendDb [0]->TOTAL;
 					} else {
-						$resultCount = count ( $resultZendDb );
-					}
-					
-					if ($this->_forceLimit !== false && $resultCount > $this->_forceLimit) {
+						
 						$resultCount = $this->_forceLimit;
+						
+						if (count ( $result ) < $resultCount) {
+							$resultCount = count ( $result );
+						}
 					}
 					
 					$cache->save ( $result, md5 ( $this->_select->__toString () ), array ($this->cache ['tag'] ) );
@@ -2750,25 +2760,34 @@ class Bvb_Grid_DataGrid {
 				$stmt = $this->_db->query ( $this->_select );
 				$result = $stmt->fetchAll ();
 				
-				$selectZendDb = clone $this->_select;
-				$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
-				$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
-				$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
-				$selectZendDb->reset ( Zend_Db_Select::GROUP );
-				$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
+				if ($this->_forceLimit === false) {
+					
+					$selectZendDb = clone $this->_select;
+					if ($this->_forceLimit == false) {
+						$selectZendDb->reset ( Zend_Db_Select::LIMIT_COUNT );
+						$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
+					}
+					$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
+					$selectZendDb->reset ( Zend_Db_Select::GROUP );
+					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
+					
+					$stmt = $selectZendDb->query ();
+					
+					$resultZendDb = $stmt->fetchAll ();
+					
+					if (count ( $resultZendDb ) == 1) {
+						$resultCount = $resultZendDb [0]->TOTAL;
+					} else {
+						$resultCount = count ( $resultZendDb );
+					}
 				
-				$stmt = $selectZendDb->query ();
-				
-				$resultZendDb = $stmt->fetchAll ();
-				
-				if (count ( $resultZendDb ) == 1) {
-					$resultCount = $resultZendDb [0]->TOTAL;
 				} else {
-					$resultCount = count ( $resultZendDb );
-				}
-				
-				if ($this->_forceLimit !== false && $resultCount > $this->_forceLimit) {
+					
 					$resultCount = $this->_forceLimit;
+					
+					if (count ( $result ) < $resultCount) {
+						$resultCount = count ( $result );
+					}
 				}
 			}
 			
@@ -3268,6 +3287,7 @@ class Bvb_Grid_DataGrid {
 		
 		if ($this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT ) > 0) {
 			$this->_forceLimit = $this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT );
+			$this->_forceLimitOffset = ( int ) $this->_select->getPart ( Zend_Db_Select::LIMIT_OFFSET );
 		}
 		
 		foreach ( $from as $key => $tables ) {
