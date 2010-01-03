@@ -1788,8 +1788,13 @@ class Bvb_Grid_DataGrid {
 		return $this;
 	}
 	
-	function repalceSpecialTags(&$item, $key, $text) {
+	function replaceSpecialTags(&$item, $key, $text) {
 		$item = str_replace ( $text ['find'], $text ['replace'], $item );
+	}
+	
+	protected function insertTableName(&$teste, $key) {
+		$table = func_get_arg ( 2 );
+		$teste = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $table [0] . ".\\1", $teste );
 	}
 	
 	/**
@@ -1824,10 +1829,12 @@ class Bvb_Grid_DataGrid {
 			/**
 			 *Deal with extrafield from the left
 			 */
-			
 			if (is_array ( $extra_fields )) {
+				
 				foreach ( $extra_fields as $value ) {
+					
 					if ($value ['position'] == 'left') {
+						
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
 						if (isset ( $value ['eval'] )) {
@@ -1848,6 +1855,25 @@ class Bvb_Grid_DataGrid {
 						if (isset ( $value ['format'] )) {
 							$new_value = $this->applyFormat ( $new_value, $value ['format'], $value ['format'] );
 						}
+						/*
+						if (isset ( $value ['callback'] ['function'] )) {
+							
+							if (! is_callable ( $value ['callback'] ['function'] )) {
+								throw new Exception ( $value ['callback'] ['function'] . ' not callable' );
+							}
+							
+							$toReplace = $value ['callback'] ['params'];
+							
+							array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
+							
+							if (is_array ( $toReplace )) {
+								array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $fi ) );
+							}
+							
+							$new_value = call_user_func_array ( $value ['callback'] ['function'], $toReplace );
+						
+						}*/
+						
 						$return [$i] [] = @array ('class' => $class . ' ' . $value ['class'], 'value' => $new_value );
 					}
 				}
@@ -1890,6 +1916,25 @@ class Bvb_Grid_DataGrid {
 				
 				}
 				
+				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] )) {
+					
+					if (! is_callable ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] )) {
+						throw new Exception ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] . ' not callable' );
+					}
+					
+					$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
+					
+					array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
+					
+					if (is_array ( $toReplace )) {
+						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
+						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
+					}
+					
+					$new_value = call_user_func_array ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'], $toReplace );
+				
+				}
+				
 				//[PT]Aplicar o formato da célula
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] )) {
 					
@@ -1897,7 +1942,7 @@ class Bvb_Grid_DataGrid {
 					
 					if (is_array ( $alias )) {
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
-						array_walk_recursive ( $alias, array ($this, 'repalceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
+						array_walk_recursive ( $alias, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
 					}
 					
 					$new_value = $this->applyFormat ( $new_value, $alias );
