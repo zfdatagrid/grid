@@ -27,6 +27,7 @@ class SiteController extends Zend_Controller_Action {
 		
 		$this->view->url = Zend_Registry::get ( 'config' )->site->url;
 		$this->view->action = $this->getRequest()->getActionName();
+		header('Content-Type: text/html; charset=ISO-8859-1');
 		$this->_db = Zend_Registry::get ( 'db' );
 	
 	}
@@ -351,7 +352,7 @@ class SiteController extends Zend_Controller_Action {
 	function pdfAction() {
 		
 		$grid = $this->grid (  );
-		$grid->query ( $this->_db->select ()->from ( 'pdf' ) );
+		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		$pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
 'orientation' => 'landscape', # || ''
@@ -390,7 +391,7 @@ class SiteController extends Zend_Controller_Action {
 		$grid->noFilters ( 1 );
 		$grid->noOrder ( 1 );
 		
-		$grid->setPagination ( 10 );
+		$grid->setPagination ( 1200 );
 		
 		$grid->updateColumn ( 'Name', array ('title' => 'Country' ) );
 		$grid->updateColumn ( 'Continent', array ('title' => 'Continent', 'hRow' => 1 ) );
