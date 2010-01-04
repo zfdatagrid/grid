@@ -3278,6 +3278,7 @@ class Bvb_Grid_DataGrid {
 		
 		if ($this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT ) > 0) {
 			$this->_forceLimit = $this->_select->getPart ( Zend_Db_Select::LIMIT_COUNT );
+            $this->setPagination($this->_forceLimit);
 		}
 		
 		foreach ( $from as $key => $tables ) {
