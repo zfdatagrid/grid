@@ -753,18 +753,6 @@ class Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 * Define which allowed types of exportation 
-	 *
-	 * @param array $var
-	 * @return $this
-	 */
-	function export(array $var) {
-		
-		$this->export = $var;
-		return $this;
-	}
-	
-	/**
 	 * Get the table name using the field name.
 	 * This happens when we are using joins, and the field
 	 * has a table sufix.
