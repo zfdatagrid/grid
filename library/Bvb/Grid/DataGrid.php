@@ -264,12 +264,6 @@ class Bvb_Grid_DataGrid {
 	 */
 	protected $_finalFields;
 	
-	/**
-	 * colspan to apply
-	 *
-	 * @var unknown_type
-	 */
-	public $_colspan;
 	
 	/**
 	 * Number of hidden fields
@@ -2409,7 +2403,7 @@ class Bvb_Grid_DataGrid {
 		$this->filters = self::validateFilters ( $this->filters );
 		
 		//[PT]O colspan a ser aplicado em tabelas
-		$this->_colspan = $this->colspan ();
+		$this->colspan ();
 		return true;
 	}
 	
