@@ -1966,7 +1966,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	function printScript() {
 		
-		if (isset ( $this->info ['ajax'] ) && $this->info ['ajax'] == 1) {
+		if (isset ( $this->info ['ajax'] ) && $this->info ['ajax'] !== false) {
 			$useAjax = 1;
 		} else {
 			$useAjax = 0;
@@ -1981,7 +1981,7 @@ function confirmDel(msg, url)
     {
     
     ";
-		if ($useAjax !== false) {
+		if ($useAjax == 1) {
 			$script .= "window.location = '" . $this->_baseUrl . "/'+url.replace('/gridmod/ajax','');";
 		} else {
 			$script .= "window.location = url;";
@@ -2050,7 +2050,7 @@ function gridChangeFilters(fields,url,Ajax)
     filtro = \"{\"+filtro+\"}\";
     ";
 		
-		if ($useAjax !== false) {
+		if ($useAjax == 1) {
 			$script .= "gridAjax('{$this->info['ajax']}',url+'/filters/'+filtro);";
 		} else {
 			$script .= "window.location=url+'/filters/'+filtro;";
