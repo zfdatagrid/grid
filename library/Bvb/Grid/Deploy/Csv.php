@@ -122,12 +122,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid {
         $grid .= self::buildGridCsv ( parent::buildGrid () );
         $grid .= self::buildSqlexpCsv ( parent::buildSqlExp () );
         
-
         file_put_contents ( $this->dir . $this->title . ".csv", $grid );
         
 
         if (in_array ( 'download', $this->options )) {
-            header ( 'Content-type: text/plain; charset=utf-8'.$this->charEncoding );
+            header ( 'Content-type: text/plain; charset='.$this->charEncoding );
             header ( 'Content-Disposition: attachment; filename="' . $this->title . '.csv"' );
             readfile ( $this->dir . $this->title . '.csv' );
         }
