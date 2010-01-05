@@ -752,6 +752,8 @@ class Bvb_Grid_DataGrid {
 		$this->info [$var] = $value;
 	}
 	
+
+	
 	/**
 	 * Get the table name using the field name.
 	 * This happens when we are using joins, and the field
@@ -3115,7 +3117,10 @@ class Bvb_Grid_DataGrid {
 				$nn = $key;
 			}
 			
-			$finalFilters [$nkey] = array ();
+			 if (isset ( $filters [$key] ['values'] )) {
+                $finalFilters [$nkey] ['values'] = $filters [$key] ['values'];
+            }
+
 			
 			if (isset ( $filters [$key] ['distinct'] )) {
 				$finalFilters [$nkey] ['distinct'] ['name'] = $nn;
