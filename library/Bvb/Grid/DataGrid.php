@@ -1254,7 +1254,7 @@ class Bvb_Grid_DataGrid {
 		}
 		
 		// Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
-		if (array_key_exists ( 'ajax', $this->info )) {
+		if (array_key_exists ( 'ajax', $this->info ) && $this->info['ajax']!==false ) {
 			return $params ['module'] . "/" . $params ['controller'] . $action . $url . "/gridmod/ajax";
 		} else {
 			return $this->_baseUrl . "/" . $params ['module'] . "/" . $params ['controller'] . $action . $url;
@@ -2402,7 +2402,7 @@ class Bvb_Grid_DataGrid {
 		// Make sure they exists on the table
 		$this->filters = self::validateFilters ( $this->filters );
 		
-		//[PT]O colspan a ser aplicado em tabelas
+		//colspan to apply
 		$this->colspan ();
 		return true;
 	}
