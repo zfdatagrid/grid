@@ -1683,7 +1683,9 @@ class Bvb_Grid_DataGrid {
 		foreach ( array_keys ( $this->filters ) as $value ) {
 			
 			$hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
-			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || (isset ( $this->data ['fields'] [$this->_fields [$i]] ['hide'] ) && $this->data ['fields'] [$this->_fields [$i]] ['hide'] == 1)) && $hRow != 1) {
+			
+			if( (!isset($this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$value] ['hide']==0) && $hRow != 1  )
+			{
 				$help_javascript .= "filter_" . $value . ",";
 			}
 		}
