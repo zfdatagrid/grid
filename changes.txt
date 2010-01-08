@@ -1,3 +1,49 @@
+[290 - 08-01-2010]
+1 - Now the constructor does not need the Zend_Db as it is received from the Zend_Db_Select instance. Please remove the first argument from all of your Bvb_Grid_Deploy_*.
+2 - Check the SiteController.php for the arguments that are need and used for Class instantiation
+3 - Form elements are now built using the Zend_View helpers
+4 - The form is only process when a specific post value is present. Allowing now external forms.
+
+[275 - 05-01-2010]
+FIXES-93: Problems when using alias
+
+[274 - 05-01-2010]
+FIXES-92:  Not possible to add in the filter array [unrealevil]
+
+[273 - 05-01-2010]
+FIXES-91: Removed the export() method in favor of changing the attr export directly
+
+[CODE]
+$grid->export=array('pdf','word');
+[/CODE]
+
+instead
+
+[CODE]
+$grid->export(array('pdf','word'));
+[/CODE]
+
+[272 - 05-01-2010]
+applies-90: New behavior: To use ajax use only this:
+[CODE]
+$grid->ajax('id');//Adcepts false (bool) or a string containing the is where the grid will be rendered
+[/CODE]
+
+[271 - 05-01-2010]
+FIXES-89: Charset not being set when CSV...
+
+[270 - 05-01-2010]
+FIXES-88: Charset not being set when printing...
+
+[269 - 05-01-2010]
+FIXES-87: Property _colspan not being used
+
+[266 - 04-01-2010]
+Small bug when using the limit clause in the query. The pagination was not being respected
+
+[264 - 04-01-2010]
+Docs, readme, license, etc.
+
 [263 - 03-01-2010]
 A new example using ajax
 
