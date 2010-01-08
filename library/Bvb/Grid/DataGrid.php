@@ -21,7 +21,7 @@
 
 class Bvb_Grid_DataGrid {
 	
-	const VERSION = 0.5;
+	const VERSION = "0.5.1";
 	
 	/**
 	 * Char encoding
@@ -362,6 +362,10 @@ class Bvb_Grid_DataGrid {
 	 */
 	protected $_forceLimit = false;
 	
+	protected $_view;
+	
+	private $_clientFecthMode = null;
+	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
@@ -372,7 +376,7 @@ class Bvb_Grid_DataGrid {
 	 */
 	function __construct($db = false) {
 		
-		if (! $db instanceof Zend_Db_Adapter_Abstract) {
+		/*	if (! $db instanceof Zend_Db_Adapter_Abstract) {
 			$this->setAdapter ( 'array' );
 		} else {
 			//Iniciate adapter
@@ -382,6 +386,8 @@ class Bvb_Grid_DataGrid {
 			$this->_select = $this->_db->select ();
 		
 		}
+		*/
+		$this->_view = Zend_Controller_Action_HelperBroker::getStaticHelper ( 'viewRenderer' );
 		
 		//Get the controller params and baseurl to use with filters
 		$this->ctrlParams = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
@@ -460,9 +466,7 @@ class Bvb_Grid_DataGrid {
 	 * @param string $adapter
 	 */
 	private function setAdapter($adapter) {
-		
 		$this->_adapter = strtolower ( $adapter ) != 'db' ? 'array' : 'db';
-		
 		return $this;
 	}
 	
@@ -1216,7 +1220,7 @@ class Bvb_Grid_DataGrid {
 		
 		if (count ( $this->params ) > 0) {
 			//User as defined its own params (probably using routes)
-			$myParams = array ('comm', 'order', 'filters', 'add', 'edit' );
+			$myParams = array ('comm', 'order', 'filters', 'add', 'edit','export' );
 			$newParams = $this->params;
 			foreach ( $myParams as $value ) {
 				if (strlen ( $params [$value] ) > 0) {
@@ -1684,55 +1688,66 @@ class Bvb_Grid_DataGrid {
 			
 			$hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
 			
-			if( (!isset($this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$value] ['hide']==0) && $hRow != 1  )
-			{
+			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$value] ['hide'] == 0) && $hRow != 1) {
 				$help_javascript .= "filter_" . $value . ",";
 			}
 		}
 		
 		if (@$options ['noFilters'] != 1) {
 			$help_javascript = str_replace ( ".", "bvbdot", $help_javascript );
-			$onchange = "onchange=\"gridChangeFilters('$help_javascript','$url');\"";
+			$attr ['onChange'] = "gridChangeFilters('$help_javascript','$url');";
 		}
 		$opcoes = $this->filters [$campo];
 		
 		if (strlen ( @$opcoes ['style'] ) > 1) {
-			$opt = " style=\"{$opcoes['style']}\"  ";
+			$attr ['style'] = $opcoes ['style'];
 		} else {
-			$opt = " style=\"width:95%\"  ";
+			$attr ['style'] = " width:95% ";
 		}
 		
+		$attr ['id'] = "filter_" . str_replace ( ".", "bvbdot", $campo );
+		
+		$selected = null;
 		if (@is_array ( $opcoes ['values'] )) {
 			
 			$tipo = 'invalid';
+			$values = array ();
+			$values [''] = '--' . $this->__ ( 'All' ) . '--';
+			
 			$avalor = $opcoes ['values'];
-			$valor = "<select name=\"$campo\" $opt $onchange id=\"filter_" . $this->replaceDots ( $campo ) . "\"  >";
-			$valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
+			
 			foreach ( $avalor as $key => $value ) {
-				$selected = isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $key ? "selected" : "";
+				if (isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $key) {
+					$selected = $key;
+				}
 				
-				$valor .= "<option value=\"" . stripslashes ( $key ) . "\" $selected >" . stripslashes ( $value ) . "</option>";
+				$values [$this->_view->view->escape ( $key )] = $this->_view->view->escape ( $value );
 			}
-			$valor .= "</select>";
+			
+			$valor = $this->_view->view->formSelect ( $campo, $selected, $attr, $values );
+		
 		}
 		
 		switch ($tipo) {
 			case 'invalid' :
 				break;
 			case 'enum' :
+				$values = array ();
+				$values [''] = '--' . $this->__ ( 'All' ) . '--';
 				$avalor = explode ( ",", substr ( $enum, 4 ) );
-				$valor = "<select  id=\"filter_" . str_replace ( ".", "bvbdot", $campo ) . "\" $opt $onchange name=\"\">";
-				$valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
-				foreach ( $avalor as $value ) {
-					$value = substr ( $value, 1 );
-					$value = substr ( $value, 0, - 1 );
-					$selected = @$this->_filtersValues [$campo] == $value ? "selected" : "";
-					$valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
+				
+				foreach ( $avalor as $key => $value ) {
+					if (isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $key) {
+						$selected = $key;
+					}
+					$values [$this->_view->view->escape ( $key )] = $this->_view->view->escape ( $value );
 				}
-				$valor .= "</select>";
+				
+				$valor = $this->_view->view->formSelect ( $campo, $selected, $attr, $values );
+				
 				break;
 			default :
-				$valor = "<input type=\"text\" $onchange id=\"filter_" . @str_replace ( ".", "bvbdot", $campo ) . "\"   class=\"input_p\" value=\"" . @$this->_filtersValues [$campo] . "\" $opt>";
+				$valor = $this->_view->view->formText ( $campo, $this->_view->view->escape (@$this->_filtersValues [$campo]), $attr );
 				break;
 		}
 		
@@ -2862,6 +2877,7 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
+		$this->_db->setFetchMode ( $this->_clientFecthMode );
 		return;
 	}
 	
@@ -3266,6 +3282,14 @@ class Bvb_Grid_DataGrid {
 	 * @return bool
 	 */
 	function query(Zend_Db_Select $select) {
+		
+		$this->_db = $select->getAdapter ();
+		$this->setAdapter ( 'db' );
+		
+		$this->_clientFecthMode = $this->_db->getFetchMode ();
+		$this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
+		//Instanciate the Zend_Db_Select object
+		$this->_select = $this->_db->select ();
 		
 		$this->_selectZendDb = true;
 		

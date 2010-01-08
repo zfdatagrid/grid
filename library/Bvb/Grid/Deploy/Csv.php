@@ -37,7 +37,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid {
     /*
     * @param array $data
     */
-    function __construct($db, $title, $dir, $options = array('download')) {
+    function __construct( $dir, $options = array('download')) {
 
         if (! in_array ( 'csv', $this->export )) {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
@@ -45,10 +45,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid {
         }
         
         $this->dir = rtrim ( $dir, "/" ) . "/";
-        $this->title = $title;
         $this->options = $options;
         
-        parent::__construct ( $db );
+        parent::__construct (  );
     }
 
 

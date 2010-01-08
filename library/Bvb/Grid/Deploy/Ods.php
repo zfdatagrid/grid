@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_DataGrid
     protected $output = 'ods';
 
 
-    function __construct($db, $title, $dir, $options = array('download'))
+    function __construct( $title, $dir, $options = array('download'))
     {
 
         
@@ -57,7 +57,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_DataGrid
         $this->inicialDir = $this->dir;
         
 
-        parent::__construct ( $db );
+        parent::__construct (  );
         
         if (! $this->temp ['ods'] instanceof Bvb_Grid_Template_Ods_Ods)
         {

@@ -30,7 +30,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
     public $templateInfo;
 
 
-    function __construct ($db,$title)
+    function __construct ($title)
     {
   
         if (! in_array ( 'print', $this->export ))
@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         $this->title = $title;
 
-        parent::__construct($db);
+        parent::__construct();
 
         if(!is_object($this->temp['print']))
         {

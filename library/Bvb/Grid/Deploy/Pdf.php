@@ -35,7 +35,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
     public $title;
 
 
-    function __construct($db, $title, $dir, $options = array('download'))
+    function __construct( $title, $dir, $options = array('download'))
     {
 
         if (! in_array ( 'pdf', $this->export ))
@@ -49,7 +49,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $this->title = $title;
         $this->options = $options;
         
-        parent::__construct ( $db );
+        parent::__construct (  );
     
 
     }

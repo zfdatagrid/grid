@@ -26,8 +26,8 @@ class SiteController extends Zend_Controller_Action {
 	function init() {
 		
 		$this->view->url = Zend_Registry::get ( 'config' )->site->url;
-		$this->view->action = $this->getRequest()->getActionName();
-		header('Content-Type: text/html; charset=ISO-8859-1');
+		$this->view->action = $this->getRequest ()->getActionName ();
+		header ( 'Content-Type: text/html; charset=ISO-8859-1' );
 		$this->_db = Zend_Registry::get ( 'db' );
 	
 	}
@@ -62,41 +62,45 @@ class SiteController extends Zend_Controller_Action {
 		if (null === $export) {
 			$export = $this->getRequest ()->getParam ( 'export' );
 		}
-		$db = Zend_Registry::get ( 'db' );
-		
 		switch ($export) {
 			case 'odt' :
-				$grid = new Bvb_Grid_Deploy_Odt ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Odt (  'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'ods' :
-				$grid = new Bvb_Grid_Deploy_Ods ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Ods ( 'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'xml' :
-				$grid = new Bvb_Grid_Deploy_Xml ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Dir where to save documents. [1] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Xml ( 'media/temp', array ('download' ) );
 				break;
 			case 'csv' :
-				$grid = new Bvb_Grid_Deploy_Csv ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Dir where to save documents. [1] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Csv ( 'media/temp', array ('download' ) );
 				break;
 			case 'excel' :
-				$grid = new Bvb_Grid_Deploy_Excel ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Excel ( 'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'word' :
-				$grid = new Bvb_Grid_Deploy_Word ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Word (  'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'wordx' :
-				$grid = new Bvb_Grid_Deploy_Wordx ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+                //[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Wordx (  'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'pdf' :
-				$grid = new Bvb_Grid_Deploy_Pdf ( $db, 'Grid Example', 'media/temp', array ('download' ) );
-				break;
-			case 'graph' :
-				$grid = new Bvb_Grid_Deploy_Graph ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+				//[0]Title for document. [1] Dir where to save documents. [2] Options (save&&|Download)
+				$grid = new Bvb_Grid_Deploy_Pdf (  'Grid Example', 'media/temp', array ('download' ) );
 				break;
 			case 'print' :
-				$grid = new Bvb_Grid_Deploy_Print ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+				//[0]=>Title for document
+				$grid = new Bvb_Grid_Deploy_Print ( 'Grid Example' );
 				break;
 			default :
-				$grid = new Bvb_Grid_Deploy_Table ( $db, 'Grid Example', 'media/temp', array ('download' ) );
+				$grid = new Bvb_Grid_Deploy_Table (  );
 				break;
 		}
 		
@@ -117,11 +121,11 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function groupAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		
-		$grid->query ( $this->_db->select ()->from ( 'crud', array ('id', 'firstname', 'lastname', 'age' ) )->group('age') );
+		$grid->query ( $this->_db->select ()->from ( 'crud', array ('id', 'firstname', 'lastname', 'age' ) )->group ( 'age' ) );
 		
-		$grid->addColumn ( 'id' )->updateColumn ( 'firstname' )->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->updateColumn ( 'age', array ( 'title' => 'Age AVG', 'class' => 'center width_50' ) )->noFilters ( 1 )->setTemplate ( 'select' );
+		$grid->addColumn ( 'id' )->updateColumn ( 'firstname' )->updateColumn ( 'lastname', array ('title' => 'Last name (Grouped)' ) )->updateColumn ( 'age', array ('title' => 'Age AVG', 'class' => 'center width_50' ) )->noFilters ( 1 )->setTemplate ( 'select' );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
@@ -137,7 +141,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function filtersAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid (  );
 		
 		$grid->query ( $this->_db->select ()->from ( 'Country', array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) ) );
 		
@@ -152,6 +156,40 @@ class SiteController extends Zend_Controller_Action {
 		$this->render ( 'index' );
 	}
 	
+	function vincentAction() {
+		$select = $this->_db->select ()->distinct ()->from ( array ('f1' => 'FicheClient1' ), array ('f1.id', 'f1.email', 'f1.nom', 'f1.ville' ) )->joinLeft ( array ('p1' => 'ProjetClient1' ), 'f1.id = p1.id_client', array ('p1.id' ) )->joinLeft ( array ('tc' => 'TypeClient' ), 'f1.id_type_client = tc.id', array ('type' => 'tc.nom' ) );
+		
+		$grid = $this->grid (  );
+		
+		$grid->setPagination ( 10 );
+		
+		$grid->query ( $select );
+		
+		$grid->setTemplate ( 'outside', 'table' );
+		
+		//Je peux enlever des colonnes que je souhaite
+		$grid->updateColumn ( 'f1.id', array ('hide' => 1 ) );
+		$grid->updateColumn ( 'p1.id', array ('hide' => 1 ) );
+		
+		$btnVoir = new Bvb_Grid_ExtraColumns ( );
+		$btnVoir->position ( 'right' )->name ( 'Fiche' )->decorator ( "<a href=\"/fiche/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\" class='fg-button ui-state-default ui-state-default ui-                 priority-primary ui-corner-all' id=''>voir</a>" );
+		
+		$btnNewProjet = new Bvb_Grid_ExtraColumns ( );
+		$btnNewProjet->position ( 'right' )->name ( 'Projet' )->decorator ( "<a href=\"projet/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}\" class='fg-button ui-state-default ui-state-default ui-priority-primary ui-                 corner-all' id=''>+</a>" );
+		
+		$grid->addExtraColumns ( $btnVoir, $btnNewProjet );
+		
+		//Add  filters
+		$filters2 = new Bvb_Grid_Filters ( );
+		$filters2->addFilter ( 'f1.ville' )->addFilter ( 'f1.email' )->addFilter ( 'f1.nom' );
+		
+		$grid->addFilters ( $filters2 );
+		
+		$this->view->pages = $grid->deploy ();
+		
+        $this->render ( 'index' );
+	}
+	
 	/**
 	 * A join query example
 	 * 
@@ -160,41 +198,11 @@ class SiteController extends Zend_Controller_Action {
 	 *
 	 */
 	function joinsAction() {
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid ( );
 		
 		$grid->query ( $this->_db->select ()->from ( array ('c' => 'Country' ), array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) )->join ( array ('ct' => 'City' ), 'c.Capital = ct.ID', array () ) );
 		
 		$grid->updateColumn ( 'c.Name', array ('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}}' ) )->updateColumn ( 'c.Continent', array ('title' => 'Continent', 'class' => 'width_120' ) )->updateColumn ( 'c.Population', array ('title' => 'Population', 'class' => 'width_80', 'format' => 'number' ) )->updateColumn ( 'c.LifeExpectancy', array ('sqlexp' => 'ROUND(LifeExpectancy)', 'title' => 'Life E.', 'class' => 'width_50' ) )->updateColumn ( 'c.GovernmentForm', array ('title' => 'Government Form' ) )->updateColumn ( 'c.HeadOfState', array ('title' => 'Head Of State' ) );
-		
-		$this->view->pages = $grid->deploy ();
-		$this->render ( 'index' );
-	}
-	
-	function joincrudAction() {
-		
-		$grid = $this->grid ( 'table' );
-		
-		$grid->query ( $this->_db->select ()->from ( array ('c' => 'crud' ), array ('id', 'firstname', 'lastname', 'age', 'email' ) )->join ( array ('b' => 'bugs' ), 'c.id_bug=b.bug_id', array ('bug_description' ) ) );
-		
-		$grid->order ( 'c.id' );
-		
-		$grid->updateColumn ( 'c.id', array ('title' => 'ID' ) )->updateColumn ( 'c.firstname', array ('title' => 'First Name', 'class' => 'width_120' ) )->updateColumn ( 'c.lastname', array ('title' => 'Last Name' ) )->updateColumn ( 'c.age', array ('title' => 'Age', 'class' => 'width_50' ) )->updateColumn ( 'c.email', array ('title' => 'Email' ) )->updateColumn ( 'b.bug_description', array ('title' => 'Bug Description', 'class' => 'width_100' ) );
-		
-		$form = new Bvb_Grid_Form ( );
-		$form->add ( 1 )->edit ( 1 )->button ( 1 )->delete ( 1 );
-		
-		$lang = new Bvb_Grid_Form_Column ( 'c.firstname' );
-		$lang->title ( 'First Name' )->validators ( array ('StringLength' => array (3, 10 ) ) );
-		
-		$nome = new Bvb_Grid_Form_Column ( 'c.lastname' );
-		$nome->title ( 'Last Name' );
-		
-		$continent = new Bvb_Grid_Form_Column ( 'c.age' );
-		$continent->title ( 'Age' );
-		
-		$form->addColumns ( $lang, $nome, $continent );
-		
-		$grid->addForm ( $form );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
@@ -207,7 +215,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function extraAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid ();
 		
 		$grid->query ( $this->_db->select ()->from ( array ('c' => 'Country' ), array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) )->join ( array ('ct' => 'City' ), 'c.Capital = ct.ID', array ('Name' ) ) );
 		
@@ -276,7 +284,7 @@ class SiteController extends Zend_Controller_Action {
 		$email->title ( 'Email Address' )->validators ( array ('EmailAddress' ) )->filters ( array ('StripTags', 'StringTrim', 'StringToLower' ) )->description ( 'Insert you email address' );
 		
 		$lang = new Bvb_Grid_Form_Column ( 'language' );
-		$lang->title ( 'Language' )->description ( 'Your language' )->values ( array_combine ( $language, $language ) );
+		$lang->title ( 'Language' )->description ( 'Your language' );
 		
 		$age = new Bvb_Grid_Form_Column ( 'age' );
 		$age->title ( 'Age' )->description ( 'Choose your age' )->values ( array_combine ( range ( 10, 100 ), range ( 10, 100 ) ) );
@@ -297,7 +305,7 @@ class SiteController extends Zend_Controller_Action {
 	
 	function csvAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid ();
 		$grid->setDataFromCsv ( 'media/files/grid.csv' );
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
@@ -305,7 +313,7 @@ class SiteController extends Zend_Controller_Action {
 	
 	function feedAction() {
 		
-		$grid = $this->grid ( 'table' );
+		$grid = $this->grid ();
 		$grid->setDataFromXml ( 'http://petala-azul.com/blog/feed/', 'channel,item' );
 		$grid->setPagination ( 10 );
 		$this->view->pages = $grid->deploy ();
@@ -317,9 +325,10 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function basicAction() {
 		
-		$grid = $this->grid ( );
+		$grid = $this->grid ();
 		
-		$grid->query ( $this->_db->select ()->from ( 'City' ) );
+		$grid->query ( $this->_db->select ()->from ( 'City') );
+		
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
 		$this->view->pages = $grid->deploy ();
@@ -331,14 +340,14 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function ajaxAction() {
 		
-		$grid = $this->grid ( );
+		$grid = $this->grid ();
 		
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
-		$grid->ajax(true);
-		$grid->ajaxId('grid');
-
+		$grid->ajax ( true );
+		$grid->ajaxId ( 'grid' );
+		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
 	}
@@ -351,7 +360,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function pdfAction() {
 		
-		$grid = $this->grid (  );
+		$grid = $this->grid ();
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		$pdf = array ('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
@@ -370,7 +379,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function templateAction() {
 		
-		$grid = $this->grid (  );
+		$grid = $this->grid ();
 		
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
@@ -386,7 +395,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function hrowAction() {
 		
-		$grid = $this->grid (  );
+		$grid = $this->grid ();
 		$grid->query ( $this->_db->select ()->from ( 'Country', array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) ) );
 		$grid->noFilters ( 1 );
 		$grid->noOrder ( 1 );
@@ -410,7 +419,7 @@ class SiteController extends Zend_Controller_Action {
 	 */
 	function columnAction() {
 		
-		$grid = $this->grid (  );
+		$grid = $this->grid ();
 		$grid->query ( $this->_db->select ()->from ( array ('c' => 'Country' ), array ('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState' ) )->join ( array ('ct' => 'City' ), 'c.Capital = ct.ID', array ('Name' ) ) );
 		$grid->setPagination ( 15 );
 		#->noFilters(1);

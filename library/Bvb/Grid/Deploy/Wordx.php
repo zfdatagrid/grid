@@ -39,7 +39,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 	
 	protected $output = 'wordx';
 	
-	function __construct($db, $title, $dir, $options = array('download')) {
+	function __construct($title, $dir, $options = array('download')) {
 		
 		if (! in_array ( 'wordx', $this->export )) {
 			echo $this->__ ( "You dont' have permission to export the results to this format" );
@@ -51,7 +51,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 		$this->options = $options;
 		$this->inicialDir = $this->dir;
 		
-		parent::__construct ( $db );
+		parent::__construct (  );
 		
 		if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
 			$this->setTemplate ( 'wordx', 'wordx' );

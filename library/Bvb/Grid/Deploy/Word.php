@@ -36,7 +36,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
     protected $output = 'word';
 
 
-    function __construct($db, $title, $dir, $options = array('download'))
+    function __construct( $title, $dir, $options = array('download'))
     {
 
         if (! in_array ( 'word', $this->export ))
@@ -50,7 +50,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
         $this->options = $options;
         
 
-        parent::__construct ( $db );
+        parent::__construct (  );
         
 
         if (! is_object ( $this->temp ['word'] ))

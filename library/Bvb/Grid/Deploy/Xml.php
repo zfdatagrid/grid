@@ -45,7 +45,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
      *
      * @param array $data
      */
-     function __construct($db, $title, $dir, $options = array('download'))
+     function __construct( $dir, $options = array('download'))
     {
 
       
@@ -56,9 +56,8 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
         }
         
         $this->dir = rtrim ( $dir, "/" ) . "/";
-        $this->title = $title;
         $this->options = $options;
-        parent::__construct ( $db );
+        parent::__construct (  );
     
     }
 

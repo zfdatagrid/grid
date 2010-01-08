@@ -192,9 +192,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 *
 	 * @param array $data
 	 */
-	function __construct($db) {
+	function __construct() {
 		
-		parent::__construct ( $db );
+		parent::__construct ();
 		
 		$this->setTemplate ( 'table', 'table' );
 	
@@ -266,7 +266,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		}
 		
 		//Check if the request method is POST
-		if (Zend_Controller_Front::getInstance ()->getRequest ()->isPost ()) {
+		if (Zend_Controller_Front::getInstance ()->getRequest ()->isPost () &&
+		      Zend_Controller_Front::getInstance()->getRequest()->getParam('_form_edit')==1) {
 			
 			$param = Zend_Controller_Front::getInstance ()->getRequest ();
 			
@@ -678,105 +679,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Field type on the filters area. If the field type is enum, build the options
-	 *  Also, we first need to check if the user has defined values.
-	 *  If set, this values override the others
-	 *
-	 * @param string $campo
-	 * @param string $valor
-	 * @return string
-	 */
-	
-	function formatField($campo, $valor, $options = array()) {
-		
-		$url = parent::getUrl ( array ('filters', 'start', 'comm' ) );
-		
-		if (! is_array ( $this->data ['table'] )) {
-			$table = parent::getDescribeTable ( $this->data ['table'] );
-		} else {
-			
-			$ini = substr ( $campo, 0, (strpos ( $campo, "." )) );
-			$table = parent::getDescribeTable ( $this->data ['table'] [$ini] );
-		}
-		
-		$tipo = $table [$campo];
-		
-		$tipo = $tipo ['DATA_TYPE'];
-		
-		if (substr ( $tipo, 0, 4 ) == 'enum') {
-			$enum = str_replace ( array ('(', ')' ), array ('', '' ), $tipo );
-			$tipo = 'enum';
-		}
-		
-		foreach ( array_keys ( $this->filters ) as $value ) {
-			
-			if (! $this->data ['fields'] [$value] ['hide'] || $this->data ['fields'] [$value] ['hide'] == 0) {
-				$help_javascript .= "filter_" . $value . ",";
-			}
-		}
-		
-		if ($options ['noFilters'] != 1) {
-			$onchange = "onchange=\"gridChangeFilters('$help_javascript','$url');\" id=\"filter_{$campo}\"";
-		}
-		
-		$opcoes = $this->filters [$campo];
-		
-		if ($opcoes ['style']) {
-			$opt = " style=\"{$opcoes['style']}\"  ";
-		} else {
-			$opt = " style=\"width:95%\"  ";
-		}
-		
-		if (is_array ( $opcoes ['valores'] )) {
-			$tipo = 'invalid';
-			$avalor = $opcoes ['valores'];
-			
-			$valor = "<select name=\"$campo\" $opt $onchange  >";
-			$valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
-			
-			foreach ( $avalor as $value ) {
-				
-				$selected = $this->_filtersValues [$campo] == $value ['value'] ? "selected" : "";
-				$valor .= "<option value=\"{$value['value']}\" $selected >{$value['name']}</option>";
-			}
-			
-			$valor .= "</select>";
-		}
-		
-		switch ($tipo) {
-			
-			case 'invalid' :
-				break;
-			case 'enum' :
-				
-				$avalor = explode ( ",", substr ( $enum, 4 ) );
-				$valor = "<select  id=\"filter_{$campo}\" $opt $onchange name=\"\">";
-				$valor .= "<option value=\"\">--" . $this->__ ( 'All' ) . "--</option>";
-				
-				foreach ( $avalor as $value ) {
-					
-					$value = substr ( $value, 1 );
-					$value = substr ( $value, 0, - 1 );
-					$selected = $this->_filtersValues [$campo] == $value ? "selected" : "";
-					$valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
-				
-				}
-				
-				$valor .= "</select>";
-				
-				break;
-			
-			default :
-				
-				$valor = "<input type=\"text\" $onchange id=\"filter_{$campo}\"   class=\"input_p\" value=\"" . $this->_filtersValues [$campo] . "\" $opt>";
-				
-				break;
-		}
-		
-		return $valor;
-	}
-	
-	/**
 	 *  Build the first line of the table (Not the TH )
 	 *
 	 * @return string
@@ -1051,17 +953,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function buildFormElement($field, $inicial_value = '', $mod = 'edit', $fieldValue = '') {
 		
+		$view = $this->_view->view;
+		
 		$fieldRaw = $field;
 		//If not editing, remove the initial value, otherwise it will assume the fields names
 		if ($mod != 'edit') {
 			$field = $inicial_value;
-			
 			if ($this->formSuccess == 0) {
 				$inicial_value = $fieldValue;
 			} else {
 				$inicial_value = '';
 			}
 		}
+		
 		
 		//Get table desc to known to field type
 		$table = parent::getDescribeTable ( $this->data ['table'], $fieldRaw );
@@ -1087,7 +991,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		@$options = $this->info [$mod] ['fields'] [$field];
 		
 		//If the field as options
-		$attr = '';
+		$attr = array ();
 		
 		if (isset ( $options ['attributes'] ['type'] )) {
 			$tipo = $options ['attributes'] ['type'];
@@ -1097,18 +1001,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			$options ['attributes'] = array ();
 			
 			if (! in_array ( 'style', @$options ['attributes'] )) {
-				$options ['attributes'] ['style'] = 'width:95%';
+				$attr ['style'] = 'width:95%';
 			}
 		} else {
 			
 			if (! array_key_exists ( 'style', @$options ['attributes'] )) {
-				$options ['attributes'] ['style'] = 'width:95%';
+				$attr ['style'] = 'width:95%';
 			}
 		}
 		
 		if (@is_array ( $options ['attributes'] )) {
 			foreach ( $options ['attributes'] as $key => $value ) {
-				$attr .= " $key=\"$value\" ";
+				$attr [$key] = $value;
 			}
 		}
 		
@@ -1121,24 +1025,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$tipo = 'invalid';
 				$avalor = $options ['values'];
 				
-				$valor = "<select name=\"$fieldRaw\"   $attr >";
-				
 				foreach ( $avalor as $key => $value ) {
 					
 					//check for select value
 					if ($mod == 'edit') {
-						$selected = $inicial_value == $key ? "selected" : "";
+						$selected = $inicial_value == $key ? $inicial_value : "";
 					} elseif (key_exists ( 'value', $options )) {
-						$selected = $options ['value'] == $key ? "selected" : "";
+						$selected = $options ['value'] == $key ? $options ['value'] : "";
 					} else {
 						$selected = null;
-					
 					}
 					
-					$valor .= "<option value=\"{$key}\" $selected >" . ucfirst ( $value ) . "</option>";
+					$values [$key] = $value;
 				}
 				
-				$valor .= "</select>";
+				
+				
+				$valor = $view->formSelect ( $fieldRaw, $selected, $attr, $avalor );
+			
 			}
 		}
 		
@@ -1150,49 +1054,34 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				
 				//Build options based on set from database, if not defined by the user
 				$avalor = explode ( ",", $set );
-				
 				$setValues = explode ( ',', $inicial_value );
+				$valor = $view->formMultiCheckbox ( $fieldRaw, $setValues, $attr, $avalor );
 				
-				$size = count ( $avalor ) > 7 ? 7 : count ( $avalor );
-				
-				$valor = "<select multiple=\"multiple\"  size=\"$size\" name=\"{$fieldRaw}[]\" $attr  >";
-				foreach ( $avalor as $value ) {
-					
-					$selected = in_array ( $value, $setValues ) ? 'selected="selected"' : '';
-					
-					$valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
-				
-				}
-				
-				$valor .= "</select>";
 				break;
 			case 'enum' :
 				
 				//Build options based on enum from database, if not defined by the user
 				$avalor = explode ( ",", substr ( $enum, 4 ) );
+				$values = array ();
 				
-				$valor = "<select  name=\"$fieldRaw\" $attr  >";
 				foreach ( $avalor as $value ) {
-					$selected = $value == "'" . $inicial_value . "'" ? "selected" : "";
+					if( $value == "'" . $inicial_value . "'"){$selected=$inicial_value;}
 					$value = substr ( $value, 1 );
 					$value = substr ( $value, 0, - 1 );
-					$valor .= "<option value=\"$value\" $selected >" . ucfirst ( $value ) . "</option>";
-				
+					$values [$value] = $value;
 				}
-				
-				$valor .= "</select>";
+				$valor = $view->formSelect ( $fieldRaw, $selected, $attr, $values );
 				
 				break;
 			case 'text' :
 			case 'textarea' :
-				$valor = "<textarea  name=\"{$fieldRaw}\"   $attr>" . stripslashes ( $inicial_value ) . "</textarea>";
+				$valor = $view->formTextarea ( $fieldRaw, $view->escape ( $inicial_value ), $attr );
 				break;
 			case 'password' :
-				$valor = "<input  type=\"password\"  name=\"{$fieldRaw}\"   value=\"" . stripslashes ( $inicial_value ) . "\" $attr>";
-				
+				$valor = $view->formPassword ( $fieldRaw, $view->escape ( $inicial_value ), $attr );
 				break;
 			default :
-				$valor = "<input  type=\"text\"  name=\"{$fieldRaw}\"   value=\"" . stripslashes ( $inicial_value ) . "\" $attr>";
+				$valor = $view->formText ( $fieldRaw, $view->escape ( $inicial_value ), $attr );
 				
 				break;
 		}
@@ -1297,6 +1186,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function gridForm() {
 		
+		$view = $this->_view->view;
+		
 		// Remove the unnecessary URL params
 		$url = parent::getUrl ( array ('comm', 'edit', 'add' ) );
 		
@@ -1321,7 +1212,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			$mod = 'add';
 		
 		}
-		$form_hidden = " <input type=\"button\"    onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
+		
+		$form_hidden = $view->formButton ( 'cancel', $this->__ ( 'Cancel' ), array ('onClick' => $view->escape ( "window.location='$url'" ) ) );
+		$form_hidden .= $view->formHidden ( '_form_edit', 1 );
 		
 		#$fields = parent::consolidateFields ( $fields, $this->data ['table'] );
 		
@@ -1361,7 +1254,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				
 				$mod = 'edit';
 				
-				$form_hidden = " <input type=\"button\"  onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
+				#$form_hidden = " <input type=\"button\"  onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
 				
 				$fields = self::removeAutoIncrement ( $fields, $this->data ['table'] );
 			
@@ -1419,7 +1312,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		}
 		
 		$grid .= $this->temp ['table']->formStart ();
-		$grid .= str_replace ( "{{value}}", "<input type=\"submit\"  value=\"" . $button_name . "\"> " . $form_hidden . "", $this->temp ['table']->formButtons () );
+		$grid .= str_replace ( "{{value}}", $view->formSubmit('submitForm',$button_name) . $form_hidden . "", $this->temp ['table']->formButtons () );
 		$grid .= $this->temp ['table']->formEnd ();
 		
 		return $grid;
@@ -1847,7 +1740,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function deploy() {
 		
-		
 		$url = parent::getUrl ( 'comm' );
 		
 		if ($this->_adapter == 'db') {
@@ -1936,7 +1828,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			}
 		}
 		
-		$grid .= "<input type=\"hidden\" name=\"inputId\" id=\"inputId\">";
+		$grid .= $this->_view->view->formHidden('inputId');
 		
 		if ((isset ( $this->info ['double_tables'] ) && $this->info ['double_tables'] == 1) || (@$this->ctrlParams ['edit'] != 1 && @$this->ctrlParams ['add'] != 1)) {
 			
