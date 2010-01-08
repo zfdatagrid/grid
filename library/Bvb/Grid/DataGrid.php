@@ -1008,13 +1008,16 @@ class Bvb_Grid_DataGrid {
 	 */
 	function buildSearchType($filtro, $key, $field) {
 		
-		#$field = $this->data['fields'][$field]['field'];
-		
-
 		$columns = $this->_select->getPart ( 'columns' );
+		
 		foreach ( $columns as $value ) {
 			if ($key == $value [2]) {
-				$field = $value [1]->__toString ();
+				if(is_object($value[1]))
+				{
+					$field = $value [1]->__toString ();
+				}else{
+					$field = $value[0].'.'.$value [1];
+				}
 				break;
 			}
 		
@@ -1625,6 +1628,7 @@ class Bvb_Grid_DataGrid {
 		if ($this->getAdapter () == 'db') {
 			//check if we need to load  fields for filters
 			
+
 			if (@is_array ( $this->filters [$valor] ['distinct'] )) {
 				$this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
 				$this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
@@ -1740,10 +1744,9 @@ class Bvb_Grid_DataGrid {
 				$values [''] = '--' . $this->__ ( 'All' ) . '--';
 				$avalor = explode ( ",", substr ( $enum, 4 ) );
 				
-				
 				foreach ( $avalor as $value ) {
 					$value = substr ( $value, 1 );
-                    $value = substr ( $value, 0, - 1 );
+					$value = substr ( $value, 0, - 1 );
 					
 					if (isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $value) {
 						$selected = $value;
@@ -3115,7 +3118,6 @@ class Bvb_Grid_DataGrid {
 	 *
 	 */
 	function addFilters($filters) {
-		
 		
 		$filters = $this->object2array ( $filters );
 		$filters = $filters ['_filters'];
