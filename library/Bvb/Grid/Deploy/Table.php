@@ -990,6 +990,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		@$options = $this->info [$mod] ['fields'] [$field];
 		
+		$selected  =null;
+		
 		//If the field as options
 		$attr = array ();
 		

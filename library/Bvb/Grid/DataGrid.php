@@ -786,7 +786,7 @@ class Bvb_Grid_DataGrid {
 		}
 		
 		if (strpos ( $field, '.' ) === false && $this->getAdapter () == 'db') {
-			$field = $this->data ['tableAlias'] . '.' . $field;
+			#	$field = $this->data ['tableAlias'] . '.' . $field;
 		}
 		
 		if ($this->_allFieldsAdded == false) {
@@ -1008,12 +1008,14 @@ class Bvb_Grid_DataGrid {
 	 */
 	function buildSearchType($filtro, $key, $field) {
 		
-		$columns = $this->_select->getPart ( 'columns' );
+		#$field = $this->data['fields'][$field]['field'];
 		
+
+		$columns = $this->_select->getPart ( 'columns' );
 		foreach ( $columns as $value ) {
-			
-			if ($key == $value [0] . '.' . $value [2] && strpos ( $key, '.' ) !== false) {
+			if ($key == $value [2]) {
 				$field = $value [1]->__toString ();
+				break;
 			}
 		
 		}
@@ -1022,6 +1024,7 @@ class Bvb_Grid_DataGrid {
 		if (@$fieldsSemAsFinal [$key] ['searchType'] != "") {
 			$op = @$fieldsSemAsFinal [$key] ['searchType'];
 		}
+		
 		$op = @strtolower ( $op );
 		
 		if (substr ( $filtro, 0, 1 ) == '=') {
@@ -1621,6 +1624,7 @@ class Bvb_Grid_DataGrid {
 		
 		if ($this->getAdapter () == 'db') {
 			//check if we need to load  fields for filters
+			
 			if (@is_array ( $this->filters [$valor] ['distinct'] )) {
 				$this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
 				$this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
@@ -1899,11 +1903,6 @@ class Bvb_Grid_DataGrid {
 					$new_value = htmlspecialchars ( $new_value );
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] ) && $this->getAdapter () == 'db') {
-					
-					$this->data ['fields'] [$fields_duble [$is]] ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
-				
-				}
 				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
 					
 					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
@@ -1920,12 +1919,13 @@ class Bvb_Grid_DataGrid {
 					$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
 					if (is_array ( $toReplace )) {
 						
-						array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
+						#array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
 						
+
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
 					} else {
-						$toReplace = array();
+						$toReplace = arr;
 					}
 					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'], $toReplace );
@@ -1955,7 +1955,7 @@ class Bvb_Grid_DataGrid {
 					$finalDados [$varEnd] = $new_value;
 					
 					if ($this->getAdapter () == 'db') {
-						$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
+						#$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 					}
 					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
 				}
@@ -1978,17 +1978,9 @@ class Bvb_Grid_DataGrid {
 					if ($value ['position'] == 'right') {
 						$fi = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 						
-						if (isset ( $value ['eval'] ) && $this->getAdapter () == 'db') {
-							$value ['eval'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['eval'] );
-						}
-						
 						if (isset ( $value ['eval'] )) {
 							$evalf = str_replace ( $search, $fi, $value ['eval'] );
 							$new_value = eval ( 'return ' . $evalf );
-						}
-						
-						if (isset ( $value ['decorator'] ) && $this->getAdapter () == 'db') {
-							$value ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $value ['decorator'] );
 						}
 						
 						if (isset ( $value ['decorator'] )) {
@@ -2706,7 +2698,6 @@ class Bvb_Grid_DataGrid {
 			
 			$this->getQuery ();
 			$this->getQueryCount ();
-			
 			$this->buildColumns ();
 			
 			if ($this->cache ['use'] == 1) {
@@ -3121,27 +3112,25 @@ class Bvb_Grid_DataGrid {
 	 */
 	function addFilters($filters) {
 		
+		
 		$filters = $this->object2array ( $filters );
 		$filters = $filters ['_filters'];
 		
+		/*
 		$finalFilters = array ();
 		
 		foreach ( $filters as $key => $filter ) {
 			
-			if (strpos ( $key, '.' ) === false) {
-				$nkey = $this->data ['tableAlias'] . '.' . $key;
-			} else {
-				$nkey = $key;
-			}
+			$nkey = $key;
 			
 			if (isset ( $filters [$key] ['distinct'] ['field'] ) && strpos ( $filters [$key] ['distinct'] ['field'], '.' ) === false) {
-				$nf = $this->data ['tableAlias'] . '.' . $filters [$key] ['distinct'] ['field'];
+				$nf = $filters [$key] ['distinct'] ['field'];
 			} else {
 				$nf = $key;
 			}
 			
 			if (isset ( $filters [$key] ['distinct'] ['name'] ) && strpos ( $filters [$key] ['distinct'] ['name'], '.' ) === false) {
-				$nn = $this->data ['tableAlias'] . '.' . $filters [$key] ['distinct'] ['name'];
+				$nn = $filters [$key] ['distinct'] ['name'];
 			} else {
 				$nn = $key;
 			}
@@ -3160,8 +3149,9 @@ class Bvb_Grid_DataGrid {
 			}
 		
 		}
+		*/
 		
-		$this->filters = $finalFilters;
+		$this->filters = $filters;
 	
 	}
 	
@@ -3246,7 +3236,7 @@ class Bvb_Grid_DataGrid {
 				
 				foreach ( $tableFields as $field ) {
 					$title = ucfirst ( $field );
-					$this->updateColumn ( $value [0] . '.' . $field, array ('title' => $title ) );
+					$this->updateColumn ( $field, array ('title' => $title, 'field' => $value [0] . '.' . $field ) );
 				}
 			
 			} else {
@@ -3256,13 +3246,13 @@ class Bvb_Grid_DataGrid {
 				
 				if (is_object ( $value [1] )) {
 					$title = $value [2];
-					$this->updateColumn ( $value [0] . '.' . $value [2] . ' as ' . $value [2], array ('title' => $title ) );
+					$this->updateColumn ( $value [2], array ('title' => $title, 'field' => $value [0] . '.' . $value [2] ) );
 				} elseif (strlen ( $value [2] ) > 0) {
 					$title = $value [2];
-					$this->updateColumn ( $value [0] . '.' . $value [1] . ' as ' . $value [2], array ('title' => $title ) );
+					$this->updateColumn ( $value [2], array ('title' => $title, 'field' => $value [0] . '.' . $value [1] ) );
 				} else {
 					$title = ucfirst ( $value [1] );
-					$this->updateColumn ( $value [0] . '.' . $value [1], array ('title' => $title ) );
+					$this->updateColumn ( $value [1], array ('title' => $title, 'field' => $value [0] ) );
 				}
 			
 			}
@@ -3272,7 +3262,7 @@ class Bvb_Grid_DataGrid {
 		foreach ( array_keys ( $this->data ['fields'] ) as $key ) {
 			$reset = explode ( ' ', trim ( $key ) );
 			$alias = explode ( '.', trim ( end ( $reset ) ) );
-			$fieldsNoAS [reset ( $reset )] = end ( $alias );
+			$fieldsNoAS [end ( $alias )] = reset ( $reset );
 		}
 		
 		$this->_fieldsNoAs = $fieldsNoAS;

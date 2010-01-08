@@ -1,3 +1,9 @@
+[292 - 08-01-2010]
+FIXES-104: params option for callback function should be optional
+
+[291 - 08-01-2010]
+Update this file
+
 [290 - 08-01-2010]
 1 - Now the constructor does not need the Zend_Db as it is received from the Zend_Db_Select instance. Please remove the first argument from all of your Bvb_Grid_Deploy_*.
 2 - Check the SiteController.php for the arguments that are need and used for Class instantiation

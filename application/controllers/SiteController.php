@@ -327,8 +327,15 @@ class SiteController extends Zend_Controller_Action {
 		
 		$grid = $this->grid ();
 		
-		$grid->query ( $this->_db->select ()->from ( 'City') );
-		
+		$select = $this->_db->select()
+            ->from('City')
+            ->order('Name')
+            ->columns(array('IsBig'=>new Zend_Db_Expr('IF(Population>500000,1,0)')))
+            ->columns(array('test'=>'ID'));
+
+        $grid->query($select);
+
+        $grid->updateColumn('test', array('title' => '#ID','width' => '20','hide'=>true));      
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
 		$this->view->pages = $grid->deploy ();
@@ -345,8 +352,7 @@ class SiteController extends Zend_Controller_Action {
 		$grid->query ( $this->_db->select ()->from ( 'City' ) );
 		
 		#$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
-		$grid->ajax ( true );
-		$grid->ajaxId ( 'grid' );
+		$grid->ajax ( 'grid' );
 		
 		$this->view->pages = $grid->deploy ();
 		$this->render ( 'index' );
