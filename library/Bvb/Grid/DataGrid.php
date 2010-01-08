@@ -1740,11 +1740,15 @@ class Bvb_Grid_DataGrid {
 				$values [''] = '--' . $this->__ ( 'All' ) . '--';
 				$avalor = explode ( ",", substr ( $enum, 4 ) );
 				
-				foreach ( $avalor as $key => $value ) {
-					if (isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $key) {
-						$selected = $key;
+				
+				foreach ( $avalor as $value ) {
+					$value = substr ( $value, 1 );
+                    $value = substr ( $value, 0, - 1 );
+					
+					if (isset ( $this->_filtersValues [$campo] ) && $this->_filtersValues [$campo] == $value) {
+						$selected = $value;
 					}
-					$values [$this->_view->view->escape ( $key )] = $this->_view->view->escape ( $value );
+					$values [$this->_view->view->escape ( $value )] = $this->_view->view->escape ( $value );
 				}
 				
 				$valor = $this->_view->view->formSelect ( $campo, $selected, $attr, $values );
