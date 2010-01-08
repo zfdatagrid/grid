@@ -1220,7 +1220,7 @@ class Bvb_Grid_DataGrid {
 		
 		if (count ( $this->params ) > 0) {
 			//User as defined its own params (probably using routes)
-			$myParams = array ('comm', 'order', 'filters', 'add', 'edit','export' );
+			$myParams = array ('comm', 'order', 'filters', 'add', 'edit', 'export' );
 			$newParams = $this->params;
 			foreach ( $myParams as $value ) {
 				if (strlen ( $params [$value] ) > 0) {
@@ -1747,7 +1747,7 @@ class Bvb_Grid_DataGrid {
 				
 				break;
 			default :
-				$valor = $this->_view->view->formText ( $campo, $this->_view->view->escape (@$this->_filtersValues [$campo]), $attr );
+				$valor = $this->_view->view->formText ( $campo, $this->_view->view->escape ( @$this->_filtersValues [$campo] ), $attr );
 				break;
 		}
 		
@@ -1918,12 +1918,14 @@ class Bvb_Grid_DataGrid {
 					}
 					
 					$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
-					
-					array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
-					
 					if (is_array ( $toReplace )) {
+						
+						array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
+						
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
+					} else {
+						$toReplace = array();
 					}
 					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'], $toReplace );
@@ -2723,6 +2725,7 @@ class Bvb_Grid_DataGrid {
 							$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
 						}
 						$selectZendDb->reset ( Zend_Db_Select::GROUP );
+						$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
 						$selectZendDb->reset ( Zend_Db_Select::ORDER );
 						$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 						
@@ -2767,6 +2770,7 @@ class Bvb_Grid_DataGrid {
 						$selectZendDb->reset ( Zend_Db_Select::LIMIT_OFFSET );
 					}
 					$selectZendDb->reset ( Zend_Db_Select::GROUP );
+					$selectZendDb->reset ( Zend_Db_Select::COLUMNS );
 					$selectZendDb->reset ( Zend_Db_Select::ORDER );
 					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 					
