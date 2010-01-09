@@ -49,7 +49,7 @@ class Bvb_Grid_DataGrid {
 	/**
 	 * The query object from Zend_Db_Select
 	 *
-	 * @var Zend_Db_Select
+	 * @return Zend_Db_Select
 	 */
 	protected $_select = false;
 	
@@ -169,6 +169,7 @@ class Bvb_Grid_DataGrid {
 	 *  DB Adapter
 	 *
 	 * @var Zend_Db_Select
+	 * @return Zend_Db_Adapter_Abstract
 	 */
 	protected $_db;
 	
@@ -1012,11 +1013,10 @@ class Bvb_Grid_DataGrid {
 		
 		foreach ( $columns as $value ) {
 			if ($key == $value [2]) {
-				if(is_object($value[1]))
-				{
+				if (is_object ( $value [1] )) {
 					$field = $value [1]->__toString ();
-				}else{
-					$field = $value[0].'.'.$value [1];
+				} else {
+					$field = $value [0] . '.' . $value [1];
 				}
 				break;
 			}
@@ -1923,16 +1923,16 @@ class Bvb_Grid_DataGrid {
 						throw new Exception ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] . ' not callable' );
 					}
 					
-					$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
+					if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'] )) {
+						$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
+					} else {
+						$toReplace = array ();
+					}
+					
 					if (is_array ( $toReplace )) {
-						
 						#array_walk ( $toReplace, array ('self', 'insertTableName' ), array ($this->data ['table'] ) );
-						
-
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
-					} else {
-						$toReplace = arr;
 					}
 					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'], $toReplace );
