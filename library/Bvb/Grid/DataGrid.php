@@ -1280,7 +1280,8 @@ class Bvb_Grid_DataGrid {
 		
 		for($i = 0; $i < $tcampos; $i ++) {
 			
-			$nf = reset ( explode ( ' ', $this->_fields [$i] ) );
+			$explode = explode ( ' ', $this->_fields [$i] ) ;
+			$nf = reset ( $explode);
 			
 			if (! isset ( $this->data ['fields'] [$nf] ['hide'] ) || $this->data ['fields'] [$nf] ['hide'] == 0) {
 				
