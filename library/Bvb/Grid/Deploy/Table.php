@@ -1101,58 +1101,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	}
 	
-	/**
-	 * When we query the db, we don't get the field prefix (c.days, c.hours returns days and hours)
-	 * We need to make the output match the fields names defined by the user
-	 *
-	 */
-	function convertOutputNamesFromSqlToUserDefined($fields) {
-		die ( __FUNCTION__ );
-		$fields = parent::object2array ( $fields );
-		
-		$originalFields = $this->data ['fields'];
-		
-		$temp = array ();
-		foreach ( array_keys ( $originalFields ) as $key ) {
-			
-			if (strpos ( ' AS ', $key )) {
-				$return = substr ( $key, strpos ( $key, ' AS ' ) + 1 );
-			} else {
-				$return = substr ( $key, strpos ( $key, '.' ) + 1 );
-			}
-			
-			if (key_exists ( $return, $fields )) {
-				
-				$temp [$key] = $fields [$return];
-			}
-		}
-		
-		return $temp;
-	
-	}
-	
-	/**
-	 * Build the select fields when performing crus operations.
-	 * 
-	 * We need to grab the tables primary keys.
-	 *
-	 */
-	protected function buildSelectFieldsForUpdate() {
-		
-		if (@is_array ( $this->info ['edit'] ['fields'] )) {
-			foreach ( $this->info ['edit'] ['fields'] as $value ) {
-				$fields_to [] = $value ['field'];
-			}
-			
-			$select_fields = parent::buildSelectFields ( $fields_to );
-		
-		} else {
-			$select_fields = " * ";
-		}
-		
-		return $select_fields;
-	
-	}
 	
 	/**
 	 * Get the list of primary keys from the URL
@@ -1206,8 +1154,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		// Get the comm param, and "decode" it
 		$final = self::convertComm ();
-		
-		$select_fields = $this->buildSelectFieldsForUpdate ();
 		
 		$fields = $this->_fields;
 		
