@@ -1105,10 +1105,6 @@ class Bvb_Grid_DataGrid {
 			return;
 		}
 		
-		if (isset ( $this->data ['where'] ) && strlen ( trim ( $this->data ['where'] ) ) > 1) {
-			$this->_select->where ( $this->data ['where'] );
-		}
-		
 		//Build an array to know filters values
 		$valor_filters = array ();
 		$filters = @urldecode ( $this->ctrlParams ['filters'] );
@@ -1276,11 +1272,7 @@ class Bvb_Grid_DataGrid {
 			return false;
 		}
 		
-		if ($this->getAdapter () != 'db') {
-			$data = $this->map_array ( $this->_fields, 'replace_AS' );
-		} else {
-			$data = array_keys ( $this->_fieldsNoAs );
-		}
+		$data = $this->_fields;
 		
 		$tcampos = count ( $data );
 		
@@ -1375,18 +1367,15 @@ class Bvb_Grid_DataGrid {
 		$return = array ();
 		$url = $this->getUrl ( array ('order', 'start', 'comm' ) );
 		
-		if ($this->getAdapter () != 'db') {
-			$tcampos = count ( $this->_fields );
-		} else {
-			$tcampos = count ( $this->_fieldsNoAs );
-		}
+		$tcampos = count ( $this->_fields );
+		
 		for($i = 0; $i < count ( $this->extra_fields ); $i ++) {
 			if ($this->extra_fields [$i] ['position'] == 'left') {
 				$return [$this->extra_fields [$i] ['name']] = array ('type' => 'extraField', 'value' => $this->extra_fields [$i] ['name'], 'position' => 'left' );
 			}
 		}
 		
-		$titles = $this->map_array ( $this->_fields, 'replace_AS' );
+		$titles = $this->_fields;
 		
 		$novaData = array ();
 		
@@ -1753,21 +1742,7 @@ class Bvb_Grid_DataGrid {
 		
 		$search = $this->map_array ( $this->_fields, 'prepare_replace' );
 		
-		if ($this->getAdapter () != 'db') {
-			$foreach = array_keys ( $this->_fields );
-		} else {
-			$foreach = array_keys ( $this->_fieldsNoAs );
-		}
-		
-		foreach ( $foreach as $field ) {
-			$fields_duble [] = $field;
-		}
-		
-		if ($this->getAdapter () != 'db') {
-			$fields = $this->_fields;
-		} else {
-			$fields = $this->_fieldsNoAs;
-		}
+		$fields = $this->_fields;
 		
 		$i = 0;
 		
@@ -1853,21 +1828,21 @@ class Bvb_Grid_DataGrid {
 					$new_value = htmlspecialchars ( $new_value );
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['eval'] )) {
+				if (isset ( $this->data ['fields'] [$fields[$is]] ['eval'] )) {
 					
-					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['eval'] );
+					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields [$is]] ['eval'] );
 					$new_value = eval ( 'return ' . $evalf . ';' );
 				
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] )) {
+				if (isset ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'] )) {
 					
-					if (! is_callable ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] )) {
-						throw new Exception ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'] . ' not callable' );
+					if (! is_callable ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'] )) {
+						throw new Exception ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'] . ' not callable' );
 					}
 					
-					if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'] )) {
-						$toReplace = $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['params'];
+					if (isset ( $this->data ['fields'] [$fields [$is]] ['callback'] ['params'] )) {
+						$toReplace = $this->data ['fields'] [$fields [$is]] ['callback'] ['params'];
 					} else {
 						$toReplace = array ();
 					}
@@ -1877,14 +1852,14 @@ class Bvb_Grid_DataGrid {
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
 					}
 					
-					$new_value = call_user_func_array ( $this->data ['fields'] [$fields_duble [$is]] ['callback'] ['function'], $toReplace );
+					$new_value = call_user_func_array ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'], $toReplace );
 				
 				}
 				
 				//[PT]Aplicar o formato da célula
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['format'] )) {
+				if (isset ( $this->data ['fields'] [$fields [$is]] ['format'] )) {
 					
-					$alias = $this->data ['fields'] [$fields_duble [$is]] ['format'];
+					$alias = $this->data ['fields'] [$fields [$is]] ['format'];
 					
 					if (is_array ( $alias )) {
 						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
@@ -1894,23 +1869,23 @@ class Bvb_Grid_DataGrid {
 					$new_value = $this->applyFormat ( $new_value, $alias );
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields_duble [$is]] ['decorator'] )) {
+				if (isset ( $this->data ['fields'] [$fields [$is]] ['decorator'] )) {
 					
 					$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 					
-					$end = explode ( '.', $fields_duble [$is] );
+					$end = explode ( '.', $fields [$is] );
 					$varEnd = end ( $end );
 					
 					$finalDados [$varEnd] = $new_value;
 					
 					if ($this->getAdapter () == 'db') {
-						#$this->data ['fields'] [$fields_duble [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
+						#$this->data ['fields'] [$fields [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields [$is]] ['decorator'] );
 					}
-					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields_duble [$is]] ['decorator'] );
+					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields [$is]] ['decorator'] );
 				}
 				
-				if (! isset ( $this->data ['fields'] [$fields_duble [$is]] ['hide'] ) || $this->data ['fields'] [$fields_duble [$is]] ['hide'] == 0) {
-					$fieldClass = isset ( $this->data ['fields'] [$fields_duble [$is]] ['class'] ) ? $this->data ['fields'] [$fields_duble [$is]] ['class'] : '';
+				if (! isset ( $this->data ['fields'] [$fields [$is]] ['hide'] ) || $this->data ['fields'] [$fields [$is]] ['hide'] == 0) {
+					$fieldClass = isset ( $this->data ['fields'] [$fields [$is]] ['class'] ) ? $this->data ['fields'] [$fields [$is]] ['class'] : '';
 					$class = isset ( $class ) ? $class : '';
 					$return [$i] [] = @array ('class' => $class . " " . $fieldClass, 'value' => stripslashes ( $new_value ), 'field' => $integralFields [$is] );
 				}
@@ -2167,23 +2142,7 @@ class Bvb_Grid_DataGrid {
 			ksort ( $fields_final );
 			
 			$fields_final = $this->reset_keys ( $fields_final );
-		
 		}
-		
-		//remove unwanted fields for dislpay
-		$naoMostrar = array_flip ( $fields_final );
-		
-		foreach ( $naoMostrar as $key => $field ) {
-			if (isset ( $this->data ['hide'] ) && in_array ( $key, $this->data ['hide'] )) {
-				unset ( $naoMostrar [$key] );
-				unset ( $orderFields [$key] );
-				unset ( $titulos [$key] );
-				unset ( $this->data ['fields'] [$key] );
-			
-			}
-		}
-		
-		$fields_final = array_values ( array_flip ( $naoMostrar ) );
 		
 		$this->totalHiddenFields = $hide;
 		$this->_fields = $fields_final;
@@ -2211,31 +2170,9 @@ class Bvb_Grid_DataGrid {
 			return $filters;
 		} elseif ($this->_adapter == 'db') {
 			//Não forneceu dados, temos que ir buscá-los todos às tabelas
-			$titulos = array_combine ( array_keys ( $this->_fieldsNoAs ), array_keys ( $this->_fieldsNoAs ) );
+			$titulos = array_combine ( $this->_fields, $this->_fields );
 		}
 		
-		if (isset ( $this->data ['hide'] ) && is_array ( $this->data ['hide'] )) {
-			
-			foreach ( $this->data ['hide'] as $value ) {
-				if (array_key_exists ( $value, $titulos )) {
-					unset ( $titulos [$value] );
-				}
-			}
-		} else {
-			if (is_array ( $titulos )) {
-				
-				foreach ( $titulos as $key => $value ) {
-					
-					if (strpos ( $key, '.' ) === false) {
-						$key = $this->data ['tableAlias'] . '.' . $key;
-					}
-					
-					if (! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) )) {
-						unset ( $titulos [$key] );
-					}
-				}
-			}
-		}
 		return $titulos;
 	}
 	
@@ -2302,77 +2239,8 @@ class Bvb_Grid_DataGrid {
 		$this->consolidated = 1;
 		$cFields = $this->data ['fields'];
 		
-		if (! is_array ( $cFields )) {
-			
-			if (is_array ( $this->data ['table'] )) {
-				
-				foreach ( $this->data ['table'] as $key => $table ) {
-					
-					$tableFinal = array_keys ( $this->getDescribeTable ( $table ) );
-					
-					foreach ( $tableFinal as $field ) {
-						$this->updateColumn ( $key . '.' . $field );
-					}
-				}
-			
-			} else {
-				
-				$table = array_keys ( $this->getDescribeTable ( $this->data ['table'] ) );
-			}
-			
-			foreach ( $table as $field ) {
-				$this->updateColumn ( $field );
-			}
-		}
-		
 		if (! @is_array ( $this->filters ) && @is_array ( $this->data ['filters'] )) {
 			$this->filters = $this->data ['filters'];
-		}
-		
-		//If a search is performed in a field that isn't displayed,
-		//If so we add the field and hide it
-		if (is_array ( $cFields )) {
-			foreach ( $cFields as $value ) {
-				if (@$value ['searchField'] != "") {
-					if (! in_array ( $value ['searchField'], $this->data ['fields'] )) {
-						$this->updateColumn ( $value ['searchField'], array ('title' => 'Barcelos', 'hide' => 1 ) );
-					}
-				}
-			}
-		}
-		
-		//Make sure the fields we need to execute the distinct query for filter exist
-		//If not, we add them and define the hide param as 1
-		if (is_array ( $this->filters )) {
-			
-			foreach ( $this->filters as $value ) {
-				
-				if (is_array ( $value ) && isset ( $value ['distinct'] ['field'] ) && isset ( $value ['distinct'] ['name'] )) {
-					
-					/*
-					if (! array_key_exists ( $value ['distinct'] ['field'], $this->data ['fields'] )) {
-						$this->updateColumn ( $value ['distinct'] ['field'] . ' AS f' . md5 ( $value ['distinct'] ['field'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
-					}
-					
-					if (! array_key_exists ( $value ['distinct'] ['name'], $this->data ['fields'] ) && $value ['distinct'] ['name'] != $value ['distinct'] ['field']) {
-						$this->updateColumn ( $value ['distinct'] ['name'] . ' AS f' . md5 ( $value ['distinct'] ['name'] ), array ('title' => 'Barcelos', 'hide' => 1 ) );
-					}
-					*/
-					$this->data ['fields'] [$value ['distinct'] ['name']] ['searchField'] = $value ['distinct'] ['field'];
-				}
-			
-			}
-		
-		}
-		
-		// The extra fields, they are not part of database table.
-		// Usefull for adding links (a least for me :D )
-		if (@is_array ( $this->info ['extra_fields'] )) {
-			if (! is_array ( $this->extra_fields )) {
-				$this->extra_fields = $this->info ['extra_fields'];
-			} else {
-				$this->extra_fields = array_merge ( $this->extra_fields, $this->info ['extra_fields'] );
-			}
 		}
 		
 		// Validate table fields, make sure they exist...
@@ -2660,14 +2528,15 @@ class Bvb_Grid_DataGrid {
 			} else {
 				$this->_totalRecords = count ( $this->_result );
 				$result = array_slice ( $this->_result, ( int ) @$this->ctrlParams ['start'] < $this->_totalRecords ? ( int ) @$this->ctrlParams ['start'] : 0, $this->pagination );
-			
 			}
 			
 			$this->_result = $result;
 		
 		}
 		
-		$this->_db->setFetchMode ( $this->_clientFecthMode );
+		if ($this->getAdapter () == 'db') {
+			$this->_db->setFetchMode ( $this->_clientFecthMode );
+		}
 		return;
 	}
 	
@@ -2909,42 +2778,6 @@ class Bvb_Grid_DataGrid {
 		
 		$filters = $this->object2array ( $filters );
 		$filters = $filters ['_filters'];
-		
-		/*
-		$finalFilters = array ();
-		
-		foreach ( $filters as $key => $filter ) {
-			
-			$nkey = $key;
-			
-			if (isset ( $filters [$key] ['distinct'] ['field'] ) && strpos ( $filters [$key] ['distinct'] ['field'], '.' ) === false) {
-				$nf = $filters [$key] ['distinct'] ['field'];
-			} else {
-				$nf = $key;
-			}
-			
-			if (isset ( $filters [$key] ['distinct'] ['name'] ) && strpos ( $filters [$key] ['distinct'] ['name'], '.' ) === false) {
-				$nn = $filters [$key] ['distinct'] ['name'];
-			} else {
-				$nn = $key;
-			}
-			
-			if (isset ( $filters [$key] ['values'] )) {
-				$finalFilters [$nkey] ['values'] = $filters [$key] ['values'];
-			}
-			
-			if (! isset ( $finalFilters [$nkey] )) {
-				$finalFilters [$nkey] = array ();
-			}
-			
-			if (isset ( $filters [$key] ['distinct'] )) {
-				$finalFilters [$nkey] ['distinct'] ['name'] = $nn;
-				$finalFilters [$nkey] ['distinct'] ['field'] = $nf;
-			}
-		
-		}
-		*/
-		
 		$this->filters = $filters;
 	
 	}
