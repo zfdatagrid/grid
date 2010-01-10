@@ -419,6 +419,15 @@ class Bvb_Grid_DataGrid {
 	}
 	
 	/**
+	 * Revert Zend_Db Fetch Mode
+	 */
+	function __destruct() {
+		if ($this->getAdapter () == 'db') {
+			$this->_db->setFetchMode ( $this->_clientFecthMode );
+		}
+	}
+	
+	/**
 	 * If set to false, then this grid won't care about any 
 	 * get vars. This is needed if we want to use more than one 
 	 * grid per page
@@ -1240,10 +1249,12 @@ class Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 * Check if a var exist 
+	 * Return variable stored in info. Return default if value is not stored.  
 	 *
 	 * @param string $param
-	 * @return bool | $param
+	 * @param mixed  $default
+	 * 
+	 * @return mixed
 	 */
 	public function getInfo($param, $default = false) {
 		if (isset ( $this->info [$param] )) {
@@ -1280,8 +1291,7 @@ class Bvb_Grid_DataGrid {
 		
 		for($i = 0; $i < $tcampos; $i ++) {
 			
-			$explode = explode ( ' ', $this->_fields [$i] ) ;
-			$nf = reset ( $explode);
+			$nf = $this->_fields [$i];
 			
 			if (! isset ( $this->data ['fields'] [$nf] ['hide'] ) || $this->data ['fields'] [$nf] ['hide'] == 0) {
 				
@@ -2333,7 +2343,7 @@ class Bvb_Grid_DataGrid {
 	
 	function buildDefaultFilters() {
 		
-		if (is_array ( $this->_defaultFilters ) && ! isset ( $this->ctrlParams ['filters'] ) && !isset($this->ctrlParams['nofilters'])) {
+		if (is_array ( $this->_defaultFilters ) && ! isset ( $this->ctrlParams ['filters'] ) && ! isset ( $this->ctrlParams ['nofilters'] )) {
 			$df = array ();
 			foreach ( $this->data ['fields'] as $key => $value ) {
 				
@@ -2557,9 +2567,6 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
-		if ($this->getAdapter () == 'db') {
-			$this->_db->setFetchMode ( $this->_clientFecthMode );
-		}
 		return;
 	}
 	
