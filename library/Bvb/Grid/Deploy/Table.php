@@ -704,9 +704,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		if (isset ( $this->ctrlParams ['filters'] ) || isset ( $this->ctrlParams ['order'] )) {
 			
-			$url = $this->getUrl ( 'filters' );
+			$url = $this->getUrl ( 'filters','nofilters' );
 			$url2 = $this->getUrl ( 'order' );
-			$url3 = $this->getUrl ( array ('filters', 'order' ) );
+			$url3 = $this->getUrl ( array ('filters', 'order','nofilters' ) );
+			
+			if(is_array($this->_defaultFilters))
+			{
+				$url .= '/nofilters/1';
+				$url3 .= '/nofilters/1';
+			}
 			
 			$this->temp ['table']->hasExtraRow = 1;
 			

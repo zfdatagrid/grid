@@ -323,11 +323,6 @@ class Bvb_Grid_DataGrid {
 	public $activeTemplates = array ();
 	
 	/**
-	 * If the query has group by
-	 */
-	private $hasGroup = 0;
-	
-	/**
 	 * Result untouched
 	 *
 	 * @var array
@@ -352,12 +347,6 @@ class Bvb_Grid_DataGrid {
 	private $_allFieldsAdded = false;
 	
 	/**
-	 * Fields names without alias
-	 * @var array
-	 */
-	private $_fieldsNoAs = array ();
-	
-	/**
 	 * If the user manually sets the query limit
 	 * @var int|bool
 	 */
@@ -365,7 +354,18 @@ class Bvb_Grid_DataGrid {
 	
 	protected $_view;
 	
+	/**
+	 * The db fetch mode used befora changed
+	 * @var unknown_type
+	 */
 	private $_clientFecthMode = null;
+	
+	/**
+	 * Default filters to be applyed
+	 * @var array
+	 * @return array
+	 */
+	protected $_defaultFilters;
 	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
@@ -377,17 +377,6 @@ class Bvb_Grid_DataGrid {
 	 */
 	function __construct($db = false) {
 		
-		/*	if (! $db instanceof Zend_Db_Adapter_Abstract) {
-			$this->setAdapter ( 'array' );
-		} else {
-			//Iniciate adapter
-			$this->_db = $db;
-			$this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
-			//Instanciate the Zend_Db_Select object
-			$this->_select = $this->_db->select ();
-		
-		}
-		*/
 		$this->_view = Zend_Controller_Action_HelperBroker::getStaticHelper ( 'viewRenderer' );
 		
 		//Get the controller params and baseurl to use with filters
@@ -1094,6 +1083,12 @@ class Bvb_Grid_DataGrid {
 	
 	}
 	
+	function setDefaultFilters(array $filters) {
+		$this->_defaultFilters = array_flip ( $filters );
+		return $this;
+	
+	}
+	
 	/**
 	 *  Build the query WHERE
 	 *
@@ -1110,6 +1105,7 @@ class Bvb_Grid_DataGrid {
 		$filters = @urldecode ( $this->ctrlParams ['filters'] );
 		$filters = str_replace ( "filter_", "", $filters );
 		$filters = Zend_Json::decode ( $filters );
+		
 		$fieldsSemAsFinal = $this->removeAsFromFields ();
 		
 		if (is_array ( $filters )) {
@@ -1828,7 +1824,7 @@ class Bvb_Grid_DataGrid {
 					$new_value = htmlspecialchars ( $new_value );
 				}
 				
-				if (isset ( $this->data ['fields'] [$fields[$is]] ['eval'] )) {
+				if (isset ( $this->data ['fields'] [$fields [$is]] ['eval'] )) {
 					
 					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields [$is]] ['eval'] );
 					$new_value = eval ( 'return ' . $evalf . ';' );
@@ -2334,6 +2330,30 @@ class Bvb_Grid_DataGrid {
 		return;
 	}
 	
+	function buildDefaultFilters() {
+		
+		if (is_array ( $this->_defaultFilters ) && ! isset ( $this->ctrlParams ['filters'] ) && !isset($this->ctrlParams['nofilters'])) {
+			$df = array ();
+			foreach ( $this->data ['fields'] as $key => $value ) {
+				
+				if (isset ( $value ['hide'] ) && $value ['hide'] == 1) {
+					continue;
+				}
+				
+				if (array_key_exists ( $key, array_flip ( $this->_defaultFilters ) )) {
+					$df ['filter_' . $key] = array_search ( $key, $this->_defaultFilters );
+				} else {
+					$df ['filter_' . $key] = '';
+				}
+			
+			}
+			
+			$defaultFilters = $df;
+			
+			$this->ctrlParams ['filters'] = Zend_Json_Encoder::encode ( $defaultFilters );
+		}
+	}
+	
 	/**
 	 *  Done. Send the grid to the user
 	 *
@@ -2353,6 +2373,8 @@ class Bvb_Grid_DataGrid {
 			}
 		
 		}
+		
+		$this->buildDefaultFilters ();
 		
 		if ($this->consolidated == 0) {
 			$this->consolidateQuery ();
