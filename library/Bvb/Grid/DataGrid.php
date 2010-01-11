@@ -2172,17 +2172,6 @@ class Bvb_Grid_DataGrid {
 		return $this->_primaryKey [$table];
 	}
 	
-	function setPrimaryKey($table, $key) {
-		
-		if (! is_string ( $key )) {
-			throw new Exception ( 'Primary key must be a string.' );
-		}
-		
-		$this->_primaryKey [$table] = $key;
-		
-		return $this;
-	}
-	
 	/**
 	 * Confirm that all fields are in the query.
 	 * Check for auto filters
