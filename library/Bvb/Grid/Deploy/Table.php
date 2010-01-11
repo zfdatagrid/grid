@@ -290,8 +290,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				$fields = parent::getFields ( $mode, $this->data ['table'] );
 			}
 			
-			$fields = array_combine ( $this->removeTablePrefixFromFields ( $fields ), $this->removeTablePrefixFromFields ( $fields ) );
-			
 			$queryUrl = $this->getPkFromUrl ();
 			
 			// Apply filter and validators. Firtst we apply the filters

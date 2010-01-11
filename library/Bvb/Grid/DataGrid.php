@@ -375,7 +375,7 @@ class Bvb_Grid_DataGrid {
 	 *
 	 * @param array $data
 	 */
-	function __construct($db = false) {
+	function __construct() {
 		
 		$this->_view = Zend_Controller_Action_HelperBroker::getStaticHelper ( 'viewRenderer' );
 		
@@ -469,6 +469,10 @@ class Bvb_Grid_DataGrid {
 		return $this;
 	}
 	
+	/**
+	 * Get the current adapter
+	 * @return (array|db)
+	 */
 	function getAdapter() {
 		return $this->_adapter;
 	}
@@ -730,12 +734,9 @@ class Bvb_Grid_DataGrid {
 	/**
 	 *  Use the overload function so we can return an object to  make possibler
 	 *  the use of 
-	 * $grid->from('barcelos')
-	 *             ->noFilters(1)->
-	 *             ->noOrder(1);
 	 * @param string $name
 	 * @param string $value
-	 * @return unknown
+	 * @return $this
 	 */
 	function __call($name, $value) {
 		
@@ -752,22 +753,6 @@ class Bvb_Grid_DataGrid {
 	 */
 	function __set($var, $value) {
 		$this->info [$var] = $value;
-	}
-	
-	/**
-	 * Get the table name using the field name.
-	 * This happens when we are using joins, and the field
-	 * has a table sufix.
-	 *
-	 * @param string $field
-	 * @return string
-	 */
-	function getTableNameFromField($field) {
-		
-		$tableAb = explode ( '.', $field );
-		$tableAb = reset ( $tableAb );
-		
-		return $this->data ['table'] [$tableAb];
 	}
 	
 	/**
@@ -954,7 +939,6 @@ class Bvb_Grid_DataGrid {
 		#return count ( $this->_fields ) - $this->totalHiddenFields + count($this->extra_fields);
 	}
 	
-	
 	/**
 	 * Searchj type to be used in filters
 	 * By default its LIKE
@@ -980,7 +964,7 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
-		$fieldsSemAsFinal = $this->removeAsFromFields ();
+		$fieldsSemAsFinal = $this->data ['fields'];
 		if (@$fieldsSemAsFinal [$key] ['searchType'] != "") {
 			$op = @$fieldsSemAsFinal [$key] ['searchType'];
 		}
@@ -1074,7 +1058,7 @@ class Bvb_Grid_DataGrid {
 		$filters = str_replace ( "filter_", "", $filters );
 		$filters = Zend_Json::decode ( $filters );
 		
-		$fieldsSemAsFinal = $this->removeAsFromFields ();
+		$fieldsSemAsFinal = $this->data ['fields'];
 		
 		if (is_array ( $filters )) {
 			foreach ( $filters as $key => $filtro ) {
@@ -1085,7 +1069,7 @@ class Bvb_Grid_DataGrid {
 				} else {
 					$oldKey = $key;
 					if (@$fieldsSemAsFinal [$key] ['searchField'] != "") {
-						$key = $this->replaceAsString ( $fieldsSemAsFinal [$key] ['searchField'] );
+						$key = $fieldsSemAsFinal [$key] ['searchField'];
 					}
 					
 					$this->buildSearchType ( $filtro, $oldKey, $key );
@@ -1285,23 +1269,8 @@ class Bvb_Grid_DataGrid {
 		
 		if (! is_array ( $campos ))
 			return FALSE;
-		
-		$ncampos = array ();
-		foreach ( $campos as $key => $value ) {
-			if (is_array ( $value ))
-				return FALSE;
 			
-			if (strlen ( $value ) == 0) {
-				$ncampos [] = stripos ( $key, ' AS ' ) ? substr ( $key, 0, stripos ( $key, ' AS ' ) ) : $key;
-			} else {
-				$ncampos [] = stripos ( $value, ' AS ' ) ? substr ( $value, 0, stripos ( $value, ' AS ' ) ) : $value;
-			}
-		
-		}
-		
-		$campos = $ncampos;
-		unset ( $ncampos );
-		$ncampos = array ();
+		$ncampos = array();
 		switch ($callback) {
 			case 'prepare_replace' :
 				foreach ( $campos as $value ) {
@@ -1431,44 +1400,6 @@ class Bvb_Grid_DataGrid {
 		return $this;
 	}
 	
-	/**
-	 * remove the word 'as' from fields
-	 *
-	 * @return unknown
-	 */
-	function removeAsFromFields() {
-		
-		$fieldsSemAs = $this->data ['fields'];
-		if (is_array ( $fieldsSemAs )) {
-			foreach ( $fieldsSemAs as $key => $value ) {
-				if (strpos ( $key, ' ' ) === false) {
-					$fieldsSemAsFinal [$key] = $value;
-				} else {
-					$fieldsSemAsFinal [substr ( $key, 0, strpos ( $key, ' ' ) )] = $value;
-				}
-			}
-		}
-		return $fieldsSemAsFinal;
-	}
-	
-	/**
-	 * remove the word '.' from fields
-	 *
-	 * @return array
-	 */
-	function removeTablePrefixFromFields($fields) {
-		
-		if (is_array ( $fields )) {
-			
-			foreach ( $fields as $value ) {
-				$aux = explode ( '.', $value );
-				$fieldsFinal [] = end ( $aux );
-			}
-		
-		}
-		
-		return $fieldsFinal;
-	}
 	
 	/**
 	 *Replace dots to avoid JS error
@@ -1479,15 +1410,6 @@ class Bvb_Grid_DataGrid {
 		return str_replace ( ".", "bvbdot", $string );
 	}
 	
-	/**
-	 * Replace As *.* from queries
-	 *
-	 * @param unknown_type $string
-	 * @return unknown
-	 */
-	function replaceAsString($string) {
-		return stripos ( $string, ' AS ' ) ? substr ( $string, 0, stripos ( $string, ' AS ' ) ) : $string;
-	}
 	
 	/**
 	 * Create the filters when using the array adapter
@@ -1536,8 +1458,8 @@ class Bvb_Grid_DataGrid {
 			
 
 			if (@is_array ( $this->filters [$valor] ['distinct'] )) {
-				$this->filters [$valor] ['distinct'] ['field'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['field'] );
-				$this->filters [$valor] ['distinct'] ['name'] = @$this->replaceAsString ( $this->filters [$valor] ['distinct'] ['name'] );
+				$this->filters [$valor] ['distinct'] ['field'] =  @$this->filters [$valor] ['distinct'] ['field'];
+				$this->filters [$valor] ['distinct'] ['name'] = @$this->filters [$valor] ['distinct'] ['name'] ;
 				
 				$distinct = clone $this->_select;
 				
@@ -1568,9 +1490,10 @@ class Bvb_Grid_DataGrid {
 		//Remove unwanted url params
 		$url = urlencode ( $this->getUrl ( array ('filters', 'start', 'comm' ) ) );
 		
-		$fieldsSemAsFinal = $this->removeAsFromFields ();
+		$fieldsSemAsFinal = $this->data ['fields'];
+		
 		if (isset ( $fieldsSemAsFinal [$campo] ['searchField'] )) {
-			$nkey = $this->replaceAsString ( $fieldsSemAsFinal [$campo] ['searchField'] );
+			$nkey = $fieldsSemAsFinal [$campo] ['searchField'];
 			@$this->_filtersValues [$campo] = $this->_filtersValues [$nkey];
 		}
 		
@@ -1672,15 +1595,6 @@ class Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 * @param unknown_type $campos
-	 * @return unknown
-	 */
-	function replace_AS($campos) {
-		
-		return trim ( stripos ( $campos, ' AS ' ) ? substr ( $campos, 0, stripos ( $campos, ' AS ' ) ) : $campos );
-	}
-	
-	/**
 	 * Escape the output
 	 */
 	function escapeOutput($escape) {
@@ -1769,7 +1683,7 @@ class Bvb_Grid_DataGrid {
 			 * Deal with the grid itself
 			 */
 			$is = 0;
-			$integralFields = array_keys ( $this->removeAsFromFields () );
+			$integralFields = array_keys ( $this->data ['fields'] );
 			
 			foreach ( $fields as $campos ) {
 				
@@ -2150,7 +2064,6 @@ class Bvb_Grid_DataGrid {
 		
 		$pk = $this->getDescribeTable ( $table );
 		
-		
 		$keys = array ();
 		
 		foreach ( $pk as $pkk => $primary ) {
@@ -2270,6 +2183,9 @@ class Bvb_Grid_DataGrid {
 		return;
 	}
 	
+	/**
+	 * Build user defined filters
+	 */
 	function buildDefaultFilters() {
 		
 		if (is_array ( $this->_defaultFilters ) && ! isset ( $this->ctrlParams ['filters'] ) && ! isset ( $this->ctrlParams ['nofilters'] )) {
@@ -2292,6 +2208,8 @@ class Bvb_Grid_DataGrid {
 			
 			$this->ctrlParams ['filters'] = Zend_Json_Encoder::encode ( $defaultFilters );
 		}
+		
+		return $this;
 	}
 	
 	/**
@@ -2805,6 +2723,12 @@ class Bvb_Grid_DataGrid {
 		return $this->_describeTables [$table];
 	}
 	
+	
+	/**
+	 * Build the fields based on Zend_Db_Select
+	 * @param $fields
+	 * @param $tables
+	 */
 	function getFieldsFromQuery(array $fields, array $tables) {
 		
 		foreach ( $fields as $key => $value ) {
@@ -2853,13 +2777,15 @@ class Bvb_Grid_DataGrid {
 		
 		$this->_fieldsNoAs = $fieldsNoAS;
 		$this->_allFieldsAdded = true;
+		
+		return $this;
 	}
 	
 	/**
 	 * Define the query using Zend_Db_Select instance
 	 *
 	 * @param Zend_Db_Select $select
-	 * @return bool
+	 * @return $this
 	 */
 	function query(Zend_Db_Select $select) {
 		
