@@ -1944,8 +1944,6 @@ class Bvb_Grid_DataGrid {
 	 */
 	function validateFields($fields) {
 		
-		echo count($fields);
-		
 		if (is_array ( $fields )) {
 			$hide = 0;
 			$fields_final = array ();
