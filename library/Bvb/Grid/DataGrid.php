@@ -1064,7 +1064,7 @@ class Bvb_Grid_DataGrid {
 			foreach ( $filters as $key => $filtro ) {
 				$key = str_replace ( "bvbdot", ".", $key );
 				
-				if (strlen ( $filtro ) == 0 || ! in_array ( $key, $this->map_array ( $this->_fields, 'replace_AS' ) )) {
+				if (strlen ( $filtro ) == 0 || ! in_array ( $key, $this->_fields )) {
 					unset ( $filters [$key] );
 				} else {
 					$oldKey = $key;
@@ -1107,7 +1107,7 @@ class Bvb_Grid_DataGrid {
 				}
 			}
 			
-			if (in_array ( $order_field, $this->map_array ( $this->_fieldsOrder, 'replace_AS' ) )) {
+			if (in_array ( $order_field, $this->_fieldsOrder )) {
 				$this->_select->reset ( 'order' );
 				$this->_select->order ( $query_order );
 			}
@@ -1259,37 +1259,19 @@ class Bvb_Grid_DataGrid {
 		return $return;
 	}
 	
+	function prepareReplace($fields) {
+		return array_map ( create_function ( '$value', 'return "{{{$value}}}";' ), $fields );
+	}
+	
 	/**
 	 * Apply various functions to arrays
 	 * @param unknown_type $campos
 	 * @param unknown_type $callback
 	 * @return unknown
 	 */
-	function map_array($campos, $callback) {
+	function prepareOutput($campos) {
 		
-		if (! is_array ( $campos ))
-			return FALSE;
-			
-		$ncampos = array();
-		switch ($callback) {
-			case 'prepare_replace' :
-				foreach ( $campos as $value ) {
-					$ncampos [] = "{{" . $value . "}}";
-				}
-				break;
-			case 'replace_AS' :
-				$ncampos = $campos;
-				break;
-			case 'prepare_output' :
-				foreach ( $campos as $value ) {
-					$ncampos [] = htmlspecialchars ( $value );
-				}
-				break;
-			default :
-				break;
-		}
-		
-		return $ncampos;
+		return $this->escapeOutput === true ? array_map ( 'htmlspecialchars', $campos ) : $campos;
 	}
 	
 	/**
@@ -1400,7 +1382,6 @@ class Bvb_Grid_DataGrid {
 		return $this;
 	}
 	
-	
 	/**
 	 *Replace dots to avoid JS error
 	 * @param string $string
@@ -1409,7 +1390,6 @@ class Bvb_Grid_DataGrid {
 	function replaceDots($string) {
 		return str_replace ( ".", "bvbdot", $string );
 	}
-	
 	
 	/**
 	 * Create the filters when using the array adapter
@@ -1458,8 +1438,8 @@ class Bvb_Grid_DataGrid {
 			
 
 			if (@is_array ( $this->filters [$valor] ['distinct'] )) {
-				$this->filters [$valor] ['distinct'] ['field'] =  @$this->filters [$valor] ['distinct'] ['field'];
-				$this->filters [$valor] ['distinct'] ['name'] = @$this->filters [$valor] ['distinct'] ['name'] ;
+				$this->filters [$valor] ['distinct'] ['field'] = @$this->filters [$valor] ['distinct'] ['field'];
+				$this->filters [$valor] ['distinct'] ['name'] = @$this->filters [$valor] ['distinct'] ['name'];
 				
 				$distinct = clone $this->_select;
 				
@@ -1597,10 +1577,8 @@ class Bvb_Grid_DataGrid {
 	/**
 	 * Escape the output
 	 */
-	function escapeOutput($escape) {
-		
+	function setEscapeOutput($escape) {
 		$this->escapeOutput = ( bool ) $escape;
-		
 		return $this;
 	}
 	
@@ -1620,7 +1598,7 @@ class Bvb_Grid_DataGrid {
 		
 		$extra_fields = $this->extra_fields;
 		
-		$search = $this->map_array ( $this->_fields, 'prepare_replace' );
+		$search = $this->prepareReplace ( $this->_fields );
 		
 		$fields = $this->_fields;
 		
@@ -1689,8 +1667,7 @@ class Bvb_Grid_DataGrid {
 				
 				$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 				
-				$campos = stripos ( $campos, ' AS ' ) ? substr ( $campos, stripos ( $campos, ' AS ' ) + 3 ) : $campos;
-				$campos = trim ( $campos );
+				$outputToReplace = $this->prepareOutput ( array_values ( $finalDados ) );
 				
 				if ($this->_adapter == 'db') {
 					$final = $this->object2array ( $dados );
@@ -1710,7 +1687,7 @@ class Bvb_Grid_DataGrid {
 				
 				if (isset ( $this->data ['fields'] [$fields [$is]] ['eval'] )) {
 					
-					$evalf = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields [$is]] ['eval'] );
+					$evalf = str_replace ( $search, $outputToReplace, $this->data ['fields'] [$fields [$is]] ['eval'] );
 					$new_value = eval ( 'return ' . $evalf . ';' );
 				
 				}
@@ -1728,22 +1705,20 @@ class Bvb_Grid_DataGrid {
 					}
 					
 					if (is_array ( $toReplace )) {
-						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
-						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
+						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $outputToReplace ) );
 					}
 					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'], $toReplace );
 				
 				}
 				
-				//[PT]Aplicar o formato da célula
+				//[PT]Format field
 				if (isset ( $this->data ['fields'] [$fields [$is]] ['format'] )) {
 					
 					$alias = $this->data ['fields'] [$fields [$is]] ['format'];
 					
 					if (is_array ( $alias )) {
-						$replace = $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) );
-						array_walk_recursive ( $alias, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $replace ) );
+						array_walk_recursive ( $alias, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $outputToReplace ) );
 					}
 					
 					$new_value = $this->applyFormat ( $new_value, $alias );
@@ -1758,10 +1733,7 @@ class Bvb_Grid_DataGrid {
 					
 					$finalDados [$varEnd] = $new_value;
 					
-					if ($this->getAdapter () == 'db') {
-						#$this->data ['fields'] [$fields [$is]] ['decorator'] = preg_replace ( "/{{([a-z0-9_-]+}})/si", "{{" . $this->data ['table'] . ".\\1", $this->data ['fields'] [$fields [$is]] ['decorator'] );
-					}
-					$new_value = str_replace ( $search, $this->reset_keys ( $this->map_array ( $finalDados, 'prepare_output' ) ), $this->data ['fields'] [$fields [$is]] ['decorator'] );
+					$new_value = str_replace ( $search, $outputToReplace, $this->data ['fields'] [$fields [$is]] ['decorator'] );
 				}
 				
 				if (! isset ( $this->data ['fields'] [$fields [$is]] ['hide'] ) || $this->data ['fields'] [$fields [$is]] ['hide'] == 0) {
@@ -2722,7 +2694,6 @@ class Bvb_Grid_DataGrid {
 		
 		return $this->_describeTables [$table];
 	}
-	
 	
 	/**
 	 * Build the fields based on Zend_Db_Select
