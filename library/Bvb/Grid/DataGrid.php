@@ -964,12 +964,11 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
-		$fieldsSemAsFinal = $this->data ['fields'];
-		if (@$fieldsSemAsFinal [$key] ['searchType'] != "") {
-			$op = @$fieldsSemAsFinal [$key] ['searchType'];
+		if (! isset ( $this->data ['fields'] [$key] ['searchType'] )) {
+			$this->data ['fields'] [$key] ['searchType'] = 'like';
 		}
 		
-		$op = @strtolower ( $op );
+		$op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
 		
 		if (substr ( $filtro, 0, 1 ) == '=') {
 			$op = '=';
@@ -983,7 +982,7 @@ class Bvb_Grid_DataGrid {
 		} elseif (substr ( $filtro, 0, 2 ) == '<=') {
 			$op = '<=';
 			$filtro = substr ( $filtro, 2 );
-		} elseif (substr ( $filtro, 0, 2 ) == '<>') {
+		} elseif (substr ( $filtro, 0, 2 ) == '<>' || substr ( $filtro, 0, 2 ) == '!=') {
 			$op = '<>';
 			$filtro = substr ( $filtro, 2 );
 		} elseif ($filtro [0] == '<') {
@@ -1000,6 +999,9 @@ class Bvb_Grid_DataGrid {
 			$filtro = substr ( $filtro, 0, - 1 );
 		}
 		
+		if (isset ( $this->data ['fields'] [$key] ['searchTypeFixed'] ) && $this->data ['fields'] [$key] ['searchTypeFixed'] === true && $op != $this->data ['fields'] [$key] ['searchType']) {
+			$op = $this->data ['fields'] [$key] ['searchType'];
+		}
 		switch ($op) {
 			case 'equal' :
 			case '=' :
@@ -1600,7 +1602,6 @@ class Bvb_Grid_DataGrid {
 		
 		$search = $this->prepareReplace ( $this->_fields );
 		
-		
 		$fields = $this->_fields;
 		
 		$i = 0;
@@ -1705,15 +1706,12 @@ class Bvb_Grid_DataGrid {
 						$toReplace = array ();
 					}
 					
-				
 					if (is_array ( $toReplace )) {
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $outputToReplace ) );
 					}
 					
-					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'], $toReplace );
-					
-					
+				
 				}
 				
 				//[PT]Format field
@@ -1974,7 +1972,7 @@ class Bvb_Grid_DataGrid {
 					if (array_key_exists ( $i, $fields_final )) {
 						$i ++;
 					}
-					$fields_final [$i+100] = $key;
+					$fields_final [$i + 100] = $key;
 				}
 				
 				if (isset ( $value ['hide'] ) && $value ['hide'] == 1) {
@@ -1984,12 +1982,11 @@ class Bvb_Grid_DataGrid {
 				$i ++;
 				$i ++;
 			}
-			 
+			
 			ksort ( $fields_final );
 			
 			$fields_final = $this->reset_keys ( $fields_final );
 		}
-	
 		
 		$this->totalHiddenFields = $hide;
 		$this->_fields = $fields_final;
@@ -2745,10 +2742,7 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
-
 		$this->_allFieldsAdded = true;
-		
-		
 		
 		return $this;
 	}
