@@ -1600,6 +1600,7 @@ class Bvb_Grid_DataGrid {
 		
 		$search = $this->prepareReplace ( $this->_fields );
 		
+		
 		$fields = $this->_fields;
 		
 		$i = 0;
@@ -1704,12 +1705,15 @@ class Bvb_Grid_DataGrid {
 						$toReplace = array ();
 					}
 					
+				
 					if (is_array ( $toReplace )) {
 						array_walk_recursive ( $toReplace, array ($this, 'replaceSpecialTags' ), array ('find' => $search, 'replace' => $outputToReplace ) );
 					}
 					
+					
 					$new_value = call_user_func_array ( $this->data ['fields'] [$fields [$is]] ['callback'] ['function'], $toReplace );
-				
+					
+					
 				}
 				
 				//[PT]Format field
@@ -1940,6 +1944,8 @@ class Bvb_Grid_DataGrid {
 	 */
 	function validateFields($fields) {
 		
+		echo count($fields);
+		
 		if (is_array ( $fields )) {
 			$hide = 0;
 			$fields_final = array ();
@@ -1963,27 +1969,29 @@ class Bvb_Grid_DataGrid {
 				
 				if (isset ( $value ['order'] )) {
 					if ($value ['order'] > - 1) {
-						$fields_final [( int ) $value ['order']] = $key;
+						$fields_final [( int ) $value ['order'] + 100] = $key;
 					}
 				} else {
 					
 					if (array_key_exists ( $i, $fields_final )) {
 						$i ++;
 					}
-					
-					$fields_final [$i] = $key;
+					$fields_final [$i+100] = $key;
 				}
 				
 				if (isset ( $value ['hide'] ) && $value ['hide'] == 1) {
 					$hide ++;
 				}
 				$i ++;
+				$i ++;
+				$i ++;
 			}
-			
+			 
 			ksort ( $fields_final );
 			
 			$fields_final = $this->reset_keys ( $fields_final );
 		}
+	
 		
 		$this->totalHiddenFields = $hide;
 		$this->_fields = $fields_final;
@@ -2739,15 +2747,10 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
-		$fieldsNoAS = array ();
-		foreach ( array_keys ( $this->data ['fields'] ) as $key ) {
-			$reset = explode ( ' ', trim ( $key ) );
-			$alias = explode ( '.', trim ( end ( $reset ) ) );
-			$fieldsNoAS [end ( $alias )] = reset ( $reset );
-		}
-		
-		$this->_fieldsNoAs = $fieldsNoAS;
+
 		$this->_allFieldsAdded = true;
+		
+		
 		
 		return $this;
 	}
