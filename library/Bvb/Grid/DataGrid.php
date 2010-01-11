@@ -2150,20 +2150,12 @@ class Bvb_Grid_DataGrid {
 		
 		$pk = $this->getDescribeTable ( $table );
 		
-		$tableLists = $this->_select->getPart ( Zend_Db_Select::FROM );
-		
-		foreach ( $tableLists as $key => $value ) {
-			if ($value ['tableName'] == $table) {
-				$tableAlias = $key;
-				break;
-			}
-		}
 		
 		$keys = array ();
 		
 		foreach ( $pk as $pkk => $primary ) {
 			if ($primary ['PRIMARY'] == 1) {
-				$keys [] = $tableAlias . '.' . $pkk;
+				$keys [] = $pkk;
 			}
 		}
 		
