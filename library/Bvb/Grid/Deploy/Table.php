@@ -1345,7 +1345,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				unset ( $search [0] );
 			}
 			
-			if ($search [1] == 'E') {
+			if (isset($search [1] ) && $search [1] == 'E') {
 				unset ( $search [1] );
 			}
 			
