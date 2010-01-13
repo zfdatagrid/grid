@@ -410,7 +410,6 @@ class Bvb_Grid_DataGrid {
 		$this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
 	
 	}
- 
 	
 	/**
 	 * If set to false, then this grid won't care about any 
@@ -955,7 +954,9 @@ class Bvb_Grid_DataGrid {
 		
 		$op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
 		
-		if (substr ( $filtro, 0, 1 ) == '=') {
+		if (strpos ( $filtro, '<>' ) !== false) {
+			$op = 'range';
+		} elseif (substr ( $filtro, 0, 1 ) == '=') {
 			$op = '=';
 			$filtro = substr ( $filtro, 1 );
 		} elseif (substr ( $filtro, 0, 2 ) == '>=') {
@@ -987,6 +988,7 @@ class Bvb_Grid_DataGrid {
 		if (isset ( $this->data ['fields'] [$key] ['searchTypeFixed'] ) && $this->data ['fields'] [$key] ['searchTypeFixed'] === true && $op != $this->data ['fields'] [$key] ['searchType']) {
 			$op = $this->data ['fields'] [$key] ['searchType'];
 		}
+		
 		switch ($op) {
 			case 'equal' :
 			case '=' :
@@ -1013,6 +1015,13 @@ class Bvb_Grid_DataGrid {
 				break;
 			case '<' :
 				$this->_select->where ( new Zend_Db_Expr ( $field . " < " . $this->_db->quote ( $filtro ) ) );
+				break;
+			case 'range':
+
+				$end = substr($filtro,0,strpos($filtro,'<>'));
+				$start = substr($filtro,strpos($filtro,'<>')+2);
+				$this->_select->where ( new Zend_Db_Expr ( $field . " < " . $this->_db->quote ( $start ) ) );
+				$this->_select->where ( new Zend_Db_Expr ( $field . " > " . $this->_db->quote ( $end ) ) );
 				break;
 			case 'like' :
 			default :
@@ -1442,7 +1451,7 @@ class Bvb_Grid_DataGrid {
 				$distinct->columns ( array ('field' => new Zend_Db_Expr ( "DISTINCT({$this->filters[$valor]['distinct']['field']})" ) ) );
 				$distinct->columns ( array ('value' => $this->filters [$valor] ['distinct'] ['name'] ) );
 				$distinct->order ( $this->filters [$valor] ['distinct'] ['name'] . ' ASC' );
-				$result = $distinct->query (Zend_Db::FETCH_OBJ);
+				$result = $distinct->query ( Zend_Db::FETCH_OBJ );
 				
 				$final = $result->fetchAll ();
 				
@@ -1875,7 +1884,7 @@ class Bvb_Grid_DataGrid {
 				
 				$select->columns ( new Zend_Db_Expr ( $valor . ' AS TOTAL' ) );
 				
-				$final = $select->query (Zend_Db::FETCH_OBJ );
+				$final = $select->query ( Zend_Db::FETCH_OBJ );
 				
 				$result1 = $final->fetchAll ();
 				
@@ -2194,7 +2203,8 @@ class Bvb_Grid_DataGrid {
 				
 				if (! $result = $cache->load ( md5 ( $this->_select->__toString () ) )) {
 					
-					$stmt =  $this->_select->query ( Zend_Db::FETCH_OBJ );;
+					$stmt = $this->_select->query ( Zend_Db::FETCH_OBJ );
+					;
 					$result = $stmt->fetchAll ();
 					
 					if ($this->_forceLimit === false) {
@@ -2209,7 +2219,7 @@ class Bvb_Grid_DataGrid {
 						$selectZendDb->reset ( Zend_Db_Select::ORDER );
 						$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 						
-						$stmt = $selectZendDb->query (  Zend_Db::FETCH_OBJ );
+						$stmt = $selectZendDb->query ( Zend_Db::FETCH_OBJ );
 						
 						$resultZendDb = $stmt->fetchAll ();
 						
@@ -2241,7 +2251,7 @@ class Bvb_Grid_DataGrid {
 				$stmt = $this->_select->query ( Zend_Db::FETCH_OBJ );
 				
 				$result = $stmt->fetchAll ();
-				    
+				
 				if ($this->_forceLimit === false) {
 					
 					$selectZendDb = clone $this->_select;
@@ -2254,7 +2264,7 @@ class Bvb_Grid_DataGrid {
 					$selectZendDb->reset ( Zend_Db_Select::ORDER );
 					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 					
-					$stmt = $selectZendDb->query (Zend_Db::FETCH_OBJ);
+					$stmt = $selectZendDb->query ( Zend_Db::FETCH_OBJ );
 					
 					$resultZendDb = $stmt->fetchAll ();
 					
@@ -2756,11 +2766,11 @@ class Bvb_Grid_DataGrid {
 		return self::VERSION;
 	}
 	
-    /**
-     * Return number records found
-     */
+	/**
+	 * Return number records found
+	 */
 	function getTotalRecords() {
-		return (int)$this->_totalRecords;
+		return ( int ) $this->_totalRecords;
 	}
 
 }
