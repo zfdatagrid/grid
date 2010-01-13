@@ -2338,16 +2338,7 @@ class Bvb_Grid_DataGrid {
 			
 			}
 			
-			if (@strlen ( $this->info ['limit'] ) > 0 || @is_array ( $this->info ['limit'] )) {
-				if (is_array ( $this->info ['limit'] )) {
-					$this->_totalRecords = $this->info ['limit'] [1];
-					$result = array_slice ( $this->_result, $this->info ['limit'] [0], $this->info ['limit'] [1] );
-				} else {
-					$this->_totalRecords = $this->info ['limit'];
-					$result = array_slice ( $this->_result, 0, $this->info ['limit'] );
-				}
-			
-			} elseif ($this->pagination == 0) {
+			if ($this->pagination == 0) {
 				$this->_totalRecords = count ( $this->_result );
 				$result = $this->_result;
 			
