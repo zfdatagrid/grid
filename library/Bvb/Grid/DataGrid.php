@@ -1016,10 +1016,10 @@ class Bvb_Grid_DataGrid {
 			case '<' :
 				$this->_select->where ( new Zend_Db_Expr ( $field . " < " . $this->_db->quote ( $filtro ) ) );
 				break;
-			case 'range':
-
-				$end = substr($filtro,0,strpos($filtro,'<>'));
-				$start = substr($filtro,strpos($filtro,'<>')+2);
+			case 'range' :
+				
+				$end = substr ( $filtro, 0, strpos ( $filtro, '<>' ) );
+				$start = substr ( $filtro, strpos ( $filtro, '<>' ) + 2 );
 				$this->_select->where ( new Zend_Db_Expr ( $field . " < " . $this->_db->quote ( $start ) ) );
 				$this->_select->where ( new Zend_Db_Expr ( $field . " > " . $this->_db->quote ( $end ) ) );
 				break;
@@ -2430,52 +2430,86 @@ class Bvb_Grid_DataGrid {
 	/**
 	 * Apply the search to a give field when the adaptar is an array
 	 */
-	function applySearchTypeToArray($final, $search, $key) {
+	function applySearchTypeToArray($final, $filtro, $key) {
 		
-		$enc = stripos ( ( string ) $final, $search );
-		
-		if (@$this->data ['fields'] [$key] ['searchType'] != "") {
-			$filtro = $this->data ['fields'] [$key] ['searchType'];
-		}
-		$filtro = @strtolower ( $filtro );
-		
-		switch ($filtro) {
+	
+        if (! isset ( $this->data ['fields'] [$key] ['searchType'] )) {
+            $this->data ['fields'] [$key] ['searchType'] = 'like';
+        }
+        
+        $op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
+        
+        if (substr ( $filtro, 0, 1 ) == '=') {
+            $op = '=';
+            $filtro = substr ( $filtro, 1 );
+        } elseif (substr ( $filtro, 0, 2 ) == '>=') {
+            $op = '>=';
+            $filtro = substr ( $filtro, 2 );
+        } elseif ($filtro [0] == '>') {
+            $op = '>';
+            $filtro = substr ( $filtro, 1 );
+        } elseif (substr ( $filtro, 0, 2 ) == '<=') {
+            $op = '<=';
+            $filtro = substr ( $filtro, 2 );
+        } elseif (substr ( $filtro, 0, 2 ) == '<>' || substr ( $filtro, 0, 2 ) == '!=') {
+            $op = '<>';
+            $filtro = substr ( $filtro, 2 );
+        } elseif ($filtro [0] == '<') {
+            $op = '<';
+            $filtro = substr ( $filtro, 1 );
+        } elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) == '*') {
+            $op = 'like';
+            $filtro = substr ( $filtro, 1, - 1 );
+        } elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) != '*') {
+            $op = 'llike';
+            $filtro = substr ( $filtro, 1 );
+        } elseif ($filtro [0] != '*' and substr ( $filtro, - 1 ) == '*') {
+            $op = 'rlike';
+            $filtro = substr ( $filtro, 0, - 1 );
+        }
+        
+        if (isset ( $this->data ['fields'] [$key] ['searchTypeFixed'] ) && $this->data ['fields'] [$key] ['searchTypeFixed'] === true && $op != $this->data ['fields'] [$key] ['searchType']) {
+            $op = $this->data ['fields'] [$key] ['searchType'];
+        }
+        
+         
+		switch ($op) {
 			case 'equal' :
 			case '=' :
-				if ($search == $final)
+				if ($filtro == $final)
 					return true;
 				break;
 			case 'rlike' :
-				if (substr ( $final, 0, strlen ( $search ) ) == $search)
+				if (substr ( $final, 0, strlen ( $filtro ) ) == $filtro)
 					return true;
 				break;
 			case 'llike' :
-				if (substr ( $final, - strlen ( $search ) ) == $search)
+				if (substr ( $final, - strlen ( $filtro ) ) == $filtro)
 					return true;
 				break;
 			case '>=' :
-				if ($final >= $search)
+				if ($final >= $filtro)
 					return true;
 				break;
 			case '>' :
-				if ($final > $search)
+				if ($final > $filtro)
 					return true;
 				break;
 			case '<>' :
 			case '!=' :
-				if ($final != $search)
+				if ($final != $filtro)
 					return true;
 				break;
 			case '<=' :
-				if ($final <= $search)
+				if ($final <= $filtro)
 					return true;
 				break;
 			case '<' :
-				if ($final < $search)
+				if ($final < $filtro)
 					return true;
 				break;
 			default :
-				$enc = stripos ( ( string ) $final, $search );
+				$enc = stripos ( ( string ) $final, $filtro );
 				if ($enc !== false) {
 					return true;
 				}
