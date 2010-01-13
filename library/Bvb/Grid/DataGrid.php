@@ -2781,8 +2781,11 @@ class Bvb_Grid_DataGrid {
 		return self::VERSION;
 	}
 	
+    /**
+     * Return number records found
+     */
 	function getTotalRecords() {
-		return $this->_totalRecords;
+		return (int)$this->_totalRecords;
 	}
 
 }
