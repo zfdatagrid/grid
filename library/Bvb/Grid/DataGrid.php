@@ -954,7 +954,7 @@ class Bvb_Grid_DataGrid {
 		
 		$op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
 		
-		if (strpos ( $filtro, '<>' ) !== false) {
+		if (strpos ( $filtro, '<>' ) !== false && substr($filtro,0,2)!='<>') {
 			$op = 'range';
 		} elseif (substr ( $filtro, 0, 1 ) == '=') {
 			$op = '=';
@@ -2808,7 +2808,7 @@ class Bvb_Grid_DataGrid {
 	}
 
 	/**
-	 * Return the sql object
+	 * Return the query object
 	 */
 	function getSelectObject()
 	{
