@@ -2807,6 +2807,13 @@ class Bvb_Grid_DataGrid {
 		return ( int ) $this->_totalRecords;
 	}
 
+	/**
+	 * Return the sql object
+	 */
+	function getSelectObject()
+	{
+		return $this->_select;
+	}
 }
 
   
