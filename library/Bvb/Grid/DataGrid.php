@@ -1238,14 +1238,13 @@ class Bvb_Grid_DataGrid {
 			
 			$nf = $this->_fields [$i];
 			
-			if(!isset($this->data ['fields'] [$nf] ['search'] ))
-			{
-				$this->data ['fields'] [$nf] ['search']=true; 
+			if (! isset ( $this->data ['fields'] [$nf] ['search'] )) {
+				$this->data ['fields'] [$nf] ['search'] = true;
 			}
 			
 			if (! isset ( $this->data ['fields'] [$nf] ['hide'] ) || $this->data ['fields'] [$nf] ['hide'] == 0) {
 				
-				if (@array_key_exists ( $data [$i], $this->filters ) && $this->data ['fields'] [$nf] ['search']===true) {
+				if (@array_key_exists ( $data [$i], $this->filters ) && $this->data ['fields'] [$nf] ['search'] === true) {
 					if (isset ( $this->filters [$data [$i]] ['decorator'] ) && is_array ( $this->filters [$data [$i]] )) {
 						$return [] = array ('type' => 'field', 'value' => $this->filters [$data [$i]] ['decorator'], 'field' => $data [$i] );
 					} else {
@@ -1669,19 +1668,15 @@ class Bvb_Grid_DataGrid {
 				
 				$finalDados = is_object ( $dados ) ? get_object_vars ( $dados ) : $dados;
 				
-				$outputToReplace = $this->prepareOutput ( array_values ( $finalDados ) );
-				
-				if ($this->_adapter == 'db') {
-					$final = $this->object2array ( $dados );
-				} else {
-					$final = $dados;
+				$outputToReplace = array ();
+				foreach ( $fields as $value ) {
+					$outputToReplace [] = $finalDados [$value];
 				}
 				
-				if (array_key_exists ( $campos, $final ) && ! is_array ( $final [$campos] )) {
-					
-					$new_value = $final [$campos];
+				$outputToReplace = $this->prepareOutput ( $outputToReplace );
 				
-				}
+				
+				$new_value = $finalDados [$fields[$is]];
 				
 				if ($this->escapeOutput === true) {
 					$new_value = htmlspecialchars ( $new_value );
