@@ -182,13 +182,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @var unknown_type
 	 */
 	protected $_callbackBeforeInsert = null;
+       
+    /**
+     * Contains result of deploy() function.
+     *
+     * @var string
+     */
+    protected $_deploymentContent = null;
 	
 	/**
-	 *  The __construct function receives the db adapter. All information related to the
-	 *  URL is also processed here
 	 *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
-	 *  it here. Remember to use the method write when autenticating a user, so we can know 
-	 *  if its logged or not
+	 *  it here. 
 	 *
 	 * @param array $data
 	 */
@@ -294,8 +298,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			// Apply filter and validators. Firtst we apply the filters
 			foreach ( $fields as $value ) {
-				
-				$value = preg_replace ( "/\./", '_', $value, 1 );
 				
 				$this->_formValues [$value] = $param->getPost ( $value );
 				
@@ -702,12 +704,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		if (isset ( $this->ctrlParams ['filters'] ) || isset ( $this->ctrlParams ['order'] )) {
 			
-			$url = $this->getUrl ( 'filters','nofilters' );
+			$url = $this->getUrl ( 'filters', 'nofilters' );
 			$url2 = $this->getUrl ( 'order' );
-			$url3 = $this->getUrl ( array ('filters', 'order','nofilters' ) );
+			$url3 = $this->getUrl ( array ('filters', 'order', 'nofilters' ) );
 			
-			if(is_array($this->_defaultFilters))
-			{
+			if (is_array ( $this->_defaultFilters )) {
 				$url .= '/nofilters/1';
 				$url3 .= '/nofilters/1';
 			}
@@ -844,7 +845,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			if ($this->getAdapter () == "db") {
 				//Lets get the default order using in the query (Zend_Db)
 				$queryOrder = $this->_select->getPart ( 'order' );
-			}else{
+			} else {
 				$queryOrder = null;
 			}
 			if (is_array ( $queryOrder )) {
@@ -1099,7 +1100,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	}
 	
-	
 	/**
 	 * Get the list of primary keys from the URL
 	 *
@@ -1345,7 +1345,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				unset ( $search [0] );
 			}
 			
-			if (isset($search [1] ) && $search [1] == 'E') {
+			if (isset ( $search [1] ) && $search [1] == 'E') {
 				unset ( $search [1] );
 			}
 			
@@ -1808,8 +1808,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			return '';
 		}
 		
-		return $grid;
+		$this->_deploymentContent = $grid;
+		return $this;
 	
+	}
+	
+	function __toString() {
+		if (is_null ( $this->_deploymentContent )) {
+			self::deploy ();
+		}
+		
+		return $this->_deploymentContent;
 	}
 	
 	function printScript() {

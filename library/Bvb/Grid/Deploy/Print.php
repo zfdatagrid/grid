@@ -204,8 +204,6 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         die();
     }
 
-
-
 }
 
 

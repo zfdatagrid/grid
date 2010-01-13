@@ -366,7 +366,6 @@ class Bvb_Grid_DataGrid {
 	 * @return array
 	 */
 	protected $_defaultFilters;
-	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
@@ -1244,7 +1243,7 @@ class Bvb_Grid_DataGrid {
 			
 			if (! isset ( $this->data ['fields'] [$nf] ['hide'] ) || $this->data ['fields'] [$nf] ['hide'] == 0) {
 				
-				if (@array_key_exists ( $data [$i], $this->filters ) && $this->data ['fields'] [$nf] ['search'] === true) {
+				if (@array_key_exists ( $data [$i], $this->filters ) && $this->data ['fields'] [$nf] ['search'] !== false) {
 					if (isset ( $this->filters [$data [$i]] ['decorator'] ) && is_array ( $this->filters [$data [$i]] )) {
 						$return [] = array ('type' => 'field', 'value' => $this->filters [$data [$i]] ['decorator'], 'field' => $data [$i] );
 					} else {
@@ -1509,9 +1508,13 @@ class Bvb_Grid_DataGrid {
 		$i = 0;
 		foreach ( array_keys ( $this->filters ) as $value ) {
 			
+			if (! isset ( $this->data ['fields'] [$value] ['search'] )) {
+				$this->data ['fields'] [$value] ['search'] = true;
+			}
+			
 			$hRow = isset ( $this->data ['fields'] [$value] ['hRow'] ) ? $this->data ['fields'] [$value] ['hRow'] : '';
 			
-			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$value] ['hide'] == 0) && $hRow != 1) {
+			if ((! isset ( $this->data ['fields'] [$value] ['hide'] ) || $this->data ['fields'] [$value] ['hide'] == 0) && $hRow != 1 && $this->data ['fields'] [$value] ['search'] != false) {
 				$help_javascript .= "filter_" . $value . ",";
 			}
 		}
@@ -1675,8 +1678,7 @@ class Bvb_Grid_DataGrid {
 				
 				$outputToReplace = $this->prepareOutput ( $outputToReplace );
 				
-				
-				$new_value = $finalDados [$fields[$is]];
+				$new_value = $finalDados [$fields [$is]];
 				
 				if ($this->escapeOutput === true) {
 					$new_value = htmlspecialchars ( $new_value );
@@ -2777,6 +2779,10 @@ class Bvb_Grid_DataGrid {
 	 */
 	function getVersion() {
 		return self::VERSION;
+	}
+	
+	function getTotalRecords() {
+		return $this->_totalRecords;
 	}
 
 }

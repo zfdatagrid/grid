@@ -397,7 +397,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_DataGrid
             unlink ( $this->inicialDir . $this->title . '.ods' );
         }
         
-        #$this->deldir ( $this->dir );
+        $this->deldir ( $this->dir );
         
         die ();
     }
