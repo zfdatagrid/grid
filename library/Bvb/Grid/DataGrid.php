@@ -355,12 +355,6 @@ class Bvb_Grid_DataGrid {
 	protected $_view;
 	
 	/**
-	 * The db fetch mode used befora changed
-	 * @var unknown_type
-	 */
-	private $_clientFecthMode = null;
-	
-	/**
 	 * Default filters to be applyed
 	 * @var array
 	 * @return array
@@ -416,15 +410,7 @@ class Bvb_Grid_DataGrid {
 		$this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
 	
 	}
-	
-	/**
-	 * Revert Zend_Db Fetch Mode
-	 */
-	function __destruct() {
-		if ($this->getAdapter () == 'db') {
-			$this->_db->setFetchMode ( $this->_clientFecthMode );
-		}
-	}
+ 
 	
 	/**
 	 * If set to false, then this grid won't care about any 
@@ -1456,7 +1442,7 @@ class Bvb_Grid_DataGrid {
 				$distinct->columns ( array ('field' => new Zend_Db_Expr ( "DISTINCT({$this->filters[$valor]['distinct']['field']})" ) ) );
 				$distinct->columns ( array ('value' => $this->filters [$valor] ['distinct'] ['name'] ) );
 				$distinct->order ( $this->filters [$valor] ['distinct'] ['name'] . ' ASC' );
-				$result = $distinct->query ();
+				$result = $distinct->query (Zend_Db::FETCH_OBJ);
 				
 				$final = $result->fetchAll ();
 				
@@ -1889,7 +1875,7 @@ class Bvb_Grid_DataGrid {
 				
 				$select->columns ( new Zend_Db_Expr ( $valor . ' AS TOTAL' ) );
 				
-				$final = $select->query ();
+				$final = $select->query (Zend_Db::FETCH_OBJ );
 				
 				$result1 = $final->fetchAll ();
 				
@@ -2208,7 +2194,7 @@ class Bvb_Grid_DataGrid {
 				
 				if (! $result = $cache->load ( md5 ( $this->_select->__toString () ) )) {
 					
-					$stmt = $this->_db->query ( $this->_select );
+					$stmt =  $this->_select->query ( Zend_Db::FETCH_OBJ );;
 					$result = $stmt->fetchAll ();
 					
 					if ($this->_forceLimit === false) {
@@ -2223,7 +2209,7 @@ class Bvb_Grid_DataGrid {
 						$selectZendDb->reset ( Zend_Db_Select::ORDER );
 						$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 						
-						$stmt = $selectZendDb->query ();
+						$stmt = $selectZendDb->query (  Zend_Db::FETCH_OBJ );
 						
 						$resultZendDb = $stmt->fetchAll ();
 						
@@ -2252,10 +2238,10 @@ class Bvb_Grid_DataGrid {
 			
 			} else {
 				
-				$stmt = $this->_db->query ( $this->_select );
+				$stmt = $this->_select->query ( Zend_Db::FETCH_OBJ );
 				
 				$result = $stmt->fetchAll ();
-				
+				    
 				if ($this->_forceLimit === false) {
 					
 					$selectZendDb = clone $this->_select;
@@ -2268,7 +2254,7 @@ class Bvb_Grid_DataGrid {
 					$selectZendDb->reset ( Zend_Db_Select::ORDER );
 					$selectZendDb->columns ( array ('TOTAL' => new Zend_Db_Expr ( "COUNT(*)" ) ) );
 					
-					$stmt = $selectZendDb->query ();
+					$stmt = $selectZendDb->query (Zend_Db::FETCH_OBJ);
 					
 					$resultZendDb = $stmt->fetchAll ();
 					
@@ -2743,8 +2729,6 @@ class Bvb_Grid_DataGrid {
 		$this->_db = $select->getAdapter ();
 		$this->setAdapter ( 'db' );
 		
-		$this->_clientFecthMode = $this->_db->getFetchMode ();
-		$this->_db->setFetchMode ( Zend_Db::FETCH_OBJ );
 		//Instanciate the Zend_Db_Select object
 		$this->_select = $this->_db->select ();
 		
