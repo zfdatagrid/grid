@@ -1238,9 +1238,14 @@ class Bvb_Grid_DataGrid {
 			
 			$nf = $this->_fields [$i];
 			
+			if(!isset($this->data ['fields'] [$nf] ['search'] ))
+			{
+				$this->data ['fields'] [$nf] ['search']=true; 
+			}
+			
 			if (! isset ( $this->data ['fields'] [$nf] ['hide'] ) || $this->data ['fields'] [$nf] ['hide'] == 0) {
 				
-				if (@array_key_exists ( $data [$i], $this->filters )) {
+				if (@array_key_exists ( $data [$i], $this->filters ) && $this->data ['fields'] [$nf] ['search']===true) {
 					if (isset ( $this->filters [$data [$i]] ['decorator'] ) && is_array ( $this->filters [$data [$i]] )) {
 						$return [] = array ('type' => 'field', 'value' => $this->filters [$data [$i]] ['decorator'], 'field' => $data [$i] );
 					} else {
