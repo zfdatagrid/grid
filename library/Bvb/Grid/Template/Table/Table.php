@@ -144,7 +144,7 @@ class Bvb_Grid_Template_Table_Table
 
     function sqlExpLoop ()
     {
-        return "<td class=\"sum\">{{value}}</td>";
+        return "<td class=\"sum {{class}}\">{{value}}</td>";
     }
 
 

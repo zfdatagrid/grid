@@ -182,13 +182,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 * @var unknown_type
 	 */
 	protected $_callbackBeforeInsert = null;
-       
-    /**
-     * Contains result of deploy() function.
-     *
-     * @var string
-     */
-    protected $_deploymentContent = null;
+	
+	/**
+	 * Contains result of deploy() function.
+	 *
+	 * @var string
+	 */
+	protected $_deploymentContent = null;
 	
 	/**
 	 *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
@@ -1411,7 +1411,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			foreach ( $sql as $exp ) {
 				if ($exp ['field'] != @$this->info ['hRow'] ['field']) {
-					$grid .= str_replace ( "{{value}}", $exp ['value'], $this->temp ['table']->sqlExpLoop () );
+					$grid .= str_replace ( array ("{{value}}", '{{class}}' ), array ($exp ['value'], $exp ['class'] ), $this->temp ['table']->sqlExpLoop () );
 				}
 			}
 			$grid .= $this->temp ['table']->sqlExpEnd ();

@@ -1905,9 +1905,11 @@ class Bvb_Grid_DataGrid {
 			foreach ( $this->_finalFields as $key => $value ) {
 				if (array_key_exists ( $key, $result )) {
 					$class = isset ( $this->template ['classes'] ['sqlexp'] ) ? $this->template ['classes'] ['sqlexp'] : '';
+                    $class .= isset ( $this->info ['sqlexp'][$key]['class']  ) ? ' '.$this->info ['sqlexp'][$key]['class'] : '';
 					$return [] = array ('class' => $class, 'value' =>  $result [$key], 'field' => $key );
 				} else {
 					$class = isset ( $this->template ['classes'] ['sqlexp'] ) ? $this->template ['classes'] ['sqlexp'] : '';
+                    $class .= isset ( $this->info ['sqlexp'][$key]['class']  ) ? ' '.$this->info ['sqlexp'][$key]['class'] : '';
 					$return [] = array ('class' => $class, 'value' => '', 'field' => $key );
 				}
 			}
