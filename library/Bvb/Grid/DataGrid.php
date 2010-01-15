@@ -1885,6 +1885,8 @@ class Bvb_Grid_DataGrid {
 	 */
 	function buildSqlExp() {
 		
+		$return = false;
+		
 		$final = isset ( $this->info ['sqlexp'] ) ? $this->info ['sqlexp'] : '';
 		
 		if (! is_array ( $final )) {
@@ -1902,6 +1904,9 @@ class Bvb_Grid_DataGrid {
 		} else {
 			
 			foreach ( $final as $key => $value ) {
+				
+				if (! array_key_exists ( $key, $this->data ['fields'] ))
+					continue;
 				
 				if (is_array ( $value )) {
 					$valor = '';
@@ -1939,7 +1944,7 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
-		if (is_array ( $result )) {
+		if (isset ( $result ) && is_array ( $result )) {
 			$return = array ();
 			foreach ( $this->_finalFields as $key => $value ) {
 				if (array_key_exists ( $key, $result )) {
