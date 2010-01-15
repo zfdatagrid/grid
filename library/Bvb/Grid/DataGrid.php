@@ -771,10 +771,6 @@ class Bvb_Grid_DataGrid {
 		
 		}
 		
-		if (strpos ( $field, '.' ) === false && $this->getAdapter () == 'db') {
-			#	$field = $this->data ['tableAlias'] . '.' . $field;
-		}
-		
 		if ($this->_allFieldsAdded == false) {
 			
 			$this->data ['fields'] [$field] = $options;
@@ -787,17 +783,6 @@ class Bvb_Grid_DataGrid {
 			}
 			
 			$this->data ['fields'] [$field] = array_merge ( $this->data ['fields'] [$field], $options );
-		
-		} else {
-			
-			foreach ( array_keys ( $this->data ['fields'] ) as $value ) {
-				$aux = explode ( ' ', trim ( $value ) );
-				
-				if (reset ( $aux ) == $field) {
-					$this->updateColumn ( $value, $options );
-				}
-			
-			}
 		
 		}
 		
@@ -2802,6 +2787,8 @@ class Bvb_Grid_DataGrid {
 			}
 		}
 		
+		$this->_allFieldsAdded = true;
+		
 		if (count ( $this->_updateColumnQueue ) > 0) {
 			foreach ( $this->_updateColumnQueue as $field => $options ) {
 				
@@ -2813,8 +2800,6 @@ class Bvb_Grid_DataGrid {
 			
 			$this->_updateColumnQueue = array ();
 		}
-		
-		$this->_allFieldsAdded = true;
 		
 		return $this;
 	}
