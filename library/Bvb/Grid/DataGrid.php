@@ -976,7 +976,7 @@ class Bvb_Grid_DataGrid {
 				$extra = '';
 			}
 			
-			if ($extra == 'boolean') {
+			if ($extra == 'IN BOOLEAN MODE') {
 				$filtro = preg_replace ( "/\s+/", " +", $this->_db->quote ( ' ' . $filtro ) );
 			} else {
 				$filtro = $this->_db->quote ( $filtro );
