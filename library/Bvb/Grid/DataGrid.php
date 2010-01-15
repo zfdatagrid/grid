@@ -360,6 +360,15 @@ class Bvb_Grid_DataGrid {
 	 * @return array
 	 */
 	protected $_defaultFilters;
+	
+	/**
+	 * Instead throwing an exception,
+	 * we queue the field list and call this in 
+	 * getFieldsFromQuery()
+	 * @var array
+	 */
+	protected $_updateColumnQueue = array ();
+	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
 	 *  URL is also processed here
@@ -750,7 +759,16 @@ class Bvb_Grid_DataGrid {
 	function updateColumn($field, $options = array()) {
 		
 		if (! isset ( $this->data ['table'] ) && $this->_selectZendDb == false && $this->getAdapter () == 'db') {
-			throw new Exception ( 'You must specify the query first and only then, you can update the column' );
+			#throw new Exception ( 'You must specify the query first and only then, you can update the column' );
+			
+
+			/**
+			 * Add to the queue and call it from the getFieldsFromQuery() method
+			 * @var $_updateColumnQueue Bvb_Grid_DataGrid
+			 */
+			$this->_updateColumnQueue [$field] = $options;
+			return true;
+		
 		}
 		
 		if (strpos ( $field, '.' ) === false && $this->getAdapter () == 'db') {
@@ -947,6 +965,42 @@ class Bvb_Grid_DataGrid {
 			}
 		
 		}
+		if (isset ( $this->data ['fields'] [$key] ['search'] ) and is_array ( $this->data ['fields'] [$key] ['search'] ) && $this->data ['fields'] [$key] ['search'] ['fulltext'] === true) {
+			
+			$full = $this->data ['fields'] [$key] ['search'];
+			
+			if (! isset ( $full ['indexes'] )) {
+				$indexes = $this->data ['fields'] [$key] ['field'];
+			} elseif (is_array ( $full ['indexes'] )) {
+				$indexes = implode ( ',', array_values ( $full ['indexes'] ) );
+			} elseif (is_string ( $full ['indexes'] )) {
+				$indexes = $full ['indexes'];
+			}
+			
+			$extra = isset ( $full ['extra'] ) ? $full ['extra'] : 'boolean';
+			
+			if (! in_array ( $extra, array ('boolean', 'queryExpansion', false ) )) {
+				throw new Exception ( 'Unrecognized value in extra key' );
+			}
+			
+			if ($extra == 'boolean') {
+				$extra = 'IN BOOLEAN MODE';
+			} elseif ($extra == 'queryExpansion') {
+				$extra = ' USING QUERY EXPANSION ';
+			} else {
+				$extra = '';
+			}
+			
+			if ($extra == 'boolean') {
+				$filtro = preg_replace ( "/\s+/", " +", $this->_db->quote ( ' ' . $filtro ) );
+			} else {
+				$filtro = $this->_db->quote ( $filtro );
+			}
+			
+			$this->_select->where ( new Zend_Db_Expr ( "MATCH ($indexes) AGAINST ($filtro $extra) " ) );
+			
+			return;
+		}
 		
 		if (! isset ( $this->data ['fields'] [$key] ['searchType'] )) {
 			$this->data ['fields'] [$key] ['searchType'] = 'like';
@@ -954,7 +1008,7 @@ class Bvb_Grid_DataGrid {
 		
 		$op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
 		
-		if (strpos ( $filtro, '<>' ) !== false && substr($filtro,0,2)!='<>') {
+		if (strpos ( $filtro, '<>' ) !== false && substr ( $filtro, 0, 2 ) != '<>') {
 			$op = 'range';
 		} elseif (substr ( $filtro, 0, 1 ) == '=') {
 			$op = '=';
@@ -1905,11 +1959,11 @@ class Bvb_Grid_DataGrid {
 			foreach ( $this->_finalFields as $key => $value ) {
 				if (array_key_exists ( $key, $result )) {
 					$class = isset ( $this->template ['classes'] ['sqlexp'] ) ? $this->template ['classes'] ['sqlexp'] : '';
-                    $class .= isset ( $this->info ['sqlexp'][$key]['class']  ) ? ' '.$this->info ['sqlexp'][$key]['class'] : '';
-					$return [] = array ('class' => $class, 'value' =>  $result [$key], 'field' => $key );
+					$class .= isset ( $this->info ['sqlexp'] [$key] ['class'] ) ? ' ' . $this->info ['sqlexp'] [$key] ['class'] : '';
+					$return [] = array ('class' => $class, 'value' => $result [$key], 'field' => $key );
 				} else {
 					$class = isset ( $this->template ['classes'] ['sqlexp'] ) ? $this->template ['classes'] ['sqlexp'] : '';
-                    $class .= isset ( $this->info ['sqlexp'][$key]['class']  ) ? ' '.$this->info ['sqlexp'][$key]['class'] : '';
+					$class .= isset ( $this->info ['sqlexp'] [$key] ['class'] ) ? ' ' . $this->info ['sqlexp'] [$key] ['class'] : '';
 					$return [] = array ('class' => $class, 'value' => '', 'field' => $key );
 				}
 			}
@@ -2434,47 +2488,45 @@ class Bvb_Grid_DataGrid {
 	 */
 	function applySearchTypeToArray($final, $filtro, $key) {
 		
-	
-        if (! isset ( $this->data ['fields'] [$key] ['searchType'] )) {
-            $this->data ['fields'] [$key] ['searchType'] = 'like';
-        }
-        
-        $op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
-        
-        if (substr ( $filtro, 0, 1 ) == '=') {
-            $op = '=';
-            $filtro = substr ( $filtro, 1 );
-        } elseif (substr ( $filtro, 0, 2 ) == '>=') {
-            $op = '>=';
-            $filtro = substr ( $filtro, 2 );
-        } elseif ($filtro [0] == '>') {
-            $op = '>';
-            $filtro = substr ( $filtro, 1 );
-        } elseif (substr ( $filtro, 0, 2 ) == '<=') {
-            $op = '<=';
-            $filtro = substr ( $filtro, 2 );
-        } elseif (substr ( $filtro, 0, 2 ) == '<>' || substr ( $filtro, 0, 2 ) == '!=') {
-            $op = '<>';
-            $filtro = substr ( $filtro, 2 );
-        } elseif ($filtro [0] == '<') {
-            $op = '<';
-            $filtro = substr ( $filtro, 1 );
-        } elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) == '*') {
-            $op = 'like';
-            $filtro = substr ( $filtro, 1, - 1 );
-        } elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) != '*') {
-            $op = 'llike';
-            $filtro = substr ( $filtro, 1 );
-        } elseif ($filtro [0] != '*' and substr ( $filtro, - 1 ) == '*') {
-            $op = 'rlike';
-            $filtro = substr ( $filtro, 0, - 1 );
-        }
-        
-        if (isset ( $this->data ['fields'] [$key] ['searchTypeFixed'] ) && $this->data ['fields'] [$key] ['searchTypeFixed'] === true && $op != $this->data ['fields'] [$key] ['searchType']) {
-            $op = $this->data ['fields'] [$key] ['searchType'];
-        }
-        
-         
+		if (! isset ( $this->data ['fields'] [$key] ['searchType'] )) {
+			$this->data ['fields'] [$key] ['searchType'] = 'like';
+		}
+		
+		$op = strtolower ( $this->data ['fields'] [$key] ['searchType'] );
+		
+		if (substr ( $filtro, 0, 1 ) == '=') {
+			$op = '=';
+			$filtro = substr ( $filtro, 1 );
+		} elseif (substr ( $filtro, 0, 2 ) == '>=') {
+			$op = '>=';
+			$filtro = substr ( $filtro, 2 );
+		} elseif ($filtro [0] == '>') {
+			$op = '>';
+			$filtro = substr ( $filtro, 1 );
+		} elseif (substr ( $filtro, 0, 2 ) == '<=') {
+			$op = '<=';
+			$filtro = substr ( $filtro, 2 );
+		} elseif (substr ( $filtro, 0, 2 ) == '<>' || substr ( $filtro, 0, 2 ) == '!=') {
+			$op = '<>';
+			$filtro = substr ( $filtro, 2 );
+		} elseif ($filtro [0] == '<') {
+			$op = '<';
+			$filtro = substr ( $filtro, 1 );
+		} elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) == '*') {
+			$op = 'like';
+			$filtro = substr ( $filtro, 1, - 1 );
+		} elseif ($filtro [0] == '*' and substr ( $filtro, - 1 ) != '*') {
+			$op = 'llike';
+			$filtro = substr ( $filtro, 1 );
+		} elseif ($filtro [0] != '*' and substr ( $filtro, - 1 ) == '*') {
+			$op = 'rlike';
+			$filtro = substr ( $filtro, 0, - 1 );
+		}
+		
+		if (isset ( $this->data ['fields'] [$key] ['searchTypeFixed'] ) && $this->data ['fields'] [$key] ['searchTypeFixed'] === true && $op != $this->data ['fields'] [$key] ['searchType']) {
+			$op = $this->data ['fields'] [$key] ['searchType'];
+		}
+		
 		switch ($op) {
 			case 'equal' :
 			case '=' :
@@ -2744,10 +2796,22 @@ class Bvb_Grid_DataGrid {
 					$this->updateColumn ( $value [2], array ('title' => $title, 'field' => $value [0] . '.' . $value [1] ) );
 				} else {
 					$title = ucfirst ( $value [1] );
-					$this->updateColumn ( $value [1], array ('title' => $title, 'field' => $value [0] ) );
+					$this->updateColumn ( $value [1], array ('title' => $title, 'field' => $value [0] . '.' . $value [1] ) );
 				}
 			
 			}
+		}
+		
+		if (count ( $this->_updateColumnQueue ) > 0) {
+			foreach ( $this->_updateColumnQueue as $field => $options ) {
+				
+				if (! array_key_exists ( $field, $this->data ['fields'] ))
+					continue;
+				
+				$this->updateColumn ( $field, $options );
+			}
+			
+			$this->_updateColumnQueue = array ();
 		}
 		
 		$this->_allFieldsAdded = true;
@@ -2808,12 +2872,11 @@ class Bvb_Grid_DataGrid {
 	function getTotalRecords() {
 		return ( int ) $this->_totalRecords;
 	}
-
+	
 	/**
 	 * Return the query object
 	 */
-	function getSelectObject()
-	{
+	function getSelectObject() {
 		return $this->_select;
 	}
 }
