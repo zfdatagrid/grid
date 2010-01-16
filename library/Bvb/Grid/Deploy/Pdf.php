@@ -50,6 +50,8 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         
         parent::__construct (  );
     
+        
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Pdf', 'Bvb_Grid_Template_Pdf', 'pdf' );
 
     }
 

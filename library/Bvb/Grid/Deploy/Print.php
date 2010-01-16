@@ -42,6 +42,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         parent::__construct();
 
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );
         if(!is_object($this->temp['print']))
         {
             $this->setTemplate('print','print',array('title'=>$title,'charEncoding'=>$this->charEncoding));

@@ -199,6 +199,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		parent::__construct ();
 		
+		
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
+		
 		$this->setTemplate ( 'table', 'table' );
 	
 	}

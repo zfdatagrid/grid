@@ -51,6 +51,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
 
         parent::__construct (  );
         
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word' );
 
         if (! is_object ( $this->temp ['word'] ))
         {

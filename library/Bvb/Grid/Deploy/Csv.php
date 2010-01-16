@@ -71,6 +71,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_DataGrid {
 		
 		$this->options = $options;
 		
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
 		parent::__construct ();
 	}
 	

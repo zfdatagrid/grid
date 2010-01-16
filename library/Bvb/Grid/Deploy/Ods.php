@@ -58,6 +58,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_DataGrid
 
         parent::__construct (  );
         
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Ods', 'Bvb_Grid_Template_Ods', 'ods' );
         if (! $this->temp ['ods'] instanceof Bvb_Grid_Template_Ods_Ods)
         {
             $this->setTemplate ( 'ods', 'ods' );

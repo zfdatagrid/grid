@@ -60,6 +60,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
 
         parent::__construct (  );
         
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
         if (! $this->temp ['odt'] instanceof Bvb_Grid_Template_odt_odt)
         {
             $this->setTemplate ( 'odt', 'odt' );

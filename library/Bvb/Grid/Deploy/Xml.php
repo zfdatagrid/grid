@@ -57,6 +57,8 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
         $this->dir = rtrim ( $dir, "/" ) . "/";
         $this->options = $options;
         parent::__construct (  );
+        
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Xml', 'Bvb_Grid_Template_Xml', 'xml' );
     
     }
 
