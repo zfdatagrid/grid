@@ -153,7 +153,7 @@ class Bvb_Grid_Template_Table_Table
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"$this->colSpan\"><div style=\"padding:2px;\">
         <div style=\"float:left;width:220px;\">{{export}}</div>
-        <div style=\"float:left;text-align:center;width:570px;\"> <em>({{numberRecords}} records)</em>  | {{pagination}}</div>
+        <div style=\"float:left;text-align:center;width:570px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
         <div style=\"float:right;width:80px;\">{{pageSelect}}</div>
         </div>
         </td></tr>";
