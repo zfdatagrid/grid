@@ -1917,6 +1917,7 @@ class Bvb_Grid_DataGrid {
 				$select->reset ( Zend_Db_Select::ORDER );
 				$select->reset ( Zend_Db_Select::LIMIT_COUNT );
 				$select->reset ( Zend_Db_Select::LIMIT_OFFSET );
+                $select->reset ( Zend_Db_Select::GROUP );
 
 				$select->columns ( new Zend_Db_Expr ( $valor . ' AS TOTAL' ) );
 
