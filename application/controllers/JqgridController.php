@@ -43,8 +43,6 @@ class JqgridController extends Zend_Controller_Action
         $this->view->g1 = $grid1->deploy();
         $this->view->g1_html = $grid1_html->deploy();
     }
-    
-    
     function exportAction()
     {
         // construct JqGrid and let it configure
