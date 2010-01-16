@@ -1,7 +1,6 @@
 <?php
 
 /**
- * Mascker
  *
  * LICENSE
  *
@@ -13,10 +12,10 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
- * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
+ * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4  mascker $
- * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
+ * @version    0.4   $
+ * @author     Bento Vilas Boas <geral@petala-azul.com > 
  */
 
 class Bvb_Grid_DataGrid {
@@ -352,8 +351,6 @@ class Bvb_Grid_DataGrid {
 	 */
 	protected $_forceLimit = false;
 	
-	protected $_view;
-	
 	/**
 	 * Default filters to be applyed
 	 * @var array
@@ -368,6 +365,10 @@ class Bvb_Grid_DataGrid {
 	 * @var array
 	 */
 	protected $_updateColumnQueue = array ();
+	
+	protected $_view;
+	
+	public $configCallbacks = array ();
 	
 	/**
 	 *  The __construct function receives the db adapter. All information related to the
@@ -736,7 +737,7 @@ class Bvb_Grid_DataGrid {
 		if (substr ( strtolower ( $name ), 0, 3 ) == 'set') {
 			$name = substr ( $name, 3 );
 		}
-		$this->__set ( $name, $value [0] );
+		$this->__set ( $name, $value );
 		return $this;
 	}
 	
@@ -2219,6 +2220,8 @@ class Bvb_Grid_DataGrid {
 	 * @return string
 	 */
 	function deploy() {
+		// apply additional configuration
+		$this->_runConfigCallbacks ();
 		
 		if ($this->_selectZendDb !== true && $this->getAdapter () == 'db') {
 			throw new Exception ( 'You must specify the query object using a Zend_Db_Select instance' );
@@ -2869,6 +2872,102 @@ class Bvb_Grid_DataGrid {
 	function getSelectObject() {
 		return $this->_select;
 	}
+	
+	/**
+	 * Automates export functionality
+	 *
+	 * @param array|array of array $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
+	 * @param array|boolean $requestData request parameters will bu used if FALSE
+	 */
+	public static function factory($defaultClass, $classCallbacks = array(), $requestData = false) {
+		if (false === $requestData) {
+			$requestData = Zend_Controller_Front::getInstance ()->getRequest ()->getParams ();
+		}
+		if (! isset ( $requestData ['_exportTo'] )) {
+			// return instance of the main Bvb object, because this is not and export request
+			$grid = new $defaultClass ( );
+			$lClass = $defaultClass;
+		} else {
+			$lClass = strtolower ( $requestData ['_exportTo'] );
+			// support translating of parameters specifig for the export initiator class
+			if (isset ( $requestData ['_exportFrom'] )) {
+				// TODO support translating of parameters specifig for the export initiator class
+				$requestData = $requestData;
+			}
+			
+			// now we need to find and load the right Bvb deploy class
+			$className = "Bvb_Grid_Deploy_" . ucfirst ( $requestData ['_exportTo'] ); // TODO support user defined classes
+			if (Zend_Loader_Autoloader::autoload ( $className )) {
+				$grid = new $className ( );
+			} else {
+				$grid = new $defaultClass ( );
+				$lClass = $defaultClass;
+			}
+		}
+		
+		// add the powerfull configuration callback function
+		if (isset ( $classCallbacks [$lClass] )) {
+			$grid->configCallbacks = $classCallbacks [$lClass];
+		}
+		
+		return $grid;
+	}
+	
+	protected function _runConfigCallbacks() {
+		if (! is_array ( $this->configCallbacks )) {
+			call_user_func ( $this->configCallbacks, $this );
+		} elseif (count ( $this->configCallbacks ) == 0) {
+			// no callback
+			return;
+		} elseif (count ( $this->configCallbacks ) > 1 && is_array ( $this->configCallbacks [0] )) {
+			die ( "multi" );
+			// TODO maybe fix
+			// ordered list of callback functions defined
+			foreach ( $this->configCallbacks as $func ) {
+			
+			}
+			break;
+		} else {
+			// only one callback function defined
+			call_user_func ( $this->configCallbacks, $this );
+		}
+		// run it only once
+		$this->configCallbacks = array ();
+	}
+	/**
+	 * Build list of exports with options
+	 *
+	 * Options:
+	 * caption   - mandatory
+	 * img       - (default null)
+	 * css_class   - (default ui-icon-extlink)
+	 * newwindow - (default true)
+	 * url       - (default actual url)
+	 * onclick   - (default null)
+	 * _class    - (reserved, used internaly)
+	 */
+	public function getExports() {
+		$res = array ();
+		foreach ( $this->export as $name => $defs ) {
+			if (! is_array ( $defs )) {
+				// only export name is paased, we need to get default option
+				$name = $defs;
+				$className = "Bvb_Grid_Deploy_" . $name; // TODO support user defined classes
+				if (Zend_Loader_Autoloader::autoload ( $className ) && method_exists ( $className, 'getExportDefaults' )) {
+					// learn the defualt values
+					$defs = call_user_func ( array ($className, "getExportDefaults" ) );
+				} else {
+					// there are no defaults, we need at least some caption
+					$defs = array ('caption' => $name );
+				}
+				$defs ['_class'] = $className;
+			}
+			$res [$name] = $defs;
+		}
+		
+		return $res;
+	}
+
 }
 
   
