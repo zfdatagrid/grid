@@ -1,7 +1,6 @@
 <?php
 
 /**
- * Mascker
  *
  * LICENSE
  *
@@ -13,10 +12,10 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
- * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
+ * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.1  mascker 
- * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com > 
+ * @version    0.1   
+ * @author     Bento Vilas Boas <geral@petala-azul.com > 
  */
 
 class My_Filter_Test implements Zend_Filter_Interface
