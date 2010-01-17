@@ -56,6 +56,8 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_DataGrid
         $this->inicialDir = $this->dir;
         
 
+        
+        $this->_setRemoveHiddenFields(true);
         parent::__construct (  );
         
         $this->addTemplateDir ( 'Bvb/Grid/Template/Ods', 'Bvb_Grid_Template_Ods', 'ods' );

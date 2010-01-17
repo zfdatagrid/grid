@@ -69,35 +69,35 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	protected $output = 'table';
 	
 	/**
-	 *  Permission to add records
+	 * Permission to add records
 	 *
 	 * @var array
 	 */
 	private $allowAdd = null;
 	
 	/**
-	 *  Permission to edit records
+	 * Permission to edit records
 	 *
 	 * @var array
 	 */
 	private $allowEdit = null;
 	
 	/**
-	 *  Permission to delete records
+	 * Permission to delete records
 	 *
 	 * @var array
 	 */
 	private $allowDelete = null;
 	
 	/**
-	 *  Message after form submission
+	 * Message after form submission
 	 *
 	 * @var string
 	 */
 	public $message;
 	
 	/**
-	 *  Template data
+	 * Template data
 	 *
 	 * @var array
 	 */
@@ -126,14 +126,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	protected $double_tables = 0;
 	
 	/**
-	 *  Set if form vaidation failed
+	 * Set if form vaidation failed
 	 *
 	 * @var bool
 	 */
 	protected $_failedValidation;
 	
 	/**
-	 *  Url param with the information about removing records
+	 * Url param with the information about removing records
 	 *
 	 * @var string
 	 */
@@ -190,17 +190,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	protected $_deploymentContent = null;
 	
 	/**
-	 *  To edit, add, or delete records, a user must be authenticated, so we instanciate 
-	 *  it here. 
+	 * To edit, add, or delete records, a user must be authenticated, so we instanciate 
+	 * it here. 
 	 *
 	 * @param array $data
 	 */
 	function __construct() {
 		
+		$this->_setRemoveHiddenFields(true);
+		
 		parent::__construct ();
 		
-		
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
+		$this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
 		
 		$this->setTemplate ( 'table', 'table' );
 	
@@ -233,9 +234,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	
 	/**
 	 * 
-	 *  Process all information forms related
-	 *  First we check for permissions to add, edit, delete
-	 *  And then the request->isPost. If true we process the data
+	 * Process all information forms related
+	 * First we check for permissions to add, edit, delete
+	 * And then the request->isPost. If true we process the data
 	 *
 	 */
 	
@@ -264,7 +265,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		}
 		
 		/**
-		 *  emove if there is something to remove
+		 * emove if there is something to remove
 		 */
 		if ($this->allowDelete) {
 			self::deleteRecord ( $dec );
@@ -491,7 +492,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Apply filter susing the Zend Framework set.
+	 * Apply filter susing the Zend Framework set.
 	 *
 	 * @param string $value
 	 * @param string $field
@@ -506,7 +507,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			//It has filters to apply. Get dirs...
 			foreach ( $filters as $func ) {
 				$class = $this->_elements ['filter']->load ( $func );
-				$t = new $class ( );
+				$t = new $class ();
 				$value = $t->filter ( $value );
 			}
 		}
@@ -515,7 +516,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Validate fields using the set on he Zend Framework
+	 * Validate fields using the set on he Zend Framework
 	 *
 	 * @param string $value
 	 * @param string $field
@@ -569,7 +570,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 				
 				} else {
 					
-					$t = new $class ( );
+					$t = new $class ();
 					$return = $t->isValid ( $value );
 					
 					if ($return === false) {
@@ -590,8 +591,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Remove the record from the table
-	 *  Don't forget to see if the user as set an "extra" WHERE.
+	 * Remove the record from the table
+	 * Don't forget to see if the user as set an "extra" WHERE.
 	 * 
 	 * @param string $sql
 	 * @param string $user
@@ -680,7 +681,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Build the first line of the table (Not the TH )
+	 * Build the first line of the table (Not the TH )
 	 *
 	 * @return string
 	 */
@@ -936,7 +937,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Convert url  params
+	 * Convert url  params
 	 *
 	 * @return array
 	 */
@@ -953,8 +954,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Build the form elements for the edit or add action
-	 *  This is different from the filters
+	 * Build the form elements for the edit or add action
+	 * This is different from the filters
 	 *
 	 * @param string $field | The database field that we are processing
 	 * @param string $inicial_value | the inicial field value
@@ -1139,7 +1140,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  The table to show when editing or adding records
+	 * The table to show when editing or adding records
 	 *
 	 * @return string
 	 */
@@ -1427,7 +1428,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Build pagination
+	 * Build pagination
 	 *
 	 * @return string
 	 */
@@ -1612,8 +1613,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Remeve the auto-increment field from the array. If a field is auto-increment,
-	 *  we won't let the user insert data on the field
+	 * Remeve the auto-increment field from the array. If a field is auto-increment,
+	 * we won't let the user insert data on the field
 	 *
 	 * @param array $fields
 	 * @param string $table
@@ -1638,10 +1639,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	}
 	
 	/**
-	 *  Make sure the filters exists, they are the name from the table field.
-	 *  If not, remove them from the array
-	 *  If we get an empty array, we then creat a new one with all the fields specifieds
-	 *  in $this->_fields method
+	 * Make sure the filters exists, they are the name from the table field.
+	 * If not, remove them from the array
+	 * If we get an empty array, we then creat a new one with all the fields specifieds
+	 * in $this->_fields method
 	 *
 	 * @param string $filters
 	 */
@@ -1658,9 +1659,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		} else {
 			
-			//o fields given. Fetch all
-			
-
+			//No fields given. Fetch all
 			$tab = parent::getDescribeTable ( $this->data ['table'] );
 			
 			foreach ( $tab as $list ) {
@@ -1669,20 +1668,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		}
 		
-		if (is_array ( $this->data ['hide'] )) {
-			foreach ( $this->data ['hide'] as $value ) {
-				if (! in_array ( $value, $titulos )) {
-					unset ( $titulos [$value] );
-				}
-			}
-		} else {
+		foreach ( $titulos as $key => $value ) {
 			
-			foreach ( $titulos as $key => $value ) {
-				
-				if (! in_array ( $key, $this->_fields )) {
-					unset ( $titulos [$key] );
-				}
-			
+			if (! in_array ( $key, $this->_fields )) {
+				unset ( $titulos [$key] );
 			}
 		
 		}

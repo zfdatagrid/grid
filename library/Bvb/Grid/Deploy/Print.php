@@ -40,6 +40,8 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         $this->title = $title;
 
+        
+        $this->_setRemoveHiddenFields(true);
         parent::__construct();
 
         $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );

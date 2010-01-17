@@ -50,6 +50,8 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 		$this->options = $options;
 		$this->inicialDir = $this->dir;
 		
+        
+        $this->_setRemoveHiddenFields(true);
 		parent::__construct (  );
 		
         $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );

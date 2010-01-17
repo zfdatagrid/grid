@@ -45,7 +45,6 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
     function __construct($title, $dir, $options = array('download'))
     {
 
-        
         if (! in_array ( 'odt', $this->export ))
         {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
@@ -58,6 +57,8 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
         $this->inicialDir = $this->dir;
         
 
+        
+        $this->_setRemoveHiddenFields(true);
         parent::__construct (  );
         
         $this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );

@@ -39,6 +39,8 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid {
 		$this->title = $title;
 		$this->options = $options;
 		
+        
+        $this->_setRemoveHiddenFields(true);
 		parent::__construct ();
 	}
 	
