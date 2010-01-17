@@ -164,7 +164,8 @@ class JqgridController extends Zend_Controller_Action
             'caption' => 'jqGrid Example',
             'forceFit'=>true,
             'viewrecords'=>false, // show/hide record count right bottom in navigation bar
-            'rowList'=> array(10, 15, 50) // show row number per page control in navigation bar
+            'rowList'=> array(10, 15, 50), // show row number per page control in navigation bar
+            'altRows'=>true, // rows will alternate color
         ));
         $grid->setJqgParam('viewrecords', true); // yet another way to set jqGrid property viewrecords
         $grid->jqgViewrecords = true; // yet another way to set jqGrid property viewrecords
