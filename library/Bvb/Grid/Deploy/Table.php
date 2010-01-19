@@ -201,6 +201,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 		parent::__construct ();
 		
+		// Add Zend_Validate and Zend_Filter to the form element
+		$this->addElementDir ( 'Zend/Filter', 'Zend_Filter', 'filter' );
+		$this->addElementDir ( 'Zend/Validate', 'Zend_Validate', 'validator' );
+		
 		$this->addTemplateDir ( 'Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table' );
 		
 		$this->setTemplate ( 'table', 'table' );
@@ -273,7 +277,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		}
 		
 		//Check if the request method is POST
-		if (Zend_Controller_Front::getInstance ()->getRequest ()->isPost () && Zend_Controller_Front::getInstance ()->getRequest ()->getParam ( '_form_edit' ) == 1) {
+		if (Zend_Controller_Front::getInstance ()->getRequest ()->isPost () && Zend_Controller_Front::getInstance ()->getRequest ()->getPost ( '_form_edit' ) == 1) {
 			
 			$param = Zend_Controller_Front::getInstance ()->getRequest ();
 			
@@ -637,7 +641,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 						$select = $this->_db->select ();
 						$select->from ( $this->data ['table'], array ('total' => $parentField ) );
 						$select->where ( $this->getPkFromUrl ( true ) );
-						$final = $select->query ();
+						$final = $select->query ( Zend_Db::FETCH_ASSOC );
 						$result = $final->fetchAll ();
 						
 						$finalValue = $result [0];
@@ -1178,7 +1182,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 		
 
 		if (count ( $fields ) == 0) {
-			throw new Exception ( 'Upsss. It seams there was an error while intersecting your fields with the table fields. Please make sure you allow the fields you are defining...' );
+			throw new Bvb_Grid_Exception ( 'Upsss. It seams there was an error while intersecting your fields with the table fields. Please make sure you allow the fields you are defining...' );
 		}
 		
 		$grid = $this->temp ['table']->formStart ();
@@ -1573,10 +1577,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			foreach ( $this->getExports () as $export ) {
 				
-				$export['newWindow'] = isset($export['newWindow'])?$export['newWindow']:true;
-				$class = isset($export['cssClass'])?'class="'.$export['cssClass'].'"':'';
+				$export ['newWindow'] = isset ( $export ['newWindow'] ) ? $export ['newWindow'] : true;
+				$class = isset ( $export ['cssClass'] ) ? 'class="' . $export ['cssClass'] . '"' : '';
 				
-				$blank = $export['newWindow']==false?'':"target='_blank'";
+				$blank = $export ['newWindow'] == false ? '' : "target='_blank'";
 				
 				if (isset ( $export ['img'] )) {
 					$exp .= "<a $class $blank href='$url/export/{$export['caption']}'><img src='{$export ['img']}' border='0'></a>";
@@ -1966,9 +1970,9 @@ function gridChangeFilters(fields,url,Ajax)
 		$checkFields = array_keys ( $fields );
 		
 		foreach ( $checkFields as $field ) {
-			$explode = explode ( '.', $field );
-			if (strpos ( $field, '.' ) !== false && reset ( $explode ) != $this->data ['tableAlias']) {
-				throw new Exception ( 'You can only add/update fields from your main table' );
+			$explode = explode ( '.', $this->data ['fields'] [$field] ['field'] );
+			if (reset ( $explode ) != $this->data ['tableAlias']) {
+				throw new Bvb_Grid_Exception ( 'You can only add/update fields from your main table' );
 			}
 		}
 		
