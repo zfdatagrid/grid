@@ -197,7 +197,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 	 */
 	function __construct() {
 		
-		$this->_setRemoveHiddenFields(true);
+		$this->_setRemoveHiddenFields ( true );
 		
 		parent::__construct ();
 		
@@ -1571,8 +1571,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_DataGrid {
 			
 			$exp = '';
 			
-			foreach ( $this->export as $export ) {
-				$exp .= "<a target='_blank' href='$url/export/{$export}'>" . $images [$export] . "</a>";
+			foreach ( $this->getExports () as $export ) {
+				
+				$export['newWindow'] = isset($export['newWindow'])?$export['newWindow']:true;
+				$class = isset($export['cssClass'])?'class="'.$export['cssClass'].'"':'';
+				
+				$blank = $export['newWindow']==false?'':"target='_blank'";
+				
+				if (isset ( $export ['img'] )) {
+					$exp .= "<a $class $blank href='$url/export/{$export['caption']}'><img src='{$export ['img']}' border='0'></a>";
+				} else {
+					$exp .= "<a $class $blank href='$url/export/{$export['caption']}'>" . $export ['caption'] . "</a>";
+				}
+			
 			}
 			
 			if (isset ( $this->info ['limit'] ) && ( int ) @$this->info ['limit'] > 0) {
