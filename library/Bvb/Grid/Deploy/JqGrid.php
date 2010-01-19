@@ -306,13 +306,13 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_DataGrid
         $myUrl = 'x';
         foreach ($exports as $export=>$options) {
             $url = isset($options['url']) ?  $options['url'] : $myUrl;
-            $newWindow = isset($options['newwindow']) ?  $options['newwindow'] : true;
+            $newWindow = isset($options['newWindow']) ?  $options['newWindow'] : true;
             $this->jqgAddNavButton(
                 array( // /public/images/csv.gif
                     'caption' => $options['caption'],
-                    'buttonicon' => isset($options['css_class']) ? $options['css_class'] : "ui-icon-extlink",
-                    'onClickButton' => isset($options['onclick'])
-                        ? new Zend_Json_Expr($options['onclick'])
+                    'buttonicon' => isset($options['cssClass']) ? $options['cssClass'] : "ui-icon-extlink",
+                    'onClickButton' => isset($options['onClick'])
+                        ? new Zend_Json_Expr($options['onClick'])
                         // TODO following JS function should be added as universal function if at least one exp. button
                         : new Zend_Json_Expr($this->_getExportButtonJs($url, $newWindow, $export)),
                     'position' => "last"
