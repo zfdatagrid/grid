@@ -297,7 +297,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_DataGrid
     /**
      * Add export action buttons to grid
      *
-     * @param array $types names of deploy classes
+     * @param array $exports names of deploy classes
      *
      * @return void
      */
@@ -314,14 +314,23 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_DataGrid
                     'onClickButton' => isset($options['onClick'])
                         ? new Zend_Json_Expr($options['onClick'])
                         // TODO following JS function should be added as universal function if at least one exp. button
-                        : new Zend_Json_Expr($this->_getExportButtonJs($url, $newWindow, $export)),
+                        : new Zend_Json_Expr($this->getExportButtonJs($url, $newWindow, $export)),
                     'position' => "last"
                 )
             );
         }
         return $this;
     }
-    protected function _getExportButtonJs($url, $newWindow, $exportTo)
+    /**
+     * Create javascript adding export button to grid navBar
+     *
+     * @param string  $url       url to action which supports generation of export
+     * @param boolean $newWindow should the export be opened as new window
+     * @param string  $exportTo  Bvb deploy class name used to generate export
+     *
+     * @return void
+     */
+    protected function getExportButtonJs($url, $newWindow, $exportTo)
     {
 
         $cmd1 = $this->cmd("getGridParam", "url");
@@ -333,7 +342,7 @@ var data = $cmd2;
 url = url + "&_exportFrom=jqGrid&_exportTo=$exportTo";
 JS;
         if ($newWindow) {
-        return
+            return
 <<<JS
 function() {
     $getUrl
@@ -1054,8 +1063,10 @@ HTML;
                 // TODO if we pass link to image to show instead of text
             } else {
                 // will show text or icon if CSS class is styled
-                $htmlAtts = array_merge($a, array('style'=>"float:left;"));
-                $htmlAtts = self::htmlAttribs($htmlAtts);
+                if (!isset($a['style'])) {
+                    $a['style'] = "float:left;";
+                }
+                $htmlAtts = self::htmlAttribs($a);
                 $html .= "<a $htmlAtts><span>$caption</span></a>";
             }
         }
