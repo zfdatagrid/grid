@@ -15,64 +15,64 @@
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
-	
+
 	public $templateInfo;
-	
+
 	public $title;
-	
+
 	protected $options = array ();
-	
+
 	public $wordInfo;
-	
+
 	public $style;
-	
+
 	public $dir;
-	
+
 	private $inicialDir;
-	
+
 	protected $templateDir;
-	
+
 	protected $output = 'wordx';
-	
+
 	function __construct($title, $dir, $options = array('download')) {
-		
+
 		if (! in_array ( 'wordx', $this->export )) {
 			echo $this->__ ( "You dont' have permission to export the results to this format" );
 			die ();
 		}
-		
+
 		$this->dir = rtrim ( $dir, "/" ) . "/";
 		$this->title = $title;
 		$this->options = $options;
 		$this->inicialDir = $this->dir;
-		
-        
+
+
         $this->_setRemoveHiddenFields(true);
 		parent::__construct (  );
-		
+
         $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
 		if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
 			$this->setTemplate ( 'wordx', 'wordx' );
 		}
-	
+
 	}
-	
+
 	/**
 	 * [Para podemros utiliza]
 	 *
 	 * @param string $var
 	 * @param string $value
 	 */
-	
+
 	function __set($var, $value) {
-		
+
 		parent::__set ( $var, $value );
 	}
-	
+
 	/**
 	 * [PT] Fazer o scan recursivo dos dir
 	 *
@@ -81,20 +81,20 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 	 * @return unknown
 	 */
 	function scan_directory_recursively($directory, $filter = FALSE) {
-		
+
 		// if the path has a slash at the end we remove it here
 		$directory = rtrim ( $directory, '/' );
-		
+
 		// if the path is not valid or is not a directory ...
 		if (! file_exists ( $directory ) || ! is_dir ( $directory )) {
 			// ... we return false and exit the function
 			return FALSE;
-			
+
 		// ... else if the path is readable
 		} elseif (is_readable ( $directory )) {
 			// we open the directory
 			$directory_list = opendir ( $directory );
-			
+
 			// and scan through the items inside
 			while ( FALSE !== ($file = readdir ( $directory_list )) ) {
 				// if the filepointer is not the current directory
@@ -102,27 +102,27 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 				if ($file != '.' && $file != '..' && $file != '.DS_Store') {
 					// we build the new path to scan
 					$path = $directory . '/' . $file;
-					
+
 					// if the path is readable
 					if (is_readable ( $path )) {
 						// we split the new path by directories
 						$subdirectories = explode ( '/', $path );
-						
+
 						// if the new path is a directory
 						if (is_dir ( $path )) {
 							// add the directory details to the file list
-							$directory_tree [] = array ('path' => $path . '|', 
+							$directory_tree [] = array ('path' => $path . '|',
 
 							// we scan the new path by calling this function
 							'content' => $this->scan_directory_recursively ( $path, $filter ) );
-							
+
 						// if the new path is a file
 						} elseif (is_file ( $path )) {
 							// get the file extension by taking everything after the last dot
 							$extension = end ( $subdirectories );
 							$extension = explode ( '.', $extension );
 							$extension = end ( $extension );
-							
+
 							// if there is no filter set or the filter is set and matches
 							if ($filter === FALSE || $filter == $extension) {
 								// add the file details to the file list
@@ -134,28 +134,28 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 			}
 			// close the directory
 			closedir ( $directory_list );
-			
+
 			// return file list
 			return $directory_tree;
-			
+
 		// if the path is not readable ...
 		} else {
 			// ... we return false
 			return FALSE;
 		}
 	}
-	
+
 	// ------------------------------------------------------------
-	
+
 
 	/**
 	 * [PT] Remove direcotiros e subdirectorios
 	 *
 	 * @param string $dir
 	 */
-	
+
 	function deldir($dir) {
-		
+
 		$current_dir = @opendir ( $dir );
 		while ( $entryname = @readdir ( $current_dir ) ) {
 			if (is_dir ( $dir . '/' . $entryname ) and ($entryname != "." and $entryname != "..")) {
@@ -167,7 +167,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 		@closedir ( $current_dir );
 		@rmdir ( $dir );
 	}
-	
+
 	/**
 	 * [PT] Ir buscar os caminhos para depois zipar
 	 *
@@ -175,7 +175,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 	 * @return unknown
 	 */
 	function zipPaths($dirs) {
-		
+
 		foreach ( $dirs as $key => $value ) {
 			if (! is_array ( @$value ['content'] )) {
 				@$file .= $value ['path'];
@@ -185,7 +185,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 		}
 		return $file;
 	}
-	
+
 	/**
 	 * [PT] TEMOS que copiar os directórtio para a  loalização final
 	 *
@@ -194,203 +194,203 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 	 * @return unknown
 	 */
 	function copyDir($source, $dest) {
-		
+
 		// Se for ficheiro
 		if (is_file ( $source )) {
 			$c = copy ( $source, $dest );
 			chmod ( $dest, 0777 );
 			return $c;
 		}
-		
+
 		// criar directorio de destino
 		if (! is_dir ( $dest )) {
 			mkdir ( $dest, 0777, 1 );
 		}
-		
+
 		// Loop
 		$dir = dir ( $source );
 		while ( false !== $entry = $dir->read () ) {
-			
+
 			if ($entry == '.' || $entry == '..' || $entry == '.svn') {
 				continue;
 			}
-			
+
 			// copiar directorios
 			if ($dest !== "$source/$entry") {
 				$this->copyDir ( "$source/$entry", "$dest/$entry" );
 			}
 		}
-		
+
 		// sair
 		$dir->close ();
 		return true;
-	
+
 	}
-	
+
 	function deploy() {
-		
+
 		$this->setPagination ( 0 );
-		
+
 		parent::deploy ();
-		
+
 		if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
 			$this->setTemplate ( 'wordx', 'wordx' );
 		}
-		
+
 		$this->templateInfo = $this->temp ['wordx']->templateInfo;
-		
+
 		$this->templateDir = explode ( '/', $this->templateInfo ['dir'] );
 		array_pop ( $this->templateDir );
-		
+
 		$this->templateDir = ucfirst ( end ( $this->templateDir ) );
-		
+
 		$this->wordInfo = $this->temp ['wordx']->info ();
-		
+
 		$this->dir = rtrim ( $this->dir, '/' ) . '/' . ucfirst ( $this->templateInfo ['name'] ) . '/';
-		
+
 		if (! defined ( 'APPLICATION_PATH' )) {
 			$pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
 		} else {
 			$pathTemplate = APPLICATION_PATH . '/../' . rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
 		}
-		
+
 		$this->deldir ( $this->dir );
-		
+
 		$this->copyDir ( $pathTemplate, $this->dir );
-		
+
 		$xml = $this->temp ['wordx']->globalStart ();
-		
-		$titles = parent::buildTitles ();
-		
+
+		$titles = parent::_buildTitles ();
+
 		#$nome = reset ( $titles );
-		$wsData = parent::buildGrid ();
-		$sql = parent::buildSqlExp ();
-		
+		$wsData = parent::_buildGrid ();
+		$sql = parent::_buildSqlExp ();
+
 		/////////////////////////
 		/////////////////////////
-		
+
 
 		#O HEADER
-		
+
 
 		if (file_exists ( $this->wordInfo ['logo'] )) {
 			$data = explode ( "/", $this->wordInfo ['logo'] );
 			copy ( $this->wordInfo ['logo'], $this->dir . 'word/media/' . end ( $data ) );
-			
+
 			$logo = $this->temp ['wordx']->logo ();
-			
+
 			file_put_contents ( $this->dir . "word/_rels/header1.xml.rels", $logo );
-			
+
 			$header = str_replace ( array ('{{title}}', '{{subtitle}}' ), array ($this->wordInfo ['title'], $this->wordInfo ['subtitle'] ), $this->temp ['wordx']->header () );
-		
+
 		} else {
-			
+
 			$header = str_replace ( array ('{{title}}', '{{subtitle}}' ), array ($this->wordInfo ['title'], $this->wordInfo ['subtitle'] ), $this->temp ['wordx']->header () );
-		
+
 		}
-		
+
 		file_put_contents ( $this->dir . "word/header1.xml", $header );
-		
+
 		/////////////////////////
 		/////////////////////////
-		
+
 
 		#END HEADER
-		
+
 
 		#BEGIN FOOTER
 		$footer = str_replace ( "{{value}}", $this->wordInfo ['footer'], $this->temp ['wordx']->footer () );
-		
+
 		file_put_contents ( $this->dir . "word/footer2.xml", $footer );
-		
+
 		#END footer
-		
+
 
 		#START DOCUMENT.XML
-		
+
 
 		$xml = $this->temp ['wordx']->globalStart ();
-		
+
 		$xml .= $this->temp ['wordx']->titlesStart ();
-		
+
 		foreach ( $titles as $value ) {
-			
+
 			if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
-				
+
 				$xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['wordx']->titlesLoop () );
-			
+
 			}
 		}
 		$xml .= $this->temp ['wordx']->titlesEnd ();
-		
+
 		if (is_array ( $wsData )) {
-			
+
 			/////////////////
 			/////////////////
 			/////////////////
 			if (@$this->info ['hRow'] ['title'] != '') {
 				$bar = $wsData;
-				
+
 				$hbar = trim ( $this->info ['hRow'] ['field'] );
-				
+
 				$p = 0;
 				foreach ( $wsData [0] as $value ) {
 					if ($value ['field'] == $hbar) {
 						$hRowIndex = $p;
 					}
-					
+
 					$p ++;
 				}
 				$aa = 0;
 			}
-			
+
 			//////////////
 			//////////////
 			//////////////
-			
+
 
 			$i = 1;
 			$aa = 0;
 			foreach ( $wsData as $row ) {
-				
+
 				////////////
 				////////////
 				//A linha horizontal
 				if (@$this->info ['hRow'] ['title'] != '') {
-					
+
 					if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value']) {
-						
+
 						$xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->temp ['wordx']->hRow () );
-					
+
 					}
 				}
-				
+
 				////////////
 				////////////
-				
+
 
 				$xml .= $this->temp ['wordx']->loopStart ();
-				
+
 				$a = 1;
-				
+
 				foreach ( $row as $value ) {
-					
+
 					$value ['value'] = strip_tags ( $value ['value'] );
-					
+
 					if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
-						
+
 						$xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['wordx']->loopLoop () );
-					
+
 					}
 					$a ++;
-				
+
 				}
 				$xml .= $this->temp ['wordx']->loopEnd ();
 				$aa ++;
 				$i ++;
 			}
 		}
-		
+
 		if (is_array ( $sql )) {
 			$xml .= $this->temp ['wordx']->sqlExpStart ();
 			foreach ( $sql as $value ) {
@@ -398,44 +398,44 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
 			}
 			$xml .= $this->temp ['wordx']->sqlExpEnd ();
 		}
-		
+
 		$xml .= $this->temp ['wordx']->globalEnd ();
-		
+
 		file_put_contents ( $this->dir . "word/document.xml", $xml );
-		
+
 		$final = $this->scan_directory_recursively ( $this->dir );
 		$f = explode ( '|', $this->zipPaths ( $final ) );
 		array_pop ( $f );
-		
+
 		$this->title = strlen ( $this->title ) > 0 ? $this->title : 'Word Document';
-		
+
 		$zip = new ZipArchive ( );
 		$filename = $this->dir . $this->title . ".zip";
-		
+
 		if ($zip->open ( $filename, ZIPARCHIVE::CREATE ) !== TRUE) {
 			exit ( "cannot open <$filename>\n" );
 		}
-		
+
 		foreach ( $f as $value ) {
 			$zip->addFile ( $value, str_replace ( $this->dir, '', $value ) );
 		}
-		
+
 		$zip->close ();
-		
+
 		rename ( $filename, $this->inicialDir . $this->title . '.docx' );
-		
+
 		if (in_array ( 'download', $this->options )) {
 			header ( 'Content-type: application/word' );
 			header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
 			readfile ( $this->inicialDir . $this->title . '.docx' );
 		}
-		
+
 		if (! in_array ( 'save', $this->options )) {
 			unlink ( $this->inicialDir . $this->title . '.docx' );
 		}
-		
+
 		$this->deldir ( $this->dir );
-		
+
 		die ();
 	}
 

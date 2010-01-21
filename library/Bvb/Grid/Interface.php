@@ -31,7 +31,7 @@ interface Bvb_Grid_Interface
     function buildTitles();
 
 
-    function buildSqlexp();
+    function buildSqlExp();
 
 }
 

@@ -15,14 +15,14 @@
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
 {
 
-    
+
     public $templateInfo;
 
     public $title;
@@ -50,23 +50,23 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
             echo $this->__ ( "You dont' have permission to export the results to this format" );
             die ();
         }
-        
+
         $this->dir = rtrim ( $dir, "/" ) . "/";
         $this->title = $title;
         $this->options = $options;
         $this->inicialDir = $this->dir;
-        
 
-        
+
+
         $this->_setRemoveHiddenFields(true);
         parent::__construct (  );
-        
+
         $this->addTemplateDir ( 'Bvb/Grid/Template/Odt', 'Bvb_Grid_Template_Odt', 'odt' );
         if (! $this->temp ['odt'] instanceof Bvb_Grid_Template_odt_odt)
         {
             $this->setTemplate ( 'odt', 'odt' );
         }
-    
+
     }
 
 
@@ -76,7 +76,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-    
+
     function __set($var, $value)
     {
 
@@ -96,20 +96,20 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
 
         // if the path has a slash at the end we remove it here
         $directory = rtrim ( $directory, '/' );
-        
+
 
         // if the path is not valid or is not a directory ...
         if (! file_exists ( $directory ) || ! is_dir ( $directory ))
         {
             // ... we return false and exit the function
             return FALSE;
-            
+
         // ... else if the path is readable
         } elseif (is_readable ( $directory ))
         {
             // we open the directory
             $directory_list = opendir ( $directory );
-            
+
             // and scan through the items inside
             while ( FALSE !== ($file = readdir ( $directory_list )) )
             {
@@ -119,22 +119,22 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
                 {
                     // we build the new path to scan
                     $path = $directory . '/' . $file;
-                    
+
                     // if the path is readable
                     if (is_readable ( $path ))
                     {
                         // we split the new path by directories
                         $subdirectories = explode ( '/', $path );
-                        
+
                         // if the new path is a directory
                         if (is_dir ( $path ))
                         {
                             // add the directory details to the file list
-                            $directory_tree [] = array ('path' => $path . '|', 
+                            $directory_tree [] = array ('path' => $path . '|',
 
                             // we scan the new path by calling this function
                             'content' => $this->scan_directory_recursively ( $path, $filter ) );
-                            
+
                         // if the new path is a file
                         } elseif (is_file ( $path ))
                         {
@@ -142,7 +142,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
                             $extension =  end ( $subdirectories  );
                             $extension = explode ( '.', $extension  );
                             $extension = end (  $extension);
-                            
+
                             // if there is no filter set or the filter is set and matches
                             if ($filter === FALSE || $filter == $extension)
                             {
@@ -155,10 +155,10 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
             }
             // close the directory
             closedir ( $directory_list );
-            
+
             // return file list
             return $directory_tree;
-            
+
         // if the path is not readable ...
         } else
         {
@@ -169,7 +169,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
 
 
     // ------------------------------------------------------------
-    
+
 
 
     /**
@@ -177,7 +177,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
      *
      * @param string $dir
      */
-    
+
     function deldir($dir)
     {
 
@@ -237,34 +237,34 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
             chmod ( $dest, 0777 );
             return $c;
         }
-        
+
         // criar directorio de destino
         if (! is_dir ( $dest ))
         {
             mkdir ( $dest, 0777, 1 );
         }
-        
+
         // Loop
         $dir = dir ( $source );
         while ( false !== $entry = $dir->read () )
         {
-            
+
             if ($entry == '.' || $entry == '..' || $entry == '.svn')
             {
                 continue;
             }
-            
+
             // copiar directorios
             if ($dest !== "$source/$entry")
             {
                 $this->copyDir ( "$source/$entry", "$dest/$entry" );
             }
         }
-        
+
         // sair
         $dir->close ();
         return true;
-    
+
     }
 
 
@@ -272,49 +272,49 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
     {
 
         $this->setPagination ( 0 );
-        
+
         parent::deploy ();
-        
+
         if (! $this->temp ['odt'] instanceof Bvb_Grid_Template_Odt_Odt)
         {
             $this->setTemplate ( 'odt', 'odt' );
         }
-        
+
         $this->templateInfo = $this->temp ['odt']->templateInfo;
-        
+
         $this->templateDir = explode ( '/', $this->templateInfo ['dir'] );
         array_pop ( $this->templateDir );
-        
+
         $this->templateDir = ucfirst ( end ( $this->templateDir ) );
-        
+
         $this->wordInfo = $this->temp ['odt']->info ();
-        
+
         $this->dir = rtrim ( $this->dir, '/' ) . '/' . ucfirst ( $this->templateInfo ['name'] ) . '/';
-        
+
         $pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
-        
+
 
         $this->deldir ( $this->dir );
-        
+
         $this->copyDir ( $pathTemplate, $this->dir );
-        
+
         $xml = $this->temp ['odt']->globalStart ();
-        
 
-        $titles = parent::buildTitles ();
-        
+
+        $titles = parent::_buildTitles ();
+
         #$nome = reset ( $titles );
-        $wsData = parent::buildGrid ();
-        $sql = parent::buildSqlExp ();
-        
+        $wsData = parent::_buildGrid ();
+        $sql = parent::_buildSqlExp ();
+
 
         /////////////////////////
         /////////////////////////
-        
+
 
 
         #O HEADER
-        
+
 
 
         if (file_exists ( $this->wordInfo ['logo'] ))
@@ -322,51 +322,51 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
         	$explode = explode ( "/", $this->wordInfo ['logo'] ) ;
             copy ( $this->wordInfo ['logo'], $this->dir . 'Pictures/' . end ( $explode) );
         }
-        
+
 
         $header = str_replace ( array ('{{title}}', '{{subtitle}}','{{footer}}' ), array ($this->wordInfo ['title'], $this->wordInfo ['subtitle'], $this->wordInfo ['footer'] ), $this->temp ['odt']->header () );
-        
+
         file_put_contents ( $this->dir . "styles.xml", $header );
-        
+
 
         /////////////////////////
         /////////////////////////
         #END HEADER
-        
+
 
 
         #START DOCUMENT.XML
-        
+
 
 
         $xml = $this->temp ['odt']->globalStart ();
-        
+
         $xml .= $this->temp ['odt']->titlesStart ();
-        
+
         foreach ( $titles as $value )
         {
-            
+
             if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
             {
-                
+
                 $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['odt']->titlesLoop () );
-            
+
             }
         }
         $xml .= $this->temp ['odt']->titlesEnd ();
-        
+
         if (is_array ( $wsData ))
         {
-            
+
             /////////////////
             /////////////////
             /////////////////
             if (@$this->info ['hRow'] ['title'] != '')
             {
                 $bar = $wsData;
-                
+
                 $hbar = trim ( $this->info ['hRow'] ['field'] );
-                
+
                 $p = 0;
                 foreach ( $wsData [0] as $value )
                 {
@@ -374,66 +374,66 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
                     {
                         $hRowIndex = $p;
                     }
-                    
+
                     $p ++;
                 }
                 $aa = 0;
             }
-            
+
             //////////////
             //////////////
             //////////////
-            
+
 
 
             $i = 1;
             $aa = 0;
             foreach ( $wsData as $row )
             {
-                
+
                 ////////////
                 ////////////
                 //A linha horizontal
                 if (@$this->info ['hRow'] ['title'] != '')
                 {
-                    
+
                     if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value'])
                     {
-                        
+
                         $xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->temp ['odt']->hRow () );
-                    
+
                     }
                 }
-                
+
                 ////////////
                 ////////////
-                
+
 
 
                 $xml .= $this->temp ['odt']->loopStart ();
-                
+
                 $a = 1;
-                
+
                 foreach ( $row as $value )
                 {
-                    
+
                     $value ['value'] = strip_tags ( $value ['value'] );
-                    
+
                     if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                     {
-                        
+
                         $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['odt']->loopLoop () );
-                    
+
                     }
                     $a ++;
-                
+
                 }
                 $xml .= $this->temp ['odt']->loopEnd ();
                 $aa ++;
                 $i ++;
             }
         }
-        
+
 
         if (is_array ( $sql ))
         {
@@ -444,37 +444,37 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
             }
             $xml .= $this->temp ['odt']->sqlExpEnd ();
         }
-        
+
         $xml .= $this->temp ['odt']->globalEnd ();
-        
+
 
         file_put_contents ( $this->dir . "content.xml", $xml );
-        
+
         $final = $this->scan_directory_recursively ( $this->dir );
         $f = explode ( '|', $this->zipPaths ( $final ) );
         array_pop ( $f );
-        
+
 
         $this->title = strlen ( $this->title ) > 0 ? $this->title : 'Openoffice Document';
-        
+
         $zip = new ZipArchive ( );
         $filename = $this->dir . $this->title . ".zip";
-        
+
         if ($zip->open ( $filename, ZIPARCHIVE::CREATE ) !== TRUE)
         {
             exit ( "cannot open <$filename>\n" );
         }
-        
+
         foreach ( $f as $value )
         {
             $zip->addFile ( $value, str_replace ( $this->dir, '', $value ) );
         }
-        
+
         $zip->close ();
-        
+
 
         rename ( $filename, $this->inicialDir . $this->title . '.odt' );
-        
+
 
         if (in_array ( 'download', $this->options ))
         {
@@ -482,14 +482,14 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_DataGrid
             header ( 'Content-Disposition: attachment; filename="' . $this->title . '.odt"' );
             readfile ( $this->inicialDir . $this->title . '.odt' );
         }
-        
+
         if (! in_array ( 'save', $this->options ))
         {
             unlink ( $this->inicialDir . $this->title . '.odt' );
         }
-        
+
         $this->deldir ( $this->dir );
-        
+
         die ();
     }
 

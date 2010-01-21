@@ -15,7 +15,7 @@
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 

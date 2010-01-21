@@ -494,7 +494,7 @@ HTML;
         // build rows
         $data = new stdClass();
         $data->rows = array();
-        foreach (parent::buildGrid() as $i=>$row) {
+        foreach (parent::_buildGrid() as $i=>$row) {
             $dataRow = new stdClass();
             // collect data for cells
             $d = array();
@@ -503,7 +503,7 @@ HTML;
             }
             if ($passPk) {
                 // set PK to row
-                // TODO works only if buildGrid() results are in same order as $this->_result
+                // TODO works only if _buildGrid() results are in same order as $this->_result
                 $dataRow->id = $this->_result[$i]->$pkName;
             }
             $dataRow->cell = $d;
@@ -686,8 +686,8 @@ HTML;
 
         //BVB grid options
         $skipOptions = array(
-            'title',     // handled in parent::buildTitles()
-            'hide',      // handled in parent::buildTitles()
+            'title',     // handled in parent::_buildTitles()
+            'hide',      // handled in parent::_buildTitles()
             'sqlexp',
             'hRow',
             'eval',
@@ -700,7 +700,7 @@ HTML;
 
         $defaultFilters = array_flip(is_null($this->_defaultFilters) ? array() : $this->_defaultFilters);
 
-        $titles = $this->buildTitles();
+        $titles = $this->_buildTitles();
         //$fields = $this->removeAsFromFields();
         $fields = $this->data['fields'];
         foreach ($titles as $key=>$title) {

@@ -15,7 +15,7 @@
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -25,13 +25,13 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
     public $title;
 
     protected  $output = 'print';
-    
+
     public $templateInfo;
 
 
     function __construct ($title)
     {
-  
+
         if (! in_array ( 'print', $this->export ))
         {
             echo $this->__( "You dont' have permission to export the results to this format" );
@@ -40,7 +40,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
 
         $this->title = $title;
 
-        
+
         $this->_setRemoveHiddenFields(true);
         parent::__construct();
 
@@ -77,13 +77,13 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
         }
 
 
-        $titles = parent::buildTitles();
+        $titles = parent::_buildTitles();
 
         #$nome = reset($titles);
-        $wsData = parent::buildGrid();
-        $sql = parent::buildSqlExp();
+        $wsData = parent::_buildGrid();
+        $sql = parent::_buildSqlExp();
 
-     
+
 
         $xml = $this->temp['print']->globalStart();
         $xml .= $this->temp['print']->header();
