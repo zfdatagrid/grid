@@ -14,430 +14,453 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_DataGrid {
+class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data
+{
 
-	public $templateInfo;
+    const OUTPUT = 'wordx';
 
-	public $title;
+    public $templateInfo;
 
-	protected $options = array ();
+    public $wordInfo;
 
-	public $wordInfo;
+    public $style;
 
-	public $style;
+    public $deploy;
 
-	public $dir;
+    private $inicialDir;
 
-	private $inicialDir;
+    protected $templateDir;
 
-	protected $templateDir;
+    function __construct ($options)
+    {
 
-	protected $output = 'wordx';
-
-	function __construct($title, $dir, $options = array('download')) {
-
-		if (! in_array ( 'wordx', $this->export )) {
-			echo $this->__ ( "You dont' have permission to export the results to this format" );
-			die ();
-		}
-
-		$this->dir = rtrim ( $dir, "/" ) . "/";
-		$this->title = $title;
-		$this->options = $options;
-		$this->inicialDir = $this->dir;
-
+        if (! in_array(self::OUTPUT, $this->export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
 
         $this->_setRemoveHiddenFields(true);
-		parent::__construct (  );
-
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
-		if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
-			$this->setTemplate ( 'wordx', 'wordx' );
-		}
-
-	}
-
-	/**
-	 * [Para podemros utiliza]
-	 *
-	 * @param string $var
-	 * @param string $value
-	 */
-
-	function __set($var, $value) {
-
-		parent::__set ( $var, $value );
-	}
-
-	/**
-	 * [PT] Fazer o scan recursivo dos dir
-	 *
-	 * @param string $directory
-	 * @param unknown_type $filter
-	 * @return unknown
-	 */
-	function scan_directory_recursively($directory, $filter = FALSE) {
-
-		// if the path has a slash at the end we remove it here
-		$directory = rtrim ( $directory, '/' );
-
-		// if the path is not valid or is not a directory ...
-		if (! file_exists ( $directory ) || ! is_dir ( $directory )) {
-			// ... we return false and exit the function
-			return FALSE;
-
-		// ... else if the path is readable
-		} elseif (is_readable ( $directory )) {
-			// we open the directory
-			$directory_list = opendir ( $directory );
-
-			// and scan through the items inside
-			while ( FALSE !== ($file = readdir ( $directory_list )) ) {
-				// if the filepointer is not the current directory
-				// or the parent directory
-				if ($file != '.' && $file != '..' && $file != '.DS_Store') {
-					// we build the new path to scan
-					$path = $directory . '/' . $file;
-
-					// if the path is readable
-					if (is_readable ( $path )) {
-						// we split the new path by directories
-						$subdirectories = explode ( '/', $path );
-
-						// if the new path is a directory
-						if (is_dir ( $path )) {
-							// add the directory details to the file list
-							$directory_tree [] = array ('path' => $path . '|',
-
-							// we scan the new path by calling this function
-							'content' => $this->scan_directory_recursively ( $path, $filter ) );
-
-						// if the new path is a file
-						} elseif (is_file ( $path )) {
-							// get the file extension by taking everything after the last dot
-							$extension = end ( $subdirectories );
-							$extension = explode ( '.', $extension );
-							$extension = end ( $extension );
-
-							// if there is no filter set or the filter is set and matches
-							if ($filter === FALSE || $filter == $extension) {
-								// add the file details to the file list
-								$directory_tree [] = array ('path' => $path . '|', 'name' => end ( $subdirectories ) );
-							}
-						}
-					}
-				}
-			}
-			// close the directory
-			closedir ( $directory_list );
-
-			// return file list
-			return $directory_tree;
-
-		// if the path is not readable ...
-		} else {
-			// ... we return false
-			return FALSE;
-		}
-	}
-
-	// ------------------------------------------------------------
-
-
-	/**
-	 * [PT] Remove direcotiros e subdirectorios
-	 *
-	 * @param string $dir
-	 */
-
-	function deldir($dir) {
-
-		$current_dir = @opendir ( $dir );
-		while ( $entryname = @readdir ( $current_dir ) ) {
-			if (is_dir ( $dir . '/' . $entryname ) and ($entryname != "." and $entryname != "..")) {
-				$this->deldir ( $dir . '/' . $entryname );
-			} elseif ($entryname != "." and $entryname != "..") {
-				@unlink ( $dir . '/' . $entryname );
-			}
-		}
-		@closedir ( $current_dir );
-		@rmdir ( $dir );
-	}
-
-	/**
-	 * [PT] Ir buscar os caminhos para depois zipar
-	 *
-	 * @param unknown_type $dirs
-	 * @return unknown
-	 */
-	function zipPaths($dirs) {
+        parent::__construct($options);
+
+        $this->addTemplateDir('Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx');
+
+    }
+
+    /**
+     * [PT] Fazer o scan recursivo dos dir
+     *
+     * @param string $directory
+     * @param unknown_type $filter
+     * @return unknown
+     */
+    function scan_directory_recursively ($directory, $filter = FALSE)
+    {
+
+        // if the path has a slash at the end we remove it here
+        $directory = rtrim($directory, '/');
+        $directory_tree = array();
+
+        // if the path is not valid or is not a directory ...
+        if (! file_exists($directory) || ! is_dir($directory)) {
+            // ... we return false and exit the function
+            return FALSE;
+
+        // ... else if the path is readable
+        } elseif (is_readable($directory)) {
+            // we open the directory
+            $directory_list = opendir($directory);
+
+            // and scan through the items inside
+            while (FALSE !== ($file = readdir($directory_list))) {
+                // if the filepointer is not the current directory
+                // or the parent directory
+                if ($file != '.' && $file != '..' && $file != '.DS_Store') {
+                    // we build the new path to scan
+                    $path = $directory . '/' . $file;
+
+                    // if the path is readable
+                    if (is_readable($path)) {
+                        // we split the new path by directories
+                        $subdirectories = explode('/', $path);
+
+                        // if the new path is a directory
+                        if (is_dir($path)) {
+                            // add the directory details to the file list
+                            $directory_tree[] = array('path' => $path . '|',
+
+                            // we scan the new path by calling this function
+                            'content' => $this->scan_directory_recursively($path, $filter));
+
+                        // if the new path is a file
+                        } elseif (is_file($path)) {
+                            // get the file extension by taking everything after the last dot
+                            $extension = end($subdirectories);
+                            $extension = explode('.', $extension);
+                            $extension = end($extension);
+
+                            // if there is no filter set or the filter is set and matches
+                            if ($filter === FALSE || $filter == $extension) {
+                                // add the file details to the file list
+                                $directory_tree[] = array('path' => $path . '|', 'name' => end($subdirectories));
+                            }
+                        }
+                    }
+                }
+            }
+            // close the directory
+            closedir($directory_list);
+
+            // return file list
+            return $directory_tree;
+
+        // if the path is not readable ...
+        } else {
+            // ... we return false
+            return FALSE;
+        }
+    }
+
+    // ------------------------------------------------------------
+
+
+
+    /**
+     * [PT] Remove direcotiros e subdirectorios
+     *
+     * @param string $dir
+     */
+
+    function deldir ($dir)
+    {
+
+        $current_dir = @opendir($dir);
+        while ($entryname = @readdir($current_dir)) {
+            if (is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..")) {
+                $this->deldir($dir . '/' . $entryname);
+            } elseif ($entryname != "." and $entryname != "..") {
+                @unlink($dir . '/' . $entryname);
+            }
+        }
+        @closedir($current_dir);
+        @rmdir($dir);
+    }
+
+    /**
+     * [PT] Ir buscar os caminhos para depois zipar
+     *
+     * @param unknown_type $dirs
+     * @return unknown
+     */
+    function zipPaths ($dirs)
+    {
+
+        foreach ($dirs as $key => $value) {
+            if (! is_array(@$value['content'])) {
+                @$file .= $value['path'];
+            } else {
+                @$file .= $this->zipPaths($value['content']);
+            }
+        }
+        return $file;
+    }
+
+    /**
+     * [PT] TEMOS que copiar os directórtio para a  loalização final
+     *
+     * @param unknown_type $source
+     * @param unknown_type $dest
+     * @return unknown
+     */
+    function copyDir ($source, $dest)
+    {
+
+        // Se for ficheiro
+        if (is_file($source)) {
+            $c = copy($source, $dest);
+            chmod($dest, 0777);
+            return $c;
+        }
+
+        // criar directorio de destino
+        if (! is_dir($dest)) {
+            mkdir($dest, 0777, 1);
+        }
+
+        // Loop
+        $dir = dir($source);
+        while (false !== $entry = $dir->read()) {
+
+            if ($entry == '.' || $entry == '..' || $entry == '.svn') {
+                continue;
+            }
 
-		foreach ( $dirs as $key => $value ) {
-			if (! is_array ( @$value ['content'] )) {
-				@$file .= $value ['path'];
-			} else {
-				@$file .= $this->zipPaths ( $value ['content'] );
-			}
-		}
-		return $file;
-	}
+            // copiar directorios
+            if ($dest !== "$source/$entry") {
+                $this->copyDir("$source/$entry", "$dest/$entry");
+            }
+        }
 
-	/**
-	 * [PT] TEMOS que copiar os directórtio para a  loalização final
-	 *
-	 * @param unknown_type $source
-	 * @param unknown_type $dest
-	 * @return unknown
-	 */
-	function copyDir($source, $dest) {
+        // sair
+        $dir->close();
+        return true;
+
+    }
+
+    function deploy ()
+    {
 
-		// Se for ficheiro
-		if (is_file ( $source )) {
-			$c = copy ( $source, $dest );
-			chmod ( $dest, 0777 );
-			return $c;
-		}
+        $this->setPagination(0);
 
-		// criar directorio de destino
-		if (! is_dir ( $dest )) {
-			mkdir ( $dest, 0777, 1 );
-		}
+        parent::deploy();
 
-		// Loop
-		$dir = dir ( $source );
-		while ( false !== $entry = $dir->read () ) {
+        if (! $this->temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
+            $this->setTemplate('wordx', 'wordx');
+        }
 
-			if ($entry == '.' || $entry == '..' || $entry == '.svn') {
-				continue;
-			}
+        $this->templateInfo = $this->temp ['wordx']->options;
 
-			// copiar directorios
-			if ($dest !== "$source/$entry") {
-				$this->copyDir ( "$source/$entry", "$dest/$entry" );
-			}
-		}
 
-		// sair
-		$dir->close ();
-		return true;
+        if(!isset($this->deploy['title']))
+        {
+            $this->deploy['title'] = '';
+        }
 
-	}
+        if(!isset($this->deploy['subtitle']))
+        {
+            $this->deploy['subtitle'] = '';
+        }
 
-	function deploy() {
+        if(!isset($this->deploy['logo']))
+        {
+            $this->deploy['logo'] = '';
+        }
 
-		$this->setPagination ( 0 );
+        if(!isset($this->deploy['footer']))
+        {
+            $this->deploy['footer'] = '';
+        }
 
-		parent::deploy ();
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
 
-		if (! $this->temp ['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
-			$this->setTemplate ( 'wordx', 'wordx' );
-		}
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
+        }
 
-		$this->templateInfo = $this->temp ['wordx']->templateInfo;
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            throw new Exception('Nothing to do. Please specify download&&|save options');
+        }
 
-		$this->templateDir = explode ( '/', $this->templateInfo ['dir'] );
-		array_pop ( $this->templateDir );
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
 
-		$this->templateDir = ucfirst ( end ( $this->templateDir ) );
 
-		$this->wordInfo = $this->temp ['wordx']->info ();
+        $this->inicialDir = $this->deploy['dir'];
 
-		$this->dir = rtrim ( $this->dir, '/' ) . '/' . ucfirst ( $this->templateInfo ['name'] ) . '/';
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
 
-		if (! defined ( 'APPLICATION_PATH' )) {
-			$pathTemplate = rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
-		} else {
-			$pathTemplate = APPLICATION_PATH . '/../' . rtrim ( $this->libraryDir, '/' ) . '/' . substr ( $this->templateInfo ['dir'], 0, - 4 ) . '/';
-		}
+        if (substr($this->deploy['name'], - 5) == '.docx') {
+            $this->deploy['name'] = substr($this->deploy['name'], 0, - 5);
+        }
 
-		$this->deldir ( $this->dir );
+        if (! is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
 
-		$this->copyDir ( $pathTemplate, $this->dir );
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
 
-		$xml = $this->temp ['wordx']->globalStart ();
+        $this->templateDir = explode('/', $this->deploy['dir']);
+        array_pop($this->templateDir);
 
-		$titles = parent::_buildTitles ();
+        $this->templateDir = ucfirst(end($this->templateDir));
 
-		#$nome = reset ( $titles );
-		$wsData = parent::_buildGrid ();
-		$sql = parent::_buildSqlExp ();
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/' . ucfirst($this->deploy['name']) . '/';
 
-		/////////////////////////
-		/////////////////////////
+        if (! defined('APPLICATION_PATH')) {
+            $pathTemplate = rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+        } else {
+            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+        }
 
 
-		#O HEADER
+        $this->deldir($this->deploy['dir']);
 
+        $this->copyDir($pathTemplate, $this->deploy['dir']);
 
-		if (file_exists ( $this->wordInfo ['logo'] )) {
-			$data = explode ( "/", $this->wordInfo ['logo'] );
-			copy ( $this->wordInfo ['logo'], $this->dir . 'word/media/' . end ( $data ) );
+        $xml = $this->temp['wordx']->globalStart();
 
-			$logo = $this->temp ['wordx']->logo ();
+        $titles = parent::_buildTitles();
+        $wsData = parent::_buildGrid();
+        $sql = parent::_buildSqlExp();
 
-			file_put_contents ( $this->dir . "word/_rels/header1.xml.rels", $logo );
+        /////////////////////////
+        /////////////////////////
+        # HEADER
+        if (file_exists($this->deploy['logo'])) {
+            $data = explode("/", $this->deploy['logo']);
+            copy($this->deploy['logo'], $this->deploy['dir'] . 'word/media/' . end($data));
 
-			$header = str_replace ( array ('{{title}}', '{{subtitle}}' ), array ($this->wordInfo ['title'], $this->wordInfo ['subtitle'] ), $this->temp ['wordx']->header () );
+            $logo = $this->temp['wordx']->logo();
 
-		} else {
+            file_put_contents($this->dir . "word/_rels/header1.xml.rels", $logo);
 
-			$header = str_replace ( array ('{{title}}', '{{subtitle}}' ), array ($this->wordInfo ['title'], $this->wordInfo ['subtitle'] ), $this->temp ['wordx']->header () );
+            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->temp['wordx']->header());
 
-		}
+        } else {
 
-		file_put_contents ( $this->dir . "word/header1.xml", $header );
+            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->temp['wordx']->header());
 
-		/////////////////////////
-		/////////////////////////
+        }
 
+        file_put_contents($this->deploy['dir'] . "word/header1.xml", $header);
 
-		#END HEADER
+        /////////////////////////
+        /////////////////////////
+        #END HEADER
 
 
-		#BEGIN FOOTER
-		$footer = str_replace ( "{{value}}", $this->wordInfo ['footer'], $this->temp ['wordx']->footer () );
 
-		file_put_contents ( $this->dir . "word/footer2.xml", $footer );
+        #BEGIN FOOTER
+        $footer = str_replace("{{value}}", $this->deploy['footer'], $this->temp['wordx']->footer());
+        file_put_contents($this->deploy['dir'] . "word/footer2.xml", $footer);
+        #END footer
 
-		#END footer
 
 
-		#START DOCUMENT.XML
+        #START DOCUMENT.XML
+        $xml = $this->temp['wordx']->globalStart();
 
+        $xml .= $this->temp['wordx']->titlesStart();
 
-		$xml = $this->temp ['wordx']->globalStart ();
+        foreach ($titles as $value) {
 
-		$xml .= $this->temp ['wordx']->titlesStart ();
+            if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-		foreach ( $titles as $value ) {
+                $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->titlesLoop());
 
-			if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
+            }
+        }
+        $xml .= $this->temp['wordx']->titlesEnd();
 
-				$xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['wordx']->titlesLoop () );
+        if (is_array($wsData)) {
 
-			}
-		}
-		$xml .= $this->temp ['wordx']->titlesEnd ();
+            /////////////////
+            /////////////////
+            /////////////////
+            if (@$this->info['hRow']['title'] != '') {
+                $bar = $wsData;
 
-		if (is_array ( $wsData )) {
+                $hbar = trim($this->info['hRow']['field']);
 
-			/////////////////
-			/////////////////
-			/////////////////
-			if (@$this->info ['hRow'] ['title'] != '') {
-				$bar = $wsData;
+                $p = 0;
+                foreach ($wsData[0] as $value) {
+                    if ($value['field'] == $hbar) {
+                        $hRowIndex = $p;
+                    }
 
-				$hbar = trim ( $this->info ['hRow'] ['field'] );
+                    $p ++;
+                }
+                $aa = 0;
+            }
 
-				$p = 0;
-				foreach ( $wsData [0] as $value ) {
-					if ($value ['field'] == $hbar) {
-						$hRowIndex = $p;
-					}
+            //////////////
+            //////////////
+            //////////////
 
-					$p ++;
-				}
-				$aa = 0;
-			}
 
-			//////////////
-			//////////////
-			//////////////
 
+            $i = 1;
+            $aa = 0;
+            foreach ($wsData as $row) {
 
-			$i = 1;
-			$aa = 0;
-			foreach ( $wsData as $row ) {
+                ////////////
+                ////////////
+                //A linha horizontal
+                if (@$this->info['hRow']['title'] != '') {
+                    if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
+                        $xml .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->temp['wordx']->hRow());
+                    }
+                }
+                ////////////
+                ////////////
 
-				////////////
-				////////////
-				//A linha horizontal
-				if (@$this->info ['hRow'] ['title'] != '') {
 
-					if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value']) {
 
-						$xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->temp ['wordx']->hRow () );
+                $xml .= $this->temp['wordx']->loopStart();
 
-					}
-				}
+                $a = 1;
 
-				////////////
-				////////////
+                foreach ($row as $value) {
 
+                    $value['value'] = strip_tags($value['value']);
 
-				$xml .= $this->temp ['wordx']->loopStart ();
+                    if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-				$a = 1;
+                        $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->loopLoop());
 
-				foreach ( $row as $value ) {
+                    }
+                    $a ++;
 
-					$value ['value'] = strip_tags ( $value ['value'] );
+                }
+                $xml .= $this->temp['wordx']->loopEnd();
+                $aa ++;
+                $i ++;
+            }
+        }
 
-					if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '') {
+        if (is_array($sql)) {
+            $xml .= $this->temp['wordx']->sqlExpStart();
+            foreach ($sql as $value) {
+                $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->sqlExpLoop());
+            }
+            $xml .= $this->temp['wordx']->sqlExpEnd();
+        }
 
-						$xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['wordx']->loopLoop () );
+        $xml .= $this->temp['wordx']->globalEnd();
 
-					}
-					$a ++;
+        file_put_contents($this->deploy['dir'] . "word/document.xml", $xml);
 
-				}
-				$xml .= $this->temp ['wordx']->loopEnd ();
-				$aa ++;
-				$i ++;
-			}
-		}
+        $final = $this->scan_directory_recursively($this->deploy['dir']);
+        $f = explode('|', $this->zipPaths($final));
+        array_pop($f);
 
-		if (is_array ( $sql )) {
-			$xml .= $this->temp ['wordx']->sqlExpStart ();
-			foreach ( $sql as $value ) {
-				$xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['wordx']->sqlExpLoop () );
-			}
-			$xml .= $this->temp ['wordx']->sqlExpEnd ();
-		}
+        $zip = new ZipArchive();
+        $filename = $this->deploy['dir'] . $this->deploy['name'] . ".zip";
 
-		$xml .= $this->temp ['wordx']->globalEnd ();
+        if ($zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE) {
+            exit("cannot open <$filename>\n");
+        }
 
-		file_put_contents ( $this->dir . "word/document.xml", $xml );
+        foreach ($f as $value) {
+            $zip->addFile($value, str_replace($this->deploy['dir'], '', $value));
+        }
 
-		$final = $this->scan_directory_recursively ( $this->dir );
-		$f = explode ( '|', $this->zipPaths ( $final ) );
-		array_pop ( $f );
+        $zip->close();
 
-		$this->title = strlen ( $this->title ) > 0 ? $this->title : 'Word Document';
+        rename($filename, $this->inicialDir . $this->deploy['name'] . '.docx');
 
-		$zip = new ZipArchive ( );
-		$filename = $this->dir . $this->title . ".zip";
+        if ($this->deploy['download'] == 1) {
+            header('Content-type: application/word');
+            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.docx"');
+            readfile($this->inicialDir . $this->deploy['name'] . '.docx');
+        }
 
-		if ($zip->open ( $filename, ZIPARCHIVE::CREATE ) !== TRUE) {
-			exit ( "cannot open <$filename>\n" );
-		}
+         if ($this->deploy['save'] != 1) {
+            unlink($this->inicialDir . $this->deploy['name'] . '.docx');
+        }
 
-		foreach ( $f as $value ) {
-			$zip->addFile ( $value, str_replace ( $this->dir, '', $value ) );
-		}
+        $this->deldir($this->deploy['dir']);
 
-		$zip->close ();
-
-		rename ( $filename, $this->inicialDir . $this->title . '.docx' );
-
-		if (in_array ( 'download', $this->options )) {
-			header ( 'Content-type: application/word' );
-			header ( 'Content-Disposition: attachment; filename="' . $this->title . '.docx"' );
-			readfile ( $this->inicialDir . $this->title . '.docx' );
-		}
-
-		if (! in_array ( 'save', $this->options )) {
-			unlink ( $this->inicialDir . $this->title . '.docx' );
-		}
-
-		$this->deldir ( $this->dir );
-
-		die ();
-	}
+        die();
+    }
 
 }
 

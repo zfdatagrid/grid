@@ -14,13 +14,13 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 
-class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_Interface 
+class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_Interface
 {
 
     /**
@@ -29,10 +29,10 @@ class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_Interface
      * @var int
      */
     public $colSpan;
-    
+
     /**
      * [PT] U array com as opções do documento
-     * 
+     *
      * possiveis: title
      *
      * @var array
@@ -46,18 +46,13 @@ class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_Interface
      */
     public $i;
 
-    
-    /**
-     * [PT] Receber as opções de configuração de classe
-     *
-     * @param unknown_type $options
-     */
-    function __construct($options = array())
-    {
-        $this->wordOptions = $options;
-    }
 
-    
+    /**
+     * Options
+     * @var array
+     */
+    public $options;
+
 
     function globalStart ()
     {
@@ -68,14 +63,14 @@ xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"
 xmlns:css=\"http://macVmlSchemaUri\" xmlns=\"http://www.w3.org/TR/REC-html40\">
 
 <head>
-<meta name=Title content=\"{$this->wordOptions['title']}\">
+<meta name=Title content=\"{$this->options['title']}\">
 <meta name=Keywords content=\"\">
 <meta http-equiv=Content-Type content=\"text/html; charset=utf-8\">
 <meta name=ProgId content=Word.Document>
 <meta name=Generator content=\"Microsoft Word 2008\">
 <meta name=Originator content=\"Microsoft Word 2008\">
-<title>{$this->wordOptions['title']}</title>
-<!--[if gte mso 9]><xml> 
+<title>{$this->options['title']}</title>
+<!--[if gte mso 9]><xml>
  <o:OfficeDocumentSettings>
   <o:AllowPNG/>
  </o:OfficeDocumentSettings>
@@ -210,7 +205,7 @@ table.MsoNormalTable
 <div class=Section1>
 <table  border=1 cellspacing=0 cellpadding=0 width='100%'
  style='width:100%;margin-left:-.35pt;border-collapse:collapse;border:none;'>
-<tr><td colspan=\"".$this->colSpan."\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{$this->wordOptions['title']}<o:p></o:p></span></p>
+<tr><td colspan=\"{$this->options['colspan']}\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{$this->options['title']}<o:p></o:p></span></p>
   </td></tr>";
 
 
@@ -242,7 +237,7 @@ table.MsoNormalTable
 
     function noResults()
     {
-        return "<tr><td colspan=\"".$this->colSpan."\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}&nbsp;<o:p></o:p></span></p>
+        return "<tr><td colspan=\"{$this->options['colspan']}\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}&nbsp;<o:p></o:p></span></p>
   </td></tr>";
     }
 
@@ -250,7 +245,7 @@ table.MsoNormalTable
 
     function hRow()
     {
-        return "<tr><td colspan=\"".$this->colSpan."\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}<o:p></o:p></span></p>
+        return "<tr><td colspan=\"{$this->options['colspan']}\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}<o:p></o:p></span></p>
   </td></tr>";
     }
 

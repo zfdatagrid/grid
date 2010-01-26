@@ -4,71 +4,40 @@
  *
  * LICENSE
  *
- * This source file is subject to the GNU General Public License 2.0
+ * This source file is subject to the new BSD license
  * It is  available through the world-wide-web at this URL:
- * http://www.opensource.org/licenses/gpl-2.0.php
+ * http://www.petala-azul.com/bsd.txt
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.4   $
+ * @license    http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
+class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_Data
 {
 
-    protected $output = 'pdf';
+    const OUTPUT = 'pdf';
 
-    public $pdfInfo = array ();
-
-    public $dir;
-
-    protected $style;
-
-    protected $options = array ();
-
-    public $title;
+    public $deploy;
 
 
-    function __construct( $title, $dir, $options = array('download'))
+    function __construct($options)
     {
 
-        if (! in_array ( 'pdf', $this->export ))
+        if (! in_array ( self::OUTPUT, $this->export ))
         {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
             die ();
         }
 
-
-        $this->dir = rtrim ( $dir, "/" ) . "/";
-        $this->title = $title;
-        $this->options = $options;
-
-
         $this->_setRemoveHiddenFields(true);
-        parent::__construct (  );
+        parent::__construct ($options  );
 
-
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Pdf', 'Bvb_Grid_Template_Pdf', 'pdf' );
-
-    }
-
-
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
-
-    function __set($var, $value)
-    {
-
-        parent::__set ( $var, $value );
     }
 
 
@@ -181,17 +150,44 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         $this->setPagination ( 0 );
         parent::deploy ();
 
+        $colors = array('title' =>'#000000','subtitle'=>'#111111','footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF',
+'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000');
+
+        $this->deploy['colors'] = array_merge($colors,$this->deploy['colors']);
+
+
         $la = '';
 
-        if (! $this->temp ['pdf'] instanceof Bvb_Grid_Template_Pdf_Pdf)
-        {
-            $this->setTemplate ( 'pdf', 'pdf' );
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
+
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
+        }
+
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            throw new Exception('Nothing to do. Please specify download&&|save options');
         }
 
 
-        $this->pdfInfo = $this->temp ['pdf']->info ();
-        $this->style = $this->temp ['pdf']->style ();
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
 
+        if (substr($this->deploy['name'], - 4) == '.xls') {
+            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
+        }
+
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+        if (!isset($this->deploy['dir']) || !is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
+
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
 
         $larg = self::calculateCellSize ();
         $total_len = array_sum ( $larg );
@@ -207,22 +203,18 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
         //set font
 
-
-
         /////////////
-
-
 
         $titulos = parent::_buildTitles ();
         $sql = parent::_buildSqlExp ();
         $grid = parent::_BuildGrid ();
 
 
-        if (strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->pdfInfo ['size'] ) == 'A4')
+        if (strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->deploy ['size'] ) == 'A4')
         {
             $totalPaginas = ceil ( count ( $grid ) / 26 );
 
-        } elseif (strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->pdfInfo ['size'] ) == 'LETTER')
+        } elseif (strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE' && strtoupper ( $this->deploy ['size'] ) == 'LETTER')
         {
             $totalPaginas = ceil ( count ( $grid ) / 27 );
 
@@ -242,37 +234,37 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
         // Create new Style
         $style = new Zend_Pdf_Style ( );
-        $style->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['lines'] ) );
+        $style->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors'] ['lines'] ) );
 
         $topo = new Zend_Pdf_Style ( );
-        $topo->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['header'] ) );
+        $topo->setFillColor ( new Zend_Pdf_Color_Html ($this->deploy['colors'] ['header'] ) );
 
         $td = new Zend_Pdf_Style ( );
-        $td->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['row2'] ) );
+        $td->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors'] ['row2'] ) );
 
         $td2 = new Zend_Pdf_Style ( );
-        $td2->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['row1'] ) );
+        $td2->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors'] ['row1'] ) );
 
         $hRowStyle = new Zend_Pdf_Style ( );
-        $hRowStyle->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['hrow'] ) );
+        $hRowStyle->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors'] ['hrow'] ) );
 
         $styleSql = new Zend_Pdf_Style ( );
-        $styleSql->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['sqlexp'] ) );
+        $styleSql->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors'] ['sqlexp'] ) );
 
         $styleText = new Zend_Pdf_Style ( );
-        $styleText->setFillColor ( new Zend_Pdf_Color_Html ( $this->style ['text'] ) );
+        $styleText->setFillColor ( new Zend_Pdf_Color_Html ( $this->deploy['colors']['text'] ) );
 
         // Add new page to the document
 
 
 
-        if (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
+        if (strtoupper ( $this->deploy ['size'] = 'LETTER' ) && strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE')
         {
             $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
-        } elseif (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) != 'LANDSCAPE')
+        } elseif (strtoupper ( $this->deploy ['size'] = 'LETTER' ) && strtoupper ( $this->deploy ['orientation'] ) != 'LANDSCAPE')
         {
             $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER );
-        } elseif (strtoupper ( $this->pdfInfo ['size'] != 'A4' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
+        } elseif (strtoupper ( $this->deploy ['size'] != 'A4' ) && strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE')
         {
             $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4_LANDSCAPE );
         } else
@@ -290,29 +282,28 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
 
 
-
-        if (file_exists ( $this->pdfInfo ['logo'] ))
+        if (file_exists ( $this->deploy ['logo'] ))
         {
-            $image = Zend_Pdf_Image::imageWithPath ( $this->pdfInfo ['logo'] );
+            $image = Zend_Pdf_Image::imageWithPath ( $this->deploy ['logo'] );
 
-            list ( $width, $height, $type, $attr ) = getimagesize ( $this->pdfInfo ['logo'] );
+            list ( $width, $height, $type, $attr ) = getimagesize ( $this->deploy ['logo'] );
 
             $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
         }
 
-        $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
+        $page->drawText ( $this->deploy ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
         $page->setFont ( $font, $cellFontSize );
 
-        $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80 , $this->charEncoding);
+        $page->drawText ( $this->deploy ['subtitle'], $width + 70, $page->getHeight () - 80 , $this->charEncoding);
 
         //Iniciar a contagem de páginas
         $pagina = 1;
 
 
-        $page->drawText ( $this->pdfInfo ['footer'], 40, 40 , $this->charEncoding);
-        if (@$this->pdfInfo ['noPagination'] != 1)
+        $page->drawText ( $this->deploy ['footer'], 40, 40 , $this->charEncoding);
+        if (@$this->deploy ['noPagination'] != 1)
         {
-            $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40, $this->charEncoding );
+            $page->drawText ( $this->deploy ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->deploy ['page'] ) * $cellFontSize) - 50, 40, $this->charEncoding );
         }
 
 
@@ -417,13 +408,13 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 if ($altura <= 80)
                 {
                     // Add new page to the document
-                    if (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
+                    if (strtoupper ( $this->deploy ['size'] = 'LETTER' ) && strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE')
                     {
                         $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE );
-                    } elseif (strtoupper ( $this->pdfInfo ['size'] = 'LETTER' ) && strtoupper ( $this->pdfInfo ['orientation'] ) != 'LANDSCAPE')
+                    } elseif (strtoupper ( $this->deploy ['size'] = 'LETTER' ) && strtoupper ( $this->deploy ['orientation'] ) != 'LANDSCAPE')
                     {
                         $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_LETTER );
-                    } elseif (strtoupper ( $this->pdfInfo ['size'] != 'A4' ) && strtoupper ( $this->pdfInfo ['orientation'] ) == 'LANDSCAPE')
+                    } elseif (strtoupper ( $this->deploy ['size'] != 'A4' ) && strtoupper ( $this->deploy ['orientation'] ) == 'LANDSCAPE')
                     {
                         $page = $pdf->newPage ( Zend_Pdf_Page::SIZE_A4_LANDSCAPE );
                     } else
@@ -442,26 +433,26 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
 
 
                     //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-                    if (file_exists ( $this->pdfInfo ['logo'] ))
+                    if (file_exists ( $this->deploy ['logo'] ))
                     {
-                        $image = Zend_Pdf_Image::imageWithPath ( $this->pdfInfo ['logo'] );
-                        list ( $width, $height, $type, $attr ) = getimagesize ( $this->pdfInfo ['logo'] );
+                        $image = Zend_Pdf_Image::imageWithPath ( $this->deploy ['logo'] );
+                        list ( $width, $height, $type, $attr ) = getimagesize ( $this->deploy ['logo'] );
                         $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
                     }
 
-                    $page->drawText ( $this->pdfInfo ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
+                    $page->drawText ( $this->deploy ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
                     $page->setFont ( $font, $cellFontSize );
 
-                    $page->drawText ( $this->pdfInfo ['subtitle'], $width + 70, $page->getHeight () - 80, $this->charEncoding );
+                    $page->drawText ( $this->deploy ['subtitle'], $width + 70, $page->getHeight () - 80, $this->charEncoding );
 
 
                     //set font
                     $altura = $page->getHeight () - 120;
 
-                    $page->drawText ( $this->pdfInfo ['footer'], 40, 40, $this->charEncoding);
-                    if ($this->pdfInfo ['noPagination'] != 1)
+                    $page->drawText ( $this->deploy ['footer'], 40, 40, $this->charEncoding);
+                    if ($this->deploy ['noPagination'] != 1)
                     {
-                        $page->drawText ( $this->pdfInfo ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->pdfInfo ['page'] ) * $cellFontSize) - 50, 40 , $this->charEncoding);
+                        $page->drawText ( $this->deploy ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->deploy ['page'] ) * $cellFontSize) - 50, 40 , $this->charEncoding);
                     }
 
 
@@ -505,27 +496,6 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 $a = 1;
 
 
-                /**
-                 *
-                 *
-                 *
-                $j = 0;
-                foreach ( $value as $linhas )
-                {
-                    $linha [$j] = strlen ( strip_tags ( $linhas ['value'] ) );
-                 * $linha [$j] / ($page->getWidth () - 80) / 230 );
-                    $j ++;
-                }
-
-                sort ( $numberLines );
-
-                $lines = end($numberLines);
-                 *
-                 *
-                 */
-
-
-                ////////////
                 ////////////
                 //A linha horizontal
                 if (@$this->info ['hRow'] ['title'] != '')
@@ -556,9 +526,6 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
                 }
 
                 ////////////
-                ////////////
-
-
 
                 foreach ( $value as $value1 )
                 {
@@ -629,18 +596,17 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_DataGrid
         }
 
 
-        $pdf->save ( $this->dir . $this->title . '.pdf' );
+        $pdf->save ($this->deploy['dir'] . $this->deploy['name'].  '.pdf' );
 
-        if (in_array ( 'download', $this->options ))
-        {
+        if ($this->deploy['download'] == 1) {
             header ( 'Content-type: application/pdf' );
-            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.pdf"' );
-            readfile ( $this->dir . $this->title . '.pdf' );
+            header ( 'Content-Disposition: attachment; filename="' . $this->deploy['name']. '.pdf"' );
+            readfile ( $this->deploy['dir'] . $this->deploy['name']. '.pdf' );
         }
 
-        if (! in_array ( 'save', $this->options ))
-        {
-            unlink ( $this->dir . $this->title . '.pdf' );
+
+        if ($this->deploy['save'] != 1) {
+            unlink($this->deploy['dir'] . $this->deploy['name'] . '.pdf');
         }
 
         die ();

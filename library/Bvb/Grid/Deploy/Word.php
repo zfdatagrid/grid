@@ -14,68 +14,37 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 
-class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
+class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data
 {
 
-    public $title;
-
-    public $dir;
-
-    public $templateInfo;
+    const OUTPUT = 'word';
 
     protected $options = array ();
 
+    public $deploy;
 
-    protected $output = 'word';
 
-
-    function __construct( $title, $dir, $options = array('download'))
+    function __construct( $options )
     {
 
-        if (! in_array ( 'word', $this->export ))
+        if (! in_array ( self::OUTPUT, $this->export ))
         {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
             die ();
         }
 
-        $this->dir = rtrim ( $dir, "/" ) . "/";
-        $this->title = $title;
-        $this->options = $options;
-
-
-
         $this->_setRemoveHiddenFields(true);
-        parent::__construct (  );
+        parent::__construct ($options  );
 
         $this->addTemplateDir ( 'Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word' );
 
-        if (! is_object ( $this->temp ['word'] ))
-        {
-            $this->setTemplate ( 'word', 'word', array ('title' => $title ) );
-        }
-
     }
-
-
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
-
-    function __set($var, $value)
-    {
-
-        parent::__set ( $var, $value );
-    }
-
 
     function deploy()
     {
@@ -85,21 +54,15 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
         parent::deploy ();
 
 
+        if (! $this->temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
+            $this->setTemplate('word', 'word');
+        }
+
         $titles = parent::_buildTitles ();
 
         #$nome = reset($titles);
         $wsData = parent::_buildGrid ();
         $sql = parent::_buildSqlExp ();
-
-        /*
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_') || strpos($nome['field'],'.id')  )
-        {
-        @array_shift($titles);
-        @array_shift($sql);
-
-        $remove = true;
-        }
-        */
 
         $xml = $this->temp ['word']->globalStart ();
 
@@ -141,15 +104,10 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
             //////////////
             //////////////
 
-
-
             $i = 1;
             $aa = 0;
             foreach ( $wsData as $row )
             {
-
-
-                ////////////
                 ////////////
                 //A linha horizontal
                 if (@$this->info ['hRow'] ['title'] != '')
@@ -160,26 +118,19 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
                         $xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->temp ['word']->hRow () );
                     }
                 }
-
                 ////////////
-                ////////////
-
-
 
                 $xml .= $this->temp ['word']->loopStart ();
                 $a = 1;
                 foreach ( $row as $value )
                 {
-
                     $value ['value'] = strip_tags ( $value ['value'] );
 
                     if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
                     {
-
                         $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->loopLoop ( 2 ) );
                     }
                     $a ++;
-
                 }
                 $xml .= $this->temp ['word']->loopEnd ();
                 $aa ++;
@@ -193,7 +144,6 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
             $xml .= $this->temp ['word']->sqlExpStart ();
             foreach ( $sql as $value )
             {
-
                 $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->sqlExpLoop () );
             }
             $xml .= $this->temp ['word']->sqlExpEnd ();
@@ -203,29 +153,50 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_DataGrid
         $xml .= $this->temp ['word']->globalEnd ();
 
 
-        if (file_exists ( $this->dir . $this->title . '.doc' ))
-        {
-            $data = date ( 'd-m-Y H\:i\:s' );
-            rename ( $this->dir . $this->title . '.doc', $this->dir . $this->title . '-' . $data . '.doc' );
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
+
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
         }
 
 
-        file_put_contents ( $this->dir . $this->title . ".doc", $xml );
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            throw new Exception('Nothing to do. Please specify download&&|save options');
+        }
+
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
+
+        if (substr($this->deploy['name'], - 4) == '.doc') {
+            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
+        }
+
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+        if (! is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
+
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
+
+        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".doc", $xml);
 
 
-        if (in_array ( 'download', $this->options ))
-        {
+        if ($this->deploy['download'] == 1) {
             header ( 'Content-type: application/word' );
-            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.doc"' );
-            readfile ( $this->dir . $this->title . '.doc' );
+            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.doc"');
+            readfile($this->deploy['dir'] . $this->deploy['name'] . '.doc');
         }
 
 
-        if (! in_array ( 'save', $this->options ))
-        {
-            unlink ( $this->dir . $this->title . '.doc' );
+        if ($this->deploy['save'] != 1) {
+            unlink($this->deploy['dir'] . $this->deploy['name'] . '.doc');
         }
-
 
         die ();
     }

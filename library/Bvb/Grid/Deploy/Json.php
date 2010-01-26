@@ -13,87 +13,94 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
- * @copyright  Copyright (c) Mascker (http://www.petala-azul.com)
+ * @copyright  Copyright (c) Bento Vilas Boas (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4  mascker $
+ * @version    $Id$
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Json extends Bvb_Grid_DataGrid {
+class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data
+{
 
-	protected $options = array ();
+    public $deploy = array();
 
-	protected $output = 'json';
+    const OUTPUT = 'json';
 
-	/*
+    /*
     * @param array $data
     */
-	function __construct($options = array('download')) {
+    function __construct ($options)
+    {
 
-		if (! in_array ( 'json', $this->export )) {
-			echo $this->__ ( "You dont' have permission to export the results to this format" );
-			die ();
-		}
-		$this->options = $options;
+        if (! in_array(self::OUTPUT, $this->export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
+        $this->options = $options;
 
-		parent::__construct ();
-	}
+        parent::__construct($options);
+    }
 
-	function buildTitltesJson($titles) {
+    function buildTitltesJson ($titles)
+    {
 
-		$grid = array ();
-		foreach ( $titles as $title ) {
+        $grid = array();
+        foreach ($titles as $title) {
 
-			$grid [] = $title ['value'];
-		}
-		return $grid;
-	}
+            $grid[] = $title['value'];
+        }
+        return $grid;
+    }
 
-	function buildSqlexpJson($sql) {
+    function buildSqlexpJson ($sql)
+    {
 
-		$grid = array ();
-		if (is_array ( $sql )) {
+        $grid = array();
+        if (is_array($sql)) {
 
-			foreach ( $sql as $exp ) {
-				$grid [] = $exp ['value'];
-			}
-		}
-		return $grid;
-	}
+            foreach ($sql as $exp) {
+                $grid[] = $exp['value'];
+            }
+        }
+        return $grid;
+    }
 
-	function buildGridJson($grids) {
+    function buildGridJson ($grids)
+    {
 
-		$grid = array ();
-		$i = 0;
-		foreach ( $grids as $value ) {
+        $grid = array();
+        $i = 0;
+        foreach ($grids as $value) {
 
-			$grid1 = array ();
-			foreach ( $value as $final ) {
-				$grid1 [] = $final ['value'];
-			}
+            $grid1 = array();
+            foreach ($value as $final) {
+                $grid1[] = $final['value'];
+            }
 
-			$grid [] = $grid1;
-			$i ++;
-		}
+            $grid[] = $grid1;
+            $i ++;
+        }
 
-		return $grid;
+        return $grid;
 
-	}
+    }
 
-	function deploy() {
-		$grid = array ();
-		#$this->setPagination(0);
-		parent::deploy ();
+    function deploy ()
+    {
+        $grid = array();
+        $this->setPagination(0);
+        parent::deploy();
 
-		$grid ['titles'] = self::buildTitltesJson ( parent::_buildTitles () );
-		$grid ['rows'] = self::buildGridJson ( parent::_buildGrid () );
-		$grid ['sqlexp'] = self::buildSqlexpJson ( parent::_buildSqlExp () );
+        $grid['titles'] = self::buildTitltesJson(parent::_buildTitles());
+        $grid['rows'] = self::buildGridJson(parent::_buildGrid());
+        $grid['sqlexp'] = self::buildSqlexpJson(parent::_buildSqlExp());
 
-		echo Zend_Json_Encoder::encode ( $grid );
-		die ();
 
-	}
+        echo Zend_Json::encode($grid);
 
+
+        die();
+    }
 }
 
 

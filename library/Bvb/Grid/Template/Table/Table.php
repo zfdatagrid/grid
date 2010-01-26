@@ -14,28 +14,27 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 class Bvb_Grid_Template_Table_Table
 {
 
-    public $colSpan;
-
     public $hasExtraRow = 0;
 
     public $hasFilters = 1;
 
-    public $i; 
+    public $i;
     public $insideLoop;
+
+    public $options;
 
 
     function globalStart ()
     {
-        return "<input type=\"inputId\" style=\"display:none;\">
-        <table  width=\"100%\" name=\"listagem\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
+        return "<table  width=\"100%\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
     }
 
     function globalEnd ()
@@ -47,7 +46,7 @@ class Bvb_Grid_Template_Table_Table
 
     function extra()
     {
-        return "<tr><td  colspan=\"$this->colSpan\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
+        return "<tr><td  colspan=\"{$this->options['colspan']}\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
 
     function titlesStart ()
@@ -84,7 +83,7 @@ class Bvb_Grid_Template_Table_Table
 
     function noResults()
     {
-        return "<td  colspan=\"$this->colSpan\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>";
+        return "<td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>";
     }
 
 
@@ -96,7 +95,7 @@ class Bvb_Grid_Template_Table_Table
 
     function hRow ($values)
     {
-        return "<td  colspan=\"$this->colSpan\" class=\"hbar\"><div>{{value}}</div></td>";
+        return "<td  colspan=\"{$this->options['colspan']}\" class=\"hbar\"><div>{{value}}</div></td>";
     }
 
 
@@ -151,7 +150,7 @@ class Bvb_Grid_Template_Table_Table
 
     function pagination()
     {
-        return "<tr><td class=\"barra_tabela\" colspan=\"$this->colSpan\"><div style=\"padding:2px;\">
+        return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div style=\"padding:2px;\">
         <div style=\"float:left;width:220px;\">{{export}}</div>
         <div style=\"float:left;text-align:center;width:570px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
         <div style=\"float:right;width:80px;\">{{pageSelect}}</div>
@@ -225,7 +224,7 @@ class Bvb_Grid_Template_Table_Table
 
     function images ($url)
     {
- 
+
         return array(
         'asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">" ,
         'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">" ,

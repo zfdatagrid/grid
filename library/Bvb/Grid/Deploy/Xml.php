@@ -14,108 +14,73 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 
-class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
+class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data
 {
 
+    const OUTPUT = 'xml';
 
     public $templateInfo;
 
-    protected $dir;
-
-    protected $title;
-
-    protected $options = array ();
-
-    protected $output = 'xml';
+    public $deploy = array();
 
 
     /**
-     * [EN] The __construct function receives the db adapter. All information related to the
-     * [EN] URL is also processed here
-     * [EN] To edit, add, or delete records, a user must be authenticated, so we instanciate
-     * [EN] it here. Remember to uses the method write when autenticating a user, so we can know
-     * [EN] if its logged or not
      *
-     * @param array $data
+     * @param array $options
      */
-     function __construct( $dir, $options = array('download'))
+    function __construct ($options = array('download'))
     {
 
-
-        if (! in_array ( 'excel', $this->export ))
-        {
-            echo $this->__ ( "You dont' have permission to export the results to this format" );
-            die ();
+        if (! in_array(self::OUTPUT, $this->export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
         }
 
-        $this->dir = rtrim ( $dir, "/" ) . "/";
-        $this->options = $options;
-
-
-
         $this->_setRemoveHiddenFields(true);
-        parent::__construct (  );
-
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Xml', 'Bvb_Grid_Template_Xml', 'xml' );
+        parent::__construct($options);
 
     }
 
-
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
-
-    function __set($var, $value)
-    {
-
-        parent::__set ( $var, $value );
-    }
-
-
-    function buildTitltesXml($titles)
+    function buildTitltesXml ($titles)
     {
         $grid = '';
 
-        $grid .= "<fields>\n";
+        $grid .= "    <fields>\n";
 
-        foreach ( $titles as $title )
-        {
+        foreach ($titles as $title) {
 
-            $grid .= "<" . $title ['field'] . "><![CDATA[" . $title ['value'] . "]]></" . $title ['field'] . ">\n";
+            $grid .= "        <" . $title['field'] . "><![CDATA[" . $title['value'] . "]]></" . $title['field'] . ">\n";
 
         }
 
-        $grid .= "</fields>\n";
+        $grid .= "    </fields>\n";
 
         return $grid;
 
     }
 
 
-    function buildSqlexpXml($sql)
+    function buildSqlexpXml ($sql)
     {
 
-        if (is_array ( $sql ))
-        {
-            $grid .= "<sqlexp>\n";
+        $grid = '';
+
+        if (is_array($sql)) {
+            $grid .= "    <sqlexp>\n";
 
 
-            foreach ( $sql as $exp )
-            {
-                $grid .= "<" . $exp ['field'] . "><![CDATA[" . $exp ['value'] . "]]></" . $exp ['field'] . ">\n";
+            foreach ($sql as $exp) {
+                $grid .= "        <" . $exp['field'] . "><![CDATA[" . $exp['value'] . "]]></" . $exp['field'] . ">\n";
                 ;
             }
 
-            $grid .= "</sqlexp>\n";
+            $grid .= "    </sqlexp>\n";
         }
 
         return $grid;
@@ -123,68 +88,96 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_DataGrid
     }
 
 
-    function buildGridXml($grids)
+    function buildGridXml ($grids)
     {
 
-        $grid .= "<results>\n";
+        $grid = '';
+
+        $grid .= "    <results>\n";
 
 
-        foreach ( $grids as $value )
-        {
-            $i ++;
-            $grid .= "<row>\n";
-            foreach ( $value as $final )
-            {
-
-                #$final['value']  = strip_tags($final['value']);
-
-
-                $grid .= "<" . $final ['field'] . "><![CDATA[" . $final ['value'] . "]]></" . $final ['field'] . ">\n";
+        foreach ($grids as $value) {
+            $grid .= "        <row>\n";
+            foreach ($value as $final) {
+                $grid .= "            <" . $final['field'] . "><![CDATA[" . $final['value'] . "]]></" . $final['field'] . ">\n";
             }
-            $grid .= "</row>\n";
+            $grid .= "        </row>\n";
         }
 
-        $grid .= "</results>\n";
-
+        $grid .= "    </results>\n";
 
         return $grid;
-
     }
 
 
-    function deploy()
+    function deploy ()
     {
 
-        $this->setPagination ( 0 );
-        parent::deploy ();
+        $this->setPagination(0);
+        parent::deploy();
 
-
-        $grid .= '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $grid = '';
+        $grid .= '<?xml version="1.0" encoding="' . $this->charEncoding . '"?>' . "\n";
         $grid .= "<grid>\n";
 
-        $grid .= self::buildTitltesXml ( parent::_buildTitles () );
-        $grid .= self::buildGridXml ( parent::_buildGrid () );
-        $grid .= self::buildSqlexpXml ( parent::_buildSqlExp () );
+        $grid .= self::buildTitltesXml(parent::_buildTitles());
+        $grid .= self::buildGridXml(parent::_buildGrid());
+        $grid .= self::buildSqlexpXml(parent::_buildSqlExp());
 
         $grid .= "</grid>";
 
-        file_put_contents ( $this->dir . $this->title . ".xml", $grid );
 
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
 
-        if (in_array ( 'download', $this->options ))
-        {
-            header ( "Content-type: application/xml" );
-            header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xml"' );
-            readfile ( $this->dir . $this->title . '.xml' );
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
+        }
+
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            header("Content-type: application/xml");
         }
 
 
-        if (! in_array ( 'save', $this->options ))
-        {
-            unlink ( $this->dir . $this->title . '.xml' );
+        if (! isset($this->deploy['save']) && ! isset($this->options['download'])) {
+            echo $grid;
+            die();
         }
 
-        die ();
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
+
+        if(substr($this->deploy['name'],-4)=='.xml')
+        {
+            $this->deploy['name'] = substr($this->deploy['name'],0,-4);
+        }
+
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+        if (! is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
+
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
+
+        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".xml", $grid);
+
+
+        if ($this->deploy['download']==1) {
+            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.xml"');
+            readfile($this->deploy['dir'] . $this->deploy['name'] . '.xml');
+        }
+
+
+        if ($this->deploy['save']!=1) {
+            unlink($this->deploy['dir'] . $this->deploy['name'] . '.xml');
+        }
+
+        die();
     }
 
 }

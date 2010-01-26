@@ -12,13 +12,13 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
+ * @copyright  Copyright (c) Pétala Azul (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_DataGrid
+class Bvb_Grid_Data
 {
 
     const VERSION = "0.6 alpha";
@@ -227,7 +227,7 @@ class Bvb_Grid_DataGrid
      *
      * @var array
      */
-    public $data = array();
+    protected $data = array();
 
     /**
      * Params list
@@ -315,17 +315,6 @@ class Bvb_Grid_DataGrid
     private $_resultRaw;
 
     /**
-     * When using multiple grids in the same page we can only
-     * use url params for one grid.
-     *
-     *
-     * This should be fixed for v 1.0
-     *
-     * @var bool
-     */
-    protected $_isPrimaryGrid = true;
-
-    /**
      * Check if all columns have been added by ->query()
      * @var bool
      */
@@ -352,8 +341,11 @@ class Bvb_Grid_DataGrid
      */
     protected $_updateColumnQueue = array();
 
-    protected $_view;
-
+    /**
+     * List of callback functions to apply
+     * on grid deploy and ajax
+     * @var $_configCallbacks
+     */
     protected $_configCallbacks = array();
 
     /**
@@ -362,6 +354,10 @@ class Bvb_Grid_DataGrid
      */
     protected $_removeHiddenFields = false;
 
+    /**
+     * Functions to be aplied on every field sbefore dislpay
+     * @var unknown_type
+     */
     protected $_escapeFunctions = array('stripslashes', 'htmlspecialchars');
 
     /**
@@ -378,18 +374,35 @@ class Bvb_Grid_DataGrid
      */
     protected $_options = array();
 
+
+    /**
+     * Id used for multiples insatnces onde the same page
+     *
+     * @var string
+     */
+    protected $_id;
+
+    /**
+     * Colspan for table
+     * @var int
+     */
+    protected $_colspan;
+
     /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
-     * @var $db = Zend_Db_Adapter_Abstract
-     *
      * @param array $data
      */
-    function __construct ()
+    function __construct ($options)
     {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        } else if (! is_array($options)) {
+            throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
+        }
 
-        $this->_view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+        $this->_options = $options;
 
         //Get the controller params and baseurl to use with filters
         $this->ctrlParams = Zend_Controller_Front::getInstance()->getRequest()->getParams();
@@ -407,39 +420,23 @@ class Bvb_Grid_DataGrid
             foreach ($this->export as $temp) {
                 $this->_templates[$temp] = new Zend_Loader_PluginLoader(array());
             }
-
         }
 
         // Add the formatter fir for fields content
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
-    // Add the templates dir'sx
 
-
-
-
-
+        //Apply options to the fields
+        $this->_applyOptionsToFields();
     }
 
-    /**
-     * If set to false, then this grid won't care about any
-     * get vars. This is needed if we want to use more than one
-     * grid per page
-     *
-     * @param bool $value
-     */
-    public function setPrimary ($value)
-    {
-
-        $this->_isPrimaryGrid = $value;
-    }
 
     /**
      * Sets the functions to be used to apply th each value
      * before fisplay
      * @param array $functions
      */
-    function setEscapeFunctions (array $functions)
+    public function setEscapeFunctions (array $functions)
     {
         $this->_escapeFunctions = $functions;
         return $this;
@@ -448,7 +445,7 @@ class Bvb_Grid_DataGrid
     /**
      * Returns the activa escape functions
      */
-    function getEscapeFunctions ()
+    public function getEscapeFunctions ()
     {
         return $this->_escapeFunctions;
     }
@@ -459,7 +456,7 @@ class Bvb_Grid_DataGrid
      * @param string $encoding
      * @return unknown
      */
-    function setcharEncoding ($encoding)
+    public function setcharEncoding ($encoding)
     {
         $this->charEncoding = $encoding;
         return $this;
@@ -470,7 +467,7 @@ class Bvb_Grid_DataGrid
      *
      * @return string
      */
-    function getCharEncoding ()
+    public function getCharEncoding ()
     {
         return $this->charEncoding;
     }
@@ -503,7 +500,7 @@ class Bvb_Grid_DataGrid
      * @param string $separator
      * @return unknown
      */
-    function setDataFromCsv ($file, $field = null, $separator = ',')
+    public function setDataFromCsv ($file, $field = null, $separator = ',')
     {
 
         $this->_setAdapter('array');
@@ -594,7 +591,7 @@ class Bvb_Grid_DataGrid
      * @param bool $loop
      * @param bool $columns
      */
-    function setDataFromXml ($url, $loop = null, $columns = null)
+    public function setDataFromXml ($url, $loop = null, $columns = null)
     {
 
         $this->_setAdapter('array');
@@ -663,8 +660,7 @@ class Bvb_Grid_DataGrid
      * @param bool $loop
      * @param bool $columns
      */
-    function setDataFromJson ($array, $file = false, $loop = null,
-    $columns = null)
+    public function setDataFromJson ($array, $file = false, $loop = null, $columns = null)
     {
 
         $this->_setAdapter('array');
@@ -727,7 +723,7 @@ class Bvb_Grid_DataGrid
      *
      * @param array $array
      */
-    function setDataFromArray ($array)
+    public function setDataFromArray ($array)
     {
 
         $this->_setAdapter('array');
@@ -745,7 +741,7 @@ class Bvb_Grid_DataGrid
      * @param string $message
      * @return string
      */
-    function __ ($message)
+    protected function __ ($message)
     {
 
         if (Zend_Registry::isRegistered('Zend_Translate')) {
@@ -760,12 +756,21 @@ class Bvb_Grid_DataGrid
      * @param string $value
      * @return $this
      */
-    function __call ($name, $value)
+    public function __call ($name, $value)
     {
+
+        $deploy = explode('_', get_class($this));
+        $class = strtolower(end($deploy));
+
+     if (substr(strtolower($name), 0, strlen($class) + 3) == 'set' . $class) {
+            $name = substr(strtolower($name), strlen($class) + 3);
+            $this->deploy[$name] = $value[0];
+            return;
+        }
 
         if (substr(strtolower($name), 0, 3) == 'set') {
             $name = substr($name, 3);
-            $this->__set($name, $value);
+            $this->__set($name, $value[0]);
         } else {
             throw new Bvb_Grid_Exception("call to unknown function $name");
         }
@@ -778,9 +783,11 @@ class Bvb_Grid_DataGrid
      * @param string $var
      * @param string $value
      */
-    function __set ($var, $value)
+    public function __set ($var, $value)
     {
+        $var[0] = strtolower($var[0]);
         $this->info[$var] = $value;
+        return $this;
     }
 
     /**
@@ -791,7 +798,7 @@ class Bvb_Grid_DataGrid
      * @return self
      */
 
-    function updateColumn ($field, $options = array())
+    public function updateColumn ($field, $options = array())
     {
 
         if (! isset($this->data['table']) && $this->_selectZendDb == false && $this->_getAdapter() == 'db') {
@@ -829,7 +836,7 @@ class Bvb_Grid_DataGrid
      * @param string $prefix
      * @return $this
      */
-    function addFormatterDir ($dir, $prefix)
+    public function addFormatterDir ($dir, $prefix)
     {
 
         $this->_formatter->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
@@ -845,7 +852,7 @@ class Bvb_Grid_DataGrid
      * @param string $type
      * @return $this
      */
-    function addElementDir ($dir, $prefix, $type = 'filter')
+    public function addElementDir ($dir, $prefix, $type = 'filter')
     {
 
         if (! in_array(strtolower($type), $this->_elementsAllowed)) {
@@ -890,7 +897,7 @@ class Bvb_Grid_DataGrid
      * @param string $table
      * @return string
      */
-    protected function _getFields ($mode = 'edit', $table)
+    protected function _getFields ($mode, $table)
     {
 
         $get = $this->info[$mode]['fields'];
@@ -920,53 +927,12 @@ class Bvb_Grid_DataGrid
      * pagination definition
      *
      */
-    function setPagination ($number = 15)
+    public function setPagination ($number = 15)
     {
-
         $this->pagination = (int) $number;
         return $this;
     }
 
-    /**
-     * Calculate colspan for pagination and top
-     *
-     * @return int
-     */
-    protected function _colspan ()
-    {
-
-        $totalFields = count($this->_fields);
-        $a = 0;
-        $i = 0;
-        foreach ($this->data['fields'] as $value) {
-            if (isset($value['remove']) && $value['remove'] == 1) {
-                $i ++;
-            } elseif (isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true) {
-                $i ++;
-            }
-
-            if (isset($value['hRow']) && $value['hRow'] == 1) {
-                $totalFields --;
-            }
-        }
-
-        $totalFields = $totalFields - $i;
-        if (isset($this->info['delete']['allow']) && $this->info['delete']['allow'] == 1) {
-            $a ++;
-        }
-
-        if (isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1) {
-            $a ++;
-        }
-
-        $totalFields = $totalFields + $a;
-        $colspan = $totalFields + count($this->extra_fields);
-
-        if (isset($this->temp[$this->output]) && is_object($this->temp[$this->output])) {
-            $this->temp[$this->output]->colSpan = $colspan;
-        }
-        return $colspan;
-    }
 
     /**
      * Searchj type to be used in filters
@@ -977,7 +943,7 @@ class Bvb_Grid_DataGrid
      * @param string $key
      * @return unknown
      */
-    function _buildSearchType ($filtro, $key, $field)
+    protected function _buildSearchType ($filtro, $key, $field)
     {
 
         $columns = $this->_select->getPart('columns');
@@ -993,7 +959,7 @@ class Bvb_Grid_DataGrid
             }
 
         }
-        if (isset($this->data['fields'][$key]['search']) and is_array($this->data['fields'][$key]['search']) && $this->data['fields'][$key]['search']['fulltext'] === true) {
+        if (isset($this->data['fields'][$key]['search']) and is_array($this->data['fields'][$key]['search']) && $this->data['fields'][$key]['search']['fulltext'] == true) {
 
             $full = $this->data['fields'][$key]['search'];
 
@@ -1014,7 +980,7 @@ class Bvb_Grid_DataGrid
             if ($extra == 'boolean') {
                 $extra = 'IN BOOLEAN MODE';
             } elseif ($extra == 'queryExpansion') {
-                $extra = ' USING QUERY EXPANSION ';
+                $extra = ' WITH QUERY EXPANSION ';
             } else {
                 $extra = '';
             }
@@ -1026,7 +992,6 @@ class Bvb_Grid_DataGrid
             }
 
             $this->_select->where(new Zend_Db_Expr("MATCH ($indexes) AGAINST ($filtro $extra) "));
-
             return;
         }
 
@@ -1113,7 +1078,7 @@ class Bvb_Grid_DataGrid
 
     }
 
-    function setDefaultFilters (array $filters)
+    public function setDefaultFilters (array $filters)
     {
         $this->_defaultFilters = array_flip($filters);
         return $this;
@@ -1134,7 +1099,7 @@ class Bvb_Grid_DataGrid
 
         //Build an array to know filters values
         $valor_filters = array();
-        $filters = @urldecode($this->ctrlParams['filters']);
+        $filters = @urldecode($this->ctrlParams['filters' . $this->_id]);
         $filters = str_replace("filter_", "", $filters);
         $filters = Zend_Json::decode($filters);
 
@@ -1172,8 +1137,8 @@ class Bvb_Grid_DataGrid
     protected function _buildQuery ()
     {
 
-        @$inicio = (int) $this->ctrlParams['start'];
-        $order = @$this->ctrlParams['order'];
+        @$inicio = (int) $this->ctrlParams['start' . $this->_id];
+        $order = @$this->ctrlParams['order' . $this->_id];
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
 
@@ -1208,6 +1173,7 @@ class Bvb_Grid_DataGrid
             $this->_select->order($query_order);
         }
 
+
         if (false === $this->_forceLimit) {
             $this->_select->limit($this->pagination, $inicio);
         }
@@ -1224,19 +1190,30 @@ class Bvb_Grid_DataGrid
     protected function _getUrl ($situation = '')
     {
 
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo');
+
         $url = '';
         $params = $this->ctrlParams;
+
+
         if (is_array($situation)) {
             foreach ($situation as $value) {
+                if (in_array($value, $paramsGet)) {
+                    $value = $value . $this->_id;
+                }
                 unset($params[$value]);
             }
+
         } else {
+            if (in_array($situation, $paramsGet)) {
+                $situation = $situation . $this->_id;
+            }
             unset($params[$situation]);
         }
 
         if (count($this->params) > 0) {
             //User as defined its own params (probably using routes)
-            $myParams = array('comm', 'order', 'filters', 'add', 'edit', 'export');
+            $myParams = array('comm', 'order', 'filters', 'add', 'edit', '_exportTo');
             $newParams = $this->params;
             foreach ($myParams as $value) {
                 if (strlen($params[$value]) > 0) {
@@ -1254,7 +1231,7 @@ class Bvb_Grid_DataGrid
 
         foreach ($params_clean as $key => $param) {
             // Apply the urldecode function to the filtros param, because its  JSON
-            if ($key == 'filters') {
+            if ($key == 'filters' . $this->_id) {
                 $url .= "/" . trim($key) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
             } else {
                 @$url .= "/" . trim($key) . "/" . trim(htmlspecialchars($param, ENT_QUOTES));
@@ -1265,11 +1242,17 @@ class Bvb_Grid_DataGrid
             $action = "/" . $params['action'];
         }
 
+        if (Zend_Controller_Front::getInstance()->getDefaultModule() != $params['module']) {
+            $urlPrefix = $params['module'] . "/";
+        } else {
+            $urlPrefix = '';
+        }
+
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists('ajax', $this->info) && $this->info['ajax'] !== false) {
-            return $params['module'] . "/" . $params['controller'] . $action . $url . "/gridmod/ajax";
+            return $urlPrefix . $params['controller'] . $action . $url . "/gridmod/ajax";
         } else {
-            return $this->_baseUrl . "/" . $params['module'] . "/" . $params['controller'] . $action . $url;
+            return $this->_baseUrl . "/" . $urlPrefix . $params['controller'] . $action . $url;
         }
     }
 
@@ -1302,7 +1285,7 @@ class Bvb_Grid_DataGrid
     {
 
         $return = array();
-        if (isset($this->info['noFilters']) || $this->_isPrimaryGrid == false) {
+        if (isset($this->info['noFilters'])) {
             return false;
         }
 
@@ -1324,20 +1307,10 @@ class Bvb_Grid_DataGrid
                 $this->data['fields'][$nf]['search'] = true;
             }
 
-            #$this->data ['fields'] [$nf] ['remove'] == 0 &&
-
-
-
-
-
             if ($this->_displayField($nf)) {
 
-                if (@array_key_exists($data[$i], $this->filters) && $this->data['fields'][$nf]['search'] !== false) {
-                    if (isset($this->filters[$data[$i]]['decorator']) && is_array($this->filters[$data[$i]])) {
-                        $return[] = array('type' => 'field', 'value' => $this->filters[$data[$i]]['decorator'], 'field' => $data[$i]);
-                    } else {
-                        $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'value' => self::_formatField($data[$i], $data[$i]), 'field' => $data[$i]);
-                    }
+                if (@array_key_exists($data[$i], $this->filters) && $this->data['fields'][$nf]['search'] != false) {
+                    $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
                     $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
                 }
@@ -1353,6 +1326,11 @@ class Bvb_Grid_DataGrid
         return $return;
     }
 
+    /**
+     *
+     * @param string $field
+     * @return bool
+     */
     protected function _displayField ($field)
     {
 
@@ -1372,6 +1350,11 @@ class Bvb_Grid_DataGrid
 
     }
 
+    /**
+     *
+     * @param array $fields
+     * @return array
+     */
     protected function _prepareReplace ($fields)
     {
         return array_map(create_function('$value', 'return "{{{$value}}}";'), $fields);
@@ -1410,10 +1393,17 @@ class Bvb_Grid_DataGrid
 
         $links = $this->_fields;
 
+
+        $selectOrder = $this->_select->getPart(Zend_Db_Select::ORDER);
+
+        if (count($selectOrder) == 1) {
+            $this->ctrlParams['order' . $this->_id] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
+        }
+
         for ($i = 0; $i < $tcampos; $i ++) {
-            if (isset($this->ctrlParams['order'])) {
-                $explode = explode('_', $this->ctrlParams['order']);
-                $name = str_replace('_' . end($explode), '', $this->ctrlParams['order']);
+            if (isset($this->ctrlParams['order' . $this->_id])) {
+                $explode = explode('_', $this->ctrlParams['order' . $this->_id]);
+                $name = str_replace('_' . end($explode), '', $this->ctrlParams['order' . $this->_id]);
                 $this->order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
             }
 
@@ -1431,10 +1421,10 @@ class Bvb_Grid_DataGrid
 
                 $noOrder = isset($this->info['noOrder']) ? $this->info['noOrder'] : '';
 
-                if ($noOrder == 1 || $this->_isPrimaryGrid == false) {
+                if ($noOrder == 1) {
                     $return[$titles[$i]] = array('type' => 'field', 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'url' => "$url/order/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_id/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
                 }
             }
         }
@@ -1450,10 +1440,14 @@ class Bvb_Grid_DataGrid
         return $return;
     }
 
+
     /**
      * Add the columns using an array
+     *
+     * @param array $columns
+     * @return bool
      */
-    function addArrayColumns (array $columns)
+    public function addArrayColumns (array $columns)
     {
 
         $filter = array();
@@ -1477,7 +1471,7 @@ class Bvb_Grid_DataGrid
     /**
      * Add the records using an array
      */
-    function addArrayData ($data)
+    public function addArrayData ($data)
     {
 
         if ($this->_adapter != 'array') return false;
@@ -1488,7 +1482,9 @@ class Bvb_Grid_DataGrid
     }
 
     /**
-     * Create the filters when using the array adapter
+     *
+     * @param string $field
+     * @return array
      */
     protected function _builFilterFromArray ($field)
     {
@@ -1521,158 +1517,9 @@ class Bvb_Grid_DataGrid
     }
 
     /**
-     * Field type on the filters area. If the field type is enum, build the options
-     * Also, we first need to check if the user has defined values to presente.
-     * If set, this values override the others
-     *
-     * @param string $campo
-     * @param string $valor
-     * @return string
-     */
-    protected function _formatField ($campo, $valor,
-    $options = array())
-    {
-
-        if ($this->_getAdapter() == 'db') {
-            //check if we need to load  fields for filters
-            if (isset($this->filters[$valor]['distinct']) && is_array($this->filters[$valor]['distinct'])) {
-                $this->filters[$valor]['distinct']['field'] = @$this->filters[$valor]['distinct']['field'];
-                $this->filters[$valor]['distinct']['name'] = @$this->filters[$valor]['distinct']['name'];
-
-                $distinct = clone $this->_select;
-
-                $distinct->reset(Zend_Db_Select::COLUMNS);
-                $distinct->reset(Zend_Db_Select::ORDER);
-                $distinct->reset(Zend_Db_Select::LIMIT_COUNT);
-                $distinct->reset(Zend_Db_Select::LIMIT_OFFSET);
-
-                $distinct->columns(array('field' => new Zend_Db_Expr("DISTINCT({$this->filters[$valor]['distinct']['field']})")));
-                $distinct->columns(array('value' => $this->filters[$valor]['distinct']['name']));
-                $distinct->order($this->filters[$valor]['distinct']['name'] . ' ASC');
-                $result = $distinct->query(Zend_Db::FETCH_ASSOC);
-
-                $final = $result->fetchAll();
-
-                $final = $this->_convertResultSetToArrayKeys($final);
-
-                $this->filters[$valor]['values'] = $final;
-            }
-
-        }
-
-        if ($this->_adapter == 'array' && @in_array('distinct', $this->filters[$valor])) {
-
-            $this->filters[$valor]['values'] = $this->_builFilterFromArray($campo);
-        }
-
-        //Remove unwanted url params
-        $url = urlencode($this->_getUrl(array('filters', 'start', 'comm')));
-
-        $fieldsSemAsFinal = $this->data['fields'];
-
-        if (isset($fieldsSemAsFinal[$campo]['searchField'])) {
-            $nkey = $fieldsSemAsFinal[$campo]['searchField'];
-            @$this->_filtersValues[$campo] = $this->_filtersValues[$nkey];
-        }
-
-        if ($this->_adapter == 'db') {
-
-            $tAlias = explode('.', $this->data['fields'][$campo]['field']);
-            $tableName = $this->_tablesList[reset($tAlias)]['tableName'];
-            $table = $this->_getDescribeTable($this->data['table']);
-        }
-
-        @$tipo = $table[$campo];
-        $tipo = $tipo['DATA_TYPE'];
-        $help_javascript = '';
-
-        if (substr($tipo, 0, 4) == 'enum') {
-            $enum = str_replace(array('(', ')'), array('', ''), $tipo);
-            $tipo = 'enum';
-        }
-
-        $i = 0;
-        foreach (array_keys($this->filters) as $value) {
-
-            if (! isset($this->data['fields'][$value]['search'])) {
-                $this->data['fields'][$value]['search'] = true;
-            }
-
-            $hRow = isset($this->data['fields'][$value]['hRow']) ? $this->data['fields'][$value]['hRow'] : '';
-
-            if ($this->_displayField($value) && $hRow != 1 && $this->data['fields'][$value]['search'] != false) {
-                $help_javascript .= "filter_" . $value . ",";
-            }
-        }
-
-        if (@$options['noFilters'] != 1) {
-            $help_javascript = str_replace(".", "bvbdot", $help_javascript);
-            $attr['onChange'] = "gridChangeFilters('$help_javascript','$url');";
-        }
-        $opcoes = $this->filters[$campo];
-
-        if (isset($opcoes['style']) && strlen($opcoes['style']) > 1) {
-            $attr['style'] = $opcoes['style'];
-        } else {
-            $attr['style'] = " width:95% ";
-        }
-
-        $attr['id'] = "filter_" . str_replace(".", "bvbdot", $campo);
-
-        $selected = null;
-        if (@is_array($opcoes['values'])) {
-
-            $tipo = 'invalid';
-            $values = array();
-            $values[''] = '--' . $this->__('All') . '--';
-
-            $avalor = $opcoes['values'];
-
-            foreach ($avalor as $key => $value) {
-                if (isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $key) {
-                    $selected = $key;
-                }
-
-                $values[$this->_view->view->escape($key)] = $this->_view->view->escape($value);
-            }
-
-            $valor = $this->_view->view->formSelect($campo, $selected, $attr, $values);
-
-        }
-
-        switch ($tipo) {
-            case 'invalid':
-                break;
-            case 'enum':
-                $values = array();
-                $values[''] = '--' . $this->__('All') . '--';
-                $avalor = explode(",", substr($enum, 4));
-
-                foreach ($avalor as $value) {
-                    $value = substr($value, 1);
-                    $value = substr($value, 0, - 1);
-
-                    if (isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $value) {
-                        $selected = $value;
-                    }
-                    $values[$this->_view->view->escape($value)] = $this->_view->view->escape($value);
-                }
-
-                $valor = $this->_view->view->formSelect($campo, $selected, $attr, $values);
-
-                break;
-            default:
-                $valor = $this->_view->view->formText($campo, $this->_view->view->escape(@$this->_filtersValues[$campo]), $attr);
-                break;
-        }
-
-        return $valor;
-    }
-
-    /**
      * Escape the output
      */
-    function setEscapeOutput ($escape)
+    public function setEscapeOutput ($escape)
     {
         $this->escapeOutput = (bool) $escape;
         return $this;
@@ -1690,12 +1537,11 @@ class Bvb_Grid_DataGrid
      * @param $search
      * @param $replace
      */
-    protected function _applyFieldFormat ($new_value, $value,
-    $search, $replace)
+    protected function _applyFieldFormat ($new_value, $value, $search, $replace)
     {
 
         if (is_array($value)) {
-            array_walk_recursive($value, array($this, 'replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         return $this->_applyFormat($new_value, $value);
@@ -1708,8 +1554,7 @@ class Bvb_Grid_DataGrid
      * @param unknown_type $search
      * @param unknown_type $replace
      */
-    protected function _applyFieldCallback ($new_value, $value,
-    $search, $replace)
+    protected function _applyFieldCallback ($new_value, $value, $search, $replace)
     {
 
         if (! is_callable($value['function'])) {
@@ -1723,7 +1568,7 @@ class Bvb_Grid_DataGrid
         }
 
         if (is_array($toReplace)) {
-            array_walk_recursive($toReplace, array($this, 'replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         $new_value = call_user_func_array($value['function'], $toReplace);
@@ -1737,8 +1582,7 @@ class Bvb_Grid_DataGrid
      * @param unknown_type $replace
      * @param unknown_type $value
      */
-    protected function _applyFieldDecorator ($find, $replace,
-    $value)
+    protected function _applyFieldDecorator ($find, $replace, $value)
     {
         return str_replace($find, $replace, $value);
     }
@@ -1921,8 +1765,7 @@ class Bvb_Grid_DataGrid
      * @param $operation
      * @param $option
      */
-    protected function _applySqlExpToArray ($field, $operation,
-    $option = 0)
+    protected function _applySqlExpToArray ($field, $operation, $option = 0)
     {
 
         foreach ($this->_resultRaw as $value) {
@@ -2055,7 +1898,7 @@ class Bvb_Grid_DataGrid
         if (is_array($fields)) {
             $hide = 0;
             $fields_final = array();
-            $i = 0;
+            $lastIndex = 1;
 
             foreach ($fields as $key => $value) {
 
@@ -2067,33 +1910,48 @@ class Bvb_Grid_DataGrid
                 }
 
                 if (isset($value['title'])) {
-
                     $titulos[$key] = $value['title'];
                 } else {
                     $titulos[$key] = ucfirst($key);
                 }
 
-                if (isset($value['order'])) {
-                    if ($value['order'] > - 1) {
-                        $fields_final[(int) $value['order'] + 100] = $key;
+
+                if (isset($value['order']) && $value['order'] >= 0) {
+                    $norder = (int) $value['order'];
+
+                    $var = $value['order'];
+
+                    while (true) {
+                        if (array_key_exists($var, $fields_final)) {
+                            $fields_final[$var + 1] = $fields_final[$var];
+                            $var = $var + 2;
+                        } else {
+                            break;
+                        }
                     }
+
+                    $fields_final[$norder] = $key;
                 } else {
 
-                    if (array_key_exists($i, $fields_final)) {
-                        $i ++;
+                    while (true) {
+                        if (array_key_exists($lastIndex, $fields_final)) {
+                            $lastIndex ++;
+                        } else {
+                            break;
+                        }
                     }
-                    $fields_final[$i + 100] = $key;
+
+                    $fields_final[$lastIndex] = $key;
                 }
 
-                $i ++;
-                $i ++;
-                $i ++;
             }
+
 
             ksort($fields_final);
 
             $fields_final = $this->_reset_keys($fields_final);
         }
+
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
@@ -2111,7 +1969,7 @@ class Bvb_Grid_DataGrid
     protected function _validateFilters ()
     {
 
-        if (isset($this->info['noFilters']) && $this->info['noFilters']) {
+        if (isset($this->info['noFilters']) && $this->info['noFilters'] == 1) {
             return false;
         }
 
@@ -2185,7 +2043,7 @@ class Bvb_Grid_DataGrid
     protected function _buildDefaultFilters ()
     {
 
-        if (is_array($this->_defaultFilters) && ! isset($this->ctrlParams['filters']) && ! isset($this->ctrlParams['nofilters'])) {
+        if (is_array($this->_defaultFilters) && ! isset($this->ctrlParams['filters' . $this->_id]) && ! isset($this->ctrlParams['nofilters'])) {
             $df = array();
             foreach ($this->data['fields'] as $key => $value) {
 
@@ -2203,7 +2061,7 @@ class Bvb_Grid_DataGrid
 
             $defaultFilters = $df;
 
-            $this->ctrlParams['filters'] = Zend_Json_Encoder::encode($defaultFilters);
+            $this->ctrlParams['filters' . $this->_id] = Zend_Json_Encoder::encode($defaultFilters);
         }
 
         return $this;
@@ -2214,7 +2072,7 @@ class Bvb_Grid_DataGrid
      *
      * @return string
      */
-    function deploy ()
+    public function deploy ()
     {
         // apply additional configuration
         $this->_runConfigCallbacks();
@@ -2223,14 +2081,7 @@ class Bvb_Grid_DataGrid
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
 
-        if (FALSE === $this->_isPrimaryGrid) {
-            $myParams = array('comm', 'order', 'filters', 'add', 'edit');
 
-            foreach ($myParams as $key) {
-                unset($this->ctrlParams[$key]);
-            }
-
-        }
 
         $this->_buildDefaultFilters();
 
@@ -2238,10 +2089,8 @@ class Bvb_Grid_DataGrid
         $this->_validateFields($this->data['fields']);
 
         // Filters. Not required that every field as filter.
-        $this->filters = self::_validateFilters($this->filters);
+        $this->filters = $this->_validateFilters($this->filters);
 
-        //colspan to apply
-        $this->_colspan();
 
         $this->_buildFiltersValues();
 
@@ -2344,7 +2193,7 @@ class Bvb_Grid_DataGrid
 
         } else {
 
-            $filters = Zend_Json::decode(@$this->ctrlParams['filters']);
+            $filters = Zend_Json::decode(@$this->ctrlParams['filters' . $this->_id]);
             if (is_array($filters)) {
 
                 foreach ($filters as $key => $filter) {
@@ -2406,25 +2255,15 @@ class Bvb_Grid_DataGrid
 
             } else {
                 $this->_totalRecords = count($this->_result);
-                $result = array_slice($this->_result, (int) @$this->ctrlParams['start'] < $this->_totalRecords ? (int) @$this->ctrlParams['start'] : 0, $this->pagination);
+                $result = array_slice($this->_result, (int) @$this->ctrlParams['start' . $this->_id] < $this->_totalRecords ? (int) @$this->ctrlParams['start' . $this->_id] : 0, $this->pagination);
             }
 
             $this->_result = $result;
 
         }
 
-        return;
-    }
-
-    /**
-     * Return the query to be executed
-     *
-     * @return Zend_Db_Select
-     */
-    function __toString ()
-    {
-
-        return $this->_select->__toString();
+        $this->_colspan();
+        return $this;
     }
 
     /**
@@ -2485,8 +2324,7 @@ class Bvb_Grid_DataGrid
     /**
      * Apply the search to a give field when the adaptar is an array
      */
-    protected function _applySearchTypeToArray ($final, $filtro,
-    $key)
+    protected function _applySearchTypeToArray ($final, $filtro, $key)
     {
 
         if (! isset($this->data['fields'][$key]['searchType'])) {
@@ -2568,40 +2406,6 @@ class Bvb_Grid_DataGrid
     }
 
     /**
-     * Remove a column
-     */
-    function removeColumn ($column)
-    {
-
-        unset($this->data['fields'][$column]);
-        unset($this->filters[$column]);
-        return $this;
-    }
-
-    /**
-     * Remove an array of columns
-     */
-    function removeColumns (array $columns)
-    {
-
-        foreach ($columns as $column) {
-            $this->removeColumn($column);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Reset a column to clear all customizations
-     */
-    function resetColumn ($column)
-    {
-
-        $this->removeColumn($column);
-        $this->updateColumn($column);
-    }
-
-    /**
      *Convert Object to Array
      * @param object $object
      * @return array
@@ -2613,7 +2417,7 @@ class Bvb_Grid_DataGrid
 
         if (is_object($data)) $data = get_object_vars($data);
 
-        return array_map(array($this, 'object2array'), $data);
+        return array_map(array($this, '_object2array'), $data);
 
     }
 
@@ -2624,7 +2428,7 @@ class Bvb_Grid_DataGrid
      * @param string $prefix
      * @return unknown
      */
-    function addTemplateDir ($dir, $prefix, $type)
+    public function addTemplateDir ($dir, $prefix, $type)
     {
 
         if (! isset($this->_templates[$type])) {
@@ -2641,16 +2445,24 @@ class Bvb_Grid_DataGrid
      * @param string $template
      * @return unknown
      */
-    function setTemplate ($template, $output = 'table',
-    $options = array())
+    public function setTemplate ($template, $output = 'table')
     {
 
         $class = $this->_templates[$output]->load($template, $output);
 
-        $this->temp[$output] = new $class($options);
+        if (isset($this->_options['template'][$output][$template])) {
+            $tpOptions = $this->_options['template'][$output][$template];
+        }else{
+            $tpOptions  =array();
+        }
+
+
+        $tpInfo = array('colspan'=>$this->_colspan, 'charEncoding' => $this->charEncoding, 'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output), 'class' => $this->_templates[$output]->getClassName($template, $output));
+
+        $this->temp[$output] = new $class();
         $this->activeTemplates[] = $output;
 
-        $this->temp[$output]->templateInfo = array('charEncoding' => $this->charEncoding, 'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output), 'class' => $this->_templates[$output]->getClassName($template, $output), 'options' => $options);
+        $this->temp[$output]->options = array_merge($tpInfo,$tpOptions);
 
         return $this->temp[$output];
 
@@ -2660,7 +2472,7 @@ class Bvb_Grid_DataGrid
      * Add multiple columns at once
      *
      */
-    function updateColumns ()
+    public function updateColumns ()
     {
 
         $fields = func_get_args();
@@ -2681,11 +2493,59 @@ class Bvb_Grid_DataGrid
         }
     }
 
+
+
+
+    /**
+     * Calculate colspan for pagination and top
+     *
+     * @return int
+     */
+    protected function _colspan ()
+    {
+
+        $totalFields = count($this->_fields);
+        $a = 0;
+        $i = 0;
+        foreach ($this->data['fields'] as $value) {
+            if (isset($value['remove']) && $value['remove'] == 1) {
+                $i ++;
+            } elseif (isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true) {
+                $i ++;
+            }
+
+            if (isset($value['hRow']) && $value['hRow'] == 1) {
+                $totalFields --;
+            }
+        }
+
+        $totalFields = $totalFields - $i;
+        if (isset($this->info['delete']['allow']) && $this->info['delete']['allow'] == 1) {
+            $a ++;
+        }
+
+        if (isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1) {
+            $a ++;
+        }
+
+        $totalFields = $totalFields + $a;
+        $colspan = $totalFields + count($this->extra_fields);
+
+       # if (isset($this->temp[$this->output]) && is_object($this->temp[$this->output])) {
+            #$this->temp[$this->output]->colSpan = $colspan;
+        #}
+
+        $this->_colspan = $colspan;
+
+        return $colspan;
+    }
+
+
     /**
      * Add filters
      *
      */
-    function addFilters ($filters)
+    public function addFilters ($filters)
     {
 
         $filters = $this->_object2array($filters);
@@ -2699,7 +2559,7 @@ class Bvb_Grid_DataGrid
      *
      * @return unknown
      */
-    function addExtraColumns ()
+    public function addExtraColumns ()
     {
 
         $extra_fields = func_get_args();
@@ -2733,23 +2593,16 @@ class Bvb_Grid_DataGrid
             return false;
         }
 
-        $explode = explode(' ', $table);
-        $table = reset($explode);
-
         if (! isset($this->_describeTables[$table]) || ! @is_array($this->_describeTables[$table])) {
 
             if ($this->cache['use'] == 1) {
-
                 $cache = $this->cache['instance'];
-
                 if (! $describe = $cache->load(md5('describe' . $table))) {
                     $describe = $this->_db->describeTable($table);
                     $cache->save($describe, md5('describe' . $table), array($this->cache['tag']));
-
                 } else {
                     $describe = $cache->load(md5('describe' . $table));
                 }
-
             } else {
                 $describe = $this->_db->describeTable($table);
             }
@@ -2765,8 +2618,7 @@ class Bvb_Grid_DataGrid
      * @param $fields
      * @param $tables
      */
-    protected function _getFieldsFromQuery (array $fields,
-    array $tables)
+    protected function _getFieldsFromQuery (array $fields, array $tables)
     {
 
         foreach ($fields as $key => $value) {
@@ -2828,7 +2680,7 @@ class Bvb_Grid_DataGrid
      * @param Zend_Db_Select $select
      * @return $this
      */
-    function query (Zend_Db_Select $select)
+    public function query (Zend_Db_Select $select)
     {
 
         $this->_db = $select->getAdapter();
@@ -2868,7 +2720,7 @@ class Bvb_Grid_DataGrid
      * Returns the grid version
      * @return string
      */
-    function getVersion ()
+    public function getVersion ()
     {
         return self::VERSION;
     }
@@ -2876,7 +2728,7 @@ class Bvb_Grid_DataGrid
     /**
      * Return number records found
      */
-    function getTotalRecords ()
+    public function getTotalRecords ()
     {
         return (int) $this->_totalRecords;
     }
@@ -2884,7 +2736,7 @@ class Bvb_Grid_DataGrid
     /**
      * Return the query object
      */
-    function getSelectObject ()
+    public function getSelectObject ()
     {
         return $this->_select;
     }
@@ -2895,18 +2747,24 @@ class Bvb_Grid_DataGrid
      * @param array|array of array $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
      * @param array|boolean $requestData request parameters will bu used if FALSE
      */
-    public static function factory ($defaultClass,
-    $classCallbacks = array(), $requestData = false)
+    public static function factory ($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestData = false)
     {
+
+        if (! is_string($id)) {
+            $id = "";
+        }
+
         if (false === $requestData) {
             $requestData = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
-        if (! isset($requestData['_exportTo'])) {
+
+        if (! isset($requestData['_exportTo' . $id])) {
+
             // return instance of the main Bvb object, because this is not and export request
-            $grid = new $defaultClass();
+            $grid = new $defaultClass($options);
             $lClass = $defaultClass;
         } else {
-            $lClass = strtolower($requestData['_exportTo']);
+            $lClass = strtolower($requestData['_exportTo' . $id]);
             // support translating of parameters specifig for the export initiator class
             if (isset($requestData['_exportFrom'])) {
                 // TODO support translating of parameters specifig for the export initiator class
@@ -2914,11 +2772,11 @@ class Bvb_Grid_DataGrid
             }
 
             // now we need to find and load the right Bvb deploy class
-            $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo']); // TODO support user defined classes
+            $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
             if (Zend_Loader_Autoloader::autoload($className)) {
-                $grid = new $className();
+                $grid = new $className($options);
             } else {
-                $grid = new $defaultClass();
+                $grid = new $defaultClass($options);
                 $lClass = $defaultClass;
             }
         }
@@ -2928,9 +2786,17 @@ class Bvb_Grid_DataGrid
             $grid->_configCallbacks = $classCallbacks[$lClass];
         }
 
+        if (is_string($id)) {
+            $grid->_setId($id);
+        }
+
         return $grid;
     }
 
+    /**
+     *
+     * @return
+     */
     protected function _runConfigCallbacks ()
     {
         if (! is_array($this->_configCallbacks)) {
@@ -3001,6 +2867,115 @@ class Bvb_Grid_DataGrid
 
     }
 
+    /**
+     *
+     * @param $options
+     */
+    public function updateOptions ($options)
+    {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        } else if (! is_array($options)) {
+            throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
+        }
 
+        $this->_options = array_merge($this->options, $options);
+        return $this;
+    }
+
+
+    /**
+     *
+     * @param $options
+     */
+    public function setOptions ($options)
+    {
+        $this->_options = array_merge($options, $this->_options);
+        return $this;
+    }
+
+
+    /**
+     * Apply the options to the fields
+     */
+    protected function _applyOptionsToFields ()
+    {
+        if (isset($this->_options['fields']) && is_array($this->_options['fields'])) {
+            foreach ($this->_options['fields'] as $field => $options) {
+
+                if (isset($options['format']['function'])) {
+                    if (! isset($options['format']['params'])) {
+                        $options['format']['params'] = array();
+                    }
+                    $options['format'] = array($options['format']['function'], $options['format']['params']);
+                }
+
+                if (isset($options['callback'])) {
+
+                    if (! isset($options['callback']['params'])) {
+                        $options['callback']['params'] = array();
+                    }
+
+                    if (isset($options['callback']['function']) && isset($options['callback']['class'])) {
+                        $options['callback'] = array('function' => array($options['callback']['class'], $options['callback']['function']), 'params' => $options['callback']['params']);
+                    } else {
+                        $options['callback'] = array('function' => $options['callback']['function'], 'params' => $options['callback']['params']);
+                    }
+
+                }
+
+                $this->updateColumn($field, $options);
+
+            }
+        }
+
+        $deploy = explode('_', get_class($this));
+        $name = strtolower(end($deploy));
+
+        if (isset($this->_options['deploy'][$name]) && is_array($this->_options['deploy'][$name])) {
+            $this->deploy = $this->_options['deploy'][$name];
+        }
+
+    }
+
+
+    /**
+     * Sets the grid id, to allow multiples instances per page
+     * @param $id
+     */
+    protected function _setId ($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
+
+    /**
+     * Returns the current id.
+     * ""=>emty string is a valid value
+     */
+    public function getId ()
+    {
+        return $this->_id;
+    }
+
+    /**
+     * Define if use order or not
+     * @param $value
+     */
+    function setNoOrder ($value)
+    {
+        $this->info['noOrder'] = (bool) $value;
+        return $this;
+    }
+
+    /**
+     * Define if use Filters or Not
+     * @param (bool) $value
+     */
+    function setNoFilters ($value)
+    {
+        $this->info['noFilters'] = (bool) $value;
+        return $this;
+    }
 }
 

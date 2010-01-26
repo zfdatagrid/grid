@@ -14,8 +14,8 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -23,9 +23,9 @@
 class Bvb_Grid_Template_Odt_Odt
 {
 
-    protected $options;
+    public $options;
 
-    
+
     public $colSpan;
 
     public $odtOptions;
@@ -37,7 +37,7 @@ class Bvb_Grid_Template_Odt_Odt
     {
 
         $this->odtOptions = $options;
-    
+
     }
 
 
@@ -45,9 +45,9 @@ class Bvb_Grid_Template_Odt_Odt
     {
 
         $pdf = array ('logo' => 'public/images/logo.png', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ' );
-        
+
         $pdf = array_merge ( $pdf, $this->odtOptions );
-        
+
         return $pdf;
     }
 
@@ -222,9 +222,9 @@ class Bvb_Grid_Template_Odt_Odt
 
         if (@file_exists ( $this->odtOptions ['logo'] ))
         {
-            
+
             $arrayLogo = explode("/",@$this->odtOptions['logo']);
-            
+
             $header = '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles
 	xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
@@ -580,7 +580,7 @@ class Bvb_Grid_Template_Odt_Odt
 						<table:table-cell table:style-name="Table2.A1"
 							office:value-type="string">
 							<text:p text:style-name="MP3">
-								<text:page-number text:select-page="current"> 
+								<text:page-number text:select-page="current">
 								</text:page-number>
 								/
 								<text:page-count> </text:page-count>
@@ -593,10 +593,10 @@ class Bvb_Grid_Template_Odt_Odt
 		</style:master-page>
 	</office:master-styles>
 </office:document-styles>';
-        
+
 
         } else {
-            
+
 
             $header = '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles
@@ -952,9 +952,9 @@ class Bvb_Grid_Template_Odt_Odt
 		</style:master-page>
 	</office:master-styles>
 </office:document-styles>';
-        
+
         }
-        
+
 
         return $header;
     }
@@ -993,16 +993,16 @@ class Bvb_Grid_Template_Odt_Odt
 			table:number-columns-spanned="' . $this->colSpan . '" office:value-type="string">
 			<text:p text:style-name="P5"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
-        
+
         for($i = 1; $i < $this->colSpan; $i ++)
         {
             $return .= '<table:covered-table-cell />';
         }
-        
+
         $return .= '</table:table-row>';
-        
+
         return $return;
-    
+
     }
 
 
@@ -1014,14 +1014,14 @@ class Bvb_Grid_Template_Odt_Odt
 			table:number-columns-spanned="' . $this->colSpan . '" office:value-type="string">
 			<text:p text:style-name="P5"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
-        
+
         for($i = 1; $i < $this->colSpan; $i ++)
         {
             $return .= '<table:covered-table-cell />';
         }
-        
+
         $return .= '</table:table-row>';
-        
+
         return $return;
     }
 
@@ -1030,7 +1030,7 @@ class Bvb_Grid_Template_Odt_Odt
     {
 
         $this->i ++;
-        
+
         return '<table:table-row>';
     }
 
@@ -1045,26 +1045,26 @@ class Bvb_Grid_Template_Odt_Odt
     function loopLoop()
     {
 
-        
+
         if ($this->i % 2)
         {
-            
+
 
             return '<table:table-cell table:style-name="Table1.A2"
 			office:value-type="string">
 			<text:p text:style-name="Table_20_Contents"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
-        
+
         } else
         {
-            
+
             return '<table:table-cell table:style-name="Table1.A3"
 			office:value-type="string">
 			<text:p text:style-name="Table_20_Contents"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
-        
+
         }
-    
+
     }
 
 

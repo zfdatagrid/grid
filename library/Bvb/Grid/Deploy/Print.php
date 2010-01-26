@@ -14,195 +14,191 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 
-class Bvb_Grid_Deploy_Print extends Bvb_Grid_DataGrid
+class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data
 {
-    public $title;
 
-    protected  $output = 'print';
+    const OUTPUT = 'print';
+
+    public $deploy = array();
 
     public $templateInfo;
 
 
-    function __construct ($title)
+    function __construct ($options)
     {
 
-        if (! in_array ( 'print', $this->export ))
-        {
-            echo $this->__( "You dont' have permission to export the results to this format" );
+        if (! in_array(self::OUTPUT, $this->export)) {
+            echo $this->__("You dont' have permission to export the results into this format");
             die();
         }
 
-        $this->title = $title;
-
-
         $this->_setRemoveHiddenFields(true);
-        parent::__construct();
+        parent::__construct($options);
 
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print' );
-        if(!is_object($this->temp['print']))
-        {
-            $this->setTemplate('print','print',array('title'=>$title,'charEncoding'=>$this->charEncoding));
-        }
-    }
+        $this->addTemplateDir('Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print');
 
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
-
-    function __set($var,$value)
-    {
-        parent::__set($var,$value);
     }
 
 
-    function deploy()
+    function deploy ()
     {
-         $this->setPagination ( 0 );
+        $this->setPagination(0);
 
         parent::deploy();
 
 
-        if(!$this->temp['print'] instanceof Bvb_Grid_Template_Print_Print   )
-        {
-            $this->setTemplate('print','print');
+        if (! $this->temp['print'] instanceof Bvb_Grid_Template_Print_Print) {
+            $this->setTemplate('print', 'print');
         }
 
-
         $titles = parent::_buildTitles();
-
-        #$nome = reset($titles);
         $wsData = parent::_buildGrid();
         $sql = parent::_buildSqlExp();
 
+        if (! isset($this->deploy['title'])) {
+            $this->deploy['title'] = '';
+        }
 
-
-        $xml = $this->temp['print']->globalStart();
-        $xml .= $this->temp['print']->header();
+        $print = $this->temp['print']->globalStart();
+        $print .= $this->temp['print']->header();
 
 
 
         //[PT] Títulos
-
-        $xml .= $this->temp['print']->titlesStart();
+        $print .= $this->temp['print']->titlesStart();
 
         foreach ($titles as $value) {
 
-            if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='') || @$this->info['hRow']['title'] =='')
-            {
-                $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->titlesLoop());
+            if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->titlesLoop());
 
             }
         }
 
 
-        $xml .= $this->temp['print']->titlesEnd();
+        $print .= $this->temp['print']->titlesEnd();
 
 
         //[PT] O Loop
-
-        if(is_array($wsData))
-        {
-
-
-
+        if (is_array($wsData)) {
             /////////////////
-            /////////////////
-            /////////////////
-            if(@$this->info['hRow']['title']!='')
-            {
+            if (@$this->info['hRow']['title'] != '') {
                 $bar = $wsData;
 
                 $hbar = trim($this->info['hRow']['field']);
 
-                $p=0;
-                foreach ($wsData[0] as $value)
-                {
-                    if($value['field'] == $hbar)
-                    {
+                $p = 0;
+                foreach ($wsData[0] as $value) {
+                    if ($value['field'] == $hbar) {
                         $hRowIndex = $p;
                     }
 
-                    $p++;
+                    $p ++;
                 }
                 $aa = 0;
             }
-
-            //////////////
             //////////////
             //////////////
 
 
-            $i=1;
-            $aa=0;
+
+            $i = 1;
+            $aa = 0;
             foreach ($wsData as $row) {
-
-
                 ////////////
-                ////////////
-                //A linha horizontal
-                if(@$this->info['hRow']['title']!='')
-                {
-
-                    if(@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa-1][$hRowIndex]['value'])
-                    {
-                        $xml .= str_replace("{{value}}",@$bar[$aa][$hRowIndex]['value'] ,$this->temp['print']->hRow());
+                //horizontal row
+                if (@$this->info['hRow']['title'] != '') {
+                    if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
+                        $print .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->temp['print']->hRow());
                     }
                 }
-
                 ////////////
-                ////////////
+                $i ++;
 
-
-                $i++;
-
-
-
-                $xml .= $this->temp['print']->loopStart();
-                $a=1;
+                $print .= $this->temp['print']->loopStart();
+                $a = 1;
                 foreach ($row as $value) {
 
-                    $value['value']  = strip_tags($value['value']);
+                    $value['value'] = strip_tags($value['value']);
 
-                    if((@$value['field']!=@$this->info['hRow']['field'] && @$this->info['hRow']['title'] !='')
-                    || @$this->info['hRow']['title'] =='')
-                    {
-
-
-                        $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->loopLoop());
+                    if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                        $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->loopLoop());
                     }
                 }
 
-                $xml .= $this->temp['print']->loopEnd();
-                $aa++;
-                $i++;
+                $print .= $this->temp['print']->loopEnd();
+                $aa ++;
+                $i ++;
             }
         }
-
-
 
         //////////////////SQL EXPRESSIONS
-
-        if(is_array($sql))
-        {
-            $xml .= $this->temp['print']->sqlExpStart ();
+        if (is_array($sql)) {
+            $print .= $this->temp['print']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}",$value['value'],$this->temp['print']->sqlExpLoop());
+                $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->sqlExpLoop());
             }
-            $xml .= $this->temp['print']->sqlExpEnd();
+            $print .= $this->temp['print']->sqlExpEnd();
         }
 
-        $xml .= $this->temp['print']->globalEnd ();
+        $print .= $this->temp['print']->globalEnd();
 
-        echo $xml;
+
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
+
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
+        }
+
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            header("Content-type: text/html");
+        }
+
+
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            echo $print;
+            die();
+        }
+
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
+
+        if (substr($this->deploy['name'], - 5) == '.html') {
+            $this->deploy['name'] = substr($this->deploy['name'], 0, - 5);
+        }
+
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+        if (! is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
+
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
+
+        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".html", $print);
+
+
+        if ($this->deploy['download'] == 1) {
+            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.html"');
+            readfile($this->deploy['dir'] . $this->deploy['name'] . '.html');
+        }
+
+
+        if ($this->deploy['save'] != 1) {
+            unlink($this->deploy['dir'] . $this->deploy['name'] . '.html');
+        }
+
         die();
     }
 

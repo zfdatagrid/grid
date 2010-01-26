@@ -14,8 +14,8 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -100,7 +100,7 @@ class Bvb_Grid_Template_Wordx_Wordx
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'.end($arrayLogo).'"/>
-</Relationships>';   
+</Relationships>';
     }
 
 
@@ -326,8 +326,8 @@ class Bvb_Grid_Template_Wordx_Wordx
 						<w:r w:rsidRPr="00304298">
 							<w:rPr>
 								<w:color w:val="D9D9D9" w:themeColor="background1"
-									w:themeShade="D9" /> 
-								<w:sz w:val="16" /> 
+									w:themeShade="D9" />
+								<w:sz w:val="16" />
 							</w:rPr>
 							<w:t><![CDATA[{{value}}]]> </w:t>
 						</w:r>
@@ -348,8 +348,8 @@ class Bvb_Grid_Template_Wordx_Wordx
 						<w:shd w:val="clear" w:color="auto" w:fill="7C7C7C" />
 					</w:tcPr>
 					<w:p w:rsidR="0034373E" w:rsidRDefault="0034373E">
-					<w:pPr> 
-							<w:sz w:val="16" /> 
+					<w:pPr>
+							<w:sz w:val="16" />
 							<w:jc w:val="center" />
 						</w:pPr>
 						<w:r>
@@ -372,8 +372,8 @@ class Bvb_Grid_Template_Wordx_Wordx
 						<w:shd w:val="clear" w:color="auto" w:fill="7C7C7C" />
 					</w:tcPr>
 					<w:p w:rsidR="0034373E" w:rsidRDefault="0034373E">
-					<w:pPr> 
-							<w:sz w:val="16" /> 
+					<w:pPr>
+							<w:sz w:val="16" />
 							<w:jc w:val="center" />
 						</w:pPr>
 						<w:r>

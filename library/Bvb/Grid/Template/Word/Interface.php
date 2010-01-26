@@ -14,8 +14,8 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -24,65 +24,65 @@ interface  Bvb_Grid_Template_Word_Interface
 {
 
     function globalStart ();
-    
-    
+
+
 
     function globalEnd ();
-    
-    
+
+
 
     function titlesStart ();
-    
-    
+
+
 
     function titlesEnd ();
-    
-    
+
+
 
 
     function titlesLoop ();
-    
-    
+
+
 
 
     function noResults();
-    
-    
+
+
 
 
 
     function hRow();
-    
-    
+
+
 
 
     function loopStart ();
-    
 
 
-    
+
+
     function loopEnd ();
-    
-    
-    
+
+
+
 
     function loopLoop ();
-    
-    
-    
-    
+
+
+
+
     function sqlExpStart ();
-    
-    
-    
+
+
+
 
     function sqlExpEnd ();
-    
-    
-    
+
+
+
 
     function sqlExpLoop ();
-    
+
 
 }
 

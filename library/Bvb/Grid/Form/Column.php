@@ -14,26 +14,26 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
 class Bvb_Grid_Form_Column
 {
     public $options;
-    
+
     function __construct($name,  $options = array())
     {
         $this->options['field'] = $name;
-        
+
         if (count($options) > 0) {
             $this->options = array_merge($this->options, $options);
         }
-        
+
         return $this;
     }
-    
+
     function __call($name, $args)
     {
         $this->options[$name] = $args[0];

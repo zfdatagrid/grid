@@ -14,47 +14,27 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid {
+class Bvb_Grid_Deploy_Excel extends Bvb_Grid_Data {
 
-	protected $output = 'excel';
+	const OUTPUT = 'excel';
 
-	protected $dir;
+	public $deploy = array ();
 
-	protected $title;
+	function __construct($options) {
 
-	protected $options = array ();
-
-	function __construct($title, $dir, $options = array('download')) {
-
-		if (! in_array ( 'excel', $this->export )) {
+		if (! in_array ( self::OUTPUT, $this->export )) {
 			echo $this->__ ( "You dont' have permission to export the results to this format" );
 			die ();
 		}
 
-		$this->dir = rtrim ( $dir, "/" ) . "/";
-		$this->title = $title;
-		$this->options = $options;
-
-
         $this->_setRemoveHiddenFields(true);
-		parent::__construct ();
+		parent::__construct ($options);
 	}
 
-	/**
-	 * [Para podemros utiliza]
-	 *
-	 * @param string $var
-	 * @param string $value
-	 */
-
-	function __set($var, $value) {
-
-		parent::__set ( $var, $value );
-	}
 
 	function deploy() {
 
@@ -62,28 +42,21 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid {
 
 		parent::deploy ();
 
+		if(!isset($this->options['title']))
+		{
+		    $this->options['title'] = 'ZFDatagrid';
+		}
+
 		$titles = parent::_buildTitles ();
 		$wsData = parent::_buildGrid ();
 		$sql = parent::_buildSqlExp ();
 
-		/*
-        $nome = reset ( $titles );
-
-
-        if($nome['field']=='id' || strpos($nome['field'],'_id')  || strpos($nome['field'],'id_')  || strpos($nome['field'],'.id')  )
-        {
-            @array_shift($titles);
-            @array_shift($sql);
-            $remove = true;
-        }
-
-        */
 		$xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns:x="urn:schemas-microsoft-com:office:excel"
   xmlns="urn:schemas-microsoft-com:office:spreadsheet"
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
 
-		$xml .= '<Worksheet ss:Name="' . $this->title . '" ss:Description="' . $this->title . '"><ss:Table>';
+		$xml .= '<Worksheet ss:Name="' .  $this->options['title']  . '" ss:Description="' .  $this->options['title']  . '"><ss:Table>';
 
 		$xml .= '<ss:Row>';
 		foreach ( $titles as $value ) {
@@ -128,17 +101,51 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_DataGrid {
 
 		$xml .= '</Workbook>';
 
-		file_put_contents ( $this->dir . $this->title . ".xls", $xml );
 
-		if (in_array ( 'download', $this->options )) {
-			header ( 'Content-type: application/excel' );
-			header ( 'Content-Disposition: attachment; filename="' . $this->title . '.xls"' );
-			readfile ( $this->dir . $this->title . '.xls' );
-		}
+        if (! isset($this->deploy['save'])) {
+            $this->deploy['save'] = false;
+        }
 
-		if (! in_array ( 'save', $this->options )) {
-			unlink ( $this->dir . $this->title . '.xls' );
-		}
+        if (! isset($this->deploy['download'])) {
+            $this->deploy['download'] = false;
+        }
+
+        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+            throw new Exception('Nothing to do. Please specify download&&|save options');
+        }
+
+
+        if (empty($this->deploy['name'])) {
+            $this->deploy['name'] = date('H_m_d_H_i_s');
+        }
+
+        if (substr($this->deploy['name'], - 4) == '.xls') {
+            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
+        }
+
+        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+        if (! is_dir($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        }
+
+        if (! is_writable($this->deploy['dir'])) {
+            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+        }
+
+        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".xls", $xml);
+
+
+        if ($this->deploy['download'] == 1) {
+            header ( 'Content-type: application/excel' );
+            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.xls"');
+            readfile($this->deploy['dir'] . $this->deploy['name'] . '.xls');
+        }
+
+        if ($this->deploy['save'] != 1) {
+            unlink($this->deploy['dir'] . $this->deploy['name'] . '.xls');
+        }
+
 
 		die ();
 

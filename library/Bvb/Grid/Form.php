@@ -14,11 +14,12 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Form {
+class Bvb_Grid_Form  {
+
 	public $options;
 
 	public $fields;
@@ -113,7 +114,6 @@ class Bvb_Grid_Form {
 		}
 
 		foreach ( $columns as $value ) {
-
 			if ($value instanceof Bvb_Grid_Form_Column) {
 				array_push ( $final, $value );
 			}

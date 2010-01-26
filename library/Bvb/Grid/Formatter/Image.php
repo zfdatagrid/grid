@@ -14,8 +14,8 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    0.4   $
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    $Id$
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -25,9 +25,9 @@ class Bvb_Grid_Formatter_Image
 
     function __construct($options)
     {
-       
+
     }
-    
+
     function format($value)
     {
         return "<img src=\"$value\" border=\"0\">";
