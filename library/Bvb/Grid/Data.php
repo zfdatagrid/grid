@@ -1604,10 +1604,10 @@ class Bvb_Grid_Data
      * Applies escape functions to a field
      * @param  $value
      */
-    protected function _applyFieldEscape ($value)
+    protected function _applyFieldEscape ($value,$force=false)
     {
 
-        if ($this->escapeOutput === true) {
+        if ($this->escapeOutput === true || $force===true) {
 
             foreach ($this->_escapeFunctions as $function) {
                 if (! is_callable($function)) {
@@ -1620,6 +1620,37 @@ class Bvb_Grid_Data
         }
 
         return $value;
+    }
+
+
+
+    /**
+     * Apply escape functions to column
+     * @param string $field
+     * @param string $new_value
+     * @return mixed
+     */
+    private function _escapeField ($field, $new_value)
+    {
+
+        if (! isset($this->data['fields'][$field]['escape'])) {
+            $this->data['fields'][$field]['escape'] = 1;
+        }
+
+        if (($this->data['fields'][$field]['escape'] ? 1 : 0) == 0) {
+            return $new_value;
+        }
+
+        if ($this->data['fields'][$field]['escape'] == 1) {
+            return $this->_applyFieldEscape($new_value, true);
+        }
+
+        if (! is_callable($this->data['fields'][$field]['escape'])) {
+            throw new Bvb_Grid_Exception($this->data['fields'][$field]['escape'] . ' not callable');
+        }
+
+        return call_user_func($this->data['fields'][$field]['escape'], $new_value);
+
     }
 
     /**
@@ -1675,7 +1706,8 @@ class Bvb_Grid_Data
 
                 $new_value = $dados[$fields[$is]];
 
-                $new_value = $this->_applyFieldEscape($new_value);
+
+                $new_value = $this->_escapeField($fields[$is],$new_value);
 
                 if (isset($this->data['fields'][$fields[$is]]['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $this->data['fields'][$fields[$is]]['callback'], $search, $outputToReplace);
