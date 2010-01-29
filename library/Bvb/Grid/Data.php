@@ -396,6 +396,12 @@ class Bvb_Grid_Data
      */
     function __construct ($options)
     {
+
+        if(!$this instanceof Bvb_Grid_Deploy_Interface)
+        {
+            throw new Bvb_Grid_Exception(get_class($this).' needs to implment the Bvb_Grid_Deploy_Interface');
+        }
+
         if ($options instanceof Zend_Config) {
             $options = $options->toArray();
         } else if (! is_array($options)) {
@@ -1917,21 +1923,32 @@ class Bvb_Grid_Data
 
 
                 if (isset($value['order']) && $value['order'] >= 0) {
-                    $norder = (int) $value['order'];
 
-                    $var = $value['order'];
 
-                    while (true) {
-                        if (array_key_exists($var, $fields_final)) {
-                            $fields_final[$var + 1] = $fields_final[$var];
-                            $var = $var + 2;
-                        } else {
-                            break;
+                    if ($value['order'] == 'last') {
+                        $fields_final[($lastIndex + 100)] = $key;
+                    } elseif ($value['order'] == 'first') {
+                        $fields_final[($lastIndex - 10)] = $key;
+                    } else {
+
+                        $norder = (int) $value['order'];
+
+                        $var = $value['order'];
+
+                        while (true) {
+                            if (array_key_exists($var, $fields_final)) {
+                                $fields_final[$var + 1] = $fields_final[$var];
+                                $var = $var + 2;
+                            } else {
+                                break;
+                            }
                         }
-                    }
 
-                    $fields_final[$norder] = $key;
+                        $fields_final[$norder] = $key;
+
+                    }
                 } else {
+
 
                     while (true) {
                         if (array_key_exists($lastIndex, $fields_final)) {
