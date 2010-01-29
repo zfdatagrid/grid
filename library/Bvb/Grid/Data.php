@@ -1929,6 +1929,7 @@ class Bvb_Grid_Data
             $hide = 0;
             $fields_final = array();
             $lastIndex = 1;
+            $norder = 0;
 
             foreach ($fields as $key => $value) {
 
@@ -1986,7 +1987,6 @@ class Bvb_Grid_Data
                 }
 
             }
-
 
 
             ksort($fields_final);
