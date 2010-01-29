@@ -75,13 +75,6 @@ class Bvb_Grid_Data
     public $arrayData = array();
 
     /**
-     * Apply or not the htmlspecialchars function to output
-     *
-     * @var unknown_type
-     */
-    public $escapeOutput = true;
-
-    /**
      * Fields order
      *
      * @var unknown_type
@@ -358,7 +351,7 @@ class Bvb_Grid_Data
      * Functions to be aplied on every field sbefore dislpay
      * @var unknown_type
      */
-    protected $_escapeFunctions = array('stripslashes', 'htmlspecialchars');
+    protected $_escapeFunction =  'htmlspecialchars';
 
     /**
      * array of used tables
@@ -441,18 +434,18 @@ class Bvb_Grid_Data
      * before fisplay
      * @param array $functions
      */
-    public function setEscapeFunctions (array $functions)
+    public function setDefaultEscapeFunction ( $functions)
     {
-        $this->_escapeFunctions = $functions;
+        $this->_escapeFunction = $functions;
         return $this;
     }
 
     /**
      * Returns the activa escape functions
      */
-    public function getEscapeFunctions ()
+    public function getDefaultEscapeFunction ()
     {
-        return $this->_escapeFunctions;
+        return $this->_escapeFunction;
     }
 
     /**
@@ -1529,14 +1522,6 @@ class Bvb_Grid_Data
 
     }
 
-    /**
-     * Escape the output
-     */
-    public function setEscapeOutput ($escape)
-    {
-        $this->escapeOutput = (bool) $escape;
-        return $this;
-    }
 
     protected function _replaceSpecialTags (&$item, $key, $text)
     {
@@ -1604,22 +1589,21 @@ class Bvb_Grid_Data
      * Applies escape functions to a field
      * @param  $value
      */
-    protected function _applyFieldEscape ($value,$force=false)
+    protected function _applyFieldEscape ($value)
     {
 
-        if ($this->escapeOutput === true || $force===true) {
-
-            foreach ($this->_escapeFunctions as $function) {
-                if (! is_callable($function)) {
-                    throw new Bvb_Grid_Exception($function . ' not callable');
-                }
-                $value = call_user_func($function, $value);
-            }
-
+        if ($this->_escapeFunction === false) {
             return $value;
         }
 
+
+        if (! is_callable($this->_escapeFunction)) {
+            throw new Bvb_Grid_Exception($this->_escapeFunction . ' not callable');
+        }
+
+        $value = call_user_func($this->_escapeFunction, $value);
         return $value;
+
     }
 
 
@@ -1642,7 +1626,7 @@ class Bvb_Grid_Data
         }
 
         if ($this->data['fields'][$field]['escape'] == 1) {
-            return $this->_applyFieldEscape($new_value, true);
+            return $this->_applyFieldEscape($new_value);
         }
 
         if (! is_callable($this->data['fields'][$field]['escape'])) {
