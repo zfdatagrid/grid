@@ -993,7 +993,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected function _buildFormElement ($field, $inicial_value = '', $mod = 'edit', $fieldValue = '')
     {
 
-        $view = $this->_view->view;
+        $view = $this->_view;
 
         $fieldRaw = $field;
         //If not editing, remove the initial value, otherwise it will assume the fields names
@@ -1176,7 +1176,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected function _gridForm ()
     {
 
-        $view = $this->_view->view;
+        $view = $this->_view;
 
         // Remove the unnecessary URL params
         $url = parent::_getUrl(array('comm', 'edit', 'add'));
