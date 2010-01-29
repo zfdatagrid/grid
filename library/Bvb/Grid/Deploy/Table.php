@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data
+class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'table';
@@ -206,6 +206,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data
     protected $_deploymentContent = null;
 
 
+    /**
+     * @var Zend_View_Interface
+     */
     protected $_view;
 
 
@@ -219,8 +222,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data
     {
 
         $this->_setRemoveHiddenFields(true);
-
-        $this->_view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
 
         parent::__construct($options);
 
@@ -1679,11 +1680,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data
 
         $url = parent::_getUrl('comm');
 
+        $this->_view = $this->getView();
         if ($this->_adapter == 'db') {
             //Process form, if necessary, before query
             self::_processForm();
         }
-
 
         parent::deploy();
 
@@ -1767,7 +1768,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data
             }
         }
 
-        $grid .= $this->_view->view->formHidden('inputId');
+        $grid .= $this->_view->formHidden('inputId');
 
         if ((isset($this->info['double_tables']) && $this->info['double_tables'] == 1) || (@$this->ctrlParams['edit'] != 1 && @$this->ctrlParams['add'] != 1)) {
 
@@ -2104,10 +2105,10 @@ function gridChangeFilters(fields,url,Ajax)
                     $selected = $key;
                 }
 
-                $values[$this->_view->view->escape($key)] = $this->_view->view->escape($value);
+                $values[$this->_view->escape($key)] = $this->_view->escape($value);
             }
 
-            $valor = $this->_view->view->formSelect($campo, $selected, $attr, $values);
+            $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
 
         }
 
@@ -2126,14 +2127,14 @@ function gridChangeFilters(fields,url,Ajax)
                     if (isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $value) {
                         $selected = $value;
                     }
-                    $values[$this->_view->view->escape($value)] = $this->_view->view->escape($value);
+                    $values[$this->_view->escape($value)] = $this->_view->escape($value);
                 }
 
-                $valor = $this->_view->view->formSelect($campo, $selected, $attr, $values);
+                $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
 
                 break;
             default:
-                $valor = $this->_view->view->formText($campo, $this->_view->view->escape(@$this->_filtersValues[$campo]), $attr);
+                $valor = $this->_view->formText($campo, $this->_view->escape(@$this->_filtersValues[$campo]), $attr);
                 break;
         }
 
@@ -2141,5 +2142,34 @@ function gridChangeFilters(fields,url,Ajax)
     }
 
 
+    /**
+     * Set view object
+     *
+     * @param Zend_View_Interface $view view object to use
+     *
+     * @return Bvb_Grid_Deploy_JqGrid
+     */
+    public function setView(Zend_View_Interface $view = null)
+    {
+        $this->_view = $view;
+        return $this;
+    }
+
+    /**
+     * Retrieve view object
+     *
+     * If none registered, attempts to pull from ViewRenderer.
+     *
+     * @return Zend_View_Interface|null
+     */
+    public function getView()
+    {
+        if (null === $this->_view) {
+            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+            $this->setView($viewRenderer->view);
+        }
+
+        return $this->_view;
+    }
 }
 
