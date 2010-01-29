@@ -761,7 +761,8 @@ class Bvb_Grid_Data
         $class = strtolower(end($deploy));
 
         if (substr(strtolower($name), 0, strlen($class) + 3) == 'set' . $class) {
-            $name = substr(strtolower($name), strlen($class) + 3);
+            $name = substr($name, strlen($class) + 3);
+            $name[0] = strtolower($name[0]);
             $this->deploy[$name] = $value[0];
             return;
         }
