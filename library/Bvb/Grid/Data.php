@@ -1945,14 +1945,15 @@ class Bvb_Grid_Data
                     $titulos[$key] = ucfirst($key);
                 }
 
-
                 if (isset($value['order']) && $value['order'] >= 0) {
-
 
                     if ($value['order'] == 'last') {
                         $fields_final[($lastIndex + 100)] = $key;
                     } elseif ($value['order'] == 'first') {
                         $fields_final[($lastIndex - 10)] = $key;
+                    } elseif ($value['order'] == 'next') {
+                        $norder++;
+                        $fields_final[$norder] = $key;
                     } else {
 
                         $norder = (int) $value['order'];
@@ -1985,6 +1986,7 @@ class Bvb_Grid_Data
                 }
 
             }
+
 
 
             ksort($fields_final);
