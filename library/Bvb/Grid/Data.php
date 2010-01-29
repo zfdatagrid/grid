@@ -397,9 +397,8 @@ class Bvb_Grid_Data
     function __construct ($options)
     {
 
-        if(!$this instanceof Bvb_Grid_Deploy_Interface)
-        {
-            throw new Bvb_Grid_Exception(get_class($this).' needs to implment the Bvb_Grid_Deploy_Interface');
+        if (! $this instanceof Bvb_Grid_Deploy_Interface) {
+            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment the Bvb_Grid_Deploy_Interface');
         }
 
         if ($options instanceof Zend_Config) {
@@ -768,7 +767,7 @@ class Bvb_Grid_Data
         $deploy = explode('_', get_class($this));
         $class = strtolower(end($deploy));
 
-     if (substr(strtolower($name), 0, strlen($class) + 3) == 'set' . $class) {
+        if (substr(strtolower($name), 0, strlen($class) + 3) == 'set' . $class) {
             $name = substr(strtolower($name), strlen($class) + 3);
             $this->deploy[$name] = $value[0];
             return;
@@ -1315,10 +1314,14 @@ class Bvb_Grid_Data
 
             if ($this->_displayField($nf)) {
 
+                if (! isset($this->data['fields'][$nf]['tooltipFilter'])) {
+                    $this->data['fields'][$nf]['tooltipFilter'] = '';
+                }
+
                 if (@array_key_exists($data[$i], $this->filters) && $this->data['fields'][$nf]['search'] != false) {
-                    $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'tooltip' => $this->data['fields'][$nf]['tooltipFilter'], 'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
-                    $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'tooltip' => $this->data['fields'][$nf]['tooltipFilter'], 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
                 }
             }
         }
@@ -1427,10 +1430,14 @@ class Bvb_Grid_Data
 
                 $noOrder = isset($this->info['noOrder']) ? $this->info['noOrder'] : '';
 
+                if (! isset($this->data['fields'][$titles[$i]]['tooltipTitle'])) {
+                    $this->data['fields'][$titles[$i]]['tooltipTitle'] = '';
+                }
+
                 if ($noOrder == 1) {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_id/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_id/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
                 }
             }
         }
@@ -1949,7 +1956,6 @@ class Bvb_Grid_Data
                     }
                 } else {
 
-
                     while (true) {
                         if (array_key_exists($lastIndex, $fields_final)) {
                             $lastIndex ++;
@@ -2097,8 +2103,6 @@ class Bvb_Grid_Data
         if ($this->_selectZendDb !== true && $this->_getAdapter() == 'db') {
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
-
-
 
         $this->_buildDefaultFilters();
 
@@ -2469,17 +2473,17 @@ class Bvb_Grid_Data
 
         if (isset($this->_options['template'][$output][$template])) {
             $tpOptions = $this->_options['template'][$output][$template];
-        }else{
-            $tpOptions  =array();
+        } else {
+            $tpOptions = array();
         }
 
 
-        $tpInfo = array('colspan'=>$this->_colspan, 'charEncoding' => $this->charEncoding, 'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output), 'class' => $this->_templates[$output]->getClassName($template, $output));
+        $tpInfo = array('colspan' => $this->_colspan, 'charEncoding' => $this->charEncoding, 'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output), 'class' => $this->_templates[$output]->getClassName($template, $output));
 
         $this->temp[$output] = new $class();
         $this->activeTemplates[] = $output;
 
-        $this->temp[$output]->options = array_merge($tpInfo,$tpOptions);
+        $this->temp[$output]->options = array_merge($tpInfo, $tpOptions);
 
         return $this->temp[$output];
 
@@ -2509,7 +2513,6 @@ class Bvb_Grid_Data
             }
         }
     }
-
 
 
 
@@ -2548,9 +2551,10 @@ class Bvb_Grid_Data
         $totalFields = $totalFields + $a;
         $colspan = $totalFields + count($this->extra_fields);
 
-       # if (isset($this->temp[$this->output]) && is_object($this->temp[$this->output])) {
-            #$this->temp[$this->output]->colSpan = $colspan;
+        # if (isset($this->temp[$this->output]) && is_object($this->temp[$this->output])) {
+        #$this->temp[$this->output]->colSpan = $colspan;
         #}
+
 
         $this->_colspan = $colspan;
 
