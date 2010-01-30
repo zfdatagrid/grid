@@ -2139,6 +2139,7 @@ class Bvb_Grid_Data
             $this->_buildQuery();
             $this->_builQueryCount();
 
+
             if ($this->cache['use'] == 1) {
                 $cache = $this->cache['instance'];
 
@@ -2485,15 +2486,15 @@ class Bvb_Grid_Data
      * @param string $template
      * @return unknown
      */
-    public function setTemplate ($template, $output = 'table')
+    public function setTemplate ($template, $output = 'table',$options=array())
     {
 
         $class = $this->_templates[$output]->load($template, $output);
 
         if (isset($this->_options['template'][$output][$template])) {
-            $tpOptions = $this->_options['template'][$output][$template];
+            $tpOptions = array_merge($this->_options['template'][$output][$template],$options);
         } else {
-            $tpOptions = array();
+            $tpOptions = $options();
         }
 
 
@@ -2531,6 +2532,8 @@ class Bvb_Grid_Data
                 }
             }
         }
+
+        return;
     }
 
 
@@ -2569,11 +2572,6 @@ class Bvb_Grid_Data
 
         $totalFields = $totalFields + $a;
         $colspan = $totalFields + count($this->extra_fields);
-
-        # if (isset($this->temp[$this->output]) && is_object($this->temp[$this->output])) {
-        #$this->temp[$this->output]->colSpan = $colspan;
-        #}
-
 
         $this->_colspan = $colspan;
 
@@ -2998,24 +2996,5 @@ class Bvb_Grid_Data
         return $this->_id;
     }
 
-    /**
-     * Define if use order or not
-     * @param $value
-     */
-    function setNoOrder ($value)
-    {
-        $this->info['noOrder'] = (bool) $value;
-        return $this;
-    }
-
-    /**
-     * Define if use Filters or Not
-     * @param (bool) $value
-     */
-    function setNoFilters ($value)
-    {
-        $this->info['noFilters'] = (bool) $value;
-        return $this;
-    }
 }
 
