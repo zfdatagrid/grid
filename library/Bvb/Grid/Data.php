@@ -2721,6 +2721,11 @@ class Bvb_Grid_Data
     public function query (Zend_Db_Select $select)
     {
 
+        if($this->_selectZendDb===true)
+        {
+            throw new Bvb_Grid_Exception('Cannot redeclare query()');
+        }
+
         $this->_db = $select->getAdapter();
         $this->_setAdapter('db');
 
@@ -2730,6 +2735,7 @@ class Bvb_Grid_Data
         $this->_selectZendDb = true;
 
         $this->_select = $select;
+
 
         $this->_tablesList = $this->_select->getPart(Zend_Db_Select::FROM);
 
@@ -2994,6 +3000,54 @@ class Bvb_Grid_Data
     public function getId ()
     {
         return $this->_id;
+    }
+
+
+    function setModel(Zend_Db_Table_Abstract  $model)
+    {
+        $info = $model->info();
+
+        $select = new Zend_Db_Select($model->getAdapter());
+
+        $map = $info['referenceMap'];
+
+        if(is_array($map) && count($map)>0)
+        {
+            $columnsToRemove = array();
+
+            foreach ($map as $sel)
+            {
+                if (is_array($sel['columns'])) {
+                    $columnsToRemove = array_merge($columnsToRemove,$sel['columns']);
+                } else {
+                    $columnsToRemove[] = $sel['columns'];
+                }
+            }
+
+            $columnsMainTable = array_diff($info['cols'],$columnsToRemove);
+
+            $select->from($info['name'],$columnsMainTable);
+
+
+            foreach ($map as $sel)
+            {
+                $newClass = new $sel['refTableClass']();
+                $infoNewClass = $newClass->info();
+
+                if (is_array($sel['columns'])) {
+                    $cols = array_combine($sel['columns'], $sel['refColumns']);
+                } else {
+                    $cols = array($sel['columns'] => $sel['refColumns']);
+                }
+                $select->from($infoNewClass['name'],$cols);
+            }
+        }else{
+             $select->from($info['name']);
+        }
+
+        $this->query($select);
+
+        return $this;
     }
 
 }
