@@ -69,7 +69,7 @@ class SiteController extends Zend_Controller_Action
             $export = $this->getRequest()->getParam('export');
         }
 
-        $config = new Zend_Config_Ini('./application/grids/grid.ini','production');
+        $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
 
         $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config);
 
@@ -111,40 +111,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    function vincentAction ()
-    {
-        $select = $this->_db->select()->distinct()->from(array('f1' => 'FicheClient1'), array('f1.id', 'f1.email', 'f1.nom', 'f1.ville'))->joinLeft(array('p1' => 'ProjetClient1'), 'f1.id = p1.id_client', array('p1.id'))->joinLeft(array('tc' => 'TypeClient'), 'f1.id_type_client = tc.id', array('type' => 'tc.nom'));
-
-        $grid = $this->grid();
-
-        $grid->setPagination(10);
-
-        $grid->query($select);
-
-        $grid->setTemplate('outside', 'table');
-
-        //Je peux enlever des colonnes que je souhaite
-        $grid->updateColumn('f1.id', array('hide' => 1));
-        $grid->updateColumn('p1.id', array('hide' => 1));
-
-        $btnVoir = new Bvb_Grid_ExtraColumns();
-        $btnVoir->position('right')->name('Fiche')->decorator("<a href=\"/fiche/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}/id_projet/{{p1.id}}\" class='fg-button ui-state-default ui-state-default ui-                 priority-primary ui-corner-all' id=''>voir</a>");
-
-        $btnNewProjet = new Bvb_Grid_ExtraColumns();
-        $btnNewProjet->position('right')->name('Projet')->decorator("<a href=\"projet/index/id_type_client/1/id_client/{{f1.id}}/email/{{f1.email}}\" class='fg-button ui-state-default ui-state-default ui-priority-primary ui-                 corner-all' id=''>+</a>");
-
-        $grid->addExtraColumns($btnVoir, $btnNewProjet);
-
-        //Add  filters
-        $filters2 = new Bvb_Grid_Filters();
-        $filters2->addFilter('f1.ville')->addFilter('f1.email')->addFilter('f1.nom');
-
-        $grid->addFilters($filters2);
-
-        $this->view->pages = $grid->deploy();
-
-        $this->render('index');
-    }
 
     /**
      * A join query example
@@ -199,57 +165,61 @@ class SiteController extends Zend_Controller_Action
      * Check how easy it is to set a form.
      *
      */
-    function crudAction ()
+    function acrudAction ()
     {
 
         $db = Zend_Registry::get('db');
 
         $grid = $this->grid('table');
-        $grid->query($this->_db->select()->from('crud'));
+        $grid->query($this->_db->select()->from('crud', array('firstname', 'lastname', 'email', 'age', 'language', 'country', 'id')));
 
-        $paises = $db->fetchCol("SELECT DISTINCT(Name) FROM Country ORDER BY Name ASC ");
-        $language = $db->fetchCol("SELECT DISTINCT(Language) FROM CountryLanguage ORDER BY Language ASC");
 
-        $grid->updateColumn('id', array('title' => 'ID', 'hide' => 1));
-        $grid->updateColumn('firstname', array('title' => 'First Name'));
-        $grid->updateColumn('lastname', array('title' => 'Last Name'));
-        $grid->updateColumn('email', array('title' => 'Email'));
-        $grid->updateColumn('age', array('title' => 'Age'));
-        $grid->updateColumn('language', array('title' => 'Language'));
-        $grid->updateColumn('date_added', array('title' => 'Updated', 'format' => array('date', 'en_US'), 'class' => 'width_150'));
-        $grid->updateColumn('country', array('title' => 'Country'));
-
+        /*
         $form = new Bvb_Grid_Form();
-        $form->add(1)->edit(1)->button(1)->delete(1)->onAddForce(array('date_added' => date('Y-m-d H:i:s')))->onEditForce(array('date_added' => date('Y-m-d H:i:s')));
+        $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1)->setOnAddForce(array('date_added' => date('Y-m-d H:i:s')))->setOnEditForce(array('date_added' => date('Y-m-d H:i:s')));
 
         #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
-        $fAdd = new Bvb_Grid_Form_Column('firstname');
-        $fAdd->title('First name')->validators(array('StringLength' => array(3, 10)))->filters(array('StripTags', 'StringTrim', 'StringToLower'))->description('Insert your first name. (password type...)');
+        $fAdd = new Zend_Form_Element_Text('firstname');
+        $fAdd->setLabel('First name')
+        ->addValidator('StringLength', false, array(3, 10))
+        ->addFilters(array('StripTags', 'StringTrim', 'StringToLower'))
+        ->setDescription('Insert your first name');
 
-        $lastName = new Bvb_Grid_Form_Column('lastname');
-        $lastName->title('Last name')->description('Your last name')->validators(array('StringLength' => array(3, 10)));
+        $lastName = new Zend_Form_Element_Text('lastname');
+        $lastName->setLabel('Last name')
+        ->setDescription('Your last name')
+         ->addValidator('StringLength', false, array(3, 10));
 
-        $country = new Bvb_Grid_Form_Column('country');
-        $country->title('Country')->description('Choose your Country')->values(array_combine($paises, $paises));
+        $country = new Zend_Form_Element_Select('country');
+        $country->setLabel('Country')
+        ->setDescription('Choose your Country')
+        ->setValue(array_combine($paises, $paises));
 
-        $email = new Bvb_Grid_Form_Column('email');
-        $email->title('Email Address')->validators(array('EmailAddress'))->filters(array('StripTags', 'StringTrim', 'StringToLower'))->description('Insert you email address');
+        $email = new Zend_Form_Element_Text('email');
+        $email->setLabel('Email Address')
+        ->addValidators(array('EmailAddress'))
+        ->addFilters(array('StripTags', 'StringTrim', 'StringToLower'))
+        ->setDescription('Insert you email address');
 
-        $lang = new Bvb_Grid_Form_Column('language');
-        $lang->title('Language')->description('Your language');
+        $lang = new Zend_Form_Element_Select('language');
+        $lang->setLabel('Language')->setDescription('Your language');
 
-        $age = new Bvb_Grid_Form_Column('age');
-        $age->title('Age')->description('Choose your age')->values(array_combine(range(10, 100), range(10, 100)));
+        $age = new Zend_Form_Element_Select('age');
+        $age->setLabel('Age')->setDescription('Choose your age')->setValue(array_combine(range(10, 100), range(10, 100)));
 
-        $form->addColumns($fAdd, $lastName, $email, $lang, $country, $age);
 
+        $submit = new Zend_Form_Element_Submit('sen');
+        $submit->setLabel('Send');
+
+        $form->addElements(array($fAdd, $lastName, $email, $lang, $country, $age,$submit));
+
+        #$form->addColumns($fAdd, $lastName, $email, $lang, $country, $age);
+
+*/
+
+        $form = new Bvb_Grid_Form();
+        $form->setModel(new City());
         $grid->addForm($form);
-
-        //Add  filters
-        $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('firstname')->addFilter('lastname')->addFilter('email')->addFilter('age', array('distinct' => array('name' => 'age', 'field' => 'age')))->addFilter('country', array('distinct' => array('name' => 'country', 'field' => 'country')))->addFilter('language', array('distinct' => array('name' => 'language', 'field' => 'language')));
-
-        $grid->addFilters($filters);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -279,13 +249,12 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
-
         $grid = $this->grid();
         $select = $this->_db->select()->from('City')->order('Name')->columns(array('IsBig' => new Zend_Db_Expr('IF(Population>500000,1,0)')))->columns(array('test' => 'ID'));
 
         $grid->query($select);
-        $grid->setTableTitle("test grid");
-        $grid->setTableDir('media/temp');
+        #$grid->setModel(new Bugs);
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -387,6 +356,7 @@ class SiteController extends Zend_Controller_Action
 
 
 
+
         $cap = new Bvb_Grid_Column('Country');
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
 
@@ -414,4 +384,22 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
+
+    function crudAction ()
+    {
+        $grid = $this->grid();
+        $grid->setModel(new Bugs());
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
+
+        $grid->addForm($form);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
 }
+include 'application/models/Model.php';

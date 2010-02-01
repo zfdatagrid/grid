@@ -36,26 +36,6 @@ td div input {
 	color: #333;
 }
 
-#newGrid .barra_tabela {
-	background-color: #CEE1EF
-}
-
-#newGrid td.alt,#newGrid tr.alt  td {
-	background: #EAF3FA;
-	color: #333;
-}
-
-#newGrid th {
-	text-align: center;
-	border-right: 1px solid #000;
-	border-bottom: 2px solid #000;
-}
-
-#newGrid input:focus {
-	background-color: #AAC4DD;
-	border: 1px solid #111;
-	text-align: center;
-}
 
 .addRecord {
 	padding: 2px;
@@ -136,7 +116,6 @@ div .element label {
 
 div .element {
 	font-style: italic;
-	text-align: right;
 	margin-right: 10px;
 }
 

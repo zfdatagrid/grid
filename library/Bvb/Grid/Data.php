@@ -382,6 +382,12 @@ class Bvb_Grid_Data
     protected $_colspan;
 
     /**
+     * Model
+     * @var Zend_Db_Table_Abstract
+     */
+    protected $_model;
+
+    /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
@@ -3009,6 +3015,7 @@ class Bvb_Grid_Data
      */
     function setModel (Zend_Db_Table_Abstract $model)
     {
+        $this->_model = $model;
         $info = $model->info();
 
         $select = new Zend_Db_Select($model->getAdapter());

@@ -27,6 +27,7 @@ class Bvb_Grid_Template_Table_Table
     public $hasFilters = 1;
 
     public $i;
+
     public $insideLoop;
 
     public $options;
@@ -37,14 +38,14 @@ class Bvb_Grid_Template_Table_Table
         return "<table  width=\"100%\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
     }
 
+
     function globalEnd ()
     {
         return "</table>";
     }
 
 
-
-    function extra()
+    function extra ()
     {
         return "<tr><td  colspan=\"{$this->options['colspan']}\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
@@ -81,7 +82,7 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function noResults()
+    function noResults ()
     {
         return "<td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>";
     }
@@ -102,7 +103,7 @@ class Bvb_Grid_Template_Table_Table
 
     function loopStart ($values)
     {
-        $this->i++;
+        $this->i ++;
 
         $this->insideLoop = 1;
 
@@ -117,10 +118,20 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
+    function formMessage ($ok = false)
+    {
+
+        if ($ok) {
+            $class = "";
+        } else {
+            $class = "_red";
+        }
+        return "<div class=\"alerta$class\">{{value}}</div>";
+    }
 
     function loopLoop ($values)
     {
-        $class =  $this->i % 2 ? "alt" : "";
+        $class = $this->i % 2 ? "alt" : "";
         return "<td class=\"$class {{class}} \" >{{value}}</td>";
     }
 
@@ -146,9 +157,7 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
-
-    function pagination()
+    function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div style=\"padding:2px;\">
         <div style=\"float:left;width:220px;\">{{export}}</div>
@@ -159,86 +168,10 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
-    function formStart ()
-    {
-        return "<tr>";
-    }
-
-
-
-    function formGlobal ()
-    {
-        return "<table width=\"900\" name=\"listagem\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
-    }
-
-
-
-    function formHeader ()
-    {
-        return "<th style=\"width:120px;\">Nome</th><th>Valor</th>";
-    }
-
-
-
-    function formLeft ()
-    {
-        return "<td class=\"alt\" width='33%' >{{value}}</td>";
-    }
-
-
-
-    function formRight ()
-    {
-        return "<td>{{value}}</td>";
-    }
-
-
-
-    function formButtons ()
-    {
-        return "<td class=\"barra_tabela\" colspan=\"2\">{{value}}</td>";
-    }
-
-
-
-    function formEnd ()
-    {
-        return "</tr>";
-    }
-
-
-
-    function formMessage ($ok=false)
-    {
-
-        if($ok) {
-            $class = "";
-        } else {
-            $class = "_red";
-        }
-        return "<div class=\"alerta$class\">{{value}}</div>";
-    }
-
-
-
     function images ($url)
     {
 
-        return array(
-        'asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">" ,
-        'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">" ,
-        'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">" ,
-        'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">" ,
-        'excel' => "<img title=\"Microsoft Excel\"  src=\"" . $url . "excel.gif\"  border=\"0\">" ,
-        'word' => "<img  title=\"Microsoft Office 2003\" src=\"" . $url . "word.gif\"  border=\"0\">" ,
-        'wordx' => "<img title=\"Microsoft Office 2007\" src=\"" . $url . "wordx.gif\"  border=\"0\">" ,
-        'pdf' => "<img title=\"PDF\"  src=\"" . $url . "pdf.gif\"  border=\"0\">" ,
-        'csv' => "<img src=\"" . $url . "csv.gif\"  border=\"0\">" ,
-        'ods' => "<img src=\"" . $url . "ods.gif\" title=\"OpenOffice Spreadsheet\"  border=\"0\">" ,
-        'odt' => "<img src=\"" . $url . "odt.gif\"  title=\"OpenOffice Document Text\"  border=\"0\">" ,
-        'xml' => "<img src=\"" . $url . "xml.gif\"  border=\"0\">" ,
-        'print' => "<img  src=\"" . $url . "print.gif\"  border=\"0\">");
+        return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">", 'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">", 'excel' => "<img title=\"Microsoft Excel\"  src=\"" . $url . "excel.gif\"  border=\"0\">", 'word' => "<img  title=\"Microsoft Office 2003\" src=\"" . $url . "word.gif\"  border=\"0\">", 'wordx' => "<img title=\"Microsoft Office 2007\" src=\"" . $url . "wordx.gif\"  border=\"0\">", 'pdf' => "<img title=\"PDF\"  src=\"" . $url . "pdf.gif\"  border=\"0\">", 'csv' => "<img src=\"" . $url . "csv.gif\"  border=\"0\">", 'ods' => "<img src=\"" . $url . "ods.gif\" title=\"OpenOffice Spreadsheet\"  border=\"0\">", 'odt' => "<img src=\"" . $url . "odt.gif\"  title=\"OpenOffice Document Text\"  border=\"0\">", 'xml' => "<img src=\"" . $url . "xml.gif\"  border=\"0\">", 'print' => "<img  src=\"" . $url . "print.gif\"  border=\"0\">");
     }
 
 

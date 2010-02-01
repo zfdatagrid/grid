@@ -18,111 +18,305 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Form  {
+class Bvb_Grid_Form extends Zend_Form
+{
 
-	public $options;
+    public $options;
 
-	public $fields;
+    public $fields;
 
-	public $cascadeDelete;
+    public $cascadeDelete;
 
-	function __call($name, $args) {
-		$this->options [$name] = $args [0];
-		return $this;
-	}
+    protected $_model;
 
-	function setCallbackBeforeDelete($callback) {
+   public $elementDecorators = array(
+        'ViewHelper',    'Errors',
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+        array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
+        array(array('label' => 'Label'), array('tag' => 'td')),
+        array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
+        );
 
-        $this->options ['callbackBeforeDelete'] = $callback;
 
-		return $this;
-	}
+    public $buttonHidden = array(
+            'ViewHelper',
+    );
 
-	function setCallbackBeforeUpdate($callback) {
+    public $buttonDecorators = array(
+            'ViewHelper',
+            array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element','colspan'=>'2')),
+            array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
+    );
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+    public function ploadDefaultDecorators ()
+    {
+        $this->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table')), 'Form'));
+    }
 
-		$this->options ['callbackBeforeUpdate'] = $callback;
+    function __call ($name, $args)
+    {
+        if (substr(strtolower($name), 0, 3) == 'set') {
+            $name = substr($name, 3);
+            $name[0] = strtolower($name[0]);
+            $this->options[$name] = $args[0];
 
-		return $this;
-	}
+            return $this;
+        }
 
-	function setCallbackBeforeInsert($callback) {
+        parent::__call($name, $args);
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+    }
 
-		$this->options ['callbackBeforeInsert'] = $callback;
+    function setCallbackBeforeDelete ($callback)
+    {
 
-		return $this;
-	}
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
+        $this->options['callbackBeforeDelete'] = $callback;
 
-	function setCallbackAfterDelete($callback) {
+        return $this;
+    }
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+    function setCallbackBeforeUpdate ($callback)
+    {
 
-		$this->options ['callbackAfterDelete'] = $callback;
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
 
-		return $this;
-	}
+        $this->options['callbackBeforeUpdate'] = $callback;
 
-	function setCallbackAfterUpdate($callback) {
+        return $this;
+    }
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+    function setCallbackBeforeInsert ($callback)
+    {
 
-		$this->options ['callbackAfterUpdate'] = $callback;
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
 
-		return $this;
-	}
+        $this->options['callbackBeforeInsert'] = $callback;
 
-	function setCallbackAfterInsert($callback) {
+        return $this;
+    }
 
-		if (! is_callable ( $callback )) {
-			throw new Exception ( $callback . ' not callable' );
-		}
+    function setCallbackAfterDelete ($callback)
+    {
 
-		$this->options ['callbackAfterInsert'] = $callback;
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
 
-		return $this;
-	}
+        $this->options['callbackAfterDelete'] = $callback;
 
-	function onDeleteCascade($options) {
-		$this->cascadeDelete [] = $options;
-		return $this;
+        return $this;
+    }
 
-	}
+    function setCallbackAfterUpdate ($callback)
+    {
 
-	function addColumns() {
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
 
-		$columns = func_get_args ();
+        $this->options['callbackAfterUpdate'] = $callback;
 
-		$final = array ();
+        return $this;
+    }
 
-		if (is_array ( $columns [0] )) {
-			$columns = $columns [0];
-		}
+    function setCallbackAfterInsert ($callback)
+    {
 
-		foreach ( $columns as $value ) {
-			if ($value instanceof Bvb_Grid_Form_Column) {
-				array_push ( $final, $value );
-			}
-		}
+        if (! is_callable($callback)) {
+            throw new Exception($callback . ' not callable');
+        }
 
-		$this->fields = $final;
+        $this->options['callbackAfterInsert'] = $callback;
 
-		return $this;
+        return $this;
+    }
 
-	}
+    function onDeleteCascade ($options)
+    {
+        $this->cascadeDelete[] = $options;
+        return $this;
+
+    }
+
+
+    /**
+     *
+     * @param Zend_Db_Table_Abstract $model
+     */
+    public function setModel ($model)
+    {
+        $this->_model = $model;
+
+        $final = array();
+
+        $info = $model->info();
+        $cols = $info['metadata'];
+        $form = array();
+
+        foreach ($cols as $column => $detail) {
+
+            $next = false;
+
+            if ($detail['PRIMARY'] == 1) {
+                continue;
+            }
+
+            if (count($info['referenceMap']) > 0) {
+
+                foreach ($info['referenceMap'] as $dep) {
+
+                    if (is_array($dep['columns']) && in_array($column, $dep['columns'])) {
+                        $refColumn = $dep['refColumns'][array_search($column, $dep['columns'])];
+                    } elseif (is_string($dep['columns']) && $column == $dep['columns']) {
+                        $refColumn = $dep['refColumns'];
+                    } else {
+                        continue;
+                    }
+
+                    $t = new $dep['refTableClass']();
+
+                    $in = $t->info();
+
+                    if ((count($in['cols']) == 1 && count($in['primary']) == 0) || count($in['primary']) > 1) {
+                        throw new Exception('Columns:' . count($in['cols']) . ' Keys:' . count($in['primary']));
+                        # break;
+                    }
+
+                    if (count($in['primary']) == 1) {
+                        $field1 = array_shift($in['primary']);
+                        $field2 = $refColumn;
+                    }
+
+                    $final['values'][$column] = array();
+                    $r = $t->fetchAll()->toArray();
+
+                    if ($detail['NULLABLE'] == 1) {
+                        $final['values'][$column][""] = "-- Empty --";
+                    }
+
+                    foreach ($r as $field) {
+                        $final['values'][$column][$field[$field1]] = $field[$field2];
+                    }
+
+                    $form['elements'][$column] = array('select', array('decorators'=>$this->elementDecorators,'multiOptions' => $final['values'][$column], 'label' => $column));
+
+                    $next = true;
+
+                }
+
+            }
+
+            if ($next === true) {
+                continue;
+            }
+
+            if (stripos($detail['DATA_TYPE'], 'enum') !== false) {
+                preg_match_all('/\'(.*?)\'/', $detail['DATA_TYPE'], $result);
+
+                $options = array();
+                foreach ($result[1] as $match) {
+                    $options[$match] = ucfirst($match);
+                }
+
+                $form['elements'][$column] = array('select', array('decorators'=>$this->elementDecorators,'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true,'label' => $column));
+
+                continue;
+            }
+
+            if (stripos($detail['DATA_TYPE'], 'set') !== false) {
+                preg_match_all('/\'(.*?)\'/', $detail['DATA_TYPE'], $result);
+
+                $options = array();
+                foreach ($result[1] as $match) {
+                    $options[$match] = ucfirst($match);
+                }
+
+                $form['elements'][$column] = array('multiCheckbox', array('decorators'=>$this->elementDecorators,'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true,'label' => $column));
+
+                continue;
+            }
+
+            switch ($detail['DATA_TYPE']) {
+
+                case 'varchar':
+                case 'char':
+                    $length = $detail['LENGTH'];
+                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $column, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    break;
+                case 'date':
+                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array('Date')), 'size' => 10, 'label' => $column, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    break;
+                case 'datetime':
+                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $column, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    break;
+
+                case 'text':
+                case 'mediumtext':
+                case 'longtext':
+                case 'smalltext':
+                    $form['elements'][$column] = array('textarea', array('decorators'=>$this->elementDecorators,'label' => $column, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    break;
+
+                case 'int':
+                case 'bigint':
+                case 'mediumint':
+                case 'smallint':
+                case 'tinyint':
+                    $defaultIsZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
+                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array('Digits'), 'label' => $column, 'size' => 10, 'required' => ($defaultIsZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    break;
+
+                case 'float':
+                case 'decimal':
+                case 'double':
+                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array('Float'), 'size' => 10, 'label' => $column, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        $form['elements']['form_submit'] = array('submit', array('decorators'=>$this->buttonDecorators,'label' => 'Submit', 'class' => 'submit'));
+        $form['elements']['_form_edit'] = array('hidden', array('decorators'=>$this->buttonHidden,'value'=>1));
+
+        $this->setDecorators(array(
+    'FormElements',
+    array('HtmlTag', array('tag' => 'table','style'=>'width:98%')),
+    'Form',
+));
+
+        $this->setOptions($form);
+        return $this;
+    }
+
+
+    function getModel()
+    {
+        return $this->_model;
+    }
+
+    function addColumns ()
+    {
+        $columns = func_get_args();
+        $final = array();
+        if (is_array($columns[0])) {
+            $columns = $columns[0];
+        }
+        foreach ($columns as $value) {
+            if ($value instanceof Bvb_Grid_Form_Column) {
+                array_push($final, $value);
+            }
+        }
+        $this->fields = $final;
+        return $this;
+    }
 
 }

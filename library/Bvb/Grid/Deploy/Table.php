@@ -18,7 +18,8 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements
+Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'table';
@@ -45,26 +46,26 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected $messageOk;
 
     /**
-     * [PT] Se o formulário foi submetido com sucesso
+     * Se o formulário foi submetido com sucesso
      *
      * @var bool
      */
     protected $formSuccess = 0;
 
     /**
-     * [PT] If the form has been submited
+     * If the form has been submited
      *
      * @var bool
      */
     protected $formPost = 0;
 
     /**
-     * [PT] Form values
+     * Form values
      */
     protected $_formValues = array();
 
     /**
-     * [PT] Form error messages
+     * Form error messages
      *
      * @var unknown_type
      */
@@ -213,6 +214,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
     /**
+     *
+     * @var Zend_Form
+     */
+    protected $_form;
+
+
+    /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
      * it here.
      *
@@ -298,123 +306,62 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         }
 
-        //Check if the request method is POST
-        if (Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit') == 1) {
 
-            $param = Zend_Controller_Front::getInstance()->getRequest();
-
+        if ($this->allowAdd == 1 || $this->allowEdit == 1) {
             $opComm = isset($this->ctrlParams['comm']) ? $this->ctrlParams['comm'] : '';
             $op_query = self::_convertComm($opComm);
 
             $get_mode = isset($op_query['mode']) ? $op_query['mode'] : '';
             $mode = $get_mode == 'edit' ? 'edit' : 'add';
-
-            // We must know what fields to get with getPost(). We only gonna get the fieds
-            // That belong to the database table. We must ensure we process the right data.
-            // So we also must verify if have been defined the fields to process
-            if (is_array($this->info[$mode]['fields'])) {
-                $fields = array();
-
-                foreach ($this->info[$mode]['fields'] as $key => $value) {
-                    $fields[$key] = $key;
-                }
-
-            } else {
-                $fields = parent::_getFields($mode, $this->data['table']);
-            }
-
             $queryUrl = $this->_getPkFromUrl();
 
-            // Apply filter and validators. Firtst we apply the filters
-            foreach ($fields as $value) {
+            if ($mode == 'edit') {
+                $r = $this->_form->getModel()->fetchRow($queryUrl)->toArray();
 
-                $this->_formValues[$value] = $param->getPost($value);
+                foreach ($r as $key => $value) {
 
-                $fieldType = $this->_getFieldType($value, $this->data['table']);
-
-                if (substr($fieldType, 0, 3) != 'set') {
-
-                    $result = $this->_applyFilters($param->getPost($value), $value, $mode);
-
-                    $result = $this->_validate($result, $value, $mode);
-
-                } else {
-
-                    $possibleValuesForSetField = explode(",", str_replace(array('(', ')', '\'', 'set'), array('', '', '', ''), $fieldType));
-
-                    if (is_array($param->getPost($value))) {
-
-                        $finalValue = array_intersect($possibleValuesForSetField, $param->getPost($value));
-                    } else {
-                        $finalValue = null;
+                    $isField = $this->_form->getElement($key);
+                    if (isset($isField)) {
+                        $this->_form->getElement($key)->setValue($value);
                     }
 
-                    if (count($finalValue) > 0) {
-                        $result = implode(',', $finalValue);
-                    } else {
-                        $result = '';
-                    }
                 }
-
-                $final[$value] = $result;
-
             }
+        }
 
-            // If pass validation
-            if ($this->_failedValidation !== true) {
+        //Check if the request method is POST
+        if (Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit') == 1) {
 
-                // Check ig the user has defined "force" fields. If so we need to merge them
-                // With the ones we get from the form process
-                $force = $this->info[$mode]['force'];
-                if (is_array($force)) {
-                    $final_values = array_merge($final, $force);
+            if ($this->_form->isValid($_POST)) {
 
-                } else {
-                    $final_values = $final;
+                $post = array();
+
+                foreach ($this->_form->getElements() as $el) {
+                    $post[$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
                 }
 
-                $pk2 = parent::_getPrimaryKey();
+                unset($post['form_submit']);
+                unset($post['_form_edit']);
 
-                foreach ($pk2 as $value) {
-                    unset($final_values[$value]);
-                }
+                $param = Zend_Controller_Front::getInstance()->getRequest();
 
-                //Deal with readonly and disabled attributes.
-                //Also check for security issues
-                foreach (array_keys($final_values) as $key) {
+                $modelInfo = $this->_form->getModel()->info();
 
-                    if (isset($this->info['add']['fields'][$key]['attributes']['disabled'])) {
-                        unset($final_values[$key]);
-                    }
 
-                    if ($mode == 'add') {
-
-                        if (isset($this->info['add']['fields'][$key]['attributes']['readonly'])) {
-                            $final_values[$key] = '';
-                        }
-
-                    }
-
-                    if ($mode == 'edit') {
-
-                        if (isset($this->info['add']['fields'][$key]['attributes']['readonly'])) {
-                            unset($final_values[$key]);
-                        }
-                    }
-                }
-
+                echo $mode;
+                die();
                 // Process data
-                if ($mode == 'add' && is_array($final_values)) {
+                if ($mode == 'add') {
 
                     try {
 
                         if (null !== $this->_callbackBeforeInsert) {
-                            call_user_func_array($this->_callbackBeforeInsert, $final_values);
+                            call_user_func_array($this->_callbackBeforeInsert, $post);
                         }
-                        $this->_db->insert($this->data['table'], $final_values);
+                        $this->_db->insert($modelInfo['name'], $post);
 
                         if (null !== $this->_callbackAfterInsert) {
-                            call_user_func_array($this->_callbackAfterInsert, $final_values);
+                            call_user_func_array($this->_callbackAfterInsert, $post);
                         }
 
                         $this->message = $this->__('Record saved');
@@ -429,20 +376,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 }
 
                 // Process data
-                if ($mode == 'edit' && is_array($final_values)) {
+                if ($mode == 'edit') {
 
                     $where = isset($this->info['edit']['where']) ? " AND " . $this->info['edit']['where'] : '';
 
                     try {
 
                         if (null !== $this->_callbackBeforeUpdate) {
-                            call_user_func_array($this->_callbackBeforeUpdate, $final_values);
+                            call_user_func_array($this->_callbackBeforeUpdate, $post);
                         }
 
-                        $this->_db->update($this->data['table'], $final_values, $queryUrl . $where);
+                        echo $queryUrl . $where;die();
+                        $this->_db->update($modelInfo['name'], $post, $queryUrl . $where);
 
                         if (null !== $this->_callbackAfterUpdate) {
-                            call_user_func_array($this->_callbackAfterUpdate, $final_values);
+                            call_user_func_array($this->_callbackAfterUpdate, $post);
                         }
 
                         $this->message = $this->__('Record saved');
@@ -456,10 +404,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     //No need to show the form
                     $this->_editNoForm = 1;
-
                     unset($this->ctrlParams['comm']);
                     unset($this->ctrlParams['edit']);
-
                 }
 
                 if ($this->cache['use'] == 1) {
@@ -473,17 +419,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $this->messageOk = false;
                 $this->formSuccess = 0;
                 $this->formPost = 1;
-
-                $final_values = null;
-
+                $post = null;
             }
 
-            // Unset all params so we can have a more ckean URl when calling $this->getUrl
-            if (is_array($final_values)) {
-                foreach ($final_values as $key => $value) {
-                    unset($this->ctrlParams[$key]);
-                }
-            }
         }
 
         if ($this->formSuccess == 1) {
@@ -520,102 +458,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         return $final;
     }
 
-    /**
-     * Apply filter susing the Zend Framework set.
-     *
-     * @param string $value
-     * @param string $field
-     * @param string $mode
-     * @return string
-     */
-    protected function _applyFilters ($value, $field, $mode)
-    {
-
-        $filters = isset($this->info[$mode]['fields'][$field]['filters']) ? $this->info[$mode]['fields'][$field]['filters'] : '';
-
-        if (is_array($filters)) {
-            //It has filters to apply. Get dirs...
-            foreach ($filters as $func) {
-                $class = $this->_elements['filter']->load($func);
-                $t = new $class();
-                $value = $t->filter($value);
-            }
-        }
-
-        return $value;
-    }
-
-    /**
-     * Validate fields using the set on he Zend Framework
-     *
-     * @param string $value
-     * @param string $field
-     * @param string $mode
-     * @return string
-     */
-    protected function _validate ($value, $field, $mode = 'edit')
-    {
-
-        //Array with allowed values
-        $values = isset($this->info[$mode]['fields'][$field]['values']) ? $this->info[$mode]['fields'][$field]['values'] : '';
-
-        //Array of validators
-        $validators = isset($this->info[$mode]['fields'][$field]['validators']) ? $this->info[$mode]['fields'][$field]['validators'] : '';
-
-        //Check if the value is in the allowed values array
-        if (is_array($values) && $mode == 'edit') {
-
-            if (! in_array($value, $values) && ! array_key_exists($value, $values)) {
-                $this->_failedValidation = true;
-                return false;
-            }
-
-        } elseif (is_array($validators)) {
-
-            foreach ($validators as $key => $func) {
-
-                if (is_array($validators[$key])) {
-                    $func = $key;
-                }
-
-                $class = $this->_elements['validator']->load($func);
-
-                // If an array, means the Validator receives arguments
-                if (is_array($validators[$key])) {
-                    // If an array, means the Validator receives arguments
-                    $refObj = new ReflectionClass($class);
-                    $t = $refObj->newInstanceArgs($validators[$key]);
-                    $return = $t->isValid($value);
-
-                    if ($return === false) {
-                        $this->_failedValidation = true;
-                        foreach ($t->getMessages() as $messageId => $message) {
-                            $this->_formMessages[$field][] = array($messageId => $message);
-                        }
-                        return false;
-                    }
-
-                } else {
-
-                    $t = new $class();
-                    $return = $t->isValid($value);
-
-                    if ($return === false) {
-                        $this->_failedValidation = true;
-                        foreach ($t->getMessages() as $messageId => $message) {
-                            $this->_formMessages[$field][] = array($messageId => $message);
-                        }
-                        return false;
-                    }
-                }
-
-            }
-
-        }
-
-        return $value;
-
-    }
 
     /**
      * Remove the record from the table
@@ -682,7 +524,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 call_user_func_array($this->_callbackBeforeDelete, $this->_getPkFromUrl(false) . $where);
             }
 
-            $resultDelete = $this->_db->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
+            $r = $this->_form->getModel()->info();
+
+            $resultDelete = $this->_db->delete($r['name'], $this->_getPkFromUrl(false) . $where);
 
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
@@ -1168,133 +1012,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
     }
 
-    /**
-     * The table to show when editing or adding records
-     *
-     * @return string
-     */
-    protected function _gridForm ()
-    {
-
-        $view = $this->_view;
-
-        // Remove the unnecessary URL params
-        $url = parent::_getUrl(array('comm', 'edit', 'add'));
-
-        $button_name = $this->__('Add');
-
-        // Get the comm param, and "decode" it
-        $final = self::_convertComm();
-
-        $fields = $this->_fields;
-
-        if (is_array(@$this->info['add']['fields'])) {
-
-            foreach ($this->info['add']['fields'] as $value) {
-                $fields_to[$value['field']] = $value['field'];
-            }
-
-            $fields = $fields_to;
-            $mod = 'add';
-
-        }
-
-        $form_hidden = $view->formButton('cancel', $this->__('Cancel'), array('onClick' => $view->escape("window.location='$url'")));
-        $form_hidden .= $view->formHidden('_form_edit', 1);
-
-        #$fields = parent::consolidateFields ( $fields, $this->data ['table'] );
-        if (count($fields) == 0) {
-            throw new Bvb_Grid_Exception('Upsss. It seams there was an error while intersecting your fields with the table fields. Please make sure you allow the fields you are defining...');
-        }
-
-        $grid = $this->temp['table']->formStart();
-
-        if (isset($final['mode'])) {
-
-            if ($final['mode'] == 'edit' && ! $this->_editNoForm) {
-
-                $select = clone $this->_select;
-
-                foreach ($this->_getPkFromUrl(true) as $key => $value) {
-                    $select->where("$key = ?", $value);
-                }
-
-                $select->reset(Zend_Db_Select::COLUMNS);
-                $select->reset(Zend_Db_Select::LIMIT_COUNT);
-                $select->reset(Zend_Db_Select::LIMIT_OFFSET);
-
-                $select->columns(array_keys($this->info['edit']['fields']));
-
-                $stmt = $select->query();
-                $result = $stmt->fetchAll();
-
-                $fields = array();
-
-                foreach ($result[0] as $key => $value) {
-                    $fields[$key] = $value;
-                }
-
-                $button_name = $this->__('Edit');
-
-                $mod = 'edit';
-
-                #$form_hidden = " <input type=\"button\"  onclick=\"window.location='$url'\" value=\"" . $this->__ ( 'Cancel' ) . "\"><input type=\"hidden\" name=\"_form_edit\" value=\"1\">";
-                $fields = self::_removeAutoIncrement($fields, $this->data['table']);
-
-            }
-        }
-
-        $titles = $this->_fields;
-
-        if (is_array($this->info[$mod]['fields'])) {
-            unset($titles);
-            foreach ($this->info[$mod]['fields'] as $key => $value) {
-                $titles[] = $key;
-            }
-        }
-
-        #$titles = parent::consolidateFields ( $titles, $this->data ['table'] );
-        $grid .= $this->temp['table']->formHeader();
-
-        $i = 0;
-
-        foreach ($fields as $key => $value) {
-
-            $grid .= $this->temp['table']->formStart();
-
-            $finalV = '';
-            if (isset($this->_formMessages[$titles[$i]])) {
-                if (is_array($this->_formMessages[$titles[$i]])) {
-                    foreach ($this->_formMessages[$titles[$i]] as $formS) {
-                        $finalV .= '<br />' . implode('<br />', $formS);
-                    }
-                    $finalV = '<span style="color:red;">' . $finalV . '</span>';
-                }
-            } else {
-                $finalV = '';
-            }
-
-            $fieldValue = isset($this->_formValues[$value]) ? $this->_formValues[$value] : '';
-            $fieldDescription = isset($this->info['add']['fields'][$titles[$i]]['description']) ? $this->info['add']['fields'][$titles[$i]]['description'] : '';
-
-            $fieldTitle = isset($this->info['add']['fields'][$titles[$i]]['title']) ? $this->info['add']['fields'][$titles[$i]]['title'] : '';
-
-            $grid .= str_replace("{{value}}", $this->__($fieldTitle) . '<br><em>' . $this->__($fieldDescription) . '</em>', $this->temp['table']->formLeft());
-
-            $grid .= str_replace("{{value}}", self::_buildFormElement($key, $value, $mod, $fieldValue) . $finalV, $this->temp['table']->formRight());
-
-            $grid .= $this->temp['table']->formEnd();
-
-            $i ++;
-        }
-
-        $grid .= $this->temp['table']->formStart();
-        $grid .= str_replace("{{value}}", $view->formSubmit('submitForm', $button_name) . $form_hidden . "", $this->temp['table']->formButtons());
-        $grid .= $this->temp['table']->formEnd();
-
-        return $grid;
-
-    }
 
     /**
      * Buil the table
@@ -1670,6 +1387,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         return $fields;
     }
 
+
     /**
      * Here we go....
      *
@@ -1677,6 +1395,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     function deploy ()
     {
+
 
         $url = parent::_getUrl('comm');
 
@@ -1694,6 +1413,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         //colspan to apply
         #  $this->_colspan();
+
+
+
 
         // The extra fields, they are not part of database table.
         // Usefull for adding links (a least for me :D )
@@ -1763,12 +1485,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                 $url = parent::_getUrl($removeParams);
 
-                $grid .= "<form method=\"post\" action=\"$url\">" . $this->temp['table']->formGlobal() . $this->_gridForm() . "</form><br><br>";
+                $grid .= $this->_form;
 
             }
         }
-
-        $grid .= $this->_view->formHidden('inputId');
 
         if ((isset($this->info['double_tables']) && $this->info['double_tables'] == 1) || (@$this->ctrlParams['edit'] != 1 && @$this->ctrlParams['add'] != 1)) {
 
@@ -1907,10 +1627,22 @@ function gridChangeFilters(fields,url,Ajax)
 
     /**
      *
+     *@var Bvb_Grid_Form
      * @return unknown
      */
     function addForm ($form)
     {
+
+        if (is_null($form->getModel())) {
+            if (is_null($this->_model)) {
+                throw new Bvb_Grid_Exception('Please set the model to use');
+            }
+            $form->setModel($this->_model);
+        }
+
+        $action = isset($this->ctrlParams['edit'])?'edit':'add';
+        $form->setAction($this->_baseUrl . '/' . $this->ctrlParams['controller'] . '/' . $this->ctrlParams['action'] . '/'.$action.'/1');
+        $this->_form = $form;
 
         $form = $this->_object2array($form);
 
@@ -1947,14 +1679,6 @@ function gridChangeFilters(fields,url,Ajax)
             }
         }
 
-        $checkFields = array_keys($fields);
-
-        foreach ($checkFields as $field) {
-            $explode = explode('.', $this->data['fields'][$field]['field']);
-            if (reset($explode) != $this->data['tableAlias']) {
-                throw new Bvb_Grid_Exception('You can only add/update fields from your main table');
-            }
-        }
 
         $options = $form['options'];
 
@@ -2149,7 +1873,7 @@ function gridChangeFilters(fields,url,Ajax)
      *
      * @return Bvb_Grid_Deploy_JqGrid
      */
-    public function setView(Zend_View_Interface $view = null)
+    public function setView (Zend_View_Interface $view = null)
     {
         $this->_view = $view;
         return $this;
@@ -2162,7 +1886,7 @@ function gridChangeFilters(fields,url,Ajax)
      *
      * @return Zend_View_Interface|null
      */
-    public function getView()
+    public function getView ()
     {
         if (null === $this->_view) {
             $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
