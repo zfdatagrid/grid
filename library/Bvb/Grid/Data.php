@@ -351,7 +351,7 @@ class Bvb_Grid_Data
      * Functions to be aplied on every field sbefore dislpay
      * @var unknown_type
      */
-    protected $_escapeFunction =  'htmlspecialchars';
+    protected $_escapeFunction = 'htmlspecialchars';
 
     /**
      * array of used tables
@@ -434,7 +434,7 @@ class Bvb_Grid_Data
      * before fisplay
      * @param array $functions
      */
-    public function setDefaultEscapeFunction ( $functions)
+    public function setDefaultEscapeFunction ($functions)
     {
         $this->_escapeFunction = $functions;
         return $this;
@@ -1692,7 +1692,7 @@ class Bvb_Grid_Data
                 $new_value = $dados[$fields[$is]];
 
 
-                $new_value = $this->_escapeField($fields[$is],$new_value);
+                $new_value = $this->_escapeField($fields[$is], $new_value);
 
                 if (isset($this->data['fields'][$fields[$is]]['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $this->data['fields'][$fields[$is]]['callback'], $search, $outputToReplace);
@@ -1953,7 +1953,7 @@ class Bvb_Grid_Data
                     } elseif ($value['order'] == 'first') {
                         $fields_final[($lastIndex - 10)] = $key;
                     } elseif ($value['order'] == 'next') {
-                        $norder++;
+                        $norder ++;
                         $fields_final[$norder] = $key;
                     } else {
 
@@ -2486,13 +2486,13 @@ class Bvb_Grid_Data
      * @param string $template
      * @return unknown
      */
-    public function setTemplate ($template, $output = 'table',$options=array())
+    public function setTemplate ($template, $output = 'table', $options = array())
     {
 
         $class = $this->_templates[$output]->load($template, $output);
 
         if (isset($this->_options['template'][$output][$template])) {
-            $tpOptions = array_merge($this->_options['template'][$output][$template],$options);
+            $tpOptions = array_merge($this->_options['template'][$output][$template], $options);
         } else {
             $tpOptions = $options();
         }
@@ -2721,8 +2721,7 @@ class Bvb_Grid_Data
     public function query (Zend_Db_Select $select)
     {
 
-        if($this->_selectZendDb===true)
-        {
+        if ($this->_selectZendDb === true) {
             throw new Bvb_Grid_Exception('Cannot redeclare query()');
         }
 
@@ -3003,7 +3002,12 @@ class Bvb_Grid_Data
     }
 
 
-    function setModel(Zend_Db_Table_Abstract  $model)
+    /**
+     * Creating a query using a Model.
+     * @param Zend_Db_Table_Abstract $model
+     * @return $this
+     */
+    function setModel (Zend_Db_Table_Abstract $model)
     {
         $info = $model->info();
 
@@ -3011,39 +3015,57 @@ class Bvb_Grid_Data
 
         $map = $info['referenceMap'];
 
-        if(is_array($map) && count($map)>0)
-        {
+        if (is_array($map) && count($map) > 0) {
             $columnsToRemove = array();
 
-            foreach ($map as $sel)
-            {
+            foreach ($map as $sel) {
                 if (is_array($sel['columns'])) {
-                    $columnsToRemove = array_merge($columnsToRemove,$sel['columns']);
+                    $columnsToRemove = array_merge($columnsToRemove, $sel['columns']);
                 } else {
                     $columnsToRemove[] = $sel['columns'];
                 }
             }
 
-            $columnsMainTable = array_diff($info['cols'],$columnsToRemove);
+            $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
 
-            $select->from($info['name'],$columnsMainTable);
+            $select->from($info['name'], $columnsMainTable);
 
+            $i = 0;
+            foreach ($map as $sel) {
 
-            foreach ($map as $sel)
-            {
+                if ($i > 0) {
+                    $alias = '_' . $i;
+                } else {
+                    $alias = '';
+                }
+
                 $newClass = new $sel['refTableClass']();
                 $infoNewClass = $newClass->info();
 
                 if (is_array($sel['columns'])) {
                     $cols = array_combine($sel['columns'], $sel['refColumns']);
+
+                    foreach ($sel['columns'] as $key => $value) {
+                        if ($i > 0) {
+                            $alias = '_' . $i;
+                        } else {
+                            $alias = '';
+                        }
+                        $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias.'.'.array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
+                        $i ++;
+                    }
+
                 } else {
                     $cols = array($sel['columns'] => $sel['refColumns']);
+                    $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias.'.'.array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
                 }
-                $select->from($infoNewClass['name'],$cols);
+
+                $i ++;
             }
-        }else{
-             $select->from($info['name']);
+        } else {
+            $select->from($info['name']);
         }
+
 
         $this->query($select);
 
