@@ -347,9 +347,6 @@ Bvb_Grid_Deploy_Interface
 
                 $modelInfo = $this->_form->getModel()->info();
 
-
-                echo $mode;
-                die();
                 // Process data
                 if ($mode == 'add') {
 
