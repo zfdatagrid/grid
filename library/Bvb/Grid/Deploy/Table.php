@@ -1698,7 +1698,7 @@ function gridChangeFilters(fields,url,Ajax)
         }
 
         if (isset($options['edit']) && $options['edit'] == 1) {
-            $this->edit = array('allow' => 1, 'button' => $options['button'], 'fields' => $fields, 'force' => @$options['onEditForce']);
+            $this->edit = array('allow' => 1,  'fields' => $fields, 'force' => @$options['onEditForce']);
         }
         if (isset($options['onUpdateAddWhere'])) {
             $this->info['edit']['where'] = $options['onUpdateAddWhere'];

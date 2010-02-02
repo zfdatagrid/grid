@@ -30,10 +30,10 @@ class Bvb_Grid_Form extends Zend_Form
     protected $_model;
 
    public $elementDecorators = array(
-        'ViewHelper',    'Errors',
-
+        'ViewHelper',
+        'Errors',
         array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
-        array(array('label' => 'Label'), array('tag' => 'td')),
+        array(array('label' => 'Label'), array('tag' => 'td','class'=>'ois')),
         array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
         );
 

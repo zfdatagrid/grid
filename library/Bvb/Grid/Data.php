@@ -1937,6 +1937,7 @@ class Bvb_Grid_Data
             $lastIndex = 1;
             $norder = 0;
 
+
             foreach ($fields as $key => $value) {
 
                 //A parte da order
@@ -1949,7 +1950,7 @@ class Bvb_Grid_Data
                 if (isset($value['title'])) {
                     $titulos[$key] = $value['title'];
                 } else {
-                    $titulos[$key] = ucfirst($key);
+                    $titulos[$key] = ucwords(str_replace('_',' ',$key));
                 }
 
                 if (isset($value['order']) && $value['order'] >= 0) {
@@ -2679,7 +2680,7 @@ class Bvb_Grid_Data
                 $tableFields = array_keys($tableFields);
 
                 foreach ($tableFields as $field) {
-                    $title = ucfirst($field);
+                    $title = ucwords(str_replace('_',' ',$field));
                     $this->updateColumn($field, array('title' => $title, 'field' => $value[0] . '.' . $field));
                 }
 
@@ -2689,13 +2690,13 @@ class Bvb_Grid_Data
                 $title = ucwords(str_replace("_", ' ', end($explode)));
 
                 if (is_object($value[1])) {
-                    $title = $value[2];
+                    $title = ucwords(str_replace('_',' ',$value[2]));
                     $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[2]));
                 } elseif (strlen($value[2]) > 0) {
-                    $title = $value[2];
+                    $title = ucwords(str_replace('_',' ',$value[2]));
                     $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
                 } else {
-                    $title = ucfirst($value[1]);
+                    $title = ucwords(str_replace('_',' ',$value[1]));
                     $this->updateColumn($value[1], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
                 }
 
@@ -2771,7 +2772,8 @@ class Bvb_Grid_Data
      */
     public function getVersion ()
     {
-        return self::VERSION;
+        return '$Rev$';
+        #return self::VERSION;
     }
 
     /**

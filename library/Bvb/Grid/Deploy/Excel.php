@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Excel extends Bvb_Grid_Data {
+class Bvb_Grid_Deploy_Excel extends Bvb_Grid_Data  implements Bvb_Grid_Deploy_Interface {
 
 	const OUTPUT = 'excel';
 

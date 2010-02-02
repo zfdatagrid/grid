@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data
+class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'odt';
