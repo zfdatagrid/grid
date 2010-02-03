@@ -73,7 +73,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config);
 
-        $grid->SetEscapeOutput(false);
+        $grid->setEscapeOutput(false);
         $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
         $grid->addElementDir('My/Validate', 'My_Validate', 'validator');
         $grid->addElementDir('My/Filter', 'My_Filter', 'filter');
@@ -391,9 +391,13 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setModel(new Bugs());
 
+        $grid->updateColumn('bug_id',array('hidden'=>1));
+        $grid->updateColumn('date',array('hidden'=>1));
+        $grid->updateColumn('time',array('hidden'=>1));
+        $grid->updateColumn('seguinte',array('hidden'=>1));
+
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
-
         $grid->addForm($form);
 
         $this->view->pages = $grid->deploy();

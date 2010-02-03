@@ -17,11 +17,16 @@ input[type='button'],input[type='submit']
 	background: #FFF url(../images/hbar.jpg);
 	border:1px solid #666;
 	cursor:pointer;
-	}
+}
 
 td div input {
 	width: 98% !important;
 	border: 1px solid #ddd;
+}
+
+input[type='button'],input[type='submit'], button
+{
+    width:auto !important;
 }
 
 #newGrid {
@@ -128,6 +133,9 @@ td.esquerda {
 	color: #FF0000;
 }
 
+.errors{
+	padding-left:15;margin:0;margin-top:5px;
+}
 .formLabel {
 	text-align: right;
 	display: block;
@@ -253,12 +261,10 @@ td.alt,tr.alt  td {
 }
 
 .alerta_red {
-	border: 1px solid #4c1414;
-	padding: 5px;
-	margin: 10px;
+	padding: 1px;
+	margin: 2px;
 	text-align: center;
 	color: #DA1609;
-	font-weight: bold;
 }
 
 .tabela_print a {
@@ -299,7 +305,7 @@ th a {
 	color: #FFF;
 }
 
-th {
+th, .elementLabel {
 	font: 11px Verdana, Arial, Helvetica, sans-serif;
 	color: #FFFFFF;
 	border-right: 1px solid #ffa500;

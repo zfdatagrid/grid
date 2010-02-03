@@ -29,24 +29,12 @@ class Bvb_Grid_Form extends Zend_Form
 
     protected $_model;
 
-   public $elementDecorators = array(
-        'ViewHelper',
-        'Errors',
-        array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
-        array(array('label' => 'Label'), array('tag' => 'td','class'=>'ois')),
-        array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
-        );
+    public $elementDecorators = array('ViewHelper', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td', 'class' => 'ois')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
 
-    public $buttonHidden = array(
-            'ViewHelper',
-    );
+    public $buttonHidden = array('ViewHelper');
 
-    public $buttonDecorators = array(
-            'ViewHelper',
-            array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element','colspan'=>'2')),
-            array(array('row' => 'HtmlTag'), array('tag' => 'tr')),
-    );
+    public $buttonDecorators = array('ViewHelper', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element', 'colspan' => '2')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     public function ploadDefaultDecorators ()
     {
@@ -162,7 +150,7 @@ class Bvb_Grid_Form extends Zend_Form
 
         foreach ($cols as $column => $detail) {
 
-            $label = ucwords(str_replace('_',' ',$column));
+            $label = ucwords(str_replace('_', ' ', $column));
 
             $next = false;
 
@@ -207,7 +195,7 @@ class Bvb_Grid_Form extends Zend_Form
                         $final['values'][$column][$field[$field1]] = $field[$field2];
                     }
 
-                    $form['elements'][$column] = array('select', array('decorators'=>$this->elementDecorators,'multiOptions' => $final['values'][$column], 'label' => $label));
+                    $form['elements'][$column] = array('select', array('decorators' => $this->elementDecorators, 'multiOptions' => $final['values'][$column], 'label' => $label));
 
                     $next = true;
 
@@ -227,7 +215,7 @@ class Bvb_Grid_Form extends Zend_Form
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('select', array('decorators'=>$this->elementDecorators,'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true,'label' => $label));
+                $form['elements'][$column] = array('select', array('decorators' => $this->elementDecorators, 'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
 
                 continue;
             }
@@ -240,7 +228,7 @@ class Bvb_Grid_Form extends Zend_Form
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('multiCheckbox', array('decorators'=>$this->elementDecorators,'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true,'label' => $label));
+                $form['elements'][$column] = array('multiCheckbox', array('decorators' => $this->elementDecorators, 'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
 
                 continue;
             }
@@ -250,20 +238,20 @@ class Bvb_Grid_Form extends Zend_Form
                 case 'varchar':
                 case 'char':
                     $length = $detail['LENGTH'];
-                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
                 case 'date':
-                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
                 case 'datetime':
-                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
                 case 'smalltext':
-                    $form['elements'][$column] = array('textarea', array('decorators'=>$this->elementDecorators,'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    $form['elements'][$column] = array('textarea', array('decorators' => $this->elementDecorators, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
                     break;
 
                 case 'int':
@@ -272,13 +260,13 @@ class Bvb_Grid_Form extends Zend_Form
                 case 'smallint':
                 case 'tinyint':
                     $defaultIsZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
-                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($defaultIsZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($defaultIsZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 case 'float':
                 case 'decimal':
                 case 'double':
-                    $form['elements'][$column] = array('text', array('decorators'=>$this->elementDecorators,'validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 default:
@@ -286,21 +274,22 @@ class Bvb_Grid_Form extends Zend_Form
             }
         }
 
-        $form['elements']['form_submit'] = array('submit', array('decorators'=>$this->buttonDecorators,'label' => 'Submit', 'class' => 'submit'));
-        $form['elements']['_form_edit'] = array('hidden', array('decorators'=>$this->buttonHidden,'value'=>1));
+        #$form['elements']['form_submit'] = array('submit', array('decorators' => $this->buttonDecorators, 'label' => 'Submit', 'class' => 'submit'));
+        $form['elements']['_form_edit'] = array('hidden', array('decorators' => $this->buttonHidden, 'value' => 1));
 
-        $this->setDecorators(array(
-    'FormElements',
-    array('HtmlTag', array('tag' => 'table','style'=>'width:98%')),
-    'Form',
-));
+        $this->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
+
 
         $this->setOptions($form);
+
+
         return $this;
     }
 
-
-    function getModel()
+    /**
+     * @var Zend_From
+     */
+    function getModel ()
     {
         return $this->_model;
     }

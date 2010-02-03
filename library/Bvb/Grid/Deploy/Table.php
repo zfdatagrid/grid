@@ -311,20 +311,23 @@ Bvb_Grid_Deploy_Interface
             $opComm = isset($this->ctrlParams['comm']) ? $this->ctrlParams['comm'] : '';
             $op_query = self::_convertComm($opComm);
 
-            $get_mode = isset($op_query['mode']) ? $op_query['mode'] : '';
-            $mode = $get_mode == 'edit' ? 'edit' : 'add';
+
+            $mode = isset($this->ctrlParams['edit'])?'edit':'add';
+
             $queryUrl = $this->_getPkFromUrl();
 
-            if ($mode == 'edit') {
-                $r = $this->_form->getModel()->fetchRow($queryUrl)->toArray();
 
-                foreach ($r as $key => $value) {
+            if (!Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
+                if ($mode == 'edit') {
+                    $r = $this->_form->getModel()->fetchRow($queryUrl)->toArray();
 
-                    $isField = $this->_form->getElement($key);
-                    if (isset($isField)) {
-                        $this->_form->getElement($key)->setValue($value);
+                    foreach ($r as $key => $value) {
+
+                        $isField = $this->_form->getElement($key);
+                        if (isset($isField)) {
+                            $this->_form->getElement($key)->setValue($value);
+                        }
                     }
-
                 }
             }
         }
@@ -342,10 +345,12 @@ Bvb_Grid_Deploy_Interface
 
                 unset($post['form_submit']);
                 unset($post['_form_edit']);
+                unset($post['form_reset']);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
                 $modelInfo = $this->_form->getModel()->info();
+
 
                 // Process data
                 if ($mode == 'add') {
@@ -355,7 +360,8 @@ Bvb_Grid_Deploy_Interface
                         if (null !== $this->_callbackBeforeInsert) {
                             call_user_func_array($this->_callbackBeforeInsert, $post);
                         }
-                        $this->_db->insert($modelInfo['name'], $post);
+
+                        $this->_form->getModel()->insert($post);
 
                         if (null !== $this->_callbackAfterInsert) {
                             call_user_func_array($this->_callbackAfterInsert, $post);
@@ -383,8 +389,7 @@ Bvb_Grid_Deploy_Interface
                             call_user_func_array($this->_callbackBeforeUpdate, $post);
                         }
 
-                        echo $queryUrl . $where;die();
-                        $this->_db->update($modelInfo['name'], $post, $queryUrl . $where);
+                        $this->_form->getModel()->update( $post, $queryUrl . $where);
 
                         if (null !== $this->_callbackAfterUpdate) {
                             call_user_func_array($this->_callbackAfterUpdate, $post);
@@ -409,6 +414,14 @@ Bvb_Grid_Deploy_Interface
                     $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
                 }
                 $this->formSuccess = 1;
+
+                foreach ($post as $key=>$value)
+                {
+                    unset($this->ctrlParams[$key]);
+                }
+
+                unset($this->ctrlParams['form_submit']);
+                unset($this->ctrlParams['_form_edit']);
 
             } else {
 
@@ -523,7 +536,7 @@ Bvb_Grid_Deploy_Interface
 
             $r = $this->_form->getModel()->info();
 
-            $resultDelete = $this->_db->delete($r['name'], $this->_getPkFromUrl(false) . $where);
+            $resultDelete = $this->_form->getModel()->delete( $this->_getPkFromUrl(false) . $where);
 
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
@@ -1622,6 +1635,8 @@ function gridChangeFilters(fields,url,Ajax)
         return $script;
     }
 
+
+
     /**
      *
      *@var Bvb_Grid_Form
@@ -1637,9 +1652,23 @@ function gridChangeFilters(fields,url,Ajax)
             $form->setModel($this->_model);
         }
 
+
+        $url = $this->_getUrl(array('add','edit','comm'));
         $action = isset($this->ctrlParams['edit'])?'edit':'add';
-        $form->setAction($this->_baseUrl . '/' . $this->ctrlParams['controller'] . '/' . $this->ctrlParams['action'] . '/'.$action.'/1');
+        $form->setAction($this->_getUrl());
+
+
+        $form->addElement('submit', 'form_submit', array( 'label' => 'Submit', 'class' => 'submit', 'decorators' => array('ViewHelper')));
+
+        $form->addElement('button', 'form_reset', array('onclick'=>"window.location='$url'",'label' => 'Cancel', 'class' => 'reset', 'decorators' => array('ViewHelper')));
+
+        $form->addDisplayGroup(array('form_submit','form_reset'), 'buttons', array('decorators' => array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper')));
+
+
         $this->_form = $form;
+
+        #$this->setButtons( array('save'=>'Save This Thing', 'cancel'=>'Cancel') );
+
 
         $form = $this->_object2array($form);
 
