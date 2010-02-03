@@ -25,7 +25,7 @@ text-decoration:none;
 <div style="float:left;top:20px;position:relative;left:20px;"><a href="<?php echo $this->url; ?>"><img border="0" width="230" height="50" src="<?php echo $this->url; ?>public/images/blank.gif"></img></a></div>
 <div id="menu" style="border:0;position:relative; top:20px;margin-left:300px;margin-right:200px;font-size:12px;">
 Examples:
-<select onchange="window.location=this.value" style="width:100%; padding:2px;font-size:12px;">
+<select onchange="window.location=this.value" style=" padding:2px;font-size:12px;">
        <option value="<?php echo $this->url ?>default/site/basic" <?php if($this->action=='basic'){echo " selected ";}?>>Basic example - $db->select()->from('table');</option>
        <option value="<?php echo $this->url ?>default/site/ajax" <?php if($this->action=='ajax'){echo " selected ";}?>>Basic example with AJAX;</option>
         <option value="<?php echo $this->url ?>default/site/joins" <?php if($this->action=='joins'){echo " selected ";}?>>Example with Joins - Several JOINS</option>

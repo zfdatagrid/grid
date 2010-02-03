@@ -4,6 +4,8 @@
  * @author mascker
  */
 
+include 'application/models/Model.php';
+
 class SiteController extends Zend_Controller_Action
 {
 
@@ -137,18 +139,18 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
 
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Name')));
+        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('country'=>'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city'=>'Name')));
 
-        $grid->updateColumn('c.Name', array('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{c.Name}} <em>({{ct.Name}})</em>'));
-        $grid->updateColumn('ct.Name', array('title' => 'Capital', 'hide' => 1));
-        $grid->updateColumn('c.Continent', array('title' => 'Continent'));
-        $grid->updateColumn('c.Population', array('title' => 'Population', 'class' => 'width_80'));
-        $grid->updateColumn('c.LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50'));
-        $grid->updateColumn('c.GovernmentForm', array('title' => 'Government Form'));
-        $grid->updateColumn('c.HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
+        $grid->updateColumn('country', array('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{country}} <em>({{city}})</em>'));
+        $grid->updateColumn('city', array('title' => 'Capital', 'hide' => 1));
+        $grid->updateColumn('Continent', array('title' => 'Continent'));
+        $grid->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'));
+        $grid->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50'));
+        $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
+        $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
 
         $extra = new Bvb_Grid_ExtraColumns();
-        $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{c.LifeExpectancy}}\" size=\"3\" name='number[]'>");
+        $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
         $esquerda = new Bvb_Grid_ExtraColumns();
         $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
@@ -159,71 +161,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    /**
-     * Performing CRUD operations.
-     *
-     * Check how easy it is to set a form.
-     *
-     */
-    function acrudAction ()
-    {
-
-        $db = Zend_Registry::get('db');
-
-        $grid = $this->grid('table');
-        $grid->query($this->_db->select()->from('crud', array('firstname', 'lastname', 'email', 'age', 'language', 'country', 'id')));
-
-
-        /*
-        $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1)->setOnAddForce(array('date_added' => date('Y-m-d H:i:s')))->setOnEditForce(array('date_added' => date('Y-m-d H:i:s')));
-
-        #->onDeleteCascade(array('table'=>'teste','parentField'=>'age','childField'=>'op','operand'=>'='))
-        $fAdd = new Zend_Form_Element_Text('firstname');
-        $fAdd->setLabel('First name')
-        ->addValidator('StringLength', false, array(3, 10))
-        ->addFilters(array('StripTags', 'StringTrim', 'StringToLower'))
-        ->setDescription('Insert your first name');
-
-        $lastName = new Zend_Form_Element_Text('lastname');
-        $lastName->setLabel('Last name')
-        ->setDescription('Your last name')
-         ->addValidator('StringLength', false, array(3, 10));
-
-        $country = new Zend_Form_Element_Select('country');
-        $country->setLabel('Country')
-        ->setDescription('Choose your Country')
-        ->setValue(array_combine($paises, $paises));
-
-        $email = new Zend_Form_Element_Text('email');
-        $email->setLabel('Email Address')
-        ->addValidators(array('EmailAddress'))
-        ->addFilters(array('StripTags', 'StringTrim', 'StringToLower'))
-        ->setDescription('Insert you email address');
-
-        $lang = new Zend_Form_Element_Select('language');
-        $lang->setLabel('Language')->setDescription('Your language');
-
-        $age = new Zend_Form_Element_Select('age');
-        $age->setLabel('Age')->setDescription('Choose your age')->setValue(array_combine(range(10, 100), range(10, 100)));
-
-
-        $submit = new Zend_Form_Element_Submit('sen');
-        $submit->setLabel('Send');
-
-        $form->addElements(array($fAdd, $lastName, $email, $lang, $country, $age,$submit));
-
-        #$form->addColumns($fAdd, $lastName, $email, $lang, $country, $age);
-
-*/
-
-        $form = new Bvb_Grid_Form();
-        $form->setModel(new City());
-        $grid->addForm($form);
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
 
     function csvAction ()
     {
@@ -238,7 +175,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->setDataFromXml('http://petala-azul.com/blog/feed/', 'channel,item');
+        $grid->setDataFromXml('http://zfdatagrid.com/blog/feed/', 'channel,item');
         $grid->setPagination(10);
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -277,27 +214,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    /**
-     * Please check the $pdf array to see how we can configure the template header and footer.
-     * If you are exporting to PDF you can even choose between a letter format or A4 format and set the page orientation
-     * landascape or '' (empty) for vertical
-     *
-     */
-    function pdfAction ()
-    {
-
-        $grid = $this->grid();
-        $grid->query($this->_db->select()->from('City'));
-
-        $pdf = array('logo' => 'public/images/logo.png', 'baseUrl' => '/grid/', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ', 'size' => 'a4', #letter || a4
-'orientation' => 'landscape', # || ''
-'page' => 'Page N.');
-
-        $grid->setTemplate('pdf', 'pdf', $pdf);
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
 
     /**
      * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
@@ -349,7 +265,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name')));
+        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name')));
         $grid->setPagination(15);
         #->noFilters(1);
         #->noOrder(1);
@@ -360,25 +276,22 @@ class SiteController extends Zend_Controller_Action
         $cap = new Bvb_Grid_Column('Country');
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
 
-        $name = new Bvb_Grid_Column('ct.Name');
+        $name = new Bvb_Grid_Column('Name');
         $name->title('Capital')->hide(1);
 
-        $continent = new Bvb_Grid_Column('c.Continent');
+        $continent = new Bvb_Grid_Column('Continent');
         $continent->title('Continent');
 
-        $population = new Bvb_Grid_Column('c.Population');
+        $population = new Bvb_Grid_Column('Population');
         $population->title('Population')->class('width_80');
 
-        $lifeExpectation = new Bvb_Grid_Column('c.LifeExpectancy');
-        $lifeExpectation->title('Life E.')->class('width_50');
-
-        $governmentForm = new Bvb_Grid_Column('c.GovernmentForm');
+        $governmentForm = new Bvb_Grid_Column('GovernmentForm');
         $governmentForm->title('Government Form');
 
-        $headState = new Bvb_Grid_Column('c.HeadOfState');
+        $headState = new Bvb_Grid_Column('HeadOfState');
         $headState->title('Head Of State');
 
-        $grid->updateColumns($cap, $name, $continent, $population, $lifeExpectation, $governmentForm, $headState);
+        $grid->updateColumns($cap, $name, $continent, $population, $governmentForm, $headState);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -398,7 +311,10 @@ class SiteController extends Zend_Controller_Action
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
+
         $grid->addForm($form);
+
+        $grid->export = array();
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -406,4 +322,3 @@ class SiteController extends Zend_Controller_Action
 
 
 }
-include 'application/models/Model.php';

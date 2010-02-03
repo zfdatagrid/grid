@@ -46,7 +46,7 @@ class JqgridController extends Zend_Controller_Action
     function exportAction()
     {
         // construct JqGrid and let it configure
-        $grid1 = Bvb_Grid_DataGrid::factory(
+        $grid1 = Bvb_Grid_Data::factory(
             'Bvb_Grid_Deploy_JqGrid', // this is the defualt grid class used to render on page
             array(
                 'csv'=>array($this, 'configG1PostCsv') // do post config for Csv export
