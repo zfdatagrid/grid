@@ -221,6 +221,19 @@ Bvb_Grid_Deploy_Interface
 
 
     /**
+     * If the form is based on a model or set by the user
+     * @var bool
+     */
+    protected $_formHasModel = false;
+
+    /**
+     * Show or not show the form
+     * @var bool
+     */
+    protected $_noForm = 0;
+
+
+    /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
      * it here.
      *
@@ -312,12 +325,12 @@ Bvb_Grid_Deploy_Interface
             $op_query = self::_convertComm($opComm);
 
 
-            $mode = isset($this->ctrlParams['edit'])?'edit':'add';
+            $mode = isset($this->ctrlParams['edit']) ? 'edit' : 'add';
 
             $queryUrl = $this->_getPkFromUrl();
 
 
-            if (!Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
+            if (! Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
                 if ($mode == 'edit') {
                     $r = $this->_form->getModel()->fetchRow($queryUrl)->toArray();
 
@@ -351,7 +364,6 @@ Bvb_Grid_Deploy_Interface
 
                 $modelInfo = $this->_form->getModel()->info();
 
-
                 // Process data
                 if ($mode == 'add') {
 
@@ -361,7 +373,11 @@ Bvb_Grid_Deploy_Interface
                             call_user_func_array($this->_callbackBeforeInsert, $post);
                         }
 
-                        $this->_form->getModel()->insert($post);
+                        if ($this->_formHasModel) {
+                            $this->_form->getModel()->insert($post);
+                        } else {
+                            $this->_db->insert($this->data['table'], $post);
+                        }
 
                         if (null !== $this->_callbackAfterInsert) {
                             call_user_func_array($this->_callbackAfterInsert, $post);
@@ -389,7 +405,11 @@ Bvb_Grid_Deploy_Interface
                             call_user_func_array($this->_callbackBeforeUpdate, $post);
                         }
 
-                        $this->_form->getModel()->update( $post, $queryUrl . $where);
+                        if ($this->_formHasModel) {
+                            $this->_form->getModel()->update($post, $queryUrl . $where);
+                        } else {
+                            $this->_db->update($this->data['table'], $post, $queryUrl . $where);
+                        }
 
                         if (null !== $this->_callbackAfterUpdate) {
                             call_user_func_array($this->_callbackAfterUpdate, $post);
@@ -404,8 +424,7 @@ Bvb_Grid_Deploy_Interface
                         $this->message = $this->__('Error updating record =>') . $e->getMessage();
                     }
 
-                    //No need to show the form
-                    $this->_editNoForm = 1;
+
                     unset($this->ctrlParams['comm']);
                     unset($this->ctrlParams['edit']);
                 }
@@ -414,14 +433,17 @@ Bvb_Grid_Deploy_Interface
                     $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
                 }
                 $this->formSuccess = 1;
+                $this->formPost = 1;
 
-                foreach ($post as $key=>$value)
-                {
+                foreach ($post as $key => $value) {
                     unset($this->ctrlParams[$key]);
                 }
 
                 unset($this->ctrlParams['form_submit']);
                 unset($this->ctrlParams['_form_edit']);
+
+                $this->_comm = false;
+                $this->_noForm = 1;
 
             } else {
 
@@ -429,20 +451,12 @@ Bvb_Grid_Deploy_Interface
                 $this->messageOk = false;
                 $this->formSuccess = 0;
                 $this->formPost = 1;
+                $this->_noForm = 0;
                 $post = null;
             }
 
         }
 
-        if ($this->formSuccess == 1) {
-            foreach ($this->ctrlParams as $key => $value) {
-                if ($key != 'module' && $key != 'controller' && $key != 'action') {
-                    unset($this->ctrlParams[$key]);
-                }
-            }
-
-            $this->_comm = false;
-        }
     }
 
     /**
@@ -534,10 +548,11 @@ Bvb_Grid_Deploy_Interface
                 call_user_func_array($this->_callbackBeforeDelete, $this->_getPkFromUrl(false) . $where);
             }
 
-            $r = $this->_form->getModel()->info();
-
-            $resultDelete = $this->_form->getModel()->delete( $this->_getPkFromUrl(false) . $where);
-
+            if ($this->_formHasModel) {
+                $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
+            } else {
+                $resultDelete = $this->_db->delete($this->data['table'],$this->_getPkFromUrl(false) . $where);
+            }
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
                     call_user_func_array($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
@@ -1421,12 +1436,6 @@ Bvb_Grid_Deploy_Interface
             $this->setTemplate('table', 'table');
         }
 
-        //colspan to apply
-        #  $this->_colspan();
-
-
-
-
         // The extra fields, they are not part of database table.
         // Usefull for adding links (a least for me :D )
         $grid = $this->_printScript();
@@ -1482,9 +1491,9 @@ Bvb_Grid_Deploy_Interface
             $grid .= str_replace("{{value}}", $this->message, $this->temp['table']->formMessage($this->messageOk));
         }
 
-        if (((isset($this->ctrlParams['edit']) && $this->ctrlParams['edit'] == 1) || @$this->ctrlParams['add'] == 1 || @$this->info['double_tables'] == 1) || ($this->formPost == 1 && $this->formSuccess == 0)) {
+        if (((isset($this->ctrlParams['edit']) && $this->ctrlParams['edit'] == 1) || (isset($this->ctrlParams['add']) && $this->ctrlParams['add'] == 1) || (isset($this->ctrlParams['double_tables']) && $this->ctrlParams['double_tables'] == 1))) {
 
-            if (($this->allowAdd == 1 && $this->_editNoForm != 1) || ($this->allowEdit == 1 && strlen($this->_comm) > 1)) {
+            if (($this->allowAdd == 1 || $this->allowEdit == 1) && $this->_noForm == 0) {
 
                 // Remove the unnecessary URL params
                 $removeParams = array('filters', 'add');
@@ -1500,19 +1509,16 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
-        if ((isset($this->info['double_tables']) && $this->info['double_tables'] == 1) || (@$this->ctrlParams['edit'] != 1 && @$this->ctrlParams['add'] != 1)) {
+        if (((! isset($this->ctrlParams['edit']) || $this->ctrlParams['edit'] != 1) && (! isset($this->ctrlParams['add']) || $this->ctrlParams['add'] != 1)) || $this->_noForm == 1) {
 
-            if (($this->formPost == 1 && $this->formSuccess == 1) || $this->formPost == 0) {
-
-                $grid .= self::_buildHeader();
-                $grid .= self::_buildTitlesTable(parent::_buildTitles());
-                $grid .= self::_buildFiltersTable(parent::_buildFilters());
-                $grid .= self::_buildGridTable(parent::_buildGrid());
-                $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
-                $grid .= self::_pagination();
-
-            }
+            $grid .= self::_buildHeader();
+            $grid .= self::_buildTitlesTable(parent::_buildTitles());
+            $grid .= self::_buildFiltersTable(parent::_buildFilters());
+            $grid .= self::_buildGridTable(parent::_buildGrid());
+            $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
+            $grid .= self::_pagination();
         }
+
         $grid .= $this->temp['table']->globalEnd();
 
         if (isset($this->ctrlParams['gridmod']) && $this->ctrlParams['gridmod'] == 'ajax' && $this->info['ajax'] !== false) {
@@ -1645,30 +1651,34 @@ function gridChangeFilters(fields,url,Ajax)
     function addForm ($form)
     {
 
-        if (is_null($form->getModel())) {
+        if (is_null($form->getModel()) && count($form->getElements()) == 0) {
             if (is_null($this->_model)) {
                 throw new Bvb_Grid_Exception('Please set the model to use');
             }
             $form->setModel($this->_model);
+
+            $this->_formHasModel = true;
+        } elseif (count($form->getElements()) > 0) {
+
+            foreach ($form->getElements() as $key => $value) {
+                $value->setDecorators($form->elementDecorators);
+            }
         }
 
 
-        $url = $this->_getUrl(array('add','edit','comm'));
-        $action = isset($this->ctrlParams['edit'])?'edit':'add';
-        $form->setAction($this->_getUrl());
+        $form->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%','class'=>'borders')), 'Form'));
 
+        $form->addElement('submit', 'form_submit', array('label' => 'Submit', 'class' => 'submit', 'decorators' => array('ViewHelper')));
+        $form->addElement('hidden', '_form_edit', array('value' => 1, 'decorators' => $form->buttonHidden));
 
-        $form->addElement('submit', 'form_submit', array( 'label' => 'Submit', 'class' => 'submit', 'decorators' => array('ViewHelper')));
+        $url = $this->_getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
 
-        $form->addElement('button', 'form_reset', array('onclick'=>"window.location='$url'",'label' => 'Cancel', 'class' => 'reset', 'decorators' => array('ViewHelper')));
+        $form->addElement('button', 'form_reset', array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => array('ViewHelper')));
+        $form->addDisplayGroup(array('form_submit', 'form_reset'), 'buttons', array('decorators' => array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper')));
 
-        $form->addDisplayGroup(array('form_submit','form_reset'), 'buttons', array('decorators' => array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper')));
-
+        $form->setAction($this->_getUrl(array_keys($form->getElements())));
 
         $this->_form = $form;
-
-        #$this->setButtons( array('save'=>'Save This Thing', 'cancel'=>'Cancel') );
-
 
         $form = $this->_object2array($form);
 
@@ -1727,7 +1737,7 @@ function gridChangeFilters(fields,url,Ajax)
         }
 
         if (isset($options['edit']) && $options['edit'] == 1) {
-            $this->edit = array('allow' => 1,  'fields' => $fields, 'force' => @$options['onEditForce']);
+            $this->edit = array('allow' => 1, 'fields' => $fields, 'force' => @$options['onEditForce']);
         }
         if (isset($options['onUpdateAddWhere'])) {
             $this->info['edit']['where'] = $options['onUpdateAddWhere'];

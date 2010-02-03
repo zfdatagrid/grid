@@ -4,6 +4,11 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
+.buttons{
+	text-align:center;
+	background-color:#DEDEDE;
+}
+
 input[type='checkbox'] ,input[type='radio'] {
 	width: 14px !important;
 	height: 14px !important;
@@ -57,15 +62,14 @@ input[type='button'],input[type='submit'], button
 	font-size: 10px !important;
 }
 
-td input:focus,#boletim input:focus,td textarea:focus {
+td input:focus,td textarea:focus {
 	border: 1px solid #666;
 	background-color: #f4F4F4;
 }
 
 table.borders {
-	border: 1px solid #FFa500;
-	border-left: 2px solid #FFa500;
-	border-top: 2px solid #FFa500;
+	border: 2px solid #FFa500;
+	border-collapse:collapse;
 }
 
 body {
@@ -81,13 +85,6 @@ body {
 	padding: 2px;
 }
 
-#submenu a {
-	display: block;
-	padding: 0px;
-	margin: 0px;
-	position: relative;
-	top: -2px;
-}
 
 .semLimites {
 	border: 0px;

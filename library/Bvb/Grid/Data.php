@@ -387,6 +387,7 @@ class Bvb_Grid_Data
      */
     protected $_model;
 
+
     /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here

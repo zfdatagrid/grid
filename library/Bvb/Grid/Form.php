@@ -29,17 +29,14 @@ class Bvb_Grid_Form extends Zend_Form
 
     protected $_model;
 
-    public $elementDecorators = array('ViewHelper', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td', 'class' => 'ois')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
+    public $elementDecorators = array(
+                                    'ViewHelper',
+                                    'Errors',
+                                    array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
+                                    array(array('label' => 'Label'), array('tag' => 'td')),
+                                    array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     public $buttonHidden = array('ViewHelper');
-
-    public $buttonDecorators = array('ViewHelper', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element', 'colspan' => '2')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
-    public function ploadDefaultDecorators ()
-    {
-        $this->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table')), 'Form'));
-    }
 
     function __call ($name, $args)
     {
@@ -273,9 +270,6 @@ class Bvb_Grid_Form extends Zend_Form
                     break;
             }
         }
-
-        #$form['elements']['form_submit'] = array('submit', array('decorators' => $this->buttonDecorators, 'label' => 'Submit', 'class' => 'submit'));
-        $form['elements']['_form_edit'] = array('hidden', array('decorators' => $this->buttonHidden, 'value' => 1));
 
         $this->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
 
