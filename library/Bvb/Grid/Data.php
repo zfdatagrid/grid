@@ -49,7 +49,7 @@ class Bvb_Grid_Data
     /**
      * The query object from Zend_Db_Select
      *
-     * @return Zend_Db_Select
+     * @var Zend_Db_Select
      */
     protected $_select = false;
 
@@ -2890,7 +2890,7 @@ class Bvb_Grid_Data
             if (! is_array($defs)) {
                 // only export name is passed, we need to get default option
                 $name = $defs;
-                $className = "Bvb_Grid_Deploy_" . $name; // TODO support user defined classes
+                $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
                 if (Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults')) {
                     // learn the defualt values
                     $defs = call_user_func(array($className, "getExportDefaults"));

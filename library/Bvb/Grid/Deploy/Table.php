@@ -1436,6 +1436,7 @@ Bvb_Grid_Deploy_Interface
             $this->setTemplate('table', 'table');
         }
 
+
         // The extra fields, they are not part of database table.
         // Usefull for adding links (a least for me :D )
         $grid = $this->_printScript();
