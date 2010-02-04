@@ -392,7 +392,7 @@ class Bvb_Grid_Data
      * User definid INFO for templates
      * @var array
      */
-    protected $_templateParams;
+    protected $_templateParams = array();
 
     /**
      * The __construct function receives the db adapter. All information related to the
@@ -2999,6 +2999,10 @@ class Bvb_Grid_Data
             $this->deploy = $this->_options['deploy'][$name];
         }
 
+        if (isset($this->_options['template'][$name]) && is_array($this->_options['template'][$name])) {
+            $this->setTemplateParams($this->_options['template'][$name]);
+        }
+
     }
 
 
@@ -3100,7 +3104,7 @@ class Bvb_Grid_Data
     function setTemplateParams (array $options)
     {
 
-        $this->_templateParams = $options;
+        $this->_templateParams = array_merge($this->_templateParams,$options);
         return $this;
 
     }
