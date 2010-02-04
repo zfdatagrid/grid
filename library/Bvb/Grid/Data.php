@@ -389,6 +389,12 @@ class Bvb_Grid_Data
 
 
     /**
+     * User definid INFO for templates
+     * @var array
+     */
+    protected $_templateParams;
+
+    /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
@@ -1954,7 +1960,7 @@ class Bvb_Grid_Data
                 if (isset($value['title'])) {
                     $titulos[$key] = $value['title'];
                 } else {
-                    $titulos[$key] = ucwords(str_replace('_',' ',$key));
+                    $titulos[$key] = ucwords(str_replace('_', ' ', $key));
                 }
 
                 if (isset($value['order']) && $value['order'] >= 0) {
@@ -2500,6 +2506,8 @@ class Bvb_Grid_Data
     public function setTemplate ($template, $output = 'table', $options = array())
     {
 
+        $options['userDefined'] = $options;
+
         $class = $this->_templates[$output]->load($template, $output);
 
         if (isset($this->_options['template'][$output][$template])) {
@@ -2684,7 +2692,7 @@ class Bvb_Grid_Data
                 $tableFields = array_keys($tableFields);
 
                 foreach ($tableFields as $field) {
-                    $title = ucwords(str_replace('_',' ',$field));
+                    $title = ucwords(str_replace('_', ' ', $field));
                     $this->updateColumn($field, array('title' => $title, 'field' => $value[0] . '.' . $field));
                 }
 
@@ -2694,13 +2702,13 @@ class Bvb_Grid_Data
                 $title = ucwords(str_replace("_", ' ', end($explode)));
 
                 if (is_object($value[1])) {
-                    $title = ucwords(str_replace('_',' ',$value[2]));
+                    $title = ucwords(str_replace('_', ' ', $value[2]));
                     $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[2]));
                 } elseif (strlen($value[2]) > 0) {
-                    $title = ucwords(str_replace('_',' ',$value[2]));
+                    $title = ucwords(str_replace('_', ' ', $value[2]));
                     $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
                 } else {
-                    $title = ucwords(str_replace('_',' ',$value[1]));
+                    $title = ucwords(str_replace('_', ' ', $value[1]));
                     $this->updateColumn($value[1], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
                 }
 
@@ -3064,13 +3072,13 @@ class Bvb_Grid_Data
                         } else {
                             $alias = '';
                         }
-                        $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias.'.'.array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
+                        $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
                         $i ++;
                     }
 
                 } else {
                     $cols = array($sel['columns'] => $sel['refColumns']);
-                    $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias.'.'.array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
+                    $select->join(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
                 }
 
                 $i ++;
@@ -3079,11 +3087,31 @@ class Bvb_Grid_Data
             $select->from($info['name']);
         }
 
-
         $this->query($select);
 
         return $this;
     }
 
-}
+    /**
+     *Set user definied params for templates.
+     * @param array $options
+     * @return unknown
+     */
+    function setTemplateParams (array $options)
+    {
 
+        $this->_templateParams = $options;
+        return $this;
+
+    }
+
+    /**
+     * Returns template info defined by the user
+     */
+    function getTemplateParams()
+    {
+        return $this->_templateParams;
+    }
+
+
+}
