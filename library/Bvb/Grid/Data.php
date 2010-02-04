@@ -1123,7 +1123,9 @@ class Bvb_Grid_Data
                         $key = $fieldsSemAsFinal[$key]['searchField'];
                     }
 
-                    $this->_buildSearchType($filtro, $oldKey, $key);
+                    if ($this->_getAdapter() == 'db') {
+                        $this->_buildSearchType($filtro, $oldKey, $key);
+                    }
                     $valor_filters[$key] = $filtro;
                 }
 
@@ -1403,11 +1405,12 @@ class Bvb_Grid_Data
 
         $links = $this->_fields;
 
+        if ($this->_getAdapter() == 'db') {
+            $selectOrder = $this->_select->getPart(Zend_Db_Select::ORDER);
 
-        $selectOrder = $this->_select->getPart(Zend_Db_Select::ORDER);
-
-        if (count($selectOrder) == 1) {
-            $this->ctrlParams['order' . $this->_id] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
+            if (count($selectOrder) == 1) {
+                $this->ctrlParams['order' . $this->_id] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
+            }
         }
 
         for ($i = 0; $i < $tcampos; $i ++) {
@@ -2502,7 +2505,7 @@ class Bvb_Grid_Data
         if (isset($this->_options['template'][$output][$template])) {
             $tpOptions = array_merge($this->_options['template'][$output][$template], $options);
         } else {
-            $tpOptions = $options();
+            $tpOptions = $options;
         }
 
 

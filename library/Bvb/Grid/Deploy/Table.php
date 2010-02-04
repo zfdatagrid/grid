@@ -1433,7 +1433,9 @@ Bvb_Grid_Deploy_Interface
         parent::deploy();
 
         if (! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table) {
-            $this->setTemplate('table', 'table');
+          $this->setTemplate('table', 'table');
+        }else{
+            $this->setTemplate($this->temp['table']->options['name'],'table');
         }
 
 

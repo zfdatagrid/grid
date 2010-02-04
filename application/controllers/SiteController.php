@@ -175,7 +175,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->setDataFromXml('http://zfdatagrid.com/blog/feed/', 'channel,item');
+        $grid->setDataFromXml('http://zfdatagrid.com/feed/', 'channel,item');
         $grid->setPagination(10);
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -226,7 +226,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->query($this->_db->select()->from('City'));
 
-        $grid->noFilters(1)->setPagination(14)->setTemplate('outside', 'table');
+        $grid->setNoFilters(1)->setPagination(14)->setTemplate('outside', 'table');
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -267,11 +267,6 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name')));
         $grid->setPagination(15);
-        #->noFilters(1);
-        #->noOrder(1);
-
-
-
 
         $cap = new Bvb_Grid_Column('Country');
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
