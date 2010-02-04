@@ -36,6 +36,13 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     function __construct ($options)
     {
 
+
+        if(!class_exists('ZipArchive'))
+        {
+            throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');
+        }
+
+
         if (! in_array(self::OUTPUT, $this->export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
