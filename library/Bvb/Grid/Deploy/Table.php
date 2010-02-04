@@ -362,7 +362,10 @@ Bvb_Grid_Deploy_Interface
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
-                $modelInfo = $this->_form->getModel()->info();
+                if($this->_formHasModel)
+                {
+                    $modelInfo = $this->_form->getModel()->info();
+                }
 
                 // Process data
                 if ($mode == 'add') {
@@ -1661,6 +1664,20 @@ function gridChangeFilters(fields,url,Ajax)
             $form->setModel($this->_model);
 
             $this->_formHasModel = true;
+
+            foreach ($form->getElements() as $key => $value) {
+
+                if(isset($this->data['fields'][$key]['title']))
+                {
+                    $value->setLabel($this->data['fields'][$key]['title']);
+                }
+
+                if(isset($this->data['fields'][$key]['tooltipField']))
+                {
+                    $value->setDescription($this->data['fields'][$key]['tooltipField']);
+                }
+            }
+
         } elseif (count($form->getElements()) > 0) {
 
             foreach ($form->getElements() as $key => $value) {

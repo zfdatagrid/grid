@@ -171,7 +171,19 @@ class Bvb_Grid_Template_Table_Table
     function images ($url)
     {
 
-        return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">", 'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">", 'excel' => "<img title=\"Microsoft Excel\"  src=\"" . $url . "excel.gif\"  border=\"0\">", 'word' => "<img  title=\"Microsoft Office 2003\" src=\"" . $url . "word.gif\"  border=\"0\">", 'wordx' => "<img title=\"Microsoft Office 2007\" src=\"" . $url . "wordx.gif\"  border=\"0\">", 'pdf' => "<img title=\"PDF\"  src=\"" . $url . "pdf.gif\"  border=\"0\">", 'csv' => "<img src=\"" . $url . "csv.gif\"  border=\"0\">", 'ods' => "<img src=\"" . $url . "ods.gif\" title=\"OpenOffice Spreadsheet\"  border=\"0\">", 'odt' => "<img src=\"" . $url . "odt.gif\"  title=\"OpenOffice Document Text\"  border=\"0\">", 'xml' => "<img src=\"" . $url . "xml.gif\"  border=\"0\">", 'print' => "<img  src=\"" . $url . "print.gif\"  border=\"0\">");
+        return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">",
+        'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">",
+        'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">",
+         'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">",
+         'excel' => "<img title=\"Microsoft Excel\"  src=\"" . $url . "excel.gif\"  border=\"0\">",
+         'word' => "<img  title=\"Microsoft Office 2003\" src=\"" . $url . "word.gif\"  border=\"0\">",
+         'wordx' => "<img title=\"Microsoft Office 2007\" src=\"" . $url . "wordx.gif\"  border=\"0\">",
+         'pdf' => "<img title=\"PDF\"  src=\"" . $url . "pdf.gif\"  border=\"0\">",
+         'csv' => "<img src=\"" . $url . "csv.gif\"  border=\"0\">",
+         'ods' => "<img src=\"" . $url . "ods.gif\" title=\"OpenOffice Spreadsheet\"  border=\"0\">",
+         'odt' => "<img src=\"" . $url . "odt.gif\"  title=\"OpenOffice Document Text\"  border=\"0\">",
+         'xml' => "<img src=\"" . $url . "xml.gif\"  border=\"0\">",
+         'print' => "<img  src=\"" . $url . "print.gif\"  border=\"0\">");
     }
 
 

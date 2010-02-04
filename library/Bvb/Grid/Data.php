@@ -3103,6 +3103,17 @@ class Bvb_Grid_Data
      */
     function setTemplateParams (array $options)
     {
+        $this->_templateParams = $options;
+        return $this;
+    }
+
+    /**
+     * Adds user definied params for templates.
+     * @param array $options
+     * @return $this
+     */
+    function addTemplateParams (array $options)
+    {
 
         $this->_templateParams = array_merge($this->_templateParams,$options);
         return $this;

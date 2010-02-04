@@ -31,6 +31,7 @@ class Bvb_Grid_Form extends Zend_Form
 
     public $elementDecorators = array(
                                     'ViewHelper',
+                                    'Description',
                                     'Errors',
                                     array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
                                     array(array('label' => 'Label'), array('tag' => 'td')),
@@ -303,5 +304,7 @@ class Bvb_Grid_Form extends Zend_Form
         $this->fields = $final;
         return $this;
     }
+
+
 
 }

@@ -302,7 +302,7 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('bug_id',array('hidden'=>1));
         $grid->updateColumn('date',array('hidden'=>1));
         $grid->updateColumn('time',array('hidden'=>1));
-        $grid->updateColumn('seguinte',array('hidden'=>1));
+        $grid->updateColumn('seguinte',array('hidden'=>1,'title'=>'Barcelos','tooltipField'=>'sempre'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
