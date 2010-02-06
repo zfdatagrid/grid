@@ -1487,7 +1487,8 @@ Bvb_Grid_Deploy_Interface
     {
         value = document.getElementById(fieldsArray[i]).value;\n";
 
-        $script .= 'value = value.replace(\'"\',\'\\\"\');';
+        $script .= " value = value.replace(/[\"]/,''); ";
+        $script .= " value = value.replace(/[\\\]/,''); ";
 
         $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
     }
