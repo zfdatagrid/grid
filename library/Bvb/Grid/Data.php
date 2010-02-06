@@ -1013,7 +1013,10 @@ class Bvb_Grid_Data
 
         $op = strtolower($this->data['fields'][$key]['searchType']);
 
-        if (strpos($filtro, '<>') !== false && substr($filtro, 0, 2) != '<>') {
+        if (substr(strtoupper($filtro), 0, 2) == 'R:') {
+            $op = 'REGEX';
+            $filtro = substr($filtro, 2);
+        } elseif (strpos($filtro, '<>') !== false && substr($filtro, 0, 2) != '<>') {
             $op = 'range';
         } elseif (substr($filtro, 0, 1) == '=') {
             $op = '=';
@@ -1052,6 +1055,9 @@ class Bvb_Grid_Data
             case 'equal':
             case '=':
                 $this->_select->where($field . ' = ?', $filtro);
+                break;
+            case 'REGEX':
+                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_db->quote($filtro )));
                 break;
             case 'rlike':
                 $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_db->quote($filtro . "%")));
@@ -2391,7 +2397,10 @@ class Bvb_Grid_Data
 
         $op = strtolower($this->data['fields'][$key]['searchType']);
 
-        if (substr($filtro, 0, 1) == '=') {
+        if (substr(strtoupper($filtro), 0, 2) == 'R:') {
+            $op = 'REGEX';
+            $filtro = substr($filtro, 2);
+        } elseif (substr($filtro, 0, 1) == '=') {
             $op = '=';
             $filtro = substr($filtro, 1);
         } elseif (substr($filtro, 0, 2) == '>=') {
@@ -2428,6 +2437,9 @@ class Bvb_Grid_Data
             case 'equal':
             case '=':
                 if ($filtro == $final) return true;
+                break;
+            case 'REGEXP':
+                if (preg_match($filtro,$final)) return true;
                 break;
             case 'rlike':
                 if (substr($final, 0, strlen($filtro)) == $filtro) return true;
