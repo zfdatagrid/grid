@@ -1486,10 +1486,8 @@ Bvb_Grid_Deploy_Interface
     for (var i = 0; i < fieldsArray.length -1; i++)
     {
         value = document.getElementById(fieldsArray[i]).value;\n";
-
         $script .= " value = value.replace(/[\"]/,''); ";
         $script .= " value = value.replace(/[\\\]/,''); ";
-
         $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
     }
 
@@ -1605,7 +1603,6 @@ Bvb_Grid_Deploy_Interface
         if (isset($options['delete'])) {
             if ($options['delete'] == 1) {
                 $this->delete = array('allow' => 1);
-
                 if (isset($options['onDeleteAddWhere'])) {
                     $this->info['delete']['where'] = $options['onDeleteAddWhere'];
                 }

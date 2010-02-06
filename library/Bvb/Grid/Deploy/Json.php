@@ -91,13 +91,13 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         $this->setPagination(0);
         parent::deploy();
 
+        header('Content-Type', 'application/json');
+
         $grid['titles'] = self::buildTitltesJson(parent::_buildTitles());
         $grid['rows'] = self::buildGridJson(parent::_buildGrid());
         $grid['sqlexp'] = self::buildSqlexpJson(parent::_buildSqlExp());
 
-
         echo Zend_Json::encode($grid);
-
 
         die();
     }

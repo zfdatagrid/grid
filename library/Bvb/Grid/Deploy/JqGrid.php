@@ -122,11 +122,11 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_In
      *
      * @param array $options configuration options
      */
-    function __construct ($options = null)
+    function __construct ($options = array())
     {
         $this->initLogger();
 
-        parent::__construct();
+        parent::__construct($options);
 
         // TODO fix for property with same name in Bvb_Grid_DataGrid
         $this->_view = null;
@@ -481,7 +481,7 @@ HTML;
         $passPk = false;
         if (isset($this->_bvbParams['id']) && count($this->_result)>0) {
             $pkName = $this->_bvbParams['id'];
-            if (isset($this->_result[0]->$pkName)) {
+            if (isset($this->_result[0][$pkName])) {
                 // only if that field exists
                 $passPk = true;
             } else {
@@ -504,7 +504,7 @@ HTML;
             if ($passPk) {
                 // set PK to row
                 // TODO works only if _buildGrid() results are in same order as $this->_result
-                $dataRow->id = $this->_result[$i]->$pkName;
+                $dataRow->id = $this->_result[$i][$pkName];
             }
             $dataRow->cell = $d;
             $data->rows[] = $dataRow;
@@ -687,7 +687,7 @@ HTML;
         //BVB grid options
         $skipOptions = array(
             'title',     // handled in parent::_buildTitles()
-            'hide',      // handled in parent::_buildTitles()
+            'hidde',      // handled in parent::_buildTitles()
             'sqlexp',
             'hRow',
             'eval',
@@ -992,6 +992,7 @@ HTML;
         if ($sidx!=="") {
             $this->ctrlParams['order'] = $sidx . '_' . strtoupper($sord);
         }
+
 
         // filters
         // TODO it would be great to have some methods to define more complicated filters

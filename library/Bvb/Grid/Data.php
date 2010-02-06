@@ -373,7 +373,7 @@ class Bvb_Grid_Data
      *
      * @var string
      */
-    protected $_id;
+    protected $_gridId;
 
     /**
      * Colspan for table
@@ -1117,9 +1117,13 @@ class Bvb_Grid_Data
 
         //Build an array to know filters values
         $valor_filters = array();
-        $filters = @urldecode($this->ctrlParams['filters' . $this->_id]);
+        $filters = @urldecode($this->ctrlParams['filters' . $this->_gridId]);
         $filters = str_replace("filter_", "", $filters);
+
+        if(strlen($filters)>5)
+        {
         $filters = Zend_Json::decode($filters);
+        }
 
         $fieldsSemAsFinal = $this->data['fields'];
 
@@ -1157,8 +1161,8 @@ class Bvb_Grid_Data
     protected function _buildQuery ()
     {
 
-        @$inicio = (int) $this->ctrlParams['start' . $this->_id];
-        $order = @$this->ctrlParams['order' . $this->_id];
+        @$inicio = (int) $this->ctrlParams['start' . $this->_gridId];
+        $order = @$this->ctrlParams['order' . $this->_gridId];
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
 
@@ -1219,14 +1223,14 @@ class Bvb_Grid_Data
         if (is_array($situation)) {
             foreach ($situation as $value) {
                 if (in_array($value, $paramsGet)) {
-                    $value = $value . $this->_id;
+                    $value = $value . $this->_gridId;
                 }
                 unset($params[$value]);
             }
 
         } else {
             if (in_array($situation, $paramsGet)) {
-                $situation = $situation . $this->_id;
+                $situation = $situation . $this->_gridId;
             }
             unset($params[$situation]);
         }
@@ -1251,7 +1255,7 @@ class Bvb_Grid_Data
 
         foreach ($params_clean as $key => $param) {
             // Apply the urldecode function to the filtros param, because its  JSON
-            if ($key == 'filters' . $this->_id) {
+            if ($key == 'filters' . $this->_gridId) {
                 $url .= "/" . trim($key) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
             } else {
                 @$url .= "/" . trim($key) . "/" . trim(htmlspecialchars($param, ENT_QUOTES));
@@ -1421,14 +1425,14 @@ class Bvb_Grid_Data
             $selectOrder = $this->_select->getPart(Zend_Db_Select::ORDER);
 
             if (count($selectOrder) == 1) {
-                $this->ctrlParams['order' . $this->_id] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
+                $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
             }
         }
 
         for ($i = 0; $i < $tcampos; $i ++) {
-            if (isset($this->ctrlParams['order' . $this->_id])) {
-                $explode = explode('_', $this->ctrlParams['order' . $this->_id]);
-                $name = str_replace('_' . end($explode), '', $this->ctrlParams['order' . $this->_id]);
+            if (isset($this->ctrlParams['order' . $this->_gridId])) {
+                $explode = explode('_', $this->ctrlParams['order' . $this->_gridId]);
+                $name = str_replace('_' . end($explode), '', $this->ctrlParams['order' . $this->_gridId]);
                 $this->order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
             }
 
@@ -1453,7 +1457,7 @@ class Bvb_Grid_Data
                 if ($noOrder == 1) {
                     $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_id/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
                 }
             }
         }
@@ -1953,7 +1957,6 @@ class Bvb_Grid_Data
             $lastIndex = 1;
             $norder = 0;
 
-
             foreach ($fields as $key => $value) {
 
                 //A parte da order
@@ -1984,6 +1987,7 @@ class Bvb_Grid_Data
 
                         $var = $value['order'];
 
+/*
                         while (true) {
                             if (array_key_exists($var, $fields_final)) {
                                 $fields_final[$var + 1] = $fields_final[$var];
@@ -1992,6 +1996,7 @@ class Bvb_Grid_Data
                                 break;
                             }
                         }
+                        */
 
                         $fields_final[$norder] = $key;
 
@@ -2016,7 +2021,6 @@ class Bvb_Grid_Data
 
             $fields_final = $this->_reset_keys($fields_final);
         }
-
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
@@ -2108,7 +2112,7 @@ class Bvb_Grid_Data
     protected function _buildDefaultFilters ()
     {
 
-        if (is_array($this->_defaultFilters) && ! isset($this->ctrlParams['filters' . $this->_id]) && ! isset($this->ctrlParams['nofilters'])) {
+        if (is_array($this->_defaultFilters) && ! isset($this->ctrlParams['filters' . $this->_gridId]) && ! isset($this->ctrlParams['nofilters'])) {
             $df = array();
             foreach ($this->data['fields'] as $key => $value) {
 
@@ -2126,7 +2130,7 @@ class Bvb_Grid_Data
 
             $defaultFilters = $df;
 
-            $this->ctrlParams['filters' . $this->_id] = Zend_Json_Encoder::encode($defaultFilters);
+            $this->ctrlParams['filters' . $this->_gridId] = Zend_Json_Encoder::encode($defaultFilters);
         }
 
         return $this;
@@ -2257,7 +2261,7 @@ class Bvb_Grid_Data
 
         } else {
 
-            $filters = Zend_Json::decode(@$this->ctrlParams['filters' . $this->_id]);
+            $filters = Zend_Json::decode(@$this->ctrlParams['filters' . $this->_gridId]);
             if (is_array($filters)) {
 
                 foreach ($filters as $key => $filter) {
@@ -2319,7 +2323,7 @@ class Bvb_Grid_Data
 
             } else {
                 $this->_totalRecords = count($this->_result);
-                $result = array_slice($this->_result, (int) @$this->ctrlParams['start' . $this->_id] < $this->_totalRecords ? (int) @$this->ctrlParams['start' . $this->_id] : 0, $this->pagination);
+                $result = array_slice($this->_result, (int) @$this->ctrlParams['start' . $this->_gridId] < $this->_totalRecords ? (int) @$this->ctrlParams['start' . $this->_gridId] : 0, $this->pagination);
             }
 
             $this->_result = $result;
@@ -2822,7 +2826,7 @@ class Bvb_Grid_Data
      * @param array|array of array $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
      * @param array|boolean $requestData request parameters will bu used if FALSE
      */
-    public static function factory ($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestData = false)
+    public static function factory ($defaultClass, $options = array(), $gridId = '', $classCallbacks = array(), $requestData = false)
     {
 
         if (! is_string($id)) {
@@ -3022,9 +3026,9 @@ class Bvb_Grid_Data
      * Sets the grid id, to allow multiples instances per page
      * @param $id
      */
-    protected function _setId ($id)
+    protected function _setGridId ($id)
     {
-        $this->_id = $id;
+        $this->_gridId = $id;
         return $this;
     }
 
@@ -3032,9 +3036,9 @@ class Bvb_Grid_Data
      * Returns the current id.
      * ""=>emty string is a valid value
      */
-    public function getId ()
+    public function getGridId ()
     {
-        return $this->_id;
+        return $this->_gridId;
     }
 
 
