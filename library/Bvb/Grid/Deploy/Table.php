@@ -853,157 +853,6 @@ Bvb_Grid_Deploy_Interface
     }
 
     /**
-     * Build the form elements for the edit or add action
-     * This is different from the filters
-     *
-     * @param string $field | The database field that we are processing
-     * @param string $inicial_value | the inicial field value
-     * @param srint $mod edit|add
-     * @param string $fieldValue | This saves the fields values in case o failed validation
-     * @return string
-     */
-    protected function _buildFormElement ($field, $inicial_value = '', $mod = 'edit', $fieldValue = '')
-    {
-
-        $view = $this->_view;
-
-        $fieldRaw = $field;
-        //If not editing, remove the initial value, otherwise it will assume the fields names
-        if ($mod != 'edit') {
-            $field = $inicial_value;
-            if ($this->formSuccess == 0) {
-                $inicial_value = $fieldValue;
-            } else {
-                $inicial_value = '';
-            }
-        }
-
-        //Get table desc to known to field type
-        $table = parent::_getDescribeTable($this->data['table'], $fieldRaw);
-
-        $field = explode('.', $field);
-        $field = end($field);
-
-        @$tipo = $table[$field];
-
-        $tipo = $tipo['DATA_TYPE'];
-
-        if (substr($tipo, 0, 4) == 'enum') {
-            $enum = str_replace(array('(', ')'), array('', ''), $tipo);
-            $tipo = 'enum';
-        }
-
-        //Let's get the possible values for the set Type
-        if (substr($tipo, 0, 3) == 'set') {
-            $set = str_replace(array('(', ')', '\'', 'set'), array('', '', '', ''), $tipo);
-            $tipo = 'set';
-        }
-
-        @$options = $this->info[$mod]['fields'][$field];
-
-        $selected = null;
-
-        //If the field as options
-        $attr = array();
-
-        if (isset($options['attributes']['type'])) {
-            $tipo = $options['attributes']['type'];
-        }
-
-        if (! is_array(@$options['attributes'])) {
-            $options['attributes'] = array();
-
-            if (! in_array('style', @$options['attributes'])) {
-                $attr['style'] = 'width:95%';
-            }
-        } else {
-
-            if (! array_key_exists('style', @$options['attributes'])) {
-                $attr['style'] = 'width:95%';
-            }
-        }
-
-        if (@is_array($options['attributes'])) {
-            foreach ($options['attributes'] as $key => $value) {
-                $attr[$key] = $value;
-            }
-        }
-
-        //User wants to specify the values
-        if (isset($options['values'])) {
-
-            if (is_array($options['values'])) {
-
-                //Declare as invalid to skip the swith
-                $tipo = 'invalid';
-                $avalor = $options['values'];
-
-                foreach ($avalor as $key => $value) {
-
-                    //check for select value
-                    if ($mod == 'edit') {
-                        $selected = $inicial_value == $key ? $inicial_value : "";
-                    } elseif (key_exists('value', $options)) {
-                        $selected = $options['value'] == $key ? $options['value'] : "";
-                    } else {
-                        $selected = null;
-                    }
-
-                    $values[$key] = $value;
-                }
-
-                $valor = $view->formSelect($fieldRaw, $selected, $attr, $avalor);
-
-            }
-        }
-
-        switch ($tipo) {
-
-            case 'invalid':
-                break;
-            case 'set':
-
-                //Build options based on set from database, if not defined by the user
-                $avalor = explode(",", $set);
-                $setValues = explode(',', $inicial_value);
-                $valor = $view->formMultiCheckbox($fieldRaw, $setValues, $attr, $avalor);
-
-                break;
-            case 'enum':
-
-                //Build options based on enum from database, if not defined by the user
-                $avalor = explode(",", substr($enum, 4));
-                $values = array();
-
-                foreach ($avalor as $value) {
-                    if ($value == "'" . $inicial_value . "'") {
-                        $selected = $inicial_value;
-                    }
-                    $value = substr($value, 1);
-                    $value = substr($value, 0, - 1);
-                    $values[$value] = $value;
-                }
-                $valor = $view->formSelect($fieldRaw, $selected, $attr, $values);
-
-                break;
-            case 'text':
-            case 'textarea':
-                $valor = $view->formTextarea($fieldRaw, $view->escape($inicial_value), $attr);
-                break;
-            case 'password':
-                $valor = $view->formPassword($fieldRaw, $view->escape($inicial_value), $attr);
-                break;
-            default:
-                $valor = $view->formText($fieldRaw, $view->escape($inicial_value), $attr);
-
-                break;
-        }
-
-        return $valor;
-
-    }
-
-    /**
      * Get the list of primary keys from the URL
      *
      * @return string
@@ -1558,9 +1407,12 @@ Bvb_Grid_Deploy_Interface
             $useAjax = 0;
         }
 
-        $script = "<script language=\"javascript\" type=\"text/javascript\">
+        $script = "<script language=\"javascript\" type=\"text/javascript\">";
 
-        function confirmDel(msg, url)
+        if($this->allowDelete==1)
+        {
+
+        $script .= " function confirmDel(msg, url)
         {
             if(confirm(msg))
             {
@@ -1576,10 +1428,11 @@ Bvb_Grid_Deploy_Interface
             }else{
                 return false;
             }
+        }";
+
         }
-
-
-function gridAjax(ponto,url) {
+        if ($useAjax == 1) {
+ $script .= "function gridAjax(ponto,url) {
 
     var xmlhttp;
     try
@@ -1618,9 +1471,13 @@ function gridAjax(ponto,url) {
     }
     xmlhttp.send(null);
 }
+";
+        }
 
+  if( !isset($this->info['noFilters']) || $this->info['noFilters']!=0)
+        {
 
-function gridChangeFilters(fields,url,Ajax)
+ $script .= "function gridChangeFilters(fields,url,Ajax)
 {
     var Ajax = \"1\";
     var fieldsArray = fields.split(\",\");
@@ -1628,7 +1485,11 @@ function gridChangeFilters(fields,url,Ajax)
 
     for (var i = 0; i < fieldsArray.length -1; i++)
     {
-        filtro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).value)+'\"';
+        value = document.getElementById(fieldsArray[i]).value;\n";
+
+        $script .= 'value = value.replace(\'"\',\'\\\"\');';
+
+        $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
     }
 
     filtro = \"{\"+filtro+\"}\";
@@ -1639,7 +1500,7 @@ function gridChangeFilters(fields,url,Ajax)
         } else {
             $script .= "window.location=url+'/filters{$this->_id}/'+filtro;";
         }
-
+        }
         $script .= "
     }
         </script>";
@@ -1885,7 +1746,7 @@ function gridChangeFilters(fields,url,Ajax)
                     $selected = $key;
                 }
 
-                $values[$this->_view->escape($key)] = $this->_view->escape($value);
+                $values[$key] = $value;
             }
 
             $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
@@ -1907,14 +1768,14 @@ function gridChangeFilters(fields,url,Ajax)
                     if (isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $value) {
                         $selected = $value;
                     }
-                    $values[$this->_view->escape($value)] = $this->_view->escape($value);
+                    $values[$value] = $value;
                 }
 
                 $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
 
                 break;
             default:
-                $valor = $this->_view->formText($campo, $this->_view->escape(@$this->_filtersValues[$campo]), $attr);
+                $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
                 break;
         }
 
