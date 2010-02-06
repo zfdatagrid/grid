@@ -607,7 +607,7 @@ Bvb_Grid_Deploy_Interface
          */
 
 
-        if (isset($this->ctrlParams['filters' . $this->_id]) || isset($this->ctrlParams['order' . $this->_id])) {
+        if (isset($this->ctrlParams['filters' . $this->_gridId]) || isset($this->ctrlParams['order' . $this->_gridId])) {
 
             $url = $this->_getUrl('filters', 'nofilters');
             $url2 = $this->_getUrl('order');
@@ -622,7 +622,7 @@ Bvb_Grid_Deploy_Interface
 
 
             //Filters and order
-            if (isset($this->ctrlParams['filters' . $this->_id]) and isset($this->ctrlParams['order' . $this->_id])) {
+            if (isset($this->ctrlParams['filters' . $this->_gridId]) and isset($this->ctrlParams['order' . $this->_gridId])) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
                     $final1 = "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "')\">" . $this->__('Remove Filters') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url2 . "')\">" . $this->__('Remove Order') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters &amp; Order') . "</a>";
@@ -632,7 +632,7 @@ Bvb_Grid_Deploy_Interface
                 }
 
             //Only filters
-            } elseif (isset($this->ctrlParams['filters' . $this->_id]) && ! isset($this->ctrlParams['order' . $this->_id])) {
+            } elseif (isset($this->ctrlParams['filters' . $this->_gridId]) && ! isset($this->ctrlParams['order' . $this->_gridId])) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
                     $final1 = "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "') \">" . $this->__('Remove Filters') . "</a>";
@@ -642,7 +642,7 @@ Bvb_Grid_Deploy_Interface
                 }
 
             //Only order
-            } elseif (! isset($this->ctrlParams['filters' . $this->_id]) && isset($this->ctrlParams['order' . $this->_id])) {
+            } elseif (! isset($this->ctrlParams['filters' . $this->_gridId]) && isset($this->ctrlParams['order' . $this->_gridId])) {
 
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
@@ -802,8 +802,8 @@ Bvb_Grid_Deploy_Interface
                             if (! array_key_exists('url', $title)) {
                                 $grid .= str_replace('{{value}}', $title['value'], $this->temp['table']->titlesLoop());
                             } else {
-                                $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_id}/{$title['field']}_DESC'>{$images['desc']}</a>";
-                                $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_id}/{$title['field']}_ASC'>{$images['asc']}</a>";
+                                $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_DESC'>{$images['desc']}</a>";
+                                $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_ASC'>{$images['asc']}</a>";
 
                                 if ($orderField == $title['field'] && $order == 'asc') {
                                     $link1 = '';
@@ -903,7 +903,7 @@ Bvb_Grid_Deploy_Interface
         $grid = '';
 
         //We have an extra td for the text to remove filters and order
-        if (isset($this->ctrlParams['filters' . $this->_id]) || isset($this->ctrlParams['order' . $this->_id])) {
+        if (isset($this->ctrlParams['filters' . $this->_gridId]) || isset($this->ctrlParams['order' . $this->_gridId])) {
             $i ++;
         }
 
@@ -1052,7 +1052,7 @@ Bvb_Grid_Deploy_Interface
 
         $url = parent::_getUrl(array('start'));
 
-        $actual = (int) isset($this->ctrlParams['start' . $this->_id]) ? $this->ctrlParams['start' . $this->_id] : 0;
+        $actual = (int) isset($this->ctrlParams['start' . $this->_gridId]) ? $this->ctrlParams['start' . $this->_gridId] : 0;
 
         $ppagina = $this->pagination;
         $result2 = '';
@@ -1069,9 +1069,9 @@ Bvb_Grid_Deploy_Interface
         }
 
         if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/star{$this->_id}t/0')\">1</a>";
+            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/star{$this->_gridId}t/0')\">1</a>";
         } else {
-            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/start{$this->_id}/0\">1</a>";
+            $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/start{$this->_gridId}/0\">1</a>";
 
         }
 
@@ -1083,9 +1083,9 @@ Bvb_Grid_Deploy_Interface
 
             for ($i = $in + 1; $i < $fin; $i ++) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_id}/" . (($i - 1) * $ppagina) . "')> $i </a>";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_gridId}/" . (($i - 1) * $ppagina) . "')> $i </a>";
                 } else {
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href='$url/start{$this->_id}/" . (($i - 1) * $ppagina) . "'> $i </a>";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href='$url/start{$this->_gridId}/" . (($i - 1) * $ppagina) . "'> $i </a>";
                 }
 
             }
@@ -1096,11 +1096,11 @@ Bvb_Grid_Deploy_Interface
             for ($i = 2; $i < $npaginas; $i ++) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "/start{$this->_id}/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "/start{$this->_gridId}/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
 
                 } else {
 
-                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"" . $url . "/start{$this->_id}/" . (($i - 1) * $ppagina) . "\">$i</a> ";
+                    $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"" . $url . "/start{$this->_gridId}/" . (($i - 1) * $ppagina) . "\">$i</a> ";
 
                 }
 
@@ -1108,21 +1108,21 @@ Bvb_Grid_Deploy_Interface
         }
 
         if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_id}/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
+            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_gridId}/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
 
         } else {
-            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"$url/start{$this->_id}/" . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
+            $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"$url/start{$this->_gridId}/" . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
 
         }
 
         if ($actual != 1) {
 
             if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-                $pag = " <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_id}/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:agridAjax('{$this->info['ajax']}','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
+                $pag = " <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_gridId}/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:agridAjax('{$this->info['ajax']}','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
 
             } else {
 
-                $pag = " <a href=\"$url/start/0\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->_id}/" . (($actual - 2) * $ppagina) . "\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
+                $pag = " <a href=\"$url/start/0\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->_gridId}/" . (($actual - 2) * $ppagina) . "\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
             }
 
         }
@@ -1130,10 +1130,10 @@ Bvb_Grid_Deploy_Interface
         if ($actual != $npaginas) {
             if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
-                $pag .= "&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_id}/" . ($actual * $ppagina) . "')\">" . $this->__('Next') . "</a> <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_id}/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__('Last') . "&nbsp;&nbsp;</a>";
+                $pag .= "&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_gridId}/" . ($actual * $ppagina) . "')\">" . $this->__('Next') . "</a> <a href=\"javascript:gridAjax('{$this->info['ajax']}','$url/start{$this->_gridId}/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__('Last') . "&nbsp;&nbsp;</a>";
             } else {
 
-                $pag .= "&nbsp;&nbsp;<a href=\"$url/start{$this->_id}/" . ($actual * $ppagina) . "\">" . $this->__('Next') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->_id}/" . (($npaginas - 1) * $ppagina) . "\">" . $this->__('Last') . "</a>";
+                $pag .= "&nbsp;&nbsp;<a href=\"$url/start{$this->_gridId}/" . ($actual * $ppagina) . "\">" . $this->__('Next') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->_gridId}/" . (($npaginas - 1) * $ppagina) . "\">" . $this->__('Last') . "</a>";
             }
 
         }
@@ -1143,9 +1143,9 @@ Bvb_Grid_Deploy_Interface
             if ($npaginas < 100) {
                 // Buil the select form element
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-                    $f = "<select id=\"idf\" onchange=\"javascript:gridAjax('{$this->info['ajax']}','{$url}/start{$this->_id}/'+this.value)\">";
+                    $f = "<select id=\"idf\" onchange=\"javascript:gridAjax('{$this->info['ajax']}','{$url}/start{$this->_gridId}/'+this.value)\">";
                 } else {
-                    $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start{$this->_id}/'+this.value\">";
+                    $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start{$this->_gridId}/'+this.value\">";
                 }
 
                 for ($i = 1; $i <= $npaginas; $i ++) {
@@ -1193,9 +1193,9 @@ Bvb_Grid_Deploy_Interface
                 $blank = $export['newWindow'] == false ? '' : "target='_blank'";
 
                 if (isset($export['img'])) {
-                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_id}/{$export['caption']}'><img src='{$export ['img']}' border='0'></a>";
+                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'><img src='{$export ['img']}' border='0'></a>";
                 } else {
-                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_id}/{$export['caption']}'>" . $export['caption'] . "</a>";
+                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'>" . $export['caption'] . "</a>";
                 }
 
             }
@@ -1495,9 +1495,9 @@ Bvb_Grid_Deploy_Interface
     ";
 
         if ($useAjax == 1) {
-            $script .= "gridAjax('{$this->info['ajax']}',url+'/filters{$this->_id}/'+filtro);";
+            $script .= "gridAjax('{$this->info['ajax']}',url+'/filters{$this->_gridId}/'+filtro);";
         } else {
-            $script .= "window.location=url+'/filters{$this->_id}/'+filtro;";
+            $script .= "window.location=url+'/filters{$this->_gridId}/'+filtro;";
         }
         }
         $script .= "

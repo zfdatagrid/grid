@@ -2826,7 +2826,7 @@ class Bvb_Grid_Data
      * @param array|array of array $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
      * @param array|boolean $requestData request parameters will bu used if FALSE
      */
-    public static function factory ($defaultClass, $options = array(), $gridId = '', $classCallbacks = array(), $requestData = false)
+    public static function factory ($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestData = false)
     {
 
         if (! is_string($id)) {
@@ -2866,7 +2866,7 @@ class Bvb_Grid_Data
         }
 
         if (is_string($id)) {
-            $grid->_setId($id);
+            $grid->_setGridId($id);
         }
 
         return $grid;
