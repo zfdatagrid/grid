@@ -1596,6 +1596,7 @@ class Bvb_Grid_Data
             array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
+
         $new_value = call_user_func_array($value['function'], $toReplace);
 
         return $new_value;
@@ -1693,6 +1694,7 @@ class Bvb_Grid_Data
                 if (isset($value['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
                 }
+
 
                 if (isset($value['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
@@ -3142,6 +3144,32 @@ class Bvb_Grid_Data
     function getTemplateParams()
     {
         return $this->_templateParams;
+    }
+
+    /**
+     * Reset otpions fo column
+     * @param string $column
+     * @return self
+     */
+    function resetColumn($column)
+    {
+        $this->updateColumn($column,array());
+        return $this;
+    }
+
+    /**
+     * Reset options for several columns
+     * @param $columns
+     */
+    function resetColumns(array $columns)
+    {
+
+        foreach ($columns as $column)
+        {
+            $this->updateColumn($column, array());
+        }
+
+        return $this;
     }
 
 
