@@ -46,7 +46,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_Interface
     function header ()
     {
 
-        if (file_exists(@$this->printOptions['logo'])) {
+        if (file_exists(@$this->options['logo'])) {
             $img = "<img align=\"left\" src=\"" . $this->options['logo'] . "\" border=\"0\">";
         } else {
             $img = '';

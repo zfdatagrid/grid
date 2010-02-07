@@ -61,7 +61,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid_Data  implements Bvb_Grid_Deploy_In
 		$xml .= '<ss:Row>';
 		foreach ( $titles as $value ) {
 
-			$type = ! preg_match ( "/^[0-9]+$/", $value ['value'] ) ? 'String' : 'Number';
+			$type = ! is_numeric ($value ['value'] ) ? 'String' : 'Number';
 
 			$xml .= '<ss:Cell><Data ss:Type="' . $type . '">' . $value ['value'] . '</Data></ss:Cell>';
 		}
