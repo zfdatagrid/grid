@@ -273,13 +273,6 @@ class Bvb_Grid_Data
     protected $_elements = array();
 
     /**
-     * Elements types allowed in forms
-     *
-     * @var array
-     */
-    private $_elementsAllowed = array('filter', 'validator');
-
-    /**
      * The field to set order by, if we have a horizontal row
      *
      * @var string
@@ -855,26 +848,6 @@ class Bvb_Grid_Data
         return $this;
     }
 
-    /**
-     * Add new elements form dir.
-     * TRhey can be filters os validators
-     *
-     * @param string $dir
-     * @param string $prefix
-     * @param string $type
-     * @return $this
-     */
-    public function addElementDir ($dir, $prefix, $type = 'filter')
-    {
-
-        if (! in_array(strtolower($type), $this->_elementsAllowed)) {
-            throw new Bvb_Grid_Exception('Type not recognized');
-        }
-
-        $this->_elements[$type]->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
-
-        return $this;
-    }
 
     /**
      * Format a field

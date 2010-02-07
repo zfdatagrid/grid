@@ -246,13 +246,7 @@ Bvb_Grid_Deploy_Interface
 
         parent::__construct($options);
 
-        // Add Zend_Validate and Zend_Filter to the form element
-        $this->addElementDir('Zend/Filter', 'Zend_Filter', 'filter');
-        $this->addElementDir('Zend/Validate', 'Zend_Validate', 'validator');
-
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
-
-
     }
 
     /**
