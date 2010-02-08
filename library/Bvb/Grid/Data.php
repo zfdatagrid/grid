@@ -2765,11 +2765,6 @@ class Bvb_Grid_Data
             }
         }
 
-        if(method_exists($this,'ajax'))
-        {
-            $this->ajax();
-        }
-
         return $this;
     }
 
