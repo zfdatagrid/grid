@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Integration of Open Flash Chart
  * Copyright (C) 2008 John Glazebrook <open-flash-chart@teethgrinder.co.uk>
@@ -21,42 +22,47 @@
 
 class OFC_Charts_Bar extends OFC_Charts_Base
 {
-	function OFC_Charts_Bar()
+    function OFC_Charts_Bar ()
     {
-		parent::OFC_Charts_Base();
+        parent::OFC_Charts_Base();
 
-		$this->type      = 'bar';
-	}
+        $this->type = 'bar';
+    }
 
-	function set_key( $text, $size )
+    function set_key ($text, $size=9)
     {
-		$this->text = $text;
-		$this->{'font-size'} = $size;
-	}
+        $this->text = $text;
+        $this->{'font-size'} = $size;
+    }
 
-	function set_values( $v )
+    function set_font_size($size)
     {
-		$this->values = $v;
-	}
+        $this->{'font-size'} = $size;
+    }
 
-	function append_value( $v )
+    function set_values ($v)
     {
-		$this->values[] = $v;
-	}
+        $this->values = $v;
+    }
 
-	function set_colour( $colour )
+    function append_value ($v)
     {
-		$this->colour = $colour;
-	}
+        $this->values[] = $v;
+    }
 
-	function set_alpha( $alpha )
+    function set_colour ($colour)
     {
-		$this->alpha = $alpha;
-	}
+        $this->colour = $colour;
+    }
 
-    function set_tooltip( $tip )
+    function set_alpha ($alpha)
     {
-            $this->tip = $tip;
+        $this->alpha = $alpha;
+    }
+
+    function set_tooltip ($tip)
+    {
+        $this->tip = $tip;
     }
 }
 

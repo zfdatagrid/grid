@@ -25,7 +25,6 @@ class OFC_Bar_Glass_Value
     function bar_glass_value ($top)
     {
         $this->top = $top;
-        //      $this->bottom = $bottom;
     }
 
     function set_colour ($colour)

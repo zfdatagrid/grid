@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Integration of Open Flash Chart
  * Copyright (C) 2008 John Glazebrook <open-flash-chart@teethgrinder.co.uk>
@@ -21,11 +22,11 @@
 
 class OFC_Charts_Line_Hollow extends OFC_Charts_Line
 {
-	function OFC_Charts_Line_Hollow()
+    function OFC_Charts_Line_Hollow ()
     {
         parent::OFC_Charts_Line();
 
-		$this->type      = 'line_hollow';
-	}
+        $this->type = 'line_hollow';
+    }
 }
 

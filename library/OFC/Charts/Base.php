@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Integration of Open Flash Chart
  * Copyright (C) 2008 John Glazebrook <open-flash-chart@teethgrinder.co.uk>
@@ -20,8 +21,18 @@
 
 class OFC_Charts_Base
 {
-    function OFC_Charts_Base()
+    function OFC_Charts_Base ()
+    {}
+
+    function __call ($name, $value)
     {
+        if (method_exists($this, $name)) {
+            $this->$name($value);
+        } else {
+            $this->$name = $value;
+        }
+
+        return $this;
     }
 }
 

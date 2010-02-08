@@ -53,7 +53,7 @@ class OFC_Charts_Line extends OFC_Charts_Base
         $this->{'halo-size'} = $size;
     }
 
-    function set_key ($text, $font_size)
+    function set_key ($text, $font_size=9)
     {
         $this->text = $text;
         $this->{'font-size'} = $font_size;

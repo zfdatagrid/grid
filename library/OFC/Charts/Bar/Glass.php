@@ -19,28 +19,8 @@
  */
 
 
-class bar_glass_value
-{
-	function bar_glass_value( $top )
-    {
-		$this->top = $top;
-//		$this->bottom = $bottom;
-	}
-
-	function set_colour( $colour )
-    {
-		$this->colour = $colour;
-	}
-
-	function set_tooltip( $tip )
-    {
-		$this->tip = $tip;
-	}
-}
-
 class OFC_Charts_Bar_Glass extends OFC_Charts_Bar
 {
-
 	function OFC_Charts_Bar_Glass()
     {
 		parent::OFC_Charts_Bar();

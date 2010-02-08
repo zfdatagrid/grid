@@ -101,20 +101,8 @@ Bvb_Grid_Deploy_Interface
 
     function deploy ()
     {
-        $final = '<script type="text/javascript" src="' . $this->_baseUrl . '/public/scripts/swfobject.js"></script>
-        <script type="text/javascript">
-        swfobject.embedSWF(
-        "' . $this->_baseUrl . '/public/flash/open-flash-chart.swf", "my_chart",
-        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",
-        {"data-file":"' . $this->_getUrl() . '/_showJs/1"} );
-        </script>
-        <div id="my_chart"></div>';
 
-        $this->_deploymentContent = $final;
-    }
 
-    function ajax ()
-    {
         $grid = array();
         $newData = array();
         $label = array();
@@ -150,7 +138,6 @@ Bvb_Grid_Deploy_Interface
             {
                 $x->$key($value);
             }
-
             $graph->set_x_axis($x);
         }
 
@@ -222,6 +209,7 @@ Bvb_Grid_Deploy_Interface
                 } else {
                     $bar->set_values($value);
                 }
+
                 $graph->add_element($bar);
             }
 
@@ -237,12 +225,34 @@ Bvb_Grid_Deploy_Interface
 
         $final = $graph->toPrettyString();
 
-        if (isset($this->ctrlParams['_showJs']) && $this->ctrlParams['_showJs'] == 1) {
-            $response = Zend_Controller_Front::getInstance()->getResponse();
-            $response->setBody($final);
-            $response->sendResponse();
-            exit();
+         $final = '<script type="text/javascript" src="' . $this->_baseUrl . '/public/scripts/swfobject.js"></script>
+        <script type="text/javascript">
+        swfobject.embedSWF(
+        "' . $this->_baseUrl . '/public/flash/open-flash-chart.swf", "my_chart",
+        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf" );
+
+        </script>
+        <script type="text/javascript">
+        function open_flash_chart_data()
+        {
+            return JSON.stringify(data);
         }
+
+        function findSWF(movieName) {
+          if (navigator.appName.indexOf("Microsoft")!= -1) {
+            return window[movieName];
+          } else {
+            return document[movieName];
+          }
+        }
+ var data = '.$final.'; </script>
+        <div id="my_chart"></div>';
+
+        $this->_deploymentContent = $final;
+
+        return $this;
+
+
     }
 
     function setXLabels ($labels,$options = array())

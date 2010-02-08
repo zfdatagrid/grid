@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Integration of Open Flash Chart
  * Copyright (C) 2008 John Glazebrook <open-flash-chart@teethgrinder.co.uk>
@@ -20,24 +21,22 @@
 
 class OFC_Charts_Bar_Filled extends OFC_Charts_Bar
 {
-    function OFC_Charts_Bar_Filled( $colour=null, $outline_colour=null )
+    function OFC_Charts_Bar_Filled ($colour = null, $outline_colour = null)
     {
         parent::OFC_Charts_Bar();
 
-        $this->type      = 'bar_filled';
+        $this->type = 'bar_filled';
 
-        if( isset( $colour ) )
-        {
-            $this->set_colour( $colour );
+        if (isset($colour)) {
+            $this->set_colour($colour);
         }
 
-        if( isset( $outline_colour ) )
-        {
-            $this->set_outline_colour( $outline_colour );
+        if (isset($outline_colour)) {
+            $this->set_outline_colour($outline_colour);
         }
     }
 
-    function set_outline_colour( $outline_colour )
+    function set_outline_colour ($outline_colour)
     {
         $this->{'outline-colour'} = $outline_colour;
     }

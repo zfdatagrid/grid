@@ -308,8 +308,8 @@ class SiteController extends Zend_Controller_Action
         if ($type == 'pie') {
             $grid->addValues('Population',array('set_colours'=>array('#000000','#999999','#BBBBBB','#FFFFFF')));
         } else {
-            $grid->addValues('GNP', array('set_colour' => '#00FF00'));
-            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF'));
+            $grid->addValues('GNP', array('set_colour' => '#00FF00','set_key'=>'Gross National Product'));
+            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF','set_key'=>'Surface'));
         }
         $grid->setXLabels('Name');
 
