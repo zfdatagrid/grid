@@ -16,6 +16,8 @@ class JqgridController extends Zend_Controller_Action
         if (@isset(Zend_Registry::get ( 'config' )->site->jqGridUrl)) {
             Bvb_Grid_Deploy_JqGrid::$defaultJqGridLibPath = Zend_Registry::get ( 'config' )->site->jqGridUrl;
         }
+
+        $this->_config = new Zend_Config_Ini('./application/grids/grid.ini','production');
     }
     /**
      * Show the source code for this controller
@@ -32,22 +34,19 @@ class JqgridController extends Zend_Controller_Action
     function indexAction()
     {
         // construct JqGrid and let it configure
-        $grid1 = new Bvb_Grid_Deploy_JqGrid();
+        $grid1 = new Bvb_Grid_Deploy_JqGrid($this->_config);
         $this->configG1($grid1, $this->_getParam('onlyFromPolynesia', 'false')==='true');
-
-        // construct HTML Table Grid and let it configure in the same way
-        $grid1_html = new Bvb_Grid_Deploy_Table();
-        $this->configG1($grid1_html);
 
         // pass grids to view and deploy() them there
         $this->view->g1 = $grid1->deploy();
-        $this->view->g1_html = $grid1_html->deploy();
     }
+
+
     function exportAction()
     {
         // construct JqGrid and let it configure
         $grid1 = Bvb_Grid_Data::factory(
-            'Bvb_Grid_Deploy_JqGrid', // this is the defualt grid class used to render on page
+            'Bvb_Grid_Deploy_JqGrid',$this->_config ,'', // this is the defualt grid class used to render on page
             array(
                 'csv'=>array($this, 'configG1PostCsv') // do post config for Csv export
             )

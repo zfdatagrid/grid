@@ -12,7 +12,7 @@ class SiteController extends Zend_Controller_Action
     private $_db;
 
     /**
-     * [EN]If a action don't exist, just redirect to the basic
+     * If a action don't exist, just redirect to the basic
      *
      * @param string $name
      * @param array $var
@@ -24,7 +24,7 @@ class SiteController extends Zend_Controller_Action
     }
 
     /**
-     * [EN] I think this is needed for something. can't remember
+     * I think this is needed for something. can't remember
      *
      */
     function init ()
@@ -34,6 +34,7 @@ class SiteController extends Zend_Controller_Action
         $this->view->action = $this->getRequest()->getActionName();
         header('Content-Type: text/html; charset=ISO-8859-1');
         $this->_db = Zend_Registry::get('db');
+        Bvb_Grid_Deploy_Ofc::$url = Zend_Registry::get('config')->site->url;
 
     }
 
@@ -56,20 +57,11 @@ class SiteController extends Zend_Controller_Action
     }
 
     /**
-     * [EN] Simplify the datagrid creation process
-     * [EN] Instead of having to write "long" lines of code we can simplify this.
-     * [EN] In fact if you have a Class that extends the Zend_Controller_Action
-     * [EN] It's not a bad idea put this piece o code there. May be very useful
-     *
-     *
+     * Simplify the datagrid creation process
      * @return Bvb_Grid_Deploy_Table
      */
     function grid ($export = null)
     {
-
-        if (null === $export) {
-            $export = $this->getRequest()->getParam('export');
-        }
 
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
 
@@ -77,8 +69,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setEscapeOutput(false);
         $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
-        $grid->addElementDir('My/Validate', 'My_Validate', 'validator');
-        $grid->addElementDir('My/Filter', 'My_Filter', 'filter');
         $grid->addFormatterDir('My/Formatter', 'My_Formatter');
         $grid->imagesUrl = $this->getRequest()->getBaseUrl() . '/public/images/';
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
@@ -139,7 +129,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
 
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('country'=>'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city'=>'Name')));
+        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name')));
 
         $grid->updateColumn('country', array('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{country}} <em>({{city}})</em>'));
         $grid->updateColumn('city', array('title' => 'Capital', 'hide' => 1));
@@ -187,10 +177,14 @@ class SiteController extends Zend_Controller_Action
     function basicAction ()
     {
         $grid = $this->grid();
-        $select = $this->_db->select()->from('City')->order('Name')->columns(array('IsBig' => new Zend_Db_Expr('IF(Population>500000,1,0)')))->columns(array('test' => 'ID'));
+        $select = $this->_db->select()->from('City')->order('Name');
 
+        $grid->resetColumn('Name');
         $grid->query($select);
         #$grid->setModel(new Bugs);
+
+
+
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -206,11 +200,9 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
 
         $grid->query($this->_db->select()->from('City'));
-
-        #$grid->updateColumn ( 'ID', array ('callback' => array ('function' => array ($this, 'teste' ), 'params' => array ('{{Name}}', '{{ID}}' ) ) ) );
         $grid->setAjax('grid');
-
         $this->view->pages = $grid->deploy();
+
         $this->render('index');
     }
 
@@ -223,11 +215,8 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-
         $grid->query($this->_db->select()->from('City'));
-
         $grid->setNoFilters(1)->setPagination(14)->setTemplate('outside', 'table');
-
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -299,14 +288,13 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setModel(new Bugs());
 
-        $grid->updateColumn('bug_id',array('hidden'=>1));
-        $grid->updateColumn('date',array('hidden'=>1));
-        $grid->updateColumn('time',array('hidden'=>1));
-        $grid->updateColumn('seguinte',array('hidden'=>1,'title'=>'Barcelos','tooltipField'=>'sempre'));
+        $grid->updateColumn('bug_id', array('hidden' => 1));
+        $grid->updateColumn('date', array('hidden' => 1));
+        $grid->updateColumn('time', array('hidden' => 1));
+        $grid->updateColumn('seguinte', array('hidden' => 1, 'title' => 'Barcelos', 'tooltipField' => 'sempre'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
-
         $grid->addForm($form);
 
         $grid->export = array();
@@ -315,5 +303,16 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+    function ofcAction ()
+    {
+
+        $this->getRequest()->setParam('_exportTo', 'ofc');
+        $grid = $this->grid();
+
+        $grid->query($this->_db->select()->from('Country', array('Population', 'Name'))->order('Population DESC')->limit(8));
+
+        $this->view->pages = $grid;
+        $this->render('index');
+    }
 
 }

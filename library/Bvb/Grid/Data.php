@@ -1030,7 +1030,7 @@ class Bvb_Grid_Data
                 $this->_select->where($field . ' = ?', $filtro);
                 break;
             case 'REGEX':
-                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_db->quote($filtro )));
+                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_db->quote($filtro)));
                 break;
             case 'rlike':
                 $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_db->quote($filtro . "%")));
@@ -1093,9 +1093,8 @@ class Bvb_Grid_Data
         $filters = @urldecode($this->ctrlParams['filters' . $this->_gridId]);
         $filters = str_replace("filter_", "", $filters);
 
-        if(strlen($filters)>5)
-        {
-        $filters = Zend_Json::decode($filters);
+        if (strlen($filters) > 5) {
+            $filters = Zend_Json::decode($filters);
         }
 
         $fieldsSemAsFinal = $this->data['fields'];
@@ -1962,7 +1961,7 @@ class Bvb_Grid_Data
 
                         $var = $value['order'];
 
-/*
+                        /*
                         while (true) {
                             if (array_key_exists($var, $fields_final)) {
                                 $fields_final[$var + 1] = $fields_final[$var];
@@ -2418,7 +2417,7 @@ class Bvb_Grid_Data
                 if ($filtro == $final) return true;
                 break;
             case 'REGEXP':
-                if (preg_match($filtro,$final)) return true;
+                if (preg_match($filtro, $final)) return true;
                 break;
             case 'rlike':
                 if (substr($final, 0, strlen($filtro)) == $filtro) return true;
@@ -2766,6 +2765,11 @@ class Bvb_Grid_Data
             }
         }
 
+        if(method_exists($this,'ajax'))
+        {
+            $this->ajax();
+        }
+
         return $this;
     }
 
@@ -2827,6 +2831,8 @@ class Bvb_Grid_Data
 
             // now we need to find and load the right Bvb deploy class
             $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
+
+
             if (Zend_Loader_Autoloader::autoload($className)) {
                 $grid = new $className($options);
             } else {
@@ -3106,7 +3112,7 @@ class Bvb_Grid_Data
     function addTemplateParams (array $options)
     {
 
-        $this->_templateParams = array_merge($this->_templateParams,$options);
+        $this->_templateParams = array_merge($this->_templateParams, $options);
         return $this;
 
     }
@@ -3114,7 +3120,7 @@ class Bvb_Grid_Data
     /**
      * Returns template info defined by the user
      */
-    function getTemplateParams()
+    function getTemplateParams ()
     {
         return $this->_templateParams;
     }
@@ -3124,9 +3130,9 @@ class Bvb_Grid_Data
      * @param string $column
      * @return self
      */
-    function resetColumn($column)
+    function resetColumn ($column)
     {
-        $this->updateColumn($column,array());
+        $this->updateColumn($column, array());
         return $this;
     }
 
@@ -3134,11 +3140,10 @@ class Bvb_Grid_Data
      * Reset options for several columns
      * @param $columns
      */
-    function resetColumns(array $columns)
+    function resetColumns (array $columns)
     {
 
-        foreach ($columns as $column)
-        {
+        foreach ($columns as $column) {
             $this->updateColumn($column, array());
         }
 

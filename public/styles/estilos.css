@@ -67,13 +67,6 @@ body {
 	background: #adbbc7 url(../images/fundo.jpg) repeat-y top center;
 }
 
-.formValue input {
-	border: 1px solid #ddd;
-	width: 98%;
-	padding: 2px;
-}
-
-
 .semLimites {
 	border: 0px;
 	padding: 0px;
@@ -128,13 +121,6 @@ td.esquerda {
 	margin-right: 10px;
 }
 
-#onde_estamos {
-	width: 890px;
-	border: 1px solid #111;
-	margin: 5px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-}
 
 .hbar {
 	text-align: center;
