@@ -301,6 +301,7 @@ class SiteController extends Zend_Controller_Action
         $this->getRequest()->setParam('_exportTo', 'ofc');
         $grid = $this->grid();
         $grid->setChartType($type);
+        $grid->setChartOptions(array('set_bg_colour'=>'#FFFFFF'));
         $grid->setTile('My First Graph');
         $grid->setChartDimensions(900, 400);
 

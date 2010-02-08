@@ -15,7 +15,7 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c) Bento Vilas Boas (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id: Json.php 525 2010-02-06 15:14:10Z pao.fresco@gmail.com $
+ * @version    $Id$
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com >
  */
 
@@ -73,9 +73,15 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_values = array();
 
-    protected $_graphOptions = array();
+    protected $_chartOptionsValues = array();
 
     protected $_title = '';
+
+    /**
+     * General Options for Graphs
+     * @var array
+     */
+    protected $_chartOptions = array();
 
 
     protected $_chartDimensions = array('x' => 200, 'y' => 120);
@@ -129,8 +135,13 @@ Bvb_Grid_Deploy_Interface
             $this->_xLabels = $result[$this->_xLabels];
         }
 
-        $chart = new OFC_Chart();
-        $chart->set_title(new OFC_Elements_Title($this->_title));
+        $graph = new OFC_Chart();
+        $graph->set_title(new OFC_Elements_Title($this->_title));
+
+        foreach ($this->_chartOptions as $key=>$value)
+        {
+            $graph->$key($value);
+        }
 
         if (count($this->_xLabels) > 0) {
             $x = new OFC_Elements_Axis_X();
@@ -140,7 +151,7 @@ Bvb_Grid_Deploy_Interface
                 $x->$key($value);
             }
 
-            $chart->set_x_axis($x);
+            $graph->set_x_axis($x);
         }
 
 
@@ -178,13 +189,13 @@ Bvb_Grid_Deploy_Interface
                     $bar->set_values($value);
                 }
 
-                $chart->add_element($bar);
+                $graph->add_element($bar);
 
             } elseif (is_string($value) && isset($result[$value])) {
 
                 $bar = new $this->_type();
 
-                $options = $this->_graphOptions[$value];
+                $options = $this->_chartOptionsValues[$value];
                 foreach ($options as $key=>$prop)
                 {
                     $bar->$key($prop);
@@ -211,7 +222,7 @@ Bvb_Grid_Deploy_Interface
                 } else {
                     $bar->set_values($value);
                 }
-                $chart->add_element($bar);
+                $graph->add_element($bar);
             }
 
         }
@@ -222,9 +233,9 @@ Bvb_Grid_Deploy_Interface
         $y->set_range($min, $max, ceil($max / 4));
 
 
-        $chart->add_y_axis($y);
+        $graph->add_y_axis($y);
 
-        $final = $chart->toPrettyString();
+        $final = $graph->toPrettyString();
 
         if (isset($this->ctrlParams['_showJs']) && $this->ctrlParams['_showJs'] == 1) {
             $response = Zend_Controller_Front::getInstance()->getResponse();
@@ -266,7 +277,7 @@ Bvb_Grid_Deploy_Interface
             $name = $values;
         }
         $this->_values[$name] = $values;
-        $this->_graphOptions[$name] = $options;
+        $this->_chartOptionsValues[$name] = $options;
 
         return $this;
     }
@@ -286,6 +297,12 @@ Bvb_Grid_Deploy_Interface
     {
         $this->_title = $title;
         return $this;
+    }
+
+
+    function setChartOptions(array $options = array())
+    {
+        $this->_chartOptions = $options;
     }
 
     function __toString ()
