@@ -37,6 +37,11 @@ class OFC_Charts_Pie extends OFC_Charts_Base
         $this->values = $values;
     }
 
+    function set_colours($colours)
+    {
+        $this->colours = $colours;
+    }
+
     // boolean
     function set_animate ($v)
     {

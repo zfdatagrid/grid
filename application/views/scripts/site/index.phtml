@@ -27,9 +27,9 @@ text-decoration:none;
 Examples:
 <select onchange="window.location=this.value" style=" padding:2px;font-size:12px;">
        <option value="<?php echo $this->url ?>default/site/basic" <?php if($this->action=='basic'){echo " selected ";}?>>Basic example - $db->select()->from('table');</option>
+       <option value="<?php echo $this->url ?>default/site/ofc" <?php if($this->action=='ofc'){echo " selected ";}?>>Open FLash Chart - Simple Implementation</option>
        <option value="<?php echo $this->url ?>default/jqgrid" >Jqgrid - From http://www.trirand.com/blog/ </option>
        <option value="<?php echo $this->url ?>default/site/ajax" <?php if($this->action=='ajax'){echo " selected ";}?>>Basic example with AJAX;</option>
-        <option value="<?php echo $this->url ?>default/site/joins" <?php if($this->action=='joins'){echo " selected ";}?>>Example with Joins - Several JOINS</option>
         <option value="<?php echo $this->url ?>default/site/extra" <?php if($this->action=='extra'){echo " selected ";}?>>Extra Fields - Extra Fields with custom content</option>
         <option value="<?php echo $this->url ?>default/site/filters" <?php if($this->action=='filters'){echo " selected ";}?>>Advanced Filters - Auto Filters</option>
         <option value="<?php echo $this->url ?>default/site/crud" <?php if($this->action=='crud'){echo " selected ";}?>>CRUD operations - Create, Read, Update and delete operations</option>
@@ -42,7 +42,6 @@ Examples:
 <a target="_blank" href="<?php echo $this->url ?>default/site/code">Source code for this controller</a> |
 <a href="http://www.zfdatagrid.com/blog">Back to blog</a>
 </div>
-
 </div>
 
 </td>
@@ -50,6 +49,18 @@ Examples:
 
 <tr>
 <td style="background-color:#F2F2F2; border:0px;">
+
+<?php if($this->action=='ofc'){?>
+
+    <div style="border:1px solid #111; padding:5px;margin:5px; font-size:12px; background-color:#DEDEDE;">Bar Types:
+    <?php foreach ($this->graphs as $value):?>
+
+    <a style="font-size:10px;text-decoration:none; margin:4px;color:maroon;" href="<?php echo $this->url ?>default/site/ofc/type/<?php echo $value?>"><?php echo ucwords(str_replace('_',' ',$value))?></a>
+
+    <?php endforeach;?>
+    </div>
+
+<?php }?>
 <div id="grid">
 <?php echo $this->pages; ?>
 </div>

@@ -103,22 +103,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-
-    /**
-     * A join query example
-     *
-     * Just don't forget if there is a field with the sdame name in more than one table
-     * you must rename the output name of that fielf ba appending AS othername
-     *
-     */
-    function joinsAction ()
-    {
-        $grid = $this->grid();
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array()));
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
      * Also notice that you can use fields values to populate the fields by surrounding the field name with {{}}
@@ -306,10 +290,29 @@ class SiteController extends Zend_Controller_Action
     function ofcAction ()
     {
 
+        $this->view->graphs = $allowedGraphs = array('line', 'bar', 'bar_glass', 'bar_3d', 'bar_filled', 'pie');
+
+        $type = $this->_getParam('type');
+
+        if (! in_array($type, $allowedGraphs)) {
+            $tipo = 'bar_glass';
+        }
+
         $this->getRequest()->setParam('_exportTo', 'ofc');
         $grid = $this->grid();
+        $grid->setChartType($type);
+        $grid->setTile('My First Graph');
+        $grid->setChartDimensions(900, 400);
 
-        $grid->query($this->_db->select()->from('Country', array('Population', 'Name'))->order('Population DESC')->limit(8));
+        if ($type == 'pie') {
+            $grid->addValues('Population',array('set_colours'=>array('#000000','#999999','#BBBBBB','#FFFFFF')));
+        } else {
+            $grid->addValues('GNP', array('set_colour' => '#00FF00'));
+            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF'));
+        }
+        $grid->setXLabels('Name');
+
+        $grid->query($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10));
 
         $this->view->pages = $grid;
         $this->render('index');

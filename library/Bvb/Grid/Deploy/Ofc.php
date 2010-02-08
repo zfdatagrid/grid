@@ -37,6 +37,49 @@ Bvb_Grid_Deploy_Interface
     protected $_deploymentContent = null;
 
 
+    /**
+     * Chart Type
+     * @var string
+     */
+    protected $_type = 'bar';
+
+
+    /**
+     * Labels for X Axis
+     *
+     * If string, then we use the column,
+     * If array, we use the array
+     * @var
+     */
+    protected $_xLabels = null;
+
+    /**
+     * Options for x Labels
+     * @var unknown_type
+     */
+
+    protected $_xLabelsOptions = array();
+
+    /**
+     * Chart Args
+     * @var array
+     */
+    protected $_typeArgs = array();
+
+
+    /**
+     * Values to show
+     * @var unknown_type
+     */
+    protected $_values = array();
+
+    protected $_graphOptions = array();
+
+    protected $_title = '';
+
+
+    protected $_chartDimensions = array('x' => 200, 'y' => 120);
+
     /*
     * @param array $data
     */
@@ -52,13 +95,11 @@ Bvb_Grid_Deploy_Interface
 
     function deploy ()
     {
-
-
-        $final = '<script type="text/javascript" src="'.$this->_baseUrl.'/public/scripts/swfobject.js"></script>
+        $final = '<script type="text/javascript" src="' . $this->_baseUrl . '/public/scripts/swfobject.js"></script>
         <script type="text/javascript">
         swfobject.embedSWF(
-        "'.$this->_baseUrl.'/public/flash/open-flash-chart.swf", "my_chart",
-        "900", "400", "9.0.0", "expressInstall.swf",
+        "' . $this->_baseUrl . '/public/flash/open-flash-chart.swf", "my_chart",
+        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",
         {"data-file":"' . $this->_getUrl() . '/_showJs/1"} );
         </script>
         <div id="my_chart"></div>';
@@ -70,41 +111,117 @@ Bvb_Grid_Deploy_Interface
     {
         $grid = array();
         $newData = array();
+        $label = array();
+        $result = array();
         #$this->setPagination(0);
         parent::deploy();
 
         $data = parent::_buildGrid();
 
-        if (count($data[0]) == 1 || count($data[0]) == 2) {
-            foreach ($data as $value) {
-                $newData[] = (int) $value[0]['value'];
-                $label[] = strip_tags($value[1]['value']);
+        foreach ($data as $value) {
+            foreach ($value as $final) {
+                $result[$final['field']][] = strip_tags($final['value']);
             }
         }
 
-        $chart = new OFC_Chart();
 
-        if (count($label) > 0) {
+        if (is_string($this->_xLabels) && isset($result[$this->_xLabels])) {
+            $this->_xLabels = $result[$this->_xLabels];
+        }
+
+        $chart = new OFC_Chart();
+        $chart->set_title(new OFC_Elements_Title($this->_title));
+
+        if (count($this->_xLabels) > 0) {
             $x = new OFC_Elements_Axis_X();
-            $x->set_labels_from_array($label);
+            $x->set_labels_from_array($this->_xLabels);
+            foreach ($this->_xLabelsOptions as $key=>$value)
+            {
+                $x->$key($value);
+            }
+
             $chart->set_x_axis($x);
         }
 
-        $support = $newData;
 
-        sort($support);
+        $min = 0;
+        $max = 0;
 
-        $min = reset($support);
-        $max = end($support);
+        if (count($this->_values) == 0) {
+            $this->setValues(key($result));
+        }
 
-        $bar = new OFC_Charts_Bar_Glass();
-        $bar->set_values($newData);
+        foreach ($this->_values as $key => $value) {
+
+            if (is_array($value)) {
+
+                $support = $value;
+                sort($support);
+                if (reset($support) < $min) {
+                    $min = reset($support);
+                }
+                if (end($support) > $max) {
+                    $max = end($support);
+                }
+                unset($support);
+
+                $bar = new $this->_type();
+
+                $pie = array();
+
+                if ($this->_type == 'Pie') {
+                    foreach ($value as $key => $title) {
+                        $pie[] = new OFC_Charts_Pie_Value($title, '09s');
+                    }
+                    $bar->set_values($pie);
+                } else {
+                    $bar->set_values($value);
+                }
+
+                $chart->add_element($bar);
+
+            } elseif (is_string($value) && isset($result[$value])) {
+
+                $bar = new $this->_type();
+
+                $options = $this->_graphOptions[$value];
+                foreach ($options as $key=>$prop)
+                {
+                    $bar->$key($prop);
+                }
+
+                $value = array_map(create_function('$item', ' return (int)$item; '), $result[$value]);
+
+                $support = $value;
+                sort($support);
+                if (reset($support) < $min) {
+                    $min = reset($support);
+                }
+                if (end($support) > $max) {
+                    $max = end($support);
+                }
+                unset($support);
+
+                $pie = array();
+                if ($this->_type == 'OFC_Charts_Pie') {
+                    foreach ($value as $key => $title) {
+                        $pie[] = new OFC_Charts_Pie_Value($title, '09s');
+                    }
+                    $bar->set_values($pie);
+                } else {
+                    $bar->set_values($value);
+                }
+                $chart->add_element($bar);
+            }
+
+        }
+
+        $max = $max * 1.05;
 
         $y = new OFC_Elements_Axis_Y();
         $y->set_range($min, $max, ceil($max / 4));
 
 
-        $chart->add_element($bar);
         $chart->add_y_axis($y);
 
         $final = $chart->toPrettyString();
@@ -115,6 +232,60 @@ Bvb_Grid_Deploy_Interface
             $response->sendResponse();
             exit();
         }
+    }
+
+    function setXLabels ($labels,$options = array())
+    {
+        $this->_xLabels = $labels;
+        $this->_xLabelsOptions = $options;
+    }
+
+    function setChartType ($type, $args = array())
+    {
+        $this->_type = (string) "OFC_Charts_" . implode('_',array_map('ucwords',explode('_',$type)));;
+        $this->_typeArgs = $args;
+        return $this;
+    }
+
+
+    function setValues ($values, $name = 'default')
+    {
+        if (is_string($values)) $name = $values;
+
+        $this->_values = array();
+        $this->_values[$name] = $values;
+        return $this;
+    }
+
+
+    function addValues ($values, $options = array())
+    {
+        if (! is_string($values)) {
+            $name = $values[0];
+        } else {
+            $name = $values;
+        }
+        $this->_values[$name] = $values;
+        $this->_graphOptions[$name] = $options;
+
+        return $this;
+    }
+
+    function getValues ($name)
+    {
+        return isset($this->_values[$name]) ? $this->_values[$name] : false;
+    }
+
+    function setChartDimensions ($x, $y)
+    {
+        $this->_chartDimensions = array('x' => $x, 'y' => $y);
+        return $this;
+    }
+
+    function setTile ($title)
+    {
+        $this->_title = $title;
+        return $this;
     }
 
     function __toString ()
