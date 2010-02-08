@@ -22,7 +22,7 @@
 
 class Bvb_Grid_ExtraColumns
 {
-    protected  $_field;
+    public   $_field;
 
     function __call($name,$args)
     {
