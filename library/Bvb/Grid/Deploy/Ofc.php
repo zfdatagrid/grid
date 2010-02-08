@@ -41,7 +41,7 @@ Bvb_Grid_Deploy_Interface
      * Chart Type
      * @var string
      */
-    protected $_type = 'bar';
+    protected $_type = 'Bar';
 
 
     /**

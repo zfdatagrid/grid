@@ -295,7 +295,7 @@ class SiteController extends Zend_Controller_Action
         $type = $this->_getParam('type');
 
         if (! in_array($type, $allowedGraphs)) {
-            $tipo = 'bar_glass';
+            $type = 'bar_glass';
         }
 
         $this->getRequest()->setParam('_exportTo', 'ofc');
