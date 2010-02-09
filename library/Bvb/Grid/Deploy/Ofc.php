@@ -73,8 +73,16 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_values = array();
 
+    /**
+     * Options to be apllied to every set of values
+     * @var array
+     */
     protected $_chartOptionsValues = array();
 
+    /**
+     * Chart Title
+     * @var string
+     */
     protected $_title = '';
 
     /**
@@ -84,7 +92,24 @@ Bvb_Grid_Deploy_Interface
     protected $_chartOptions = array();
 
 
+    /**
+     * Char Dimensions
+     * @var array
+     */
     protected $_chartDimensions = array('x' => 200, 'y' => 120);
+
+
+    /**
+     * Chart Id
+     * @var string
+     */
+    protected $_chartId = null;
+
+    /**
+     * LOcation for flash and js files
+     * @var array
+     */
+    protected $_filesLocation = null;
 
     /*
     * @param array $data
@@ -102,6 +127,10 @@ Bvb_Grid_Deploy_Interface
     function deploy ()
     {
 
+        if($this->_filesLocation===null)
+        {
+           die( 'Please set Javascript and Flash file locations using SetFilesLocation()');
+        }
 
         $grid = array();
         $newData = array();
@@ -126,16 +155,14 @@ Bvb_Grid_Deploy_Interface
         $graph = new OFC_Chart();
         $graph->set_title(new OFC_Elements_Title($this->_title));
 
-        foreach ($this->_chartOptions as $key=>$value)
-        {
+        foreach ($this->_chartOptions as $key => $value) {
             $graph->$key($value);
         }
 
         if (count($this->_xLabels) > 0) {
             $x = new OFC_Elements_Axis_X();
             $x->set_labels_from_array($this->_xLabels);
-            foreach ($this->_xLabelsOptions as $key=>$value)
-            {
+            foreach ($this->_xLabelsOptions as $key => $value) {
                 $x->$key($value);
             }
             $graph->set_x_axis($x);
@@ -183,8 +210,7 @@ Bvb_Grid_Deploy_Interface
                 $bar = new $this->_type();
 
                 $options = $this->_chartOptionsValues[$value];
-                foreach ($options as $key=>$prop)
-                {
+                foreach ($options as $key => $prop) {
                     $bar->$key($prop);
                 }
 
@@ -225,10 +251,14 @@ Bvb_Grid_Deploy_Interface
 
         $final = $graph->toPrettyString();
 
-         $final = '<script type="text/javascript" src="' . $this->_baseUrl . '/public/scripts/swfobject.js"></script>
+        if (! is_string($this->_chartId)) {
+            $this->_chartId = 'chart_' . rand(1, 10000);
+        }
+
+        $final = '<script type="text/javascript" src="' .$this->_filesLocation['js']. '"></script>
         <script type="text/javascript">
         swfobject.embedSWF(
-        "' . $this->_baseUrl . '/public/flash/open-flash-chart.swf", "my_chart",
+        "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
         "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf" );
 
         </script>
@@ -245,17 +275,13 @@ Bvb_Grid_Deploy_Interface
             return document[movieName];
           }
         }
- var data = '.$final.'; </script>
-        <div id="my_chart"></div>';
-
+        var data = ' . $final . '; </script>
+        <div id="' . $this->_chartId . '"></div>';
         $this->_deploymentContent = $final;
-
         return $this;
-
-
     }
 
-    function setXLabels ($labels,$options = array())
+    function setXLabels ($labels, $options = array())
     {
         $this->_xLabels = $labels;
         $this->_xLabelsOptions = $options;
@@ -263,18 +289,24 @@ Bvb_Grid_Deploy_Interface
 
     function setChartType ($type, $args = array())
     {
-        $this->_type = (string) "OFC_Charts_" . implode('_',array_map('ucwords',explode('_',$type)));;
+        $this->_type = (string) "OFC_Charts_" . implode('_', array_map('ucwords', explode('_', $type)));
+        ;
         $this->_typeArgs = $args;
         return $this;
     }
 
 
-    function setValues ($values, $name = 'default')
+    function setValues ($values, $options = array())
     {
-        if (is_string($values)) $name = $values;
+        if (! is_string($values)) {
+            $name = $values[0];
+        } else {
+            $name = $values;
+        }
 
         $this->_values = array();
         $this->_values[$name] = $values;
+        $this->_chartOptionsValues[$name] = $options;
         return $this;
     }
 
@@ -310,7 +342,7 @@ Bvb_Grid_Deploy_Interface
     }
 
 
-    function setChartOptions(array $options = array())
+    function setChartOptions (array $options = array())
     {
         $this->_chartOptions = $options;
     }
@@ -321,6 +353,28 @@ Bvb_Grid_Deploy_Interface
             self::deploy();
         }
         return $this->_deploymentContent;
+    }
+
+    function setChartId ($id)
+    {
+        $htis->_id = $id;
+        return $this;
+    }
+
+    function getChartId ()
+    {
+        return $this->_chartId;
+    }
+
+    function setFilesLocation(array $locations)
+    {
+        $this->_filesLocation = $locations;
+        return $this;
+    }
+
+    function getFilesLocation()
+    {
+        return $this->_filesLocation;
     }
 }
 

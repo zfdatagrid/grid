@@ -299,11 +299,13 @@ class SiteController extends Zend_Controller_Action
         }
 
         $this->getRequest()->setParam('_exportTo', 'ofc');
+
         $grid = $this->grid();
         $grid->setChartType($type);
         $grid->setChartOptions(array('set_bg_colour'=>'#FFFFFF'));
         $grid->setTile('My First Graph');
         $grid->setChartDimensions(900, 400);
+        $grid->setFilesLocation(array('js'=>$this->getFrontController()->getBaseUrl().'/public/scripts/swfobject.js','flash'=>$this->getFrontController()->getBaseUrl().'/public/flash/open-flash-chart.swf'));
 
         if ($type == 'pie') {
             $grid->addValues('Population',array('set_colours'=>array('#000000','#999999','#BBBBBB','#FFFFFF')));

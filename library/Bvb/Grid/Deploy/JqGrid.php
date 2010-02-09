@@ -138,20 +138,20 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_In
     /**
      * Call this in controller (before any output) to dispatch Ajax requests.
      *
-     * @param string $gridId ID to recognize the request from multiple tables ajax request will be ignored if FALSE
+     * @param string $id ID to recognize the request from multiple tables ajax request will be ignored if FALSE
      *
      * @return void
      */
-    function ajax($gridId)
+    function ajax($id='')
     {
         // apply additional configuration
         $this->_runConfigCallbacks();
 
-        $this->setId($gridId);
+        $this->setId($id);
         // track that this function was called
         $this->_ajaxFuncCalled = true;
         // if request is Ajax we should only return data
-        if (false!==$gridId && $this->isAjaxRequest()) {
+        if (false!==$id && $this->isAjaxRequest()) {
             // prepare data
             parent::deploy();
             // set data in JSON format

@@ -26,11 +26,7 @@ class OFC_Charts_Base
 
     function __call ($name, $value)
     {
-        if (method_exists($this, $name)) {
-            $this->$name($value);
-        } else {
-            $this->$name = $value;
-        }
+        $this->$name = $value;
 
         return $this;
     }
