@@ -311,7 +311,7 @@ class SiteController extends Zend_Controller_Action
             $grid->addValues('Population',array('set_colours'=>array('#000000','#999999','#BBBBBB','#FFFFFF')));
         } else {
             $grid->addValues('GNP', array('set_colour' => '#00FF00','set_key'=>'Gross National Product'));
-            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF','set_key'=>'Surface'));
+            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF','set_key'=>'Surface','set_tooltip'=>"Title Bar 1<br>val = #val#"));
         }
         $grid->setXLabels('Name');
 

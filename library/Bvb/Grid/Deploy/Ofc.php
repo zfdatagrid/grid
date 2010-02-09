@@ -127,16 +127,15 @@ Bvb_Grid_Deploy_Interface
     function deploy ()
     {
 
-        if($this->_filesLocation===null)
-        {
-           die( 'Please set Javascript and Flash file locations using SetFilesLocation()');
+        if ($this->_filesLocation === null) {
+            die('Please set Javascript and Flash file locations using SetFilesLocation()');
         }
 
         $grid = array();
         $newData = array();
         $label = array();
         $result = array();
-        #$this->setPagination(0);
+
         parent::deploy();
 
         $data = parent::_buildGrid();
@@ -146,7 +145,6 @@ Bvb_Grid_Deploy_Interface
                 $result[$final['field']][] = strip_tags($final['value']);
             }
         }
-
 
         if (is_string($this->_xLabels) && isset($result[$this->_xLabels])) {
             $this->_xLabels = $result[$this->_xLabels];
@@ -190,7 +188,19 @@ Bvb_Grid_Deploy_Interface
                 }
                 unset($support);
 
+
+                $options = $this->_chartOptionsValues[$value];
+                if (isset($options['chartType'])) {
+                    $this->setChartType($options['chartType']);
+                }
+
                 $bar = new $this->_type();
+
+
+                foreach ($options as $key => $prop) {
+                    $bar->$key($prop);
+                }
+                $this->_type();
 
                 $pie = array();
 
@@ -207,9 +217,14 @@ Bvb_Grid_Deploy_Interface
 
             } elseif (is_string($value) && isset($result[$value])) {
 
-                $bar = new $this->_type();
 
                 $options = $this->_chartOptionsValues[$value];
+                if (isset($options['chartType'])) {
+                    $this->setChartType($options['chartType']);
+                }
+
+                $bar = new $this->_type();
+
                 foreach ($options as $key => $prop) {
                     $bar->$key($prop);
                 }
@@ -229,7 +244,7 @@ Bvb_Grid_Deploy_Interface
                 $pie = array();
                 if ($this->_type == 'OFC_Charts_Pie') {
                     foreach ($value as $key => $title) {
-                        $pie[] = new OFC_Charts_Pie_Value($title, '09s');
+                        $pie[] = new OFC_Charts_Pie_Value($title, 'iou');
                     }
                     $bar->set_values($pie);
                 } else {
@@ -255,11 +270,11 @@ Bvb_Grid_Deploy_Interface
             $this->_chartId = 'chart_' . rand(1, 10000);
         }
 
-        $final = '<script type="text/javascript" src="' .$this->_filesLocation['js']. '"></script>
+        $final = '<script type="text/javascript" src="' . $this->_filesLocation['js'] . '"></script>
         <script type="text/javascript">
         swfobject.embedSWF(
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
-        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf" );
+        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"'.$this->_chartId.'"} );
 
         </script>
         <script type="text/javascript">
@@ -366,13 +381,13 @@ Bvb_Grid_Deploy_Interface
         return $this->_chartId;
     }
 
-    function setFilesLocation(array $locations)
+    function setFilesLocation (array $locations)
     {
         $this->_filesLocation = $locations;
         return $this;
     }
 
-    function getFilesLocation()
+    function getFilesLocation ()
     {
         return $this->_filesLocation;
     }
