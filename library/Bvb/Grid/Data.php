@@ -1558,10 +1558,10 @@ class Bvb_Grid_Data
             throw new Bvb_Grid_Exception($value['function'] . ' not callable');
         }
 
-        if (isset($value['params'])) {
+        if (isset($value['params']) && is_array($value['params'])) {
             $toReplace = $value['params'];
         } else {
-            $toReplace = array();
+            return call_user_func($value['function']);
         }
 
         if (is_array($toReplace)) {
@@ -1569,9 +1569,8 @@ class Bvb_Grid_Data
         }
 
 
-        $new_value = call_user_func_array($value['function'], $toReplace);
+        return call_user_func_array($value['function'], $toReplace);
 
-        return $new_value;
     }
 
     /**
