@@ -747,7 +747,6 @@ class Bvb_Grid_Data
      */
     protected function __ ($message)
     {
-
         if (Zend_Registry::isRegistered('Zend_Translate')) {
             $message = Zend_Registry::get('Zend_Translate')->translate($message);
         }
@@ -1144,7 +1143,7 @@ class Bvb_Grid_Data
             $query_order = $order_field . " $orderf ";
 
             foreach ($this->_select->getPart(Zend_Db_Select::COLUMNS) as $col) {
-                if (($col[0] . '.' . $col[2] == $order_field) and is_object($col[1])) {
+                if (($col[0] . '.' . $col[2] == $order_field) && is_object($col[1])) {
                     $query_order = $col[2] . " $orderf ";
                 }
             }
@@ -1427,9 +1426,9 @@ class Bvb_Grid_Data
                 }
 
                 if ($noOrder == 1) {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__($links[$i]), 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__($titles[$i]), 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->__($this->_titles[$links[$i]]));
                 }
             }
         }
@@ -1441,6 +1440,7 @@ class Bvb_Grid_Data
         }
 
         $this->_finalFields = $return;
+
 
         return $return;
     }
@@ -2142,7 +2142,7 @@ class Bvb_Grid_Data
                 if (! $result = $cache->load(md5($this->_select->__toString()))) {
 
                     $stmt = $this->_select->query(Zend_Db::FETCH_ASSOC);
-                    ;
+
                     $result = $stmt->fetchAll();
 
                     if ($this->_forceLimit === false) {
