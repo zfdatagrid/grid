@@ -1376,7 +1376,7 @@ class Bvb_Grid_Data
 
         for ($i = 0; $i < count($this->extra_fields); $i ++) {
             if ($this->extra_fields[$i]['position'] == 'left') {
-                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->extra_fields[$i]['name'], 'position' => 'left');
+                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' =>$this->__( $this->extra_fields[$i]['name']), 'position' => 'left');
             }
         }
 
@@ -1427,16 +1427,16 @@ class Bvb_Grid_Data
                 }
 
                 if ($noOrder == 1) {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' =>$this->__(  $this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__( $links[$i]), 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->data['fields'][$titles[$i]]['tooltipTitle'], 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__( $this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' =>$this->__(  $titles[$i]), 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
                 }
             }
         }
 
         for ($i = 0; $i < count($this->extra_fields); $i ++) {
             if ($this->extra_fields[$i]['position'] == 'right') {
-                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->extra_fields[$i]['name'], 'position' => 'right');
+                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__( $this->extra_fields[$i]['name']), 'position' => 'right');
             }
         }
 
@@ -1567,8 +1567,6 @@ class Bvb_Grid_Data
         if (is_array($toReplace)) {
             array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
-
-
         return call_user_func_array($value['function'], $toReplace);
 
     }
