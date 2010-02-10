@@ -329,7 +329,6 @@ Bvb_Grid_Deploy_Interface
                     $r = $this->_form->getModel()->fetchRow($queryUrl)->toArray();
 
                     foreach ($r as $key => $value) {
-
                         $isField = $this->_form->getElement($key);
                         if (isset($isField)) {
                             $this->_form->getElement($key)->setValue($value);
@@ -382,11 +381,16 @@ Bvb_Grid_Deploy_Interface
 
                         $this->message = $this->__('Record saved');
                         $this->messageOk = true;
+                        $this->_comm = false;
+                        $this->_noForm = 1;
 
                     }
                     catch (Zend_Exception $e) {
                         $this->messageOk = FALSE;
                         $this->message = $this->__('Error saving record =>') . $e->getMessage();
+                        $this->formSuccess = 0;
+                        $this->formPost = 1;
+                        $this->_noForm = 0;
                     }
 
                 }
@@ -415,15 +419,23 @@ Bvb_Grid_Deploy_Interface
                         $this->message = $this->__('Record saved');
                         $this->messageOk = true;
 
+                        $this->_comm = false;
+                        $this->_noForm = 1;
+
+
+                        unset($this->ctrlParams['comm']);
+                        unset($this->ctrlParams['edit']);
+
                     }
                     catch (Zend_Exception $e) {
                         $this->messageOk = FALSE;
                         $this->message = $this->__('Error updating record =>') . $e->getMessage();
+                        $this->formSuccess = 0;
+                        $this->formPost = 1;
+                        $this->_noForm = 0;
                     }
 
 
-                    unset($this->ctrlParams['comm']);
-                    unset($this->ctrlParams['edit']);
                 }
 
                 if ($this->cache['use'] == 1) {
@@ -438,9 +450,6 @@ Bvb_Grid_Deploy_Interface
 
                 unset($this->ctrlParams['form_submit']);
                 unset($this->ctrlParams['_form_edit']);
-
-                $this->_comm = false;
-                $this->_noForm = 1;
 
             } else {
 
@@ -1804,5 +1813,6 @@ Bvb_Grid_Deploy_Interface
 
         return $this->_view;
     }
+
 }
 
