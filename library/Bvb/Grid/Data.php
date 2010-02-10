@@ -3128,7 +3128,7 @@ class Bvb_Grid_Data
      * @param $value
      */
 
-    function setTemplateParam($name,$value)
+    function addTemplateParam($name,$value)
     {
         $this->_templateParams[$name] = $value;
         return $this;
