@@ -92,7 +92,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->query($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState')));
 
-        $grid->updateColumn('Name', array('title' => 'Country', 'class' => 'width_200'))->updateColumn('Continent', array('title' => 'Continent'))->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'))->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50'))->updateColumn('GovernmentForm', array('title' => 'Government Form', 'searchType' => '='))->updateColumn('HeadOfState', array('title' => 'Head Of State', 'searchType' => '='));
+        $grid->updateColumn('Name', array('title' => 'Country', 'class' => 'width_200'))->updateColumn('Continent', array('title' => 'Continent'))->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'))->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_80'))->updateColumn('GovernmentForm', array('title' => 'Government Form', 'searchType' => '='))->updateColumn('HeadOfState', array('title' => 'Head Of State', 'searchType' => '='));
 
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
@@ -163,12 +163,10 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $select = $this->_db->select()->from('City')->order('Name');
 
-        $grid->resetColumn('Name');
+        $grid->updateColumn('Name', array('title' => 'Barcelos'));
+
         $grid->query($select);
         #$grid->setModel(new Bugs);
-
-
-
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -266,7 +264,6 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-
     function crudAction ()
     {
         $grid = $this->grid();
@@ -290,7 +287,7 @@ class SiteController extends Zend_Controller_Action
     function ofcAction ()
     {
 
-        $this->view->graphs = $allowedGraphs = array('line', 'bar', 'bar_glass', 'bar_3d', 'bar_filled', 'pie');
+        $this->view->graphs = $allowedGraphs = array('line', 'bar', 'bar_glass', 'bar_3d', 'bar_filled', 'pie', 'mixed');
 
         $type = $this->_getParam('type');
 
@@ -302,17 +299,21 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setChartType($type);
-        $grid->setChartOptions(array('set_bg_colour'=>'#FFFFFF'));
+        $grid->setChartOptions(array('set_bg_colour' => '#FFFFFF'));
         $grid->setTile('My First Graph');
         $grid->setChartDimensions(900, 400);
-        $grid->setFilesLocation(array('js'=>$this->getFrontController()->getBaseUrl().'/public/scripts/swfobject.js','flash'=>$this->getFrontController()->getBaseUrl().'/public/flash/open-flash-chart.swf'));
+        $grid->setFilesLocation(array('js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
 
         if ($type == 'pie') {
-            $grid->addValues('Population',array('set_colours'=>array('#000000','#999999','#BBBBBB','#FFFFFF')));
+            $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));
+        } elseif ($type == 'mixed') {
+            $grid->addValues('GNP', array('set_colour' => '#FF0000', 'set_key' => 'Gross National Product', 'chartType' => 'Bar_Glass'));
+            $grid->addValues('SurfaceArea', array('set_colour' => '#00FF00', 'set_key' => 'Surface', 'chartType' => 'line'));
         } else {
-            $grid->addValues('GNP', array('set_colour' => '#00FF00','set_key'=>'Gross National Product'));
-            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF','set_key'=>'Surface','set_tooltip'=>"Title Bar 1<br>val = #val#"));
+            $grid->addValues('GNP', array('set_colour' => '#00FF00', 'set_key' => 'Gross National Product'));
+            $grid->addValues('SurfaceArea', array('set_colour' => '#0000FF', 'set_key' => 'Surface'));
         }
+
         $grid->setXLabels('Name');
 
         $grid->query($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10));

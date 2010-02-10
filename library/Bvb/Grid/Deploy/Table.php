@@ -996,7 +996,7 @@ Bvb_Grid_Deploy_Interface
 
                     $set ++;
 
-                    $grid .= str_replace(array("{{value}}", "{{class}}"), array($final['value'], $final['class']), $this->temp['table']->loopLoop($finalFields));
+                    $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'],$final['style']), $this->temp['table']->loopLoop($finalFields));
 
                 }
             }

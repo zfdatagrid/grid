@@ -1667,6 +1667,8 @@ class Bvb_Grid_Data
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
 
+                $value['style'] = ! isset($value['style']) ? '' : $value['style'];
+
                 if (isset($value['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
                 }
@@ -1679,7 +1681,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value,'style'=>$value['style']);
             }
 
             /**
@@ -1707,8 +1709,11 @@ class Bvb_Grid_Data
                 }
 
                 if ($this->_displayField($fields[$is])) {
+
+                    $style = ! isset($this->data['fields'][$fields[$is]]['style'])  ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
-                    $return[$i][] = @array('class' => $fieldClass, 'value' => $new_value, 'field' => $this->_fields[$is]);
+
+                    $return[$i][] = @array('class' => $fieldClass, 'value' => $new_value, 'field' => $this->_fields[$is], 'style'=>$style);
                 }
 
                 $is ++;
@@ -1724,6 +1729,7 @@ class Bvb_Grid_Data
             foreach ($this->_getExtraFields('right') as $value) {
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
+                $value['style'] = ! isset($value['style']) ? '' : $value['style'];
 
                 if (isset($value['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
@@ -1737,7 +1743,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value,'style'=>$value['style']);
             }
             $i ++;
         }
