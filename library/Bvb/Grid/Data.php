@@ -1376,7 +1376,7 @@ class Bvb_Grid_Data
 
         for ($i = 0; $i < count($this->extra_fields); $i ++) {
             if ($this->extra_fields[$i]['position'] == 'left') {
-                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' =>$this->__( $this->extra_fields[$i]['name']), 'position' => 'left');
+                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->extra_fields[$i]['name']), 'position' => 'left');
             }
         }
 
@@ -1427,16 +1427,16 @@ class Bvb_Grid_Data
                 }
 
                 if ($noOrder == 1) {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' =>$this->__(  $this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__( $links[$i]), 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__($links[$i]), 'field' => $links[$i], 'value' => $this->_titles[$links[$i]]);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__( $this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' =>$this->__(  $titles[$i]), 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
+                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $this->__($titles[$i]), 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->_titles[$links[$i]]);
                 }
             }
         }
 
         for ($i = 0; $i < count($this->extra_fields); $i ++) {
             if ($this->extra_fields[$i]['position'] == 'right') {
-                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__( $this->extra_fields[$i]['name']), 'position' => 'right');
+                $return[$this->extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->extra_fields[$i]['name']), 'position' => 'right');
             }
         }
 
@@ -1649,9 +1649,16 @@ class Bvb_Grid_Data
 
         $fields = $this->_fields;
 
+
         $i = 0;
 
         foreach ($this->_result as $dados) {
+
+
+            $outputToReplace = array();
+            foreach ($fields as $value) {
+                $outputToReplace[] = $dados[$value];
+            }
 
             /**
              *Deal with extrafield from the left
@@ -1664,27 +1671,23 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
                 }
 
-
                 if (isset($value['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
                 }
 
                 if (isset($value['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $dados, $value['decorator']);
+                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value);
             }
+
             /**
              * Deal with the grid itself
              */
             $is = 0;
             foreach ($fields as $campos) {
 
-                $outputToReplace = array();
-                foreach ($fields as $value) {
-                    $outputToReplace[] = $dados[$value];
-                }
 
                 $new_value = $dados[$fields[$is]];
 
@@ -1731,7 +1734,7 @@ class Bvb_Grid_Data
                 }
 
                 if (isset($value['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $dados, $value['decorator']);
+                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value);
@@ -1943,34 +1946,29 @@ class Bvb_Grid_Data
                     $titulos[$key] = ucwords(str_replace('_', ' ', $key));
                 }
 
-                if (isset($value['order']) && $value['order'] >= 0) {
+                if (isset($value['order'])) {
 
                     if ($value['order'] == 'last') {
-                        $fields_final[($lastIndex + 100)] = $key;
+                        $fields_final[($lastIndex + rand(100, 1000))] = $key;
                     } elseif ($value['order'] == 'first') {
-                        $fields_final[($lastIndex - 10)] = $key;
-                    } elseif ($value['order'] == 'next') {
-                        $norder ++;
-                        $fields_final[$norder] = $key;
+                        $fields_final[($lastIndex - rand(100, 1000))] = $key;
                     } else {
 
-                        $norder = (int) $value['order'];
-
-                        $var = $value['order'];
-
-                        /*
-                        while (true) {
-                            if (array_key_exists($var, $fields_final)) {
-                                $fields_final[$var + 1] = $fields_final[$var];
-                                $var = $var + 2;
-                            } else {
-                                break;
-                            }
+                        if ($value['order'] == 'next') {
+                            $norder = $lastIndex ++;
+                        } else {
+                            $norder = (int) $value['order'];
                         }
-                        */
+
+                        if (array_key_exists($norder, $fields_final)) {
+                            for ($i = count($fields_final); $i >= $norder; $i --) {
+                                $fields_final[($i + 1)] = $fields_final[$i];
+                            }
+                            $fields_final[$norder] = $key;
+                        }
 
                         $fields_final[$norder] = $key;
-
+                        $lastIndex ++;
                     }
                 } else {
 
@@ -1987,11 +1985,11 @@ class Bvb_Grid_Data
 
             }
 
-
             ksort($fields_final);
 
             $fields_final = $this->_reset_keys($fields_final);
         }
+
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
@@ -2825,6 +2823,8 @@ class Bvb_Grid_Data
             $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
 
+
+
             if (Zend_Loader_Autoloader::autoload($className)) {
                 $grid = new $className($options);
             } else {
@@ -2986,10 +2986,9 @@ class Bvb_Grid_Data
 
         if (isset($this->_options['deploy'][$name]) && is_array($this->_options['deploy'][$name])) {
 
-            if(method_exists($this,'_applyConfigOptions'))
-            {
+            if (method_exists($this, '_applyConfigOptions')) {
                 $this->_applyConfigOptions($this->_options['deploy'][$name]);
-            }else{
+            } else {
                 $this->deploy = $this->_options['deploy'][$name];
             }
         }
