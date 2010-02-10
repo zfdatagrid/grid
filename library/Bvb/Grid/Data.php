@@ -810,7 +810,14 @@ class Bvb_Grid_Data
              * Add to the queue and call it from the getFieldsFromQuery() method
              * @var $_updateColumnQueue Bvb_Grid_DataGrid
              */
-            $this->_updateColumnQueue[$field] = $options;
+
+            if(isset( $this->_updateColumnQueue[$field]))
+            {
+                 $this->_updateColumnQueue[$field] = array_merge( $this->_updateColumnQueue[$field],$options);
+            }else{
+                 $this->_updateColumnQueue[$field] = $options;
+            }
+
             return true;
 
         }
