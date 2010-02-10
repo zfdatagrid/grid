@@ -2988,7 +2988,13 @@ class Bvb_Grid_Data
         $name = strtolower(end($deploy));
 
         if (isset($this->_options['deploy'][$name]) && is_array($this->_options['deploy'][$name])) {
-            $this->deploy = $this->_options['deploy'][$name];
+
+            if(method_exists($this,'_applyConfigOptions'))
+            {
+                $this->_applyConfigOptions($this->_options['deploy'][$name]);
+            }else{
+                $this->deploy = $this->_options['deploy'][$name];
+            }
         }
 
         if (isset($this->_options['template'][$name]) && is_array($this->_options['template'][$name])) {
