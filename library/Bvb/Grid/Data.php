@@ -3034,6 +3034,14 @@ class Bvb_Grid_Data
 
 
     /**
+     * Get Model
+     */
+    function getModel()
+    {
+        return $this->_model;
+    }
+
+    /**
      * Creating a query using a Model.
      * @param Zend_Db_Table_Abstract $model
      * @return $this
