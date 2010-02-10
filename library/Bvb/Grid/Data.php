@@ -3123,6 +3123,18 @@ class Bvb_Grid_Data
     }
 
     /**
+     * Seet user definied params for templates.
+     * @param $name
+     * @param $value
+     */
+
+    function setTemplateParam($name,$value)
+    {
+        $this->_templateParams[$name] = $value;
+        return $this;
+    }
+
+    /**
      * Adds user definied params for templates.
      * @param array $options
      * @return $this
