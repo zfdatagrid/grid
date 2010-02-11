@@ -68,6 +68,12 @@ class Bvb_Grid_Data
     protected $_adapter = 'db';
 
     /**
+     * DBRM server name
+     * @var string
+     */
+    private $_server = null;
+
+    /**
      * Array containing all data
      *
      * @var unknown_type
@@ -956,47 +962,50 @@ class Bvb_Grid_Data
                 if (is_object($value[1])) {
                     $field = $value[1]->__toString();
                 } else {
-                    $field =  $value[1];
+                    $field = $value[1];
                 }
                 break;
             }
         }
 
 
-        if (isset($this->data['fields'][$field]['search']) and is_array($this->data['fields'][$field]['search']) && $this->data['fields'][$field]['search']['fulltext'] == true) {
+        if ($this->getDbServerName() == 'name') {
 
-            $full = $this->data['fields'][$field]['search'];
+            if (isset($this->data['fields'][$field]['search']) and is_array($this->data['fields'][$field]['search']) && $this->data['fields'][$field]['search']['fulltext'] == true) {
 
-            if (! isset($full['indexes'])) {
-                $indexes = $this->data['fields'][$field]['field'];
-            } elseif (is_array($full['indexes'])) {
-                $indexes = implode(',', array_values($full['indexes']));
-            } elseif (is_string($full['indexes'])) {
-                $indexes = $full['indexes'];
+                $full = $this->data['fields'][$field]['search'];
+
+                if (! isset($full['indexes'])) {
+                    $indexes = $this->data['fields'][$field]['field'];
+                } elseif (is_array($full['indexes'])) {
+                    $indexes = implode(',', array_values($full['indexes']));
+                } elseif (is_string($full['indexes'])) {
+                    $indexes = $full['indexes'];
+                }
+
+                $extra = isset($full['extra']) ? $full['extra'] : 'boolean';
+
+                if (! in_array($extra, array('boolean', 'queryExpansion', false))) {
+                    throw new Bvb_Grid_Exception('Unrecognized value in extra key');
+                }
+
+                if ($extra == 'boolean') {
+                    $extra = 'IN BOOLEAN MODE';
+                } elseif ($extra == 'queryExpansion') {
+                    $extra = ' WITH QUERY EXPANSION ';
+                } else {
+                    $extra = '';
+                }
+
+                if ($extra == 'IN BOOLEAN MODE') {
+                    $filtro = preg_replace("/\s+/", " +", $this->_db->quote(' ' . $filtro));
+                } else {
+                    $filtro = $this->_db->quote($filtro);
+                }
+
+                $this->_select->where(new Zend_Db_Expr("MATCH ($indexes) AGAINST ($filtro $extra) "));
+                return;
             }
-
-            $extra = isset($full['extra']) ? $full['extra'] : 'boolean';
-
-            if (! in_array($extra, array('boolean', 'queryExpansion', false))) {
-                throw new Bvb_Grid_Exception('Unrecognized value in extra key');
-            }
-
-            if ($extra == 'boolean') {
-                $extra = 'IN BOOLEAN MODE';
-            } elseif ($extra == 'queryExpansion') {
-                $extra = ' WITH QUERY EXPANSION ';
-            } else {
-                $extra = '';
-            }
-
-            if ($extra == 'IN BOOLEAN MODE') {
-                $filtro = preg_replace("/\s+/", " +", $this->_db->quote(' ' . $filtro));
-            } else {
-                $filtro = $this->_db->quote($filtro);
-            }
-
-            $this->_select->where(new Zend_Db_Expr("MATCH ($indexes) AGAINST ($filtro $extra) "));
-            return;
         }
 
         if (! isset($this->data['fields'][$field]['searchType'])) {
@@ -2650,9 +2659,8 @@ class Bvb_Grid_Data
 
         $unspecifiedFields = array_diff($this->getFields(), array_keys($this->filters));
 
-        foreach ($unspecifiedFields as $value)
-        {
-            $this->updateColumn($value,array('search'=>false));
+        foreach ($unspecifiedFields as $value) {
+            $this->updateColumn($value, array('search' => false));
         }
 
         return $this;
@@ -2794,14 +2802,23 @@ class Bvb_Grid_Data
         $this->_db = $select->getAdapter();
         $this->_setAdapter('db');
 
-        //Instanciate the Zend_Db_Select object
-        $this->_select = $this->_db->select();
+        $adapter = get_class($select->getAdapter());
+        $adapter = str_replace("Zend_Db_Adapter_", "", $adapter);
 
+        if (stripos($adapter, 'mysql') !== false) {
+            $this->_server = 'mysql';
+        } else {
+            $adapter = str_replace('Pdo_', '', $adapter);
+            $this->_server = strtolower($adapter);
+        }
+
+        //To know if the query has already been performed
         $this->_selectZendDb = true;
 
         $this->_select = $select;
 
 
+        //A list of tables in the query
         $this->_tablesList = $this->_select->getPart(Zend_Db_Select::FROM);
 
         $this->_getFieldsFromQuery($this->_select->getPart(Zend_Db_Select::COLUMNS), $this->_select->getPart(Zend_Db_Select::FROM));
@@ -3229,6 +3246,11 @@ class Bvb_Grid_Data
         }
 
         return $this;
+    }
+
+    function getDbServerName ()
+    {
+        return $this->_server;
     }
 
 

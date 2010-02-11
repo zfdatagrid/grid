@@ -1391,7 +1391,6 @@ Bvb_Grid_Deploy_Interface
             return '';
         }
 
-
         $this->_deploymentContent = $grid;
         return $this;
 
