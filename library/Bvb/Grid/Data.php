@@ -844,7 +844,7 @@ class Bvb_Grid_Data
      * Set option hide=1 on several columns
      * @param $columns
      */
-    function hideColumns (array $columns)
+    function setColumnsHidden (array $columns)
     {
         foreach ($columns as $column) {
             $this->updateColumn($column, array('hidden' => 1));
