@@ -946,28 +946,29 @@ class Bvb_Grid_Data
      * @param string $key
      * @return unknown
      */
-    protected function _buildSearchType ($filtro, $key, $field)
+    protected function _buildSearchType ($filtro, $field)
     {
 
         $columns = $this->_select->getPart('columns');
 
         foreach ($columns as $value) {
-            if ($key == $value[2]) {
+            if ($field == $value[2]) {
                 if (is_object($value[1])) {
                     $field = $value[1]->__toString();
                 } else {
-                    $field = $value[0] . '.' . $value[1];
+                    $field =  $value[1];
                 }
                 break;
             }
-
         }
-        if (isset($this->data['fields'][$key]['search']) and is_array($this->data['fields'][$key]['search']) && $this->data['fields'][$key]['search']['fulltext'] == true) {
 
-            $full = $this->data['fields'][$key]['search'];
+
+        if (isset($this->data['fields'][$field]['search']) and is_array($this->data['fields'][$field]['search']) && $this->data['fields'][$field]['search']['fulltext'] == true) {
+
+            $full = $this->data['fields'][$field]['search'];
 
             if (! isset($full['indexes'])) {
-                $indexes = $this->data['fields'][$key]['field'];
+                $indexes = $this->data['fields'][$field]['field'];
             } elseif (is_array($full['indexes'])) {
                 $indexes = implode(',', array_values($full['indexes']));
             } elseif (is_string($full['indexes'])) {
@@ -998,11 +999,11 @@ class Bvb_Grid_Data
             return;
         }
 
-        if (! isset($this->data['fields'][$key]['searchType'])) {
-            $this->data['fields'][$key]['searchType'] = 'like';
+        if (! isset($this->data['fields'][$field]['searchType'])) {
+            $this->data['fields'][$field]['searchType'] = 'like';
         }
 
-        $op = strtolower($this->data['fields'][$key]['searchType']);
+        $op = strtolower($this->data['fields'][$field]['searchType']);
 
         if (substr(strtoupper($filtro), 0, 2) == 'R:') {
             $op = 'REGEX';
@@ -1038,12 +1039,9 @@ class Bvb_Grid_Data
             $filtro = substr($filtro, 0, - 1);
         }
 
-        if (isset($this->data['fields'][$key]['searchTypeFixed']) && $this->data['fields'][$key]['searchTypeFixed'] === true && $op != $this->data['fields'][$key]['searchType']) {
-            $op = $this->data['fields'][$key]['searchType'];
+        if (isset($this->data['fields'][$field]['searchTypeFixed']) && $this->data['fields'][$field]['searchTypeFixed'] === true && $op != $this->data['fields'][$field]['searchType']) {
+            $op = $this->data['fields'][$field]['searchType'];
         }
-
-
-        $field = $this->data['fields'][$field]['field'];
 
         switch ($op) {
             case 'equal':
@@ -1092,7 +1090,7 @@ class Bvb_Grid_Data
 
     /**
      * Default values for filters.
-     * Thy will be applied before deisplaying. However the user can still remove them.
+     * Thy will be applied before displaying. However the user can still remove them.
      * @param $filters
      */
     public function setDefaultFiltersValues (array $filters)
@@ -1127,17 +1125,15 @@ class Bvb_Grid_Data
         if (is_array($filters)) {
             foreach ($filters as $key => $filtro) {
                 $key = str_replace("bvbdot", ".", $key);
-
                 if (strlen($filtro) == 0 || ! in_array($key, $this->_fields)) {
                     unset($filters[$key]);
                 } else {
-                    $oldKey = $key;
-                    if (@$fieldsSemAsFinal[$key]['searchField'] != "") {
+                    if (isset($fieldsSemAsFinal[$key]['searchField'])) {
                         $key = $fieldsSemAsFinal[$key]['searchField'];
                     }
 
                     if ($this->_getAdapter() == 'db') {
-                        $this->_buildSearchType($filtro, $oldKey, $key);
+                        $this->_buildSearchType($filtro, $key);
                     }
                     $valor_filters[$key] = $filtro;
                 }
@@ -1347,6 +1343,7 @@ class Bvb_Grid_Data
                 $return[] = array('type' => 'extraField', 'class' => $this->template['classes']['filter'], 'position' => 'right');
             }
         }
+
 
         return $return;
     }
@@ -2150,6 +2147,7 @@ class Bvb_Grid_Data
         if ($this->_selectZendDb !== true && $this->_getAdapter() == 'db') {
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
+
 
         $this->_buildDefaultFilters();
 
@@ -3137,6 +3135,7 @@ class Bvb_Grid_Data
                     $cols = array_combine($sel['columns'], $sel['refColumns']);
 
                     foreach ($sel['columns'] as $key => $value) {
+
                         if ($i > 0) {
                             $alias = '_' . $i;
                         } else {
@@ -3148,6 +3147,7 @@ class Bvb_Grid_Data
 
                 } else {
                     $cols = array($sel['columns'] => $sel['refColumns']);
+
                     $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
                 }
 
@@ -3156,8 +3156,6 @@ class Bvb_Grid_Data
         } else {
             $select->from($info['name']);
         }
-
-
 
         $this->query($select);
 
