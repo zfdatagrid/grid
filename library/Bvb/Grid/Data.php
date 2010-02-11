@@ -1042,6 +1042,9 @@ class Bvb_Grid_Data
             $op = $this->data['fields'][$key]['searchType'];
         }
 
+
+        $field = $this->data['fields'][$field]['field'];
+
         switch ($op) {
             case 'equal':
             case '=':
@@ -1087,11 +1090,15 @@ class Bvb_Grid_Data
 
     }
 
+    /**
+     * Default values for filters.
+     * Thy will be applied before deisplaying. However the user can still remove them.
+     * @param $filters
+     */
     public function setDefaultFiltersValues (array $filters)
     {
         $this->_defaultFilters = array_flip($filters);
         return $this;
-
     }
 
     /**
@@ -2160,7 +2167,6 @@ class Bvb_Grid_Data
             $this->_buildQuery();
             $this->_builQueryCount();
 
-
             if ($this->cache['use'] == 1) {
                 $cache = $this->cache['instance'];
 
@@ -3150,6 +3156,8 @@ class Bvb_Grid_Data
         } else {
             $select->from($info['name']);
         }
+
+
 
         $this->query($select);
 
