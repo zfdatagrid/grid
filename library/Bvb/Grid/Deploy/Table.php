@@ -331,6 +331,11 @@ Bvb_Grid_Deploy_Interface
                     foreach ($r as $key => $value) {
                         $isField = $this->_form->getElement($key);
                         if (isset($isField)) {
+                            $info = $this->_form->getModel()->info();
+                            if(substr($info['metadata'][$key]['DATA_TYPE'],0,4)=='set(')
+                            {
+                                $value = explode(',',$value);
+                            }
                             $this->_form->getElement($key)->setValue($value);
                         }
                     }

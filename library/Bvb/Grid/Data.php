@@ -841,7 +841,7 @@ class Bvb_Grid_Data
 
 
     /**
-     * Set option hide=1 on several columns
+     * Set option hidden=1 on several columns
      * @param $columns
      */
     function setColumnsHidden (array $columns)
