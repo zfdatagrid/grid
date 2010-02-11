@@ -811,11 +811,10 @@ class Bvb_Grid_Data
              * @var $_updateColumnQueue Bvb_Grid_DataGrid
              */
 
-            if(isset( $this->_updateColumnQueue[$field]))
-            {
-                 $this->_updateColumnQueue[$field] = array_merge( $this->_updateColumnQueue[$field],$options);
-            }else{
-                 $this->_updateColumnQueue[$field] = $options;
+            if (isset($this->_updateColumnQueue[$field])) {
+                $this->_updateColumnQueue[$field] = array_merge($this->_updateColumnQueue[$field], $options);
+            } else {
+                $this->_updateColumnQueue[$field] = $options;
             }
 
             return true;
@@ -845,11 +844,10 @@ class Bvb_Grid_Data
      * Set option hide=1 on several columns
      * @param $columns
      */
-    function hideColumns(array $columns)
+    function hideColumns (array $columns)
     {
-        foreach ($columns as $column)
-        {
-            $this->updateColumn($column,array('hidden'=>1));
+        foreach ($columns as $column) {
+            $this->updateColumn($column, array('hidden' => 1));
         }
         return $this;
     }
@@ -1702,7 +1700,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value,'style'=>$value['style']);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
 
             /**
@@ -1731,10 +1729,10 @@ class Bvb_Grid_Data
 
                 if ($this->_displayField($fields[$is])) {
 
-                    $style = ! isset($this->data['fields'][$fields[$is]]['style'])  ? '' : $this->data['fields'][$fields[$is]]['style'];
+                    $style = ! isset($this->data['fields'][$fields[$is]]['style']) ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
 
-                    $return[$i][] = @array('class' => $fieldClass, 'value' => $new_value, 'field' => $this->_fields[$is], 'style'=>$style);
+                    $return[$i][] = @array('class' => $fieldClass, 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
 
                 $is ++;
@@ -1764,7 +1762,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value,'style'=>$value['style']);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
             $i ++;
         }
@@ -2611,16 +2609,49 @@ class Bvb_Grid_Data
 
 
     /**
+     * Returns a field and is options
+     * @param $field
+     */
+    function getField ($field)
+    {
+        return $this->data['fields'][$field];
+    }
+
+
+    /**
+     *Return fields list.
+     *Optional param returns also fields options
+     * @param $returnOptions
+     */
+    function getFields ($returnOptions = false)
+    {
+
+        if (false !== $returnOptions) {
+            return $this->data['fields'];
+        }
+
+        return array_keys($this->data['fields']);
+
+    }
+
+    /**
      * Add filters
      *
      */
     public function addFilters ($filters)
     {
-
         $filters = $this->_object2array($filters);
         $filters = $filters['_filters'];
         $this->filters = $filters;
 
+        $unspecifiedFields = array_diff($this->getFields(), array_keys($this->filters));
+
+        foreach ($unspecifiedFields as $value)
+        {
+            $this->updateColumn($value,array('search'=>false));
+        }
+
+        return $this;
     }
 
     /**
@@ -3050,7 +3081,7 @@ class Bvb_Grid_Data
     /**
      * Get Model
      */
-    function getModel()
+    function getModel ()
     {
         return $this->_model;
     }
@@ -3142,7 +3173,7 @@ class Bvb_Grid_Data
      * @param $value
      */
 
-    function addTemplateParam($name,$value)
+    function addTemplateParam ($name, $value)
     {
         $this->_templateParams[$name] = $value;
         return $this;
