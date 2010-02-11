@@ -840,6 +840,20 @@ class Bvb_Grid_Data
         return $this;
     }
 
+
+    /**
+     * Set option hide=1 on several columns
+     * @param $columns
+     */
+    function hideColumns(array $columns)
+    {
+        foreach ($columns as $column)
+        {
+            $this->updateColumn($column,array('hidden'=>1));
+        }
+        return $this;
+    }
+
     /**
      * Add a new dir to look for when formating a field
      *
