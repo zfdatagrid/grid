@@ -1087,7 +1087,7 @@ class Bvb_Grid_Data
 
     }
 
-    public function setDefaultFilters (array $filters)
+    public function setDefaultFiltersValues (array $filters)
     {
         $this->_defaultFilters = array_flip($filters);
         return $this;
