@@ -1653,8 +1653,9 @@ Bvb_Grid_Deploy_Interface
         if ($this->_getAdapter() == 'db') {
             //check if we need to load  fields for filters
             if (isset($this->filters[$valor]['distinct']) && is_array($this->filters[$valor]['distinct']) && isset($this->filters[$valor]['distinct']['field'])) {
-                $this->filters[$valor]['distinct']['field'] = @$this->filters[$valor]['distinct']['field'];
-                $this->filters[$valor]['distinct']['name'] = @$this->filters[$valor]['distinct']['name'];
+
+                $distinctField = $this->filters[$valor]['distinct']['field'];
+                $distinctValue = $this->filters[$valor]['distinct']['name'];
 
                 $distinct = clone $this->_select;
 
@@ -1663,8 +1664,8 @@ Bvb_Grid_Deploy_Interface
                 $distinct->reset(Zend_Db_Select::LIMIT_COUNT);
                 $distinct->reset(Zend_Db_Select::LIMIT_OFFSET);
 
-                $distinct->columns(array('field' => new Zend_Db_Expr("DISTINCT({$this->filters[$valor]['distinct']['field']})")));
-                $distinct->columns(array('value' => $this->filters[$valor]['distinct']['name']));
+                $distinct->columns(array('field' => new Zend_Db_Expr("DISTINCT({$this->data['fields'][$distinctField]['field']})")));
+                $distinct->columns(array('value' => $this->data['fields'][$distinctValue]['field']));
                 $distinct->order(' value ASC');
 
                 $result = $distinct->query(Zend_Db::FETCH_ASSOC);
