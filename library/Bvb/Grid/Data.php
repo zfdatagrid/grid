@@ -768,6 +768,10 @@ class Bvb_Grid_Data
      */
     protected function __ ($message)
     {
+        if(strlen($message)==0){
+            return $message;
+        }
+
         if (Zend_Registry::isRegistered('Zend_Translate')) {
             $message = Zend_Registry::get('Zend_Translate')->translate($message);
         }
