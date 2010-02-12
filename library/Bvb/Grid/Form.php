@@ -242,6 +242,7 @@ class Bvb_Grid_Form extends Zend_Form
                     $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
                 case 'datetime':
+                case 'timestamp':
                     $form['elements'][$column] = array('text', array('decorators' => $this->elementDecorators, 'validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
