@@ -140,6 +140,11 @@ class Bvb_Grid_Form extends Zend_Form
     {
         $this->_model = $model;
 
+        if(stripos(get_class($model->getAdapter()),'mysql')===false)
+        {
+            throw new Bvb_Grid_Exception('At this moment only models using MySQL can be used for scaffolding');
+        }
+
         $final = array();
 
         $info = $model->info();
