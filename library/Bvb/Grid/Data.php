@@ -163,7 +163,7 @@ class Bvb_Grid_Data
      * @var Zend_Db_Select
      * @return Zend_Db_Adapter_Abstract
      */
-    protected $_db;
+    private $_db;
 
     /**
      * Baseurl
@@ -392,6 +392,21 @@ class Bvb_Grid_Data
      * @var array
      */
     protected $_templateParams = array();
+
+
+    protected function _setDb(Zend_Db_Adapter_Abstract $db)
+    {
+        $this->_db = $db;
+        return $this;
+    }
+
+    /**
+     * Get db instance
+     */
+    protected function _getDb()
+    {
+        return $this->_db;
+    }
 
     /**
      * The __construct function receives the db adapter. All information related to the
@@ -1008,9 +1023,9 @@ class Bvb_Grid_Data
                 }
 
                 if ($extra == 'IN BOOLEAN MODE') {
-                    $filtro = preg_replace("/\s+/", " +", $this->_db->quote(' ' . $filtro));
+                    $filtro = preg_replace("/\s+/", " +", $this->_getDb()->quote(' ' . $filtro));
                 } else {
-                    $filtro = $this->_db->quote($filtro);
+                    $filtro = $this->_getDb()->quote($filtro);
                 }
 
                 $this->_select->where(new Zend_Db_Expr("MATCH ($indexes) AGAINST ($filtro $extra) "));
@@ -1069,40 +1084,40 @@ class Bvb_Grid_Data
                 $this->_select->where($field . ' = ?', $filtro);
                 break;
             case 'REGEX':
-                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_db->quote($filtro)));
+                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_getDb()->quote($filtro)));
                 break;
             case 'rlike':
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_db->quote($filtro . "%")));
+                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote($filtro . "%")));
                 break;
             case 'llike':
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_db->quote("%" . $filtro)));
+                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote("%" . $filtro)));
                 break;
             case '>=':
-                $this->_select->where(new Zend_Db_Expr($field . " >= " . $this->_db->quote($filtro)));
+                $this->_select->where($field . " >= ?" ,$filtro);
                 break;
             case '>':
-                $this->_select->where(new Zend_Db_Expr($field . " > " . $this->_db->quote($filtro)));
+                $this->_select->where($field . " > ?" ,$filtro);
                 break;
             case '<>':
             case '!=':
-                $this->_select->where(new Zend_Db_Expr($field . " <> " . $this->_db->quote($filtro)));
+                $this->_select->where($field . " <> ?",$filtro);
                 break;
             case '<=':
-                $this->_select->where(new Zend_Db_Expr($field . " <= " . $this->_db->quote($filtro)));
+                $this->_select->where($field . " <= ?",$filtro);
                 break;
             case '<':
-                $this->_select->where(new Zend_Db_Expr($field . " < " . $this->_db->quote($filtro)));
+                $this->_select->where($field . " < ?",$filtro);
                 break;
             case 'range':
 
                 $end = substr($filtro, 0, strpos($filtro, '<>'));
                 $start = substr($filtro, strpos($filtro, '<>') + 2);
-                $this->_select->where(new Zend_Db_Expr($field . " < " . $this->_db->quote($start)));
-                $this->_select->where(new Zend_Db_Expr($field . " > " . $this->_db->quote($end)));
+                $this->_select->where($field . " < ?" ,$start);
+                $this->_select->where($field . " > ? " ,$end);
                 break;
             case 'like':
             default:
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_db->quote("%" . $filtro . "%")));
+                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote("%" . $filtro . "%")));
                 break;
         }
 
@@ -2720,13 +2735,13 @@ class Bvb_Grid_Data
             if ($this->cache['use'] == 1) {
                 $cache = $this->cache['instance'];
                 if (! $describe = $cache->load(md5('describe' . $table))) {
-                    $describe = $this->_db->describeTable($table);
+                    $describe = $this->_getDb()->describeTable($table);
                     $cache->save($describe, md5('describe' . $table), array($this->cache['tag']));
                 } else {
                     $describe = $cache->load(md5('describe' . $table));
                 }
             } else {
-                $describe = $this->_db->describeTable($table);
+                $describe = $this->_getDb()->describeTable($table);
             }
 
             $this->_describeTables[$table] = $describe;
@@ -2809,7 +2824,7 @@ class Bvb_Grid_Data
             throw new Bvb_Grid_Exception('Cannot redeclare query()');
         }
 
-        $this->_db = $select->getAdapter();
+        $this->_setDb($select->getAdapter());
         $this->_setAdapter('db');
 
         $adapter = get_class($select->getAdapter());

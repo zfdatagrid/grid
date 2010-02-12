@@ -377,7 +377,7 @@ Bvb_Grid_Deploy_Interface
                         if ($this->_formHasModel) {
                             $this->_form->getModel()->insert($post);
                         } else {
-                            $this->_db->insert($this->data['table'], $post);
+                            $this->_getDb()->insert($this->data['table'], $post);
                         }
 
                         if (null !== $this->_callbackAfterInsert) {
@@ -414,7 +414,7 @@ Bvb_Grid_Deploy_Interface
                         if ($this->_formHasModel) {
                             $this->_form->getModel()->update($post, $queryUrl . $where);
                         } else {
-                            $this->_db->update($this->data['table'], $post, $queryUrl . $where);
+                            $this->_getDb()->update($this->data['table'], $post, $queryUrl . $where);
                         }
 
                         if (null !== $this->_callbackAfterUpdate) {
@@ -517,7 +517,7 @@ Bvb_Grid_Deploy_Interface
         }
 
         $pkArray = parent::_getPrimaryKey();
-        $id = $this->_db->quoteIdentifier($pkArray[0]);
+        $id = $this->_getDb()->quoteIdentifier($pkArray[0]);
 
         if (isset($this->info['delete']['where'])) {
 
@@ -539,7 +539,7 @@ Bvb_Grid_Deploy_Interface
 
                     if ($parentField != $pkParent && ! is_array($pkParentArray)) {
 
-                        $select = $this->_db->select();
+                        $select = $this->_getDb()->select();
                         $select->from($this->data['table'], array('total' => $parentField));
                         $select->where($this->_getPkFromUrl(true));
                         $final = $select->query(Zend_Db::FETCH_ASSOC);
@@ -550,7 +550,7 @@ Bvb_Grid_Deploy_Interface
                         $finalValue = $final['id'];
                     }
 
-                    $resultDelete = $this->_db->delete($value['table'], $this->_db->quoteIdentifier($value['childField']) . $operand . $this->_db->quote($finalValue));
+                    $resultDelete = $this->_getDb()->delete($value['table'], $this->_getDb()->quoteIdentifier($value['childField']) . $operand . $this->_getDb()->quote($finalValue));
 
                 }
             }
@@ -562,7 +562,7 @@ Bvb_Grid_Deploy_Interface
             if ($this->_formHasModel) {
                 $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
             } else {
-                $resultDelete = $this->_db->delete($this->data['table'],$this->_getPkFromUrl(false) . $where);
+                $resultDelete = $this->_getDb()->delete($this->data['table'],$this->_getPkFromUrl(false) . $where);
             }
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
@@ -886,7 +886,7 @@ Bvb_Grid_Deploy_Interface
             $field_explode = explode('.', $f[0]);
             $field = end($field_explode);
 
-            $param .= " AND  " . $this->_db->quoteIdentifier($field) . '=' . $this->_db->quote($f[1]);
+            $param .= " AND  " . $this->_getDb()->quoteIdentifier($field) . '=' . $this->_getDb()->quote($f[1]);
 
             $returnArray[$f[0]] = $f[1];
         }
