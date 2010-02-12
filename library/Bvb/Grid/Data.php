@@ -964,13 +964,18 @@ class Bvb_Grid_Data
                 } else {
                     $field = $value[0].'.'. $value[1];
                 }
-
                 break;
             }elseif ($field == $value[0])
             {
                 $field = $value[0].'.'. $value[1];
                 break;
             }
+        }
+
+
+        if(strpos($field,'.')===false)
+        {
+            $field = $this->data['fields'][$field]['field'];
         }
 
 
@@ -1016,6 +1021,7 @@ class Bvb_Grid_Data
         if (! isset($this->data['fields'][$field]['searchType'])) {
             $this->data['fields'][$field]['searchType'] = 'like';
         }
+
 
         $op = strtolower($this->data['fields'][$field]['searchType']);
 
@@ -2228,7 +2234,6 @@ class Bvb_Grid_Data
                 }
 
             } else {
-
                 $stmt = $this->_select->query(Zend_Db::FETCH_ASSOC);
 
                 $result = $stmt->fetchAll();
