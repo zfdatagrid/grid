@@ -1709,7 +1709,6 @@ class Bvb_Grid_Data
 
         $fields = $this->_fields;
 
-
         $i = 0;
 
         foreach ($this->_result as $dados) {
@@ -1719,6 +1718,7 @@ class Bvb_Grid_Data
             foreach ($fields as $value) {
                 $outputToReplace[] = $dados[$value];
             }
+
 
             /**
              *Deal with extrafield from the left
@@ -1741,7 +1741,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+               $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
 
             /**
@@ -1749,7 +1749,6 @@ class Bvb_Grid_Data
              */
             $is = 0;
             foreach ($fields as $campos) {
-
 
                 $new_value = $dados[$fields[$is]];
 
@@ -1803,7 +1802,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+               $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
             $i ++;
         }
@@ -1991,6 +1990,7 @@ class Bvb_Grid_Data
     protected function _validateFields ($fields)
     {
 
+
         if (is_array($fields)) {
             $hide = 0;
             $fields_final = array();
@@ -2012,18 +2012,18 @@ class Bvb_Grid_Data
                     $titulos[$key] = ucwords(str_replace('_', ' ', $key));
                 }
 
-                if (isset($value['order'])) {
+                if (isset($value['position'])&& (!isset($value['hidden']) || $value['hidden']==0) ) {
 
-                    if ($value['order'] == 'last') {
-                        $fields_final[($lastIndex + rand(100, 1000))] = $key;
-                    } elseif ($value['order'] == 'first') {
-                        $fields_final[($lastIndex - rand(100, 1000))] = $key;
+                    if ($value['position'] == 'last') {
+                        $fields_final[($lastIndex + 100)] = $key;
+                    } elseif ($value['position'] == 'first') {
+                        $fields_final[($lastIndex - 100)] = $key;
                     } else {
 
-                        if ($value['order'] == 'next') {
+                        if ($value['position'] == 'next') {
                             $norder = $lastIndex ++;
                         } else {
-                            $norder = (int) $value['order'];
+                            $norder = (int) $value['position'];
                         }
 
                         if (array_key_exists($norder, $fields_final)) {
@@ -2036,7 +2036,7 @@ class Bvb_Grid_Data
                         $fields_final[$norder] = $key;
                         $lastIndex ++;
                     }
-                } else {
+                } elseif(!isset($value['hidden']) || $value['hidden']==0) {
 
                     while (true) {
                         if (array_key_exists($lastIndex, $fields_final)) {
@@ -2053,9 +2053,9 @@ class Bvb_Grid_Data
 
             ksort($fields_final);
 
+
             $fields_final = $this->_reset_keys($fields_final);
         }
-
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
