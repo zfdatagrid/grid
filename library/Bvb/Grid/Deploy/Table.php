@@ -1624,6 +1624,11 @@ Bvb_Grid_Deploy_Interface
         @$this->info['delete']['cascadeDelete'] = $form['cascadeDelete'];
 
         if ($options['add'] == 1 && $options['add'] == 1) {
+            if(!isset($options['button']))
+            {
+                $options['button'] = 0;
+            }
+
             $this->add = array('allow' => 1, 'button' => $options['button'], 'fields' => $fields, 'force' => @$options['onAddForce']);
         }
 
