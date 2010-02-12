@@ -2034,8 +2034,8 @@ class Bvb_Grid_Data
                         }
 
                         $fields_final[$norder] = $key;
-                        $lastIndex ++;
                     }
+
                 } elseif(!isset($value['hidden']) || $value['hidden']==0) {
 
                     while (true) {
@@ -2047,6 +2047,8 @@ class Bvb_Grid_Data
                     }
 
                     $fields_final[$lastIndex] = $key;
+                }else{
+                      $fields_final[10000] = $key;
                 }
 
             }
