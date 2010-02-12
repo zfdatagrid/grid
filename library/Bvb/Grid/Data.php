@@ -394,7 +394,7 @@ class Bvb_Grid_Data
     protected $_templateParams = array();
 
 
-    protected function _setDb(Zend_Db_Adapter_Abstract $db)
+    protected function _setDb (Zend_Db_Adapter_Abstract $db)
     {
         $this->_db = $db;
         return $this;
@@ -403,7 +403,7 @@ class Bvb_Grid_Data
     /**
      * Get db instance
      */
-    protected function _getDb()
+    protected function _getDb ()
     {
         return $this->_db;
     }
@@ -768,7 +768,7 @@ class Bvb_Grid_Data
      */
     protected function __ ($message)
     {
-        if(strlen($message)==0){
+        if (strlen($message) == 0) {
             return $message;
         }
 
@@ -981,19 +981,17 @@ class Bvb_Grid_Data
                 if (is_object($value[1])) {
                     $field = $value[1]->__toString();
                 } else {
-                    $field = $value[0].'.'. $value[1];
+                    $field = $value[0] . '.' . $value[1];
                 }
                 break;
-            }elseif ($field == $value[0])
-            {
-                $field = $value[0].'.'. $value[1];
+            } elseif ($field == $value[0]) {
+                $field = $value[0] . '.' . $value[1];
                 break;
             }
         }
 
 
-        if(strpos($field,'.')===false)
-        {
+        if (strpos($field, '.') === false) {
             $field = $this->data['fields'][$field]['field'];
         }
 
@@ -1097,27 +1095,27 @@ class Bvb_Grid_Data
                 $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote("%" . $filtro)));
                 break;
             case '>=':
-                $this->_select->where($field . " >= ?" ,$filtro);
+                $this->_select->where($field . " >= ?", $filtro);
                 break;
             case '>':
-                $this->_select->where($field . " > ?" ,$filtro);
+                $this->_select->where($field . " > ?", $filtro);
                 break;
             case '<>':
             case '!=':
-                $this->_select->where($field . " <> ?",$filtro);
+                $this->_select->where($field . " <> ?", $filtro);
                 break;
             case '<=':
-                $this->_select->where($field . " <= ?",$filtro);
+                $this->_select->where($field . " <= ?", $filtro);
                 break;
             case '<':
-                $this->_select->where($field . " < ?",$filtro);
+                $this->_select->where($field . " < ?", $filtro);
                 break;
             case 'range':
 
                 $end = substr($filtro, 0, strpos($filtro, '<>'));
                 $start = substr($filtro, strpos($filtro, '<>') + 2);
-                $this->_select->where($field . " < ?" ,$start);
-                $this->_select->where($field . " > ? " ,$end);
+                $this->_select->where($field . " < ?", $start);
+                $this->_select->where($field . " > ? ", $end);
                 break;
             case 'like':
             default:
@@ -2101,6 +2099,9 @@ class Bvb_Grid_Data
     {
 
         if (null === $table) {
+            if (! isset($this->data['table'])) {
+                return;
+            }
             $table = $this->data['table'];
         }
 
@@ -2732,6 +2733,10 @@ class Bvb_Grid_Data
 
         if ($this->_getAdapter() != 'db') {
             return false;
+        }
+
+        if (is_null($table)) {
+            return;
         }
 
         if (! isset($this->_describeTables[$table]) || ! @is_array($this->_describeTables[$table])) {

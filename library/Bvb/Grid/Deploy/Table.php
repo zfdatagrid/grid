@@ -1698,10 +1698,9 @@ Bvb_Grid_Deploy_Interface
         }
 
         if ($this->_getAdapter() == 'db') {
-
             $tAlias = explode('.', $this->data['fields'][$campo]['field']);
             $tableName = $this->_tablesList[reset($tAlias)]['tableName'];
-            $table = $this->_getDescribeTable($this->data['table']);
+            $table = $this->_getDescribeTable($tableName);
         }
 
         @$tipo = $table[$campo];
