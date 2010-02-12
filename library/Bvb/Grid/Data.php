@@ -2048,7 +2048,7 @@ class Bvb_Grid_Data
 
                     $fields_final[$lastIndex] = $key;
                 }else{
-                      $fields_final[10000] = $key;
+                      $fields_final[$lastIndex + $lastIndex*2] = $key;
                 }
 
             }
