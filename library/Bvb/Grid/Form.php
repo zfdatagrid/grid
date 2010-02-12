@@ -29,6 +29,8 @@ class Bvb_Grid_Form extends Zend_Form
 
     protected $_model;
 
+    public $groupDecorators = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper');
+
     public $elementDecorators = array(
                                     'ViewHelper',
                                     'Description',
@@ -38,6 +40,9 @@ class Bvb_Grid_Form extends Zend_Form
                                     array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     public $buttonHidden = array('ViewHelper');
+
+    public $formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%','class'=>'borders')), 'Form');
+
 
     function __call ($name, $args)
     {

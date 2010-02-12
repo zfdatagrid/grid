@@ -1528,6 +1528,11 @@ Bvb_Grid_Deploy_Interface
             if (is_null($this->_model)) {
                 throw new Bvb_Grid_Exception('Please set the model to use');
             }
+
+            if($this->getDbServerName()!='mysql')
+            {
+                throw new Bvb_Grid_Exception('At this moment only models using MySQL can be used for scaffolding');
+            }
             $form->setModel($this->_model);
 
             $this->_formHasModel = true;
@@ -1553,15 +1558,15 @@ Bvb_Grid_Deploy_Interface
         }
 
 
-        $form->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%','class'=>'borders')), 'Form'));
+        $form->setDecorators($form->formDecorator);
 
-        $form->addElement('submit', 'form_submit', array('label' => 'Submit', 'class' => 'submit', 'decorators' => array('ViewHelper')));
+        $form->addElement('submit', 'form_submit', array('label' => 'Submit', 'class' => 'submit', 'decorators' => $form->buttonHidden));
         $form->addElement('hidden', '_form_edit', array('value' => 1, 'decorators' => $form->buttonHidden));
 
         $url = $this->_getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
 
-        $form->addElement('button', 'form_reset', array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => array('ViewHelper')));
-        $form->addDisplayGroup(array('form_submit', 'form_reset'), 'buttons', array('decorators' => array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper')));
+        $form->addElement('button', 'form_reset', array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $form->buttonHidden));
+        $form->addDisplayGroup(array('form_submit', 'form_reset'), 'buttons', array('decorators' => $form->groupDecorators));
 
         $form->setAction($this->_getUrl(array_keys($form->getElements())));
 
@@ -1692,7 +1697,7 @@ Bvb_Grid_Deploy_Interface
             @$this->_filtersValues[$campo] = $this->_filtersValues[$nkey];
         }
 
-        if ($this->_adapter == 'db') {
+        if ($this->_getAdapter() == 'db') {
 
             $tAlias = explode('.', $this->data['fields'][$campo]['field']);
             $tableName = $this->_tablesList[reset($tAlias)]['tableName'];
