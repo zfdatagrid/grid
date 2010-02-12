@@ -33,7 +33,7 @@ class Bvb_Grid_Formatter_Date
             $this->locale = $options;
         } elseif (is_string($options)) {
             $this->date_format = $options;
-        } else {
+        } elseif (is_array($options)) {
             foreach ($options as $k => $v) {
                 switch ($k) {
                     case 'locale':
@@ -46,9 +46,11 @@ class Bvb_Grid_Formatter_Date
                         $this->type = $v;
                         break;
                     default:
-                        throw new Exception("Unknown option '$k'.");
+                        throw new Bvb_Grid_Exception($this->__("Unknown option '$k'."));
                 }
             }
+        } elseif (Zend_Registry::isRegistered('Zend_Locale')) {
+            $this->locale = Zend_Registry::get('Zend_Locale');
         }
     }
 
