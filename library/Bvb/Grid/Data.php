@@ -962,14 +962,19 @@ class Bvb_Grid_Data
                 if (is_object($value[1])) {
                     $field = $value[1]->__toString();
                 } else {
-                    $field = $value[1];
+                    $field = $value[0].'.'. $value[1];
                 }
+
+                break;
+            }elseif ($field == $value[0])
+            {
+                $field = $value[0].'.'. $value[1];
                 break;
             }
         }
 
 
-        if ($this->getDbServerName() == 'name') {
+        if ($this->getDbServerName() == 'mysql') {
 
             if (isset($this->data['fields'][$field]['search']) and is_array($this->data['fields'][$field]['search']) && $this->data['fields'][$field]['search']['fulltext'] == true) {
 
