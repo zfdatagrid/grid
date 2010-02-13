@@ -1996,6 +1996,7 @@ class Bvb_Grid_Data
             $fields_final = array();
             $lastIndex = 1;
             $norder = 0;
+            $noIndex = 1;
 
             foreach ($fields as $key => $value) {
 
@@ -2036,6 +2037,8 @@ class Bvb_Grid_Data
                         $fields_final[$norder] = $key;
                     }
 
+
+
                 } elseif(!isset($value['hidden']) || $value['hidden']==0) {
 
                     while (true) {
@@ -2048,13 +2051,15 @@ class Bvb_Grid_Data
 
                     $fields_final[$lastIndex] = $key;
                 }else{
-                      $fields_final[$lastIndex + $lastIndex*2] = $key;
-                }
 
+                    $noIndex++;
+
+                      $fields_final[1000 + $noIndex] = $key;
+
+                }
             }
 
             ksort($fields_final);
-
 
             $fields_final = $this->_reset_keys($fields_final);
         }
@@ -2621,13 +2626,12 @@ class Bvb_Grid_Data
     {
 
         $totalFields = count($this->_fields);
-        $a = 0;
-        $i = 0;
+
         foreach ($this->data['fields'] as $value) {
             if (isset($value['remove']) && $value['remove'] == 1) {
-                $i ++;
+                $totalFields --;
             } elseif (isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true) {
-                $i ++;
+                $totalFields --;
             }
 
             if (isset($value['hRow']) && $value['hRow'] == 1) {
@@ -2635,16 +2639,14 @@ class Bvb_Grid_Data
             }
         }
 
-        $totalFields = $totalFields - $i;
         if (isset($this->info['delete']['allow']) && $this->info['delete']['allow'] == 1) {
-            $a ++;
+           $totalFields ++;
         }
 
         if (isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1) {
-            $a ++;
+            $totalFields ++;
         }
 
-        $totalFields = $totalFields + $a;
         $colspan = $totalFields + count($this->extra_fields);
 
         $this->_colspan = $colspan;
