@@ -217,7 +217,7 @@ Bvb_Grid_Deploy_Interface
      *
      * @var Zend_Form
      */
-    protected $_form;
+    protected $_form ;
 
 
     /**
@@ -1484,7 +1484,7 @@ Bvb_Grid_Deploy_Interface
   if( !isset($this->info['noFilters']) || $this->info['noFilters']!=0)
         {
 
- $script .= "function gridChangeFilters(fields,url,Ajax)
+ $script .= "function ".$this->_gridId."gridChangeFilters(fields,url,Ajax)
 {
     var Ajax = \"1\";
     var fieldsArray = fields.split(\",\");
@@ -1732,7 +1732,7 @@ Bvb_Grid_Deploy_Interface
         }
 
         $help_javascript = str_replace(".", "bvbdot", $help_javascript);
-        $attr['onChange'] = "gridChangeFilters('$help_javascript','$url');";
+        $attr['onChange'] = $this->_gridId."gridChangeFilters('$help_javascript','$url');";
 
         $opcoes = array();
         if (isset($this->filters[$campo])) {
