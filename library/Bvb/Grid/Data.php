@@ -1741,7 +1741,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-               $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
 
             /**
@@ -1802,7 +1802,7 @@ class Bvb_Grid_Data
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
-               $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
             $i ++;
         }
@@ -1840,10 +1840,8 @@ class Bvb_Grid_Data
      * @param unknown_type $array
      * @return unknown
      */
-    protected function _reset_keys ($array)
+    protected function _reset_keys (array $array)
     {
-
-        if (! is_array($array)) return FALSE;
 
         $novo_array = array();
         $i = 0;
@@ -1987,87 +1985,81 @@ class Bvb_Grid_Data
      *
      * @param array $fields
      */
-    protected function _validateFields ($fields)
+    protected function _validateFields (array $fields)
     {
 
+        $hide = 0;
+        $fields_final = array();
+        $lastIndex = 1;
+        $norder = 0;
+        $lastHidden = 10000;
 
-        if (is_array($fields)) {
-            $hide = 0;
-            $fields_final = array();
-            $lastIndex = 1;
-            $norder = 0;
-            $noIndex = 1;
+        foreach ($fields as $key => $value) {
 
-            foreach ($fields as $key => $value) {
+            //A parte da order
+            if (isset($value['orderField'])) {
+                $orderFields[$key] = $value['orderField'];
+            } else {
+                $orderFields[$key] = $key;
+            }
 
-                //A parte da order
-                if (isset($value['orderField'])) {
-                    $orderFields[$key] = $value['orderField'];
+            if (isset($value['title'])) {
+                $titulos[$key] = $value['title'];
+            } else {
+                $titulos[$key] = ucwords(str_replace('_', ' ', $key));
+            }
+
+            if (isset($value['position']) && (! isset($value['hidden']) || $value['hidden'] == 0)) {
+
+                if ($value['position'] == 'last') {
+                    $fields_final[($lastIndex + 100)] = $key;
+                } elseif ($value['position'] == 'first') {
+                    $fields_final[($lastIndex - 100)] = $key;
                 } else {
-                    $orderFields[$key] = $key;
-                }
 
-                if (isset($value['title'])) {
-                    $titulos[$key] = $value['title'];
-                } else {
-                    $titulos[$key] = ucwords(str_replace('_', ' ', $key));
-                }
-
-                if (isset($value['position'])&& (!isset($value['hidden']) || $value['hidden']==0) ) {
-
-                    if ($value['position'] == 'last') {
-                        $fields_final[($lastIndex + 100)] = $key;
-                    } elseif ($value['position'] == 'first') {
-                        $fields_final[($lastIndex - 100)] = $key;
+                    if ($value['position'] == 'next') {
+                        $norder = $lastIndex ++;
                     } else {
+                        $norder = (int) $value['position'];
+                    }
 
-                        if ($value['position'] == 'next') {
-                            $norder = $lastIndex ++;
-                        } else {
-                            $norder = (int) $value['position'];
+                    if (array_key_exists($norder, $fields_final)) {
+                        for ($i = count($fields_final); $i >= $norder; $i --) {
+                            $fields_final[($i + 1)] = $fields_final[$i];
                         }
-
-                        if (array_key_exists($norder, $fields_final)) {
-                            for ($i = count($fields_final); $i >= $norder; $i --) {
-                                $fields_final[($i + 1)] = $fields_final[$i];
-                            }
-                            $fields_final[$norder] = $key;
-                        }
-
                         $fields_final[$norder] = $key;
                     }
 
-
-
-                } elseif(!isset($value['hidden']) || $value['hidden']==0) {
-
-                    while (true) {
-                        if (array_key_exists($lastIndex, $fields_final)) {
-                            $lastIndex ++;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    $fields_final[$lastIndex] = $key;
-                }else{
-
-                    $noIndex++;
-
-                      $fields_final[1000 + $noIndex] = $key;
-
+                    $fields_final[$norder] = $key;
                 }
+
+            } elseif (! isset($value['hidden']) || $value['hidden'] == 0) {
+
+                while (true) {
+                    if (array_key_exists($lastIndex, $fields_final)) {
+                        $lastIndex ++;
+                    } else {
+                        break;
+                    }
+                }
+
+                $fields_final[$lastIndex] = $key;
+            } else {
+                $fields_final[$lastHidden ++] = $key;
             }
 
-            ksort($fields_final);
-
-            $fields_final = $this->_reset_keys($fields_final);
         }
+
+        ksort($fields_final);
+
+        $fields_final = $this->_reset_keys($fields_final);
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
         $this->_fieldsOrder = $orderFields;
     }
+
+
 
     /**
      * Make sure the filters exists, they are the name from the table field.
@@ -2640,7 +2632,7 @@ class Bvb_Grid_Data
         }
 
         if (isset($this->info['delete']['allow']) && $this->info['delete']['allow'] == 1) {
-           $totalFields ++;
+            $totalFields ++;
         }
 
         if (isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1) {
