@@ -1115,8 +1115,7 @@ class Bvb_Grid_Data
 
                 $end = substr($filtro, 0, strpos($filtro, '<>'));
                 $start = substr($filtro, strpos($filtro, '<>') + 2);
-                $this->_select->where($field . " < ?", $start);
-                $this->_select->where($field . " > ? ", $end);
+                $this->_select->where($field . " between ".$this->_getDb()->quote($start)." and ".$this->_getDb()->quote($end));
                 break;
             case 'like':
             default:
