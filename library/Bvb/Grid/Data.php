@@ -973,6 +973,8 @@ class Bvb_Grid_Data
     protected function _buildSearchType ($filtro, $field)
     {
 
+        $fieldShorten = $field;
+
         $columns = $this->_select->getPart('columns');
 
         foreach ($columns as $value) {
@@ -1034,12 +1036,12 @@ class Bvb_Grid_Data
             }
         }
 
-        if (! isset($this->data['fields'][$field]['searchType'])) {
-            $this->data['fields'][$field]['searchType'] = 'like';
+        if (! isset($this->data['fields'][$fieldShorten]['searchType'])) {
+            $this->data['fields'][$fieldShorten]['searchType'] = 'like';
         }
 
 
-        $op = strtolower($this->data['fields'][$field]['searchType']);
+        $op = strtolower($this->data['fields'][$fieldShorten]['searchType']);
 
         if (substr(strtoupper($filtro), 0, 2) == 'R:') {
             $op = 'REGEX';
@@ -2683,6 +2685,15 @@ class Bvb_Grid_Data
         $filters = $this->_object2array($filters);
         $filters = $filters['_filters'];
         $this->filters = $filters;
+
+
+        foreach ($filters as $key=>$filter)
+        {
+            if(isset($filter['searchType']))
+            {
+                $this->updateColumn($key,array('searchType'=>$filter['searchType']));
+            }
+        }
 
         $unspecifiedFields = array_diff($this->getFields(), array_keys($this->filters));
 
