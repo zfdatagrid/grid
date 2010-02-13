@@ -886,7 +886,6 @@ class Bvb_Grid_Data
      */
     public function addFormatterDir ($dir, $prefix)
     {
-
         $this->_formatter->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
         return $this;
     }
@@ -1244,6 +1243,8 @@ class Bvb_Grid_Data
     protected function _getUrl ($situation = '')
     {
 
+        //this array the a list of params that change name
+        //based on grid id. The id is appended to the name
         $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo');
 
         $url = '';
@@ -3270,7 +3271,6 @@ class Bvb_Grid_Data
      */
     function resetColumns (array $columns)
     {
-
         foreach ($columns as $column) {
             $this->updateColumn($column, array());
         }
@@ -3278,10 +3278,35 @@ class Bvb_Grid_Data
         return $this;
     }
 
+    /**
+     * Returns server name (mysql|pgsql|etc)
+     */
     function getDbServerName ()
     {
         return $this->_server;
     }
 
+    /**
+     * Some debug info
+     */
+    function debug($returnSerialized = false)
+    {
+        $result = array();
+        $result['fields'] = $this->getFields(true);
+        $result['colspan'] = $this->_colspan();
+        $result['filters'] = $this->filters;
+        $result['filtersValues'] = $this->_filtersValues;
+        $result['mainSelect'] = $this->getSelectObject()->__toString();
+        $result['countSelect'] = $this->_selectCount->__toString();
+        $result['model'] = isset($this->_model) ? $this->_model->info() : null;
+        $result['form'] = isset($this->_form) ? $this->_form: null;
+
+        if($returnSerialized ===true)
+        {
+            return serialize($result);
+        }
+
+        return $result;
+    }
 
 }
