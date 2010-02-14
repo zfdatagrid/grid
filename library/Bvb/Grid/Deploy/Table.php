@@ -232,6 +232,18 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_noForm = 0;
 
+    /**
+     * To let the user know if a form will be displayed or not
+     * @var bool
+     */
+    protected $_showsForm = false;
+
+
+    /**
+     * To let a user know if the grid will be displayed or not
+     * @var unknown_type
+     */
+    protected $_showsGrid = false;
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
@@ -1390,6 +1402,8 @@ Bvb_Grid_Deploy_Interface
 
                 $grid .= $this->_form;
 
+                $this->_showsForm = true;
+
             }
         }
 
@@ -1401,6 +1415,8 @@ Bvb_Grid_Deploy_Interface
             $grid .= self::_buildGridTable(parent::_buildGrid());
             $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
             $grid .= self::_pagination();
+
+            $this->_showsGrid = true;
         }
 
         $grid .= $this->temp['table']->globalEnd();
@@ -1859,6 +1875,37 @@ Bvb_Grid_Deploy_Interface
         }
 
         return $this->_view;
+    }
+
+    /**
+     * Let the user know waht will be displayed.
+     * @param $option (grid|form)
+     * @return array|bool
+     */
+    public function willShow ($option = 'null')
+    {
+
+        if (null !== $option && in_array($option, array('grid', 'form'))) {
+
+            if($option =='form')
+            return $this->_showsForm;
+            else
+            return $this->_showsGrid;
+
+        }
+
+        $return = array();
+        if ($this->_showsGrid == true) {
+            $return[] = 'grid';
+        }
+
+        if ($this->_showsForm == true) {
+            $return[] = 'form';
+        }
+
+
+        return $return;
+
     }
 
 }
