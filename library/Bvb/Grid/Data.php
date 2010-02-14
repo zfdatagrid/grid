@@ -384,7 +384,7 @@ class Bvb_Grid_Data
      * Model
      * @var Zend_Db_Table_Abstract
      */
-    protected $_model;
+    protected $_model = false;
 
 
     /**
@@ -394,6 +394,37 @@ class Bvb_Grid_Data
     protected $_templateParams = array();
 
 
+
+    /**
+     * To let a user know if the grid will be displayed or not
+     * @var unknown_type
+     */
+    protected $_showsGrid = false;
+
+
+    /**
+     * Array of fields that should appear on detail view
+     * @var unknown_type
+     */
+    protected $_gridColumns = null;
+
+
+    /**
+     * Array of columns that should appear on detail view
+     * @var unknown_type
+     */
+    protected $_detailColumns = null;
+
+    /**
+     * If we are on detail or grid view
+     * @var unknown_type
+     */
+    protected $_isDetail = false;
+
+    /**
+     * Set db
+     * @param Zend_Db_Adapter_Abstract $db
+     */
     protected function _setDb (Zend_Db_Adapter_Abstract $db)
     {
         $this->_db = $db;
@@ -402,6 +433,7 @@ class Bvb_Grid_Data
 
     /**
      * Get db instance
+     * @return Zend_Db_Adapter_Abstract
      */
     protected function _getDb ()
     {
@@ -2218,6 +2250,61 @@ class Bvb_Grid_Data
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
 
+        if(isset($this->ctrlParams['gridDetail'.$this->_gridId]) && $this->ctrlParams['gridDetail'.$this->_gridId]==1)
+        {
+            $this->_isDetail = true;
+        }
+
+        if($this->_isDetail===true && is_array($this->_detailColumns))
+        {
+            if(count($this->_detailColumns)>0)
+            {
+
+
+            $finalColumns = array_intersect($this->_detailColumns,array_keys($this->data['fields']));
+
+            foreach ($this->data['fields'] as $key=>$value)
+            {
+                if(!in_array($key,$finalColumns))
+                {
+                    $this->updateColumn($key,array('hidden'=>1));
+                }
+            }
+            }
+
+        }
+
+
+        if($this->_isDetail===false && is_array($this->_gridColumns))
+        {
+            $finalColumns = array_intersect($this->_gridColumns,array_keys($this->data['fields']));
+            foreach ($this->data['fields'] as $key=>$value)
+            {
+                if(!in_array($key,$finalColumns))
+                {
+                    $this->updateColumn($key,array('hidden'=>1));
+                }
+            }
+
+        }
+
+
+        if ($this->_isDetail == true) {
+
+            $this->_select->where(new Zend_Db_Expr($this->_getPkFromUrl()));
+
+            $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
+            $result = $final->fetchAll();
+
+            if (count($result) == 0) {
+                $this->message = $this->__('Record Not Found');
+                $this->_isDetail = false;
+            } else {
+                $result = $result[0];
+            }
+
+        }
+
 
         $this->_buildDefaultFilters();
 
@@ -2667,6 +2754,10 @@ class Bvb_Grid_Data
         }
 
         if (isset($this->info['edit']['allow']) && $this->info['edit']['allow'] == 1) {
+            $totalFields ++;
+        }
+
+        if (is_array($this->_detailColumns) && $this->_isDetail==false) {
             $totalFields ++;
         }
 
@@ -3343,6 +3434,30 @@ class Bvb_Grid_Data
         }
 
         return $result;
+    }
+
+    function setGridColumns(array $columns)
+    {
+        $this->_gridColumns = $columns;
+        return $this;
+    }
+
+    function addGridColumns(array $columns)
+    {
+        $this->_gridColumns = array_merge($this->_gridColumns,$columns);
+        return $this;
+    }
+
+    function setDetailColumns( $columns=array())
+    {
+        $this->_detailColumns = $columns;
+        return $this;
+    }
+
+    function addDetailColumns(array $columns)
+    {
+        $this->_detailColumns = array_merge($this->_detailColumns,$columns);
+        return $this;
     }
 
 }

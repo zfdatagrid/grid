@@ -100,7 +100,6 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
     function loopStart ($values)
     {
         $this->i ++;
@@ -136,12 +135,10 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
     function sqlExpStart ()
     {
         return "<tr>";
     }
-
 
 
     function sqlExpEnd ()
@@ -169,14 +166,25 @@ class Bvb_Grid_Template_Table_Table
 
     function images ($url)
     {
-
         return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">",
         'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">",
         'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">",
+        'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\">",
          'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">"
          );
     }
 
+
+    function detail()
+    {
+        return "<tr><td class='detailLeft'>{{field}}</td><td class='detailRight'>{{value}}</td></tr>";
+    }
+
+
+    function detailEnd()
+    {
+        return "<tr><td colspan='2'><a href='{{url}}'>Return</a></td></tr>";
+    }
 
 }
 

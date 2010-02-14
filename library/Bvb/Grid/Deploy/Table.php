@@ -217,7 +217,7 @@ Bvb_Grid_Deploy_Interface
      *
      * @var Zend_Form
      */
-    protected $_form ;
+    protected $_form;
 
 
     /**
@@ -244,6 +244,7 @@ Bvb_Grid_Deploy_Interface
      * @var unknown_type
      */
     protected $_showsGrid = false;
+
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
@@ -313,7 +314,7 @@ Bvb_Grid_Deploy_Interface
         // IF a user can edit or delete data we must instanciate the crypt classe.
         // This is an extra-security step.
         if ($this->allowEdit == 1 || $this->allowDelete) {
-            $dec = isset($this->ctrlParams['comm'.$this->_gridId]) ? $this->ctrlParams['comm'.$this->_gridId] : '';
+            $dec = isset($this->ctrlParams['comm' . $this->_gridId]) ? $this->ctrlParams['comm' . $this->_gridId] : '';
             $this->_comm = $dec;
         }
 
@@ -327,11 +328,11 @@ Bvb_Grid_Deploy_Interface
 
 
         if ($this->allowAdd == 1 || $this->allowEdit == 1) {
-            $opComm = isset($this->ctrlParams['comm'.$this->_gridId]) ? $this->ctrlParams['comm'.$this->_gridId] : '';
+            $opComm = isset($this->ctrlParams['comm' . $this->_gridId]) ? $this->ctrlParams['comm' . $this->_gridId] : '';
             $op_query = self::_convertComm($opComm);
 
 
-            $mode = isset($this->ctrlParams['edit'.$this->_gridId]) ? 'edit' : 'add';
+            $mode = isset($this->ctrlParams['edit' . $this->_gridId]) ? 'edit' : 'add';
 
             $queryUrl = $this->_getPkFromUrl();
 
@@ -363,7 +364,7 @@ Bvb_Grid_Deploy_Interface
         }
 
         //Check if the request method is POST
-        if (Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit'.$this->_gridId) == 1) {
+        if (Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit' . $this->_gridId) == 1) {
 
             if ($this->_form->isValid($_POST)) {
 
@@ -373,14 +374,13 @@ Bvb_Grid_Deploy_Interface
                     $post[$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
                 }
 
-                unset($post['form_submit'.$this->_gridId]);
-                unset($post['_form_edit'.$this->_gridId]);
-                unset($post['form_reset'.$this->_gridId]);
+                unset($post['form_submit' . $this->_gridId]);
+                unset($post['_form_edit' . $this->_gridId]);
+                unset($post['form_reset' . $this->_gridId]);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
-                if($this->_formHasModel)
-                {
+                if ($this->_formHasModel) {
                     $modelInfo = $this->_form->getModel()->info();
                 }
 
@@ -447,8 +447,8 @@ Bvb_Grid_Deploy_Interface
                         $this->_noForm = 1;
 
 
-                        unset($this->ctrlParams['comm'.$this->_gridId]);
-                        unset($this->ctrlParams['edit'.$this->_gridId]);
+                        unset($this->ctrlParams['comm' . $this->_gridId]);
+                        unset($this->ctrlParams['edit' . $this->_gridId]);
 
                     }
                     catch (Zend_Exception $e) {
@@ -472,8 +472,8 @@ Bvb_Grid_Deploy_Interface
                     unset($this->ctrlParams[$key]);
                 }
 
-                unset($this->ctrlParams['form_submit'.$this->_gridId]);
-                unset($this->ctrlParams['_form_edit'.$this->_gridId]);
+                unset($this->ctrlParams['form_submit' . $this->_gridId]);
+                unset($this->ctrlParams['_form_edit' . $this->_gridId]);
 
             } else {
 
@@ -581,8 +581,9 @@ Bvb_Grid_Deploy_Interface
             if ($this->_formHasModel) {
                 $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
             } else {
-                $resultDelete = $this->_getDb()->delete($this->data['table'],$this->_getPkFromUrl(false) . $where);
+                $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
             }
+
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
                     call_user_func_array($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
@@ -598,7 +599,7 @@ Bvb_Grid_Deploy_Interface
             $this->message = $this->__('Error deleting record =>') . $e->getMessage();
         }
 
-        unset($this->ctrlParams['comm'.$this->_gridId]);
+        unset($this->ctrlParams['comm' . $this->_gridId]);
 
         if ($this->cache['use'] == 1) {
             $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
@@ -620,9 +621,9 @@ Bvb_Grid_Deploy_Interface
         $final = '';
 
         if ($this->_adapter == 'db') {
-            if (($this->getInfo('double_tables') == 0 && @$this->ctrlParams['add'.$this->_gridId] != 1 && @$this->ctrlParams['edit'.$this->_gridId] != 1) && $this->_getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1) {
+            if (($this->getInfo('double_tables') == 0 && @$this->ctrlParams['add' . $this->_gridId] != 1 && @$this->ctrlParams['edit' . $this->_gridId] != 1) && $this->_getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1) {
 
-                $final = "<div class=\"addRecord\" ><a href=\"$url/add".$this->_gridId."/1\">" . $this->__('Add Record') . "</a></div>";
+                $final = "<div class=\"addRecord\" ><a href=\"$url/add" . $this->_gridId . "/1\">" . $this->__('Add Record') . "</a></div>";
             }
         }
 
@@ -835,7 +836,7 @@ Bvb_Grid_Deploy_Interface
                                 $link2 = '';
                             }
 
-                            $grid .= str_replace('{{value}}', $link2. $title['value'] . $link1, $this->temp['table']->titlesLoop());
+                            $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->temp['table']->titlesLoop());
 
                         } else {
                             //Replace values in the template
@@ -901,11 +902,11 @@ Bvb_Grid_Deploy_Interface
     protected function _getPkFromUrl ($array = false)
     {
 
-        if (! isset($this->ctrlParams['comm'.$this->_gridId])) {
+        if (! isset($this->ctrlParams['comm' . $this->_gridId])) {
             return false;
         }
 
-        $param = $this->ctrlParams['comm'.$this->_gridId];
+        $param = $this->ctrlParams['comm' . $this->_gridId];
         $explode = explode(';', $param);
         $param = end($explode);
         $param = substr($param, 1, - 1);
@@ -997,7 +998,7 @@ Bvb_Grid_Deploy_Interface
                 }
             }
 
-            if ($search[0] == 'D' || $search[0] == 'E') {
+            if ($search[0] == 'D' || $search[0] == 'E' || $search[0] == 'V') {
                 unset($search[0]);
             }
 
@@ -1034,7 +1035,7 @@ Bvb_Grid_Deploy_Interface
 
                     $set ++;
 
-                    $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'],$final['style']), $this->temp['table']->loopLoop($finalFields));
+                    $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'], $final['style']), $this->temp['table']->loopLoop($finalFields));
 
                 }
             }
@@ -1234,9 +1235,8 @@ Bvb_Grid_Deploy_Interface
 
                 $blank = $export['newWindow'] == false ? '' : "target='_blank'";
 
-                if(isset($this->imagesUrl))
-                {
-                    $export['img'] = $this->imagesUrl.$export['caption'].'.gif';
+                if (isset($this->imagesUrl)) {
+                    $export['img'] = $this->imagesUrl . $export['caption'] . '.gif';
 
                 }
 
@@ -1245,7 +1245,6 @@ Bvb_Grid_Deploy_Interface
                 } else {
                     $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'>" . $export['caption'] . "</a>";
                 }
-
             }
 
             if (isset($this->info['limit']) && (int) @$this->info['limit'] > 0) {
@@ -1258,7 +1257,7 @@ Bvb_Grid_Deploy_Interface
                     $f = '';
                 }
 
-                $result2 = str_replace(array('{{export}}', '{{pagination}}',  '{{numberRecords}}'), array($exp, $pag,  $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, $pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif ($npaginas < 2 && count($this->export) > 0) {
 
@@ -1266,7 +1265,7 @@ Bvb_Grid_Deploy_Interface
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}',  '{{numberRecords}}'), array($exp, '',  $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, '', $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif (count($this->export) == 0) {
 
@@ -1274,7 +1273,7 @@ Bvb_Grid_Deploy_Interface
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array('', $pag,  $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array('', $pag, $this->_totalRecords), $this->temp['table']->pagination());
 
             }
 
@@ -1333,9 +1332,9 @@ Bvb_Grid_Deploy_Interface
         parent::deploy();
 
         if (! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table) {
-            $this->setTemplate('table', 'table',$this->_templateParams);
-        }else{
-            $this->setTemplate($this->temp['table']->options['name'],'table',$this->_templateParams);
+            $this->setTemplate('table', 'table', $this->_templateParams);
+        } else {
+            $this->setTemplate($this->temp['table']->options['name'], 'table', $this->_templateParams);
         }
 
 
@@ -1345,7 +1344,7 @@ Bvb_Grid_Deploy_Interface
 
         $images = $this->temp['table']->images($this->imagesUrl);
 
-        if ($this->allowDelete == 1 || $this->allowEdit == 1) {
+        if ($this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false)) {
             $pkUrl = $this->_getPrimaryKey();
             $urlFinal = '';
 
@@ -1373,28 +1372,43 @@ Bvb_Grid_Deploy_Interface
             $url = $this->getUrl($removeParams);
 
             if ($this->allowEdit == 1 && isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-                $urlEdit = $this->_baseUrl . '/' . str_replace("/gridmod".$this->_gridId."/ajax", "", $url);
+                $urlEdit = $this->_baseUrl . '/' . str_replace("/gridmod" . $this->_gridId . "/ajax", "", $url);
             } else {
                 $urlEdit = $url;
             }
 
-            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit".$this->_gridId."/1/comm".$this->_gridId."/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
+            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
 
         }
+
+
+
 
         if ($this->allowDelete) {
             if (! is_array($this->extra_fields)) {
                 $this->extra_fields = array();
             }
 
-            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_".$this->_gridId."confirmDel('" . $this->__('Are you sure?') . "','$url/comm".$this->_gridId."/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+        }
+
+     if (is_array($this->_detailColumns) && $this->_isDetail == false) {
+            if (! is_array($this->extra_fields)) {
+                $this->extra_fields = array();
+            }
+
+            $removeParams = array('filters', 'add', 'edit', 'comm');
+            $url = $this->getUrl($removeParams);
+
+            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]\" > " . $images['detail'] . "</a>", 'detail' => true));
+
         }
 
         if (strlen($this->message) > 0) {
             $grid .= str_replace("{{value}}", $this->message, $this->temp['table']->formMessage($this->messageOk));
         }
 
-        if (((isset($this->ctrlParams['edit'.$this->_gridId]) && $this->ctrlParams['edit'.$this->_gridId] == 1) || (isset($this->ctrlParams['add'.$this->_gridId]) && $this->ctrlParams['add'.$this->_gridId] == 1) || (isset($this->ctrlParams['double_tables'.$this->_gridId]) && $this->ctrlParams['double_tables'.$this->_gridId] == 1))) {
+        if (((isset($this->ctrlParams['edit' . $this->_gridId]) && $this->ctrlParams['edit' . $this->_gridId] == 1) || (isset($this->ctrlParams['add' . $this->_gridId]) && $this->ctrlParams['add' . $this->_gridId] == 1) || (isset($this->ctrlParams['double_tables' . $this->_gridId]) && $this->ctrlParams['double_tables' . $this->_gridId] == 1))) {
 
             if (($this->allowAdd == 1 || $this->allowEdit == 1) && $this->_noForm == 0) {
 
@@ -1414,14 +1428,43 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
-        if (((! isset($this->ctrlParams['edit'.$this->_gridId]) || $this->ctrlParams['edit'.$this->_gridId] != 1) && (! isset($this->ctrlParams['add'.$this->_gridId]) || $this->ctrlParams['add'.$this->_gridId] != 1)) || $this->_noForm == 1) {
+        if ( ((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1) && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1)) || $this->_noForm == 1) {
 
-            $grid .= self::_buildHeader();
-            $grid .= self::_buildTitlesTable(parent::_buildTitles());
-            $grid .= self::_buildFiltersTable(parent::_buildFilters());
-            $grid .= self::_buildGridTable(parent::_buildGrid());
-            $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
-            $grid .= self::_pagination();
+            if ($this->_isDetail == true) {
+
+                $columns = parent::_buildGrid();
+
+                $grid = $this->temp['table']->globalStart();
+
+                foreach ($columns[0] as $value)
+                {
+                    if(!isset($value['field']))
+                    {
+                        continue;
+                    }
+
+                    if(isset($this->data['fields'][$value['field']]['title']))
+                    {
+                        $value['field'] = $this->data['fields'][$value['field']]['title'];
+                    }else{
+                        $value['field'] = ucwords(str_replace('_',' ',$value['field']));
+                    }
+
+                    $grid .= str_replace(array('{{field}}','{{value}}'),array($value['field'],$value['value']),$this->temp['table']->detail());
+                }
+
+                $grid .= str_replace('{{url}}',$this->getUrl(array('gridDetail','comm')),$this->temp['table']->detailEnd());
+                $grid .= $this->temp['table']->globalEnd();
+
+            } else {
+
+                $grid .= self::_buildHeader();
+                $grid .= self::_buildTitlesTable(parent::_buildTitles());
+                $grid .= self::_buildFiltersTable(parent::_buildFilters());
+                $grid .= self::_buildGridTable(parent::_buildGrid());
+                $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
+                $grid .= self::_pagination();
+            }
 
             $this->_showsGrid = true;
         }
@@ -1430,18 +1473,17 @@ Bvb_Grid_Deploy_Interface
 
         $gridId = $this->_gridId;
 
-        if (isset($this->ctrlParams['gridmod'.$this->_gridId]) && $this->ctrlParams['gridmod'.$this->_gridId] == 'ajax' && $this->info['ajax'] !== false) {
+        if (isset($this->ctrlParams['gridmod' . $this->_gridId]) && $this->ctrlParams['gridmod' . $this->_gridId] == 'ajax' && $this->info['ajax'] !== false) {
 
             echo $grid;
             die();
             return '';
         }
-        if(isset($this->info['ajax']) && $this->info['ajax']!==false)
-        {
+        if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
             $gridId = $this->info['ajax'];
         }
 
-        $grid  = "<div id='{$gridId}'>".$grid."</div>";
+        $grid = "<div id='{$gridId}'>" . $grid . "</div>";
 
         $this->_deploymentContent = $grid;
         return $this;
@@ -1451,7 +1493,7 @@ Bvb_Grid_Deploy_Interface
     function __toString ()
     {
         if (is_null($this->_deploymentContent)) {
-           die('You must explicity call the deploy() method before printing the object');
+            die('You must explicity call the deploy() method before printing the object');
             # self::deploy();
         }
 
@@ -1469,21 +1511,20 @@ Bvb_Grid_Deploy_Interface
 
         $script = "";
 
-        if($this->allowDelete==1)
-        {
+        if ($this->allowDelete == 1) {
 
-        $script .= " function _".$this->_gridId."confirmDel(msg, url)
+            $script .= " function _" . $this->_gridId . "confirmDel(msg, url)
         {
             if(confirm(msg))
             {
             ";
-        if ($useAjax == 1) {
-            $script .= "window.location = '" . $this->_baseUrl . "/'+url.replace('/gridmod".$this->_gridId."/ajax','');";
-        } else {
-            $script .= "window.location = url;";
-        }
+            if ($useAjax == 1) {
+                $script .= "window.location = '" . $this->_baseUrl . "/'+url.replace('/gridmod" . $this->_gridId . "/ajax','');";
+            } else {
+                $script .= "window.location = url;";
+            }
 
-        $script .= "
+            $script .= "
 
             }else{
                 return false;
@@ -1492,7 +1533,7 @@ Bvb_Grid_Deploy_Interface
 
         }
         if ($useAjax == 1) {
- $script .= "function gridAjax(ponto,url) {
+            $script .= "function gridAjax(ponto,url) {
 
     var xmlhttp;
     try
@@ -1534,10 +1575,9 @@ Bvb_Grid_Deploy_Interface
 ";
         }
 
-  if( !isset($this->info['noFilters']) || $this->info['noFilters']!=0)
-        {
+        if (! isset($this->info['noFilters']) || $this->info['noFilters'] != 0) {
 
- $script .= "function _".$this->_gridId."gridChangeFilters(fields,url,Ajax)
+            $script .= "function _" . $this->_gridId . "gridChangeFilters(fields,url,Ajax)
 {
     var Ajax = \"1\";
     var fieldsArray = fields.split(\",\");
@@ -1546,20 +1586,20 @@ Bvb_Grid_Deploy_Interface
     for (var i = 0; i < fieldsArray.length -1; i++)
     {
         value = document.getElementById(fieldsArray[i]).value;\n";
-        $script .= " value = value.replace(/[\"]/,''); ";
-        $script .= " value = value.replace(/[\\\]/,''); ";
-        $script .= " fieldsArray[i] = fieldsArray[i].replace(/filter_".$this->_gridId."/,'filter_'); ";
-        $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
+            $script .= " value = value.replace(/[\"]/,''); ";
+            $script .= " value = value.replace(/[\\\]/,''); ";
+            $script .= " fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->_gridId . "/,'filter_'); ";
+            $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
     }
 
     filtro = \"{\"+filtro+\"}\";
     ";
 
-        if ($useAjax == 1) {
-            $script .= "gridAjax('{$this->info['ajax']}',url+'/filters{$this->_gridId}/'+filtro);";
-        } else {
-            $script .= "window.location=url+'/filters{$this->_gridId}/'+filtro;";
-        }
+            if ($useAjax == 1) {
+                $script .= "gridAjax('{$this->info['ajax']}',url+'/filters{$this->_gridId}/'+filtro);";
+            } else {
+                $script .= "window.location=url+'/filters{$this->_gridId}/'+filtro;";
+            }
         }
         $script .= "
     }
@@ -1567,7 +1607,7 @@ Bvb_Grid_Deploy_Interface
 
         $this->getView()->headScript()->appendScript($script);
 
-        return ;
+        return;
     }
 
 
@@ -1585,8 +1625,7 @@ Bvb_Grid_Deploy_Interface
                 throw new Bvb_Grid_Exception('Please set the model to use');
             }
 
-            if($this->getDbServerName()!='mysql')
-            {
+            if ($this->getDbServerName() != 'mysql') {
                 throw new Bvb_Grid_Exception('At this moment only models using MySQL can be used for scaffolding');
             }
             $form->setModel($this->_model);
@@ -1595,13 +1634,11 @@ Bvb_Grid_Deploy_Interface
 
             foreach ($form->getElements() as $key => $value) {
 
-                if(isset($this->data['fields'][$key]['title']))
-                {
+                if (isset($this->data['fields'][$key]['title'])) {
                     $value->setLabel($this->data['fields'][$key]['title']);
                 }
 
-                if(isset($this->data['fields'][$key]['tooltipField']))
-                {
+                if (isset($this->data['fields'][$key]['tooltipField'])) {
                     $value->setDescription($this->data['fields'][$key]['tooltipField']);
                 }
             }
@@ -1616,13 +1653,13 @@ Bvb_Grid_Deploy_Interface
 
         $form->setDecorators($form->formDecorator);
 
-        $form->addElement('submit', 'form_submit'.$this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $form->buttonHidden));
-        $form->addElement('hidden', '_form_edit'.$this->_gridId, array('value' => 1, 'decorators' => $form->buttonHidden));
+        $form->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $form->buttonHidden));
+        $form->addElement('hidden', '_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $form->buttonHidden));
 
         $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
 
-        $form->addElement('button', 'form_reset'.$this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $form->buttonHidden));
-        $form->addDisplayGroup(array('form_submit'.$this->_gridId, 'form_reset'.$this->_gridId), 'buttons', array('decorators' => $form->groupDecorators));
+        $form->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $form->buttonHidden));
+        $form->addDisplayGroup(array('form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $form->groupDecorators));
 
         $form->setAction($this->getUrl(array_keys($form->getElements())));
 
@@ -1680,8 +1717,7 @@ Bvb_Grid_Deploy_Interface
         @$this->info['delete']['cascadeDelete'] = $form['cascadeDelete'];
 
         if ($options['add'] == 1 && $options['add'] == 1) {
-            if(!isset($options['button']))
-            {
+            if (! isset($options['button'])) {
                 $options['button'] = 0;
             }
 
@@ -1783,12 +1819,12 @@ Bvb_Grid_Deploy_Interface
             $hRow = isset($this->data['fields'][$value]['hRow']) ? $this->data['fields'][$value]['hRow'] : '';
 
             if ($this->_displayField($value) && $hRow != 1 && $this->data['fields'][$value]['search'] != false) {
-                $help_javascript .= "filter_" . $this->_gridId. $value . ",";
+                $help_javascript .= "filter_" . $this->_gridId . $value . ",";
             }
         }
 
         $help_javascript = str_replace(".", "bvbdot", $help_javascript);
-        $attr['onChange'] = "_".$this->_gridId."gridChangeFilters('$help_javascript','$url');";
+        $attr['onChange'] = "_" . $this->_gridId . "gridChangeFilters('$help_javascript','$url');";
 
         $opcoes = array();
         if (isset($this->filters[$campo])) {
@@ -1801,7 +1837,7 @@ Bvb_Grid_Deploy_Interface
             $attr['style'] = " width:95% ";
         }
 
-        $attr['id'] = "filter_"  . $this->_gridId. $campo;
+        $attr['id'] = "filter_" . $this->_gridId . $campo;
 
         $selected = null;
         if (isset($opcoes['values']) && is_array($opcoes['values'])) {
@@ -1894,10 +1930,10 @@ Bvb_Grid_Deploy_Interface
 
         if (null !== $option && in_array($option, array('grid', 'form'))) {
 
-            if($option =='form')
-            return $this->_showsForm;
+            if ($option == 'form')
+                return $this->_showsForm;
             else
-            return $this->_showsGrid;
+                return $this->_showsGrid;
 
         }
 

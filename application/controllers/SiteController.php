@@ -74,6 +74,7 @@ class SiteController extends Zend_Controller_Action
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
         $grid->setPagination(10);
 
+
         return $grid;
     }
 
@@ -162,6 +163,24 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('City');
+        $grid->query($select);
+
+      #  $grid->setDetailColumns();
+        #$grid->setGridColumns(array('ID','Name'));
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+
+    /**
+     * The 'most' basic example.
+     */
+    function multiAction ()
+    {
 
 
         $grid = $this->grid('2');
@@ -201,7 +220,7 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
 
         $grid->query($this->_db->select()->from('City'));
-        $grid->setAjax('grid');
+        $grid->setAjax('ajaxGrid');
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
@@ -291,11 +310,11 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('date', array( 'title' => 'Date', 'tooltipField' => 'sempre'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1);
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setDetail(1);
         $grid->addForm($form);
 
         $grid->export = array();
-
+        $grid->setDetailColumns();
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }

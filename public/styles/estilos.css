@@ -374,3 +374,9 @@ th a {
 .width_200 {
 	width: 200px;
 }
+
+.detailLeft{
+	width:150px;
+	font-weight:bold;
+	background-color:#DDD;
+}
