@@ -1405,12 +1405,20 @@ Bvb_Grid_Deploy_Interface
 
         $grid .= $this->temp['table']->globalEnd();
 
+        $gridId = $this->_gridId;
+
         if (isset($this->ctrlParams['gridmod'.$this->_gridId]) && $this->ctrlParams['gridmod'.$this->_gridId] == 'ajax' && $this->info['ajax'] !== false) {
 
             echo $grid;
             die();
             return '';
         }
+        if(isset($this->info['ajax']) && $this->info['ajax']!==false)
+        {
+            $gridId = $this->info['ajax'];
+        }
+
+        $grid  = "<div id='{$gridId}'>".$grid."</div>";
 
         $this->_deploymentContent = $grid;
         return $this;
