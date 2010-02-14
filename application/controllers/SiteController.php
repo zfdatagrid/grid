@@ -72,7 +72,6 @@ class SiteController extends Zend_Controller_Action
         $grid->addFormatterDir('My/Formatter', 'My_Formatter');
         $grid->imagesUrl = $this->getRequest()->getBaseUrl() . '/public/images/';
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
-        $grid->setPagination(10);
 
 
         return $grid;
@@ -164,11 +163,11 @@ class SiteController extends Zend_Controller_Action
     function basicAction ()
     {
         $grid = $this->grid();
-        $select = $this->_db->select()->from('City');
+        $select = $this->_db->select()->from('Country');
         $grid->query($select);
 
-      #  $grid->setDetailColumns();
-        #$grid->setGridColumns(array('ID','Name'));
+        $grid->setDetailColumns();
+        $grid->setGridColumns(array('ID','Name','Continent','Population','LocalName','GovernmentForm'));
 
         $this->view->pages = $grid->deploy();
 

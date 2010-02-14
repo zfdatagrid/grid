@@ -989,21 +989,17 @@ Bvb_Grid_Deploy_Interface
                 }
             }
 
-            if (count($fi) != count($search)) {
-                $diff = count($fi) > count($search) ? count($fi) - count($search) : count($search) - count($fi);
-
-                if (count($search) > count($fi) && $diff == 1) {
-                    //Remove first element if a id_
-                    array_shift($search);
-                }
-            }
 
             if ($search[0] == 'D' || $search[0] == 'E' || $search[0] == 'V') {
                 unset($search[0]);
             }
 
-            if (isset($search[1]) && $search[1] == 'E') {
+            if (isset($search[1]) && ($search[1] == 'D' || $search[1] == 'E' ) ) {
                 unset($search[1]);
+            }
+
+            if (isset($search[2]) && ($search[2] == 'D' || $search[2] == 'E' ) ) {
+                unset($search[2]);
             }
 
             $search = $this->_reset_keys($search);
@@ -1319,11 +1315,10 @@ Bvb_Grid_Deploy_Interface
      */
     function deploy ()
     {
-
-
         $url = $this->getUrl('comm');
 
         $this->_view = $this->getView();
+
         if ($this->_adapter == 'db') {
             //Process form, if necessary, before query
             self::_processForm();
@@ -1336,7 +1331,6 @@ Bvb_Grid_Deploy_Interface
         } else {
             $this->setTemplate($this->temp['table']->options['name'], 'table', $this->_templateParams);
         }
-
 
         // The extra fields, they are not part of database table.
         // Usefull for adding links (a least for me :D )
@@ -1382,8 +1376,6 @@ Bvb_Grid_Deploy_Interface
         }
 
 
-
-
         if ($this->allowDelete) {
             if (! is_array($this->extra_fields)) {
                 $this->extra_fields = array();
@@ -1392,7 +1384,8 @@ Bvb_Grid_Deploy_Interface
             array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
         }
 
-     if (is_array($this->_detailColumns) && $this->_isDetail == false) {
+
+        if (is_array($this->_detailColumns) && $this->_isDetail == false) {
             if (! is_array($this->extra_fields)) {
                 $this->extra_fields = array();
             }
@@ -1400,7 +1393,7 @@ Bvb_Grid_Deploy_Interface
             $removeParams = array('filters', 'add', 'edit', 'comm');
             $url = $this->getUrl($removeParams);
 
-            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]\" > " . $images['detail'] . "</a>", 'detail' => true));
+            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]\" >" . $images['detail'] . "</a>", 'detail' => true));
 
         }
 
@@ -1428,32 +1421,30 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
-        if ( ((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1) && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1)) || $this->_noForm == 1) {
+        if (((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1) && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1)) || $this->_noForm == 1) {
 
             if ($this->_isDetail == true) {
 
                 $columns = parent::_buildGrid();
 
+
                 $grid = $this->temp['table']->globalStart();
 
-                foreach ($columns[0] as $value)
-                {
-                    if(!isset($value['field']))
-                    {
+                foreach ($columns[0] as $value) {
+                    if (! isset($value['field'])) {
                         continue;
                     }
 
-                    if(isset($this->data['fields'][$value['field']]['title']))
-                    {
+                    if (isset($this->data['fields'][$value['field']]['title'])) {
                         $value['field'] = $this->data['fields'][$value['field']]['title'];
-                    }else{
-                        $value['field'] = ucwords(str_replace('_',' ',$value['field']));
+                    } else {
+                        $value['field'] = ucwords(str_replace('_', ' ', $value['field']));
                     }
 
-                    $grid .= str_replace(array('{{field}}','{{value}}'),array($value['field'],$value['value']),$this->temp['table']->detail());
+                    $grid .= str_replace(array('{{field}}', '{{value}}'), array($value['field'], $value['value']), $this->temp['table']->detail());
                 }
 
-                $grid .= str_replace('{{url}}',$this->getUrl(array('gridDetail','comm')),$this->temp['table']->detailEnd());
+                $grid .= str_replace('{{url}}', $this->getUrl(array('gridDetail', 'comm')), $this->temp['table']->detailEnd());
                 $grid .= $this->temp['table']->globalEnd();
 
             } else {

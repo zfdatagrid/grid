@@ -1794,6 +1794,8 @@ class Bvb_Grid_Data
                 }
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+
+
             }
 
             /**
@@ -2250,26 +2252,23 @@ class Bvb_Grid_Data
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
 
-        if(isset($this->ctrlParams['gridDetail'.$this->_gridId]) && $this->ctrlParams['gridDetail'.$this->_gridId]==1)
+        if(isset($this->ctrlParams['gridDetail'.$this->_gridId]) && $this->ctrlParams['gridDetail'.$this->_gridId]==1
+             && is_array($this->_detailColumns))
         {
             $this->_isDetail = true;
         }
 
         if($this->_isDetail===true && is_array($this->_detailColumns))
         {
-            if(count($this->_detailColumns)>0)
-            {
+            if (count($this->_detailColumns) > 0) {
 
+                $finalColumns = array_intersect($this->_detailColumns, array_keys($this->data['fields']));
 
-            $finalColumns = array_intersect($this->_detailColumns,array_keys($this->data['fields']));
-
-            foreach ($this->data['fields'] as $key=>$value)
-            {
-                if(!in_array($key,$finalColumns))
-                {
-                    $this->updateColumn($key,array('hidden'=>1));
+                foreach ($this->data['fields'] as $key => $value) {
+                    if (! in_array($key, $finalColumns)) {
+                        $this->updateColumn($key, array('hidden' => 1));
+                    }
                 }
-            }
             }
 
         }
@@ -2291,6 +2290,8 @@ class Bvb_Grid_Data
 
         if ($this->_isDetail == true) {
 
+            $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
+            $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
             $this->_select->where(new Zend_Db_Expr($this->_getPkFromUrl()));
 
             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
@@ -2318,10 +2319,10 @@ class Bvb_Grid_Data
         $this->_buildFiltersValues();
 
         if ($this->_adapter == 'db') {
-
-            $this->_buildQuery();
+             if ($this->_isDetail == false) {
+                $this->_buildQuery();
+            }
             $this->_builQueryCount();
-
             if ($this->cache['use'] == 1) {
                 $cache = $this->cache['instance'];
 
