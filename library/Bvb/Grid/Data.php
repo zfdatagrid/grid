@@ -995,7 +995,7 @@ class Bvb_Grid_Data
             $field = $this->data['fields'][$field]['field'];
         }
 
-        if (isset($this->filters[$fieldShorten]['callback'])) {
+        if (isset($this->filters[$fieldShorten]['callback']) && is_array($this->filters[$fieldShorten]['callback'])) {
 
             if (! is_callable($this->filters[$fieldShorten]['callback']['function'])) {
                 throw new Bvb_Grid_Exception($this->filters[$fieldShorten]['callback']['function'] . ' is not callable');
