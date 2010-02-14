@@ -810,13 +810,27 @@ Bvb_Grid_Deploy_Interface
                     } else {
 
                         if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
-                            $grid .= str_replace('{{value}}', "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . @$title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->temp['table']->titlesLoop());
+
+
+                            $link1 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_DESC')\">{$images['desc']}</a>";
+                            $link2 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_ASC')\">{$images['asc']}</a>";
+
+                            if ($orderField == $title['field'] && $order == 'asc') {
+                                $link1 = '';
+                            }
+
+                            if ($orderField == $title['field'] && $order == 'desc') {
+                                $link2 = '';
+                            }
+
+                            $grid .= str_replace('{{value}}', $link2. $title['value'] . $link1, $this->temp['table']->titlesLoop());
 
                         } else {
                             //Replace values in the template
                             if (! array_key_exists('url', $title)) {
                                 $grid .= str_replace('{{value}}', $title['value'], $this->temp['table']->titlesLoop());
                             } else {
+
                                 $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_DESC'>{$images['desc']}</a>";
                                 $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_ASC'>{$images['asc']}</a>";
 
