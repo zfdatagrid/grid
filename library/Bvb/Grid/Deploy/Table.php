@@ -344,7 +344,7 @@ Bvb_Grid_Deploy_Interface
                         $this->message = $this->__('Record Not Found');
                         $this->_noForm = 1;
                     } else {
-                        $r->toArray();
+                        $r = $r->toArray();
 
                         $info = $this->_form->getModel()->info();
 
