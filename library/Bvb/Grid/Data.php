@@ -991,11 +991,27 @@ class Bvb_Grid_Data
             }
         }
 
-
         if (strpos($field, '.') === false) {
             $field = $this->data['fields'][$field]['field'];
         }
 
+        if (isset($this->filters[$fieldShorten]['callback'])) {
+
+            if (! is_callable($this->filters[$fieldShorten]['callback']['function'])) {
+                throw new Bvb_Grid_Exception($this->filters[$fieldShorten]['callback']['function'] . ' is not callable');
+            }
+
+            if (!isset($this->filters[$fieldShorten]['callback']['params']) || ! is_array($this->filters[$fieldShorten]['callback']['params'])) {
+                $this->filters[$fieldShorten]['callback']['params'] = array();
+            }
+            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'],
+            array('field' => $fieldShorten, 'value' => $filtro,'select'=>$this->getSelectObject()));
+
+            $result = call_user_func($this->filters[$fieldShorten]['callback']['function'], $this->filters[$fieldShorten]['callback']['params']);
+
+            return;
+
+        }
 
         if ($this->getDbServerName() == 'mysql') {
 
@@ -1246,7 +1262,7 @@ class Bvb_Grid_Data
 
         //this array the a list of params that change name
         //based on grid id. The id is appended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo','add','edit','comm');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm');
 
         $url = '';
         $params = $this->ctrlParams;
@@ -2006,7 +2022,7 @@ class Bvb_Grid_Data
                 $titulos[$key] = ucwords(str_replace('_', ' ', $key));
             }
 
-         if (isset($this->data['fields'][$key]['hidden']) && $this->data['fields'][$key]['hidden'] == 1) {
+            if (isset($this->data['fields'][$key]['hidden']) && $this->data['fields'][$key]['hidden'] == 1) {
                 $hidden[$key] = $key;
             } else {
                 $show[$key] = $key;
@@ -2017,7 +2033,7 @@ class Bvb_Grid_Data
         $fields_final = array();
         $lastIndex = 1;
         $norder = 0;
-        foreach ($show as $key=>$value) {
+        foreach ($show as $key => $value) {
 
             $value = $this->data['fields'][$value];
 
@@ -2030,7 +2046,7 @@ class Bvb_Grid_Data
                 } else {
 
                     if ($value['position'] == 'next') {
-                        $norder =  $lastIndex + 1;
+                        $norder = $lastIndex + 1;
                     } else {
                         $norder = (int) $value['position'];
                     }
@@ -2063,8 +2079,7 @@ class Bvb_Grid_Data
         $fields_final = $this->_reset_keys($fields_final);
 
         //Put the hidden fields on the end of the array
-        foreach ($hidden as $value)
-        {
+        foreach ($hidden as $value) {
             $fields_final[] = $value;
         }
 
@@ -2335,9 +2350,9 @@ class Bvb_Grid_Data
 
             }
 
-            if (isset($this->ctrlParams['order'.$this->_gridId]) || strlen(@$this->data['order'.$this->_gridId]) > 3) {
+            if (isset($this->ctrlParams['order' . $this->_gridId]) || strlen(@$this->data['order' . $this->_gridId]) > 3) {
 
-                if (strlen($this->data['order']) > 3 && ! isset($this->ctrlParams['order'.$this->_gridId])) {
+                if (strlen($this->data['order']) > 3 && ! isset($this->ctrlParams['order' . $this->_gridId])) {
 
                     $explode = explode(' ', $this->data['order']);
 
@@ -2351,7 +2366,7 @@ class Bvb_Grid_Data
 
                 } else {
 
-                    $explode = explode('_', $this->ctrlParams['order'.$this->_gridId]);
+                    $explode = explode('_', $this->ctrlParams['order' . $this->_gridId]);
                     $order = reset($explode);
                     $orderType = end($explode);
 
