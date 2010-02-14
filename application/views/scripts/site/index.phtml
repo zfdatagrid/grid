@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>P&eacute;tala Azul - DataGrid Examples</title>
 <link type="text/css" rel="stylesheet" href="<?php echo $this->url; ?>public/styles/estilos.css">
+<?php echo $this->headScript();?>
 <style type="text/css">
 li {
 padding:0px;margin:0px;
@@ -62,7 +63,8 @@ text-decoration:none;
 
 <?php }?>
 <div id="grid">
-<?php echo $this->pages; ?>
+<?php echo $this->pages; ?><hr>
+<?php echo $this->pages1; ?>
 </div>
 
 </td>

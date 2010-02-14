@@ -111,6 +111,12 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_filesLocation = null;
 
+    /**
+     * View
+     * @var unknown_type
+     */
+    protected $_view = null;
+
     /*
     * @param array $data
     */
@@ -270,14 +276,12 @@ Bvb_Grid_Deploy_Interface
             $this->_chartId = 'chart_' . rand(1, 10000);
         }
 
-        $final = '<script type="text/javascript" src="' . $this->_filesLocation['js'] . '"></script>
-        <script type="text/javascript">
+
+        $script = '
         swfobject.embedSWF(
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
-        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"'.$this->_chartId.'"} );
+        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"} );
 
-        </script>
-        <script type="text/javascript">
         function open_flash_chart_data()
         {
             return JSON.stringify(data);
@@ -290,8 +294,13 @@ Bvb_Grid_Deploy_Interface
             return document[movieName];
           }
         }
-        var data = ' . $final . '; </script>
-        <div id="' . $this->_chartId . '"></div>';
+        var data = ' . $final . '; ';
+
+        $final ='<div id="' . $this->_chartId . '"></div>';
+
+        $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
+        $this->getView()->headScript()->appendScript($script);
+
         $this->_deploymentContent = $final;
         return $this;
     }
@@ -365,7 +374,7 @@ Bvb_Grid_Deploy_Interface
     function __toString ()
     {
         if (is_null($this->_deploymentContent)) {
-            self::deploy();
+           die('You must explicity call the deploy() method before printing the object');
         }
         return $this->_deploymentContent;
     }
@@ -391,6 +400,37 @@ Bvb_Grid_Deploy_Interface
     {
         return $this->_filesLocation;
     }
+
+    /**
+     * Set view object
+     *
+     * @param Zend_View_Interface $view view object to use
+     *
+     * @return Bvb_Grid_Deploy_JqGrid
+     */
+    public function setView (Zend_View_Interface $view = null)
+    {
+        $this->_view = $view;
+        return $this;
+    }
+
+    /**
+     * Retrieve view object
+     *
+     * If none registered, attempts to pull from ViewRenderer.
+     *
+     * @return Zend_View_Interface|null
+     */
+    public function getView ()
+    {
+        if (null === $this->_view) {
+            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+            $this->setView($viewRenderer->view);
+        }
+
+        return $this->_view;
+    }
+
 }
 
 

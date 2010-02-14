@@ -1399,7 +1399,8 @@ Bvb_Grid_Deploy_Interface
     function __toString ()
     {
         if (is_null($this->_deploymentContent)) {
-            self::deploy();
+           die('You must explicity call the deploy() method before printing the object');
+            # self::deploy();
         }
 
         return $this->_deploymentContent;
@@ -1414,7 +1415,7 @@ Bvb_Grid_Deploy_Interface
             $useAjax = 0;
         }
 
-        $script = "<script language=\"javascript\" type=\"text/javascript\">";
+        $script = "";
 
         if($this->allowDelete==1)
         {
@@ -1484,7 +1485,7 @@ Bvb_Grid_Deploy_Interface
   if( !isset($this->info['noFilters']) || $this->info['noFilters']!=0)
         {
 
- $script .= "function ".$this->_gridId."gridChangeFilters(fields,url,Ajax)
+ $script .= "function _".$this->_gridId."gridChangeFilters(fields,url,Ajax)
 {
     var Ajax = \"1\";
     var fieldsArray = fields.split(\",\");
@@ -1509,9 +1510,11 @@ Bvb_Grid_Deploy_Interface
         }
         $script .= "
     }
-        </script>";
+        ";
 
-        return $script;
+        $this->getView()->headScript()->appendScript($script);
+
+        return ;
     }
 
 
@@ -1732,7 +1735,7 @@ Bvb_Grid_Deploy_Interface
         }
 
         $help_javascript = str_replace(".", "bvbdot", $help_javascript);
-        $attr['onChange'] = $this->_gridId."gridChangeFilters('$help_javascript','$url');";
+        $attr['onChange'] = "_".$this->_gridId."gridChangeFilters('$help_javascript','$url');";
 
         $opcoes = array();
         if (isset($this->filters[$campo])) {
@@ -1745,7 +1748,7 @@ Bvb_Grid_Deploy_Interface
             $attr['style'] = " width:95% ";
         }
 
-        $attr['id'] = "filter_" . $campo;
+        $attr['id'] = "filter_"  . $campo;
 
         $selected = null;
         if (isset($opcoes['values']) && is_array($opcoes['values'])) {

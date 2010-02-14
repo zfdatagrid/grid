@@ -60,12 +60,12 @@ class SiteController extends Zend_Controller_Action
      * Simplify the datagrid creation process
      * @return Bvb_Grid_Deploy_Table
      */
-    function grid ($export = null)
+    function grid ($id = '')
     {
 
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
 
-        $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config);
+        $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config,$id);
 
         $grid->setEscapeOutput(false);
         $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
@@ -95,11 +95,13 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('Name', array('title' => 'Country', 'class' => 'width_200'))->updateColumn('Continent', array('title' => 'Continent'))->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'))->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_80'))->updateColumn('GovernmentForm', array('title' => 'Government Form', 'searchType' => '='))->updateColumn('HeadOfState', array('title' => 'Head Of State', 'searchType' => '='));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
+        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name'),'searchType'=>'<>'))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
 
         $grid->addFilters($filters);
 
         $this->view->pages = $grid->deploy();
+
+
         $this->render('index');
     }
 
@@ -147,7 +149,6 @@ class SiteController extends Zend_Controller_Action
 
     function feedAction ()
     {
-
         $grid = $this->grid();
         $grid->setDataFromXml('http://zfdatagrid.com/feed/', 'channel,item');
         $grid->setPagination(10);
@@ -160,17 +161,21 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
-        $grid = $this->grid();
+        $grid = $this->grid('2');
         $select = $this->_db->select()->from('City')->order('Name');
 
-        $grid->updateColumn('Name', array('title' => 'Barcelos'));
-
         $grid->query($select);
-        #$grid->setModel(new Bugs);
+        #$grid->setModel(new Addressbook());
+
+        $grid1 = $this->grid('1');
+        $grid1->setModel(new Addressbook());
 
         $this->view->pages = $grid->deploy();
+        $this->view->pages1 = $grid1->deploy();
+
         $this->render('index');
     }
+
 
 
     /**
@@ -187,7 +192,6 @@ class SiteController extends Zend_Controller_Action
 
         $this->render('index');
     }
-
 
     /**
      * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
@@ -269,13 +273,11 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setModel(new Bugs());
 
-        $grid->updateColumn('bug_id', array('hidden' => 1));
-        $grid->updateColumn('date', array('hidden' => 1));
-        $grid->updateColumn('time', array('hidden' => 1));
-        $grid->updateColumn('seguinte', array('hidden' => 1, 'title' => 'Barcelos', 'tooltipField' => 'sempre'));
+        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status'));
+        $grid->updateColumn('date', array( 'title' => 'Date', 'tooltipField' => 'sempre'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setButton(1)->setDelete(1);
+        $form->setAdd(1)->setEdit(1)->setDelete(1);
         $grid->addForm($form);
 
         $grid->export = array();
@@ -318,7 +320,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->query($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10));
 
-        $this->view->pages = $grid;
+        $this->view->pages = $grid->deploy();
         $this->render('index');
     }
 
