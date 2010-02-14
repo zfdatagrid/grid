@@ -799,6 +799,8 @@ class Bvb_Grid_Data
 
         if (substr(strtolower($name), 0, 3) == 'set') {
             $name = substr($name, 3);
+
+            if(!isset($value[0])){$value[0] =null;}
             $this->__set($name, $value[0]);
         } else {
             throw new Bvb_Grid_Exception("call to unknown function $name");

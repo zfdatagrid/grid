@@ -160,9 +160,8 @@ class Bvb_Grid_Template_Table_Table
     function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
-        <div style=\"float:left;width:220px;\">{{export}}</div>
-        <div style=\"float:left;text-align:center;width:520px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
-        <div style=\"float:right;width:50px;\">{{pageSelect}}</div>
+        <div style=\"float:left;width:240px;\">{{export}}</div>
+        <div style=\"float:left;text-align:center;width:640px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
         </div>
         </td></tr>";
     }
@@ -174,16 +173,8 @@ class Bvb_Grid_Template_Table_Table
         return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">",
         'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">",
         'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">",
-         'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">",
-         'excel' => "<img title=\"Microsoft Excel\"  src=\"" . $url . "excel.gif\"  border=\"0\">",
-         'word' => "<img  title=\"Microsoft Office 2003\" src=\"" . $url . "word.gif\"  border=\"0\">",
-         'wordx' => "<img title=\"Microsoft Office 2007\" src=\"" . $url . "wordx.gif\"  border=\"0\">",
-         'pdf' => "<img title=\"PDF\"  src=\"" . $url . "pdf.gif\"  border=\"0\">",
-         'csv' => "<img src=\"" . $url . "csv.gif\"  border=\"0\">",
-         'ods' => "<img src=\"" . $url . "ods.gif\" title=\"OpenOffice Spreadsheet\"  border=\"0\">",
-         'odt' => "<img src=\"" . $url . "odt.gif\"  title=\"OpenOffice Document Text\"  border=\"0\">",
-         'xml' => "<img src=\"" . $url . "xml.gif\"  border=\"0\">",
-         'print' => "<img  src=\"" . $url . "print.gif\"  border=\"0\">");
+         'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">"
+         );
     }
 
 

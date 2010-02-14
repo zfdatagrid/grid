@@ -1226,6 +1226,7 @@ Bvb_Grid_Deploy_Interface
 
             $exp = '';
 
+
             foreach ($this->getExports() as $export) {
 
                 $export['newWindow'] = isset($export['newWindow']) ? $export['newWindow'] : true;
@@ -1233,16 +1234,22 @@ Bvb_Grid_Deploy_Interface
 
                 $blank = $export['newWindow'] == false ? '' : "target='_blank'";
 
+                if(isset($this->imagesUrl))
+                {
+                    $export['img'] = $this->imagesUrl.$export['caption'].'.gif';
+
+                }
+
                 if (isset($export['img'])) {
-                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'><img src='{$export ['img']}' border='0'></a>";
+                    $exp .= "<a title='{$export['caption'] }' $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'><img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
                 } else {
-                    $exp .= "<a $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'>" . $export['caption'] . "</a>";
+                    $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'>" . $export['caption'] . "</a>";
                 }
 
             }
 
             if (isset($this->info['limit']) && (int) @$this->info['limit'] > 0) {
-                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}'), array($exp, '', '', (int) $this->info['limit']), $this->temp['table']->pagination());
+                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, '', (int) $this->info['limit']), $this->temp['table']->pagination());
 
             } elseif ($npaginas > 1 && count($this->export) > 0) {
 
@@ -1251,7 +1258,7 @@ Bvb_Grid_Deploy_Interface
                     $f = '';
                 }
 
-                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}'), array($exp, $pag, $f, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 = str_replace(array('{{export}}', '{{pagination}}',  '{{numberRecords}}'), array($exp, $pag,  $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif ($npaginas < 2 && count($this->export) > 0) {
 
@@ -1259,7 +1266,7 @@ Bvb_Grid_Deploy_Interface
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}'), array($exp, '', '', $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array('{{export}}', '{{pagination}}',  '{{numberRecords}}'), array($exp, '',  $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif (count($this->export) == 0) {
 
@@ -1267,7 +1274,7 @@ Bvb_Grid_Deploy_Interface
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{pageSelect}}', '{{numberRecords}}'), array('', $pag, $f, $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array('', $pag,  $this->_totalRecords), $this->temp['table']->pagination());
 
             }
 
