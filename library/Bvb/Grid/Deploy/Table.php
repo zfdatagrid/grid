@@ -603,7 +603,7 @@ Bvb_Grid_Deploy_Interface
     protected function _buildHeader ()
     {
 
-        $url = parent::_getUrl(array('comm', 'edit', 'filters', 'order'));
+        $url = $this->getUrl(array('comm', 'edit', 'filters', 'order'));
 
         $final = '';
 
@@ -624,9 +624,9 @@ Bvb_Grid_Deploy_Interface
 
         if (isset($this->ctrlParams['filters' . $this->_gridId]) || isset($this->ctrlParams['order' . $this->_gridId])) {
 
-            $url = $this->_getUrl('filters', 'nofilters');
-            $url2 = $this->_getUrl('order');
-            $url3 = $this->_getUrl(array('filters', 'order', 'nofilters'));
+            $url = $this->getUrl('filters', 'nofilters');
+            $url2 = $this->getUrl('order');
+            $url3 = $this->getUrl(array('filters', 'order', 'nofilters'));
 
             if (is_array($this->_defaultFilters)) {
                 $url .= '/nofilters/1';
@@ -1079,7 +1079,7 @@ Bvb_Grid_Deploy_Interface
 
         $f = '';
 
-        $url = parent::_getUrl(array('start'));
+        $url = $this->getUrl(array('start'));
 
         $actual = (int) isset($this->ctrlParams['start' . $this->_gridId]) ? $this->ctrlParams['start' . $this->_gridId] : 0;
 
@@ -1303,7 +1303,7 @@ Bvb_Grid_Deploy_Interface
     {
 
 
-        $url = parent::_getUrl('comm');
+        $url = $this->getUrl('comm');
 
         $this->_view = $this->getView();
         if ($this->_adapter == 'db') {
@@ -1351,7 +1351,7 @@ Bvb_Grid_Deploy_Interface
             foreach (array_keys($this->info['edit']['fields']) as $key) {
                 array_push($removeParams, $key);
             }
-            $url = parent::_getUrl($removeParams);
+            $url = $this->getUrl($removeParams);
 
             if ($this->allowEdit == 1 && isset($this->info['ajax']) && $this->info['ajax'] !== false) {
                 $urlEdit = $this->_baseUrl . '/' . str_replace("/gridmod".$this->_gridId."/ajax", "", $url);
@@ -1386,7 +1386,7 @@ Bvb_Grid_Deploy_Interface
                     array_push($removeParams, $key);
                 }
 
-                $url = parent::_getUrl($removeParams);
+                $url = $this->getUrl($removeParams);
 
                 $grid .= $this->_form;
 
@@ -1588,12 +1588,12 @@ Bvb_Grid_Deploy_Interface
         $form->addElement('submit', 'form_submit'.$this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $form->buttonHidden));
         $form->addElement('hidden', '_form_edit'.$this->_gridId, array('value' => 1, 'decorators' => $form->buttonHidden));
 
-        $url = $this->_getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
+        $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
 
         $form->addElement('button', 'form_reset'.$this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $form->buttonHidden));
         $form->addDisplayGroup(array('form_submit'.$this->_gridId, 'form_reset'.$this->_gridId), 'buttons', array('decorators' => $form->groupDecorators));
 
-        $form->setAction($this->_getUrl(array_keys($form->getElements())));
+        $form->setAction($this->getUrl(array_keys($form->getElements())));
 
         $this->_form = $form;
 
@@ -1718,7 +1718,7 @@ Bvb_Grid_Deploy_Interface
         }
 
         //Remove unwanted url params
-        $url = $this->_getUrl(array('filters', 'start', 'comm', '_exportTo'));
+        $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo'));
 
         $fieldsSemAsFinal = $this->data['fields'];
 

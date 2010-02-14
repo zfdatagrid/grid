@@ -1241,7 +1241,7 @@ class Bvb_Grid_Data
      * @param array|string $situation
      * @return string
      */
-    protected function _getUrl ($situation = '')
+    public function getUrl ($situation = '')
     {
 
         //this array the a list of params that change name
@@ -1431,7 +1431,7 @@ class Bvb_Grid_Data
     {
 
         $return = array();
-        $url = $this->_getUrl(array('order', 'start', 'comm'));
+        $url = $this->getUrl(array('order', 'start', 'comm'));
 
         $tcampos = count($this->_fields);
 
