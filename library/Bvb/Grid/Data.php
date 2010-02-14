@@ -1115,7 +1115,7 @@ class Bvb_Grid_Data
 
                 $start = substr($filtro, 0, strpos($filtro, '<>'));
                 $end = substr($filtro, strpos($filtro, '<>') + 2);
-                $this->_select->where($field . " between ".$this->_getDb()->quote($start)." and ".$this->_getDb()->quote($end));
+                $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
                 break;
             case 'like':
             default:
@@ -1990,14 +1990,9 @@ class Bvb_Grid_Data
     protected function _validateFields (array $fields)
     {
 
-        $hide = 0;
-        $fields_final = array();
-        $lastIndex = 1;
-        $norder = 0;
-        $lastHidden = 10000;
-
+        $hidden = array();
+        $show = array();
         foreach ($fields as $key => $value) {
-
             //A parte da order
             if (isset($value['orderField'])) {
                 $orderFields[$key] = $value['orderField'];
@@ -2011,6 +2006,21 @@ class Bvb_Grid_Data
                 $titulos[$key] = ucwords(str_replace('_', ' ', $key));
             }
 
+         if (isset($this->data['fields'][$key]['hidden']) && $this->data['fields'][$key]['hidden'] == 1) {
+                $hidden[$key] = $key;
+            } else {
+                $show[$key] = $key;
+            }
+
+        }
+
+        $fields_final = array();
+        $lastIndex = 1;
+        $norder = 0;
+        foreach ($show as $key=>$value) {
+
+            $value = $this->data['fields'][$value];
+
             if (isset($value['position']) && (! isset($value['hidden']) || $value['hidden'] == 0)) {
 
                 if ($value['position'] == 'last') {
@@ -2020,7 +2030,7 @@ class Bvb_Grid_Data
                 } else {
 
                     if ($value['position'] == 'next') {
-                        $norder = $lastIndex ++;
+                        $norder =  $lastIndex + 1;
                     } else {
                         $norder = (int) $value['position'];
                     }
@@ -2044,17 +2054,19 @@ class Bvb_Grid_Data
                         break;
                     }
                 }
-
                 $fields_final[$lastIndex] = $key;
-            } else {
-                $fields_final[$lastHidden ++] = $key;
             }
-
         }
 
         ksort($fields_final);
 
         $fields_final = $this->_reset_keys($fields_final);
+
+        //Put the hidden fields on the end of the array
+        foreach ($hidden as $value)
+        {
+            $fields_final[] = $value;
+        }
 
         $this->_fields = $fields_final;
         $this->_titles = $titulos;
@@ -2686,11 +2698,9 @@ class Bvb_Grid_Data
         $this->filters = $filters;
 
 
-        foreach ($filters as $key=>$filter)
-        {
-            if(isset($filter['searchType']))
-            {
-                $this->updateColumn($key,array('searchType'=>$filter['searchType']));
+        foreach ($filters as $key => $filter) {
+            if (isset($filter['searchType'])) {
+                $this->updateColumn($key, array('searchType' => $filter['searchType']));
             }
         }
 
@@ -3299,7 +3309,7 @@ class Bvb_Grid_Data
     /**
      * Some debug info
      */
-    function debug($returnSerialized = false)
+    function debug ($returnSerialized = false)
     {
         $result = array();
         $result['fields'] = $this->getFields(true);
@@ -3309,10 +3319,9 @@ class Bvb_Grid_Data
         $result['mainSelect'] = $this->getSelectObject()->__toString();
         $result['countSelect'] = $this->_selectCount->__toString();
         $result['model'] = isset($this->_model) ? $this->_model->info() : null;
-        $result['form'] = isset($this->_form) ? $this->_form: null;
+        $result['form'] = isset($this->_form) ? $this->_form : null;
 
-        if($returnSerialized ===true)
-        {
+        if ($returnSerialized === true) {
             return serialize($result);
         }
 
