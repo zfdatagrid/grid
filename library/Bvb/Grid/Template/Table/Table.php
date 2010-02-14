@@ -35,7 +35,7 @@ class Bvb_Grid_Template_Table_Table
 
     function globalStart ()
     {
-        return "<table  width=\"100%\" class=\"borders\" align=\"center\" cellspacing=\"0\" celpadding=\"0\">";
+        return "<table  width=\"100%\" class=\"borders\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">";
     }
 
 

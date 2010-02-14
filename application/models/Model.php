@@ -1,4 +1,20 @@
 <?php
+class Addressbook extends  Zend_Db_Table_Abstract
+{
+    protected $_referenceMap = array(
+            'User' => array(
+            'columns' => 'userID',
+            'refTableClass' => 'users',
+            'refColumns' => 'username'
+        ),
+    );
+}
+
+class Users extends Zend_Db_Table_Abstract
+{
+
+}
+
 
 class Accounts extends Zend_Db_Table_Abstract
 {

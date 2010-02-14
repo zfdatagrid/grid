@@ -72,6 +72,7 @@ class SiteController extends Zend_Controller_Action
         $grid->addFormatterDir('My/Formatter', 'My_Formatter');
         $grid->imagesUrl = $this->getRequest()->getBaseUrl() . '/public/images/';
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
+        $grid->setPagination(10);
 
         return $grid;
     }
@@ -161,14 +162,27 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
-        $grid = $this->grid('2');
-        $select = $this->_db->select()->from('City')->order('Name');
 
+
+        $grid = $this->grid('2');
+        $select = $this->_db->select()->from('City');
         $grid->query($select);
-        #$grid->setModel(new Addressbook());
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
+        $form->setModel(new Addressbook());
+        $grid->addForm($form);
+
+
 
         $grid1 = $this->grid('1');
-        $grid1->setModel(new Addressbook());
+        $select1 = $this->_db->select()->from('City');
+        $grid1->query($select1);
+
+        $form1 = new Bvb_Grid_Form();
+        $form1->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
+        $form1->setModel(new Addressbook());
+        $grid1->addForm($form1);
 
         $this->view->pages = $grid->deploy();
         $this->view->pages1 = $grid1->deploy();

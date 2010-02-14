@@ -1246,7 +1246,7 @@ class Bvb_Grid_Data
 
         //this array the a list of params that change name
         //based on grid id. The id is appended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo','add','edit','comm');
 
         $url = '';
         $params = $this->ctrlParams;
@@ -2335,9 +2335,9 @@ class Bvb_Grid_Data
 
             }
 
-            if (isset($this->ctrlParams['order']) || strlen(@$this->data['order']) > 3) {
+            if (isset($this->ctrlParams['order'.$this->_gridId]) || strlen(@$this->data['order'.$this->_gridId]) > 3) {
 
-                if (strlen($this->data['order']) > 3 && ! isset($this->ctrlParams['order'])) {
+                if (strlen($this->data['order']) > 3 && ! isset($this->ctrlParams['order'.$this->_gridId])) {
 
                     $explode = explode(' ', $this->data['order']);
 
@@ -2351,7 +2351,7 @@ class Bvb_Grid_Data
 
                 } else {
 
-                    $explode = explode('_', $this->ctrlParams['order']);
+                    $explode = explode('_', $this->ctrlParams['order'.$this->_gridId]);
                     $order = reset($explode);
                     $orderType = end($explode);
 
