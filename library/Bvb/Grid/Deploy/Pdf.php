@@ -291,10 +291,10 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
         }
 
-        $page->drawText ( $this->deploy ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
+        $page->drawText (  $this->__($this->deploy ['title']), $width + 70, $page->getHeight () - 70, $this->charEncoding );
         $page->setFont ( $font, $cellFontSize );
 
-        $page->drawText ( $this->deploy ['subtitle'], $width + 70, $page->getHeight () - 80 , $this->charEncoding);
+        $page->drawText ( $this->__($this->deploy ['subtitle']), $width + 70, $page->getHeight () - 80 , $this->charEncoding);
 
         //Iniciar a contagem de páginas
         $pagina = 1;
@@ -303,7 +303,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $page->drawText ( $this->deploy ['footer'], 40, 40 , $this->charEncoding);
         if (@$this->deploy ['noPagination'] != 1)
         {
-            $page->drawText ( $this->deploy ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->deploy ['page'] ) * $cellFontSize) - 50, 40, $this->charEncoding );
+            $page->drawText (  $this->__($this->deploy ['page'] ). ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen (  $this->__($this->deploy ['page']) ) * $cellFontSize) - 50, 40, $this->charEncoding );
         }
 
 
@@ -440,19 +440,19 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
                         $page->drawImage ( $image, 40, $page->getHeight () - $height - 40, 40 + $width, $page->getHeight () - 40 );
                     }
 
-                    $page->drawText ( $this->deploy ['title'], $width + 70, $page->getHeight () - 70, $this->charEncoding );
+                    $page->drawText (  $this->__($this->deploy ['title']), $width + 70, $page->getHeight () - 70, $this->charEncoding );
                     $page->setFont ( $font, $cellFontSize );
 
-                    $page->drawText ( $this->deploy ['subtitle'], $width + 70, $page->getHeight () - 80, $this->charEncoding );
+                    $page->drawText (  $this->__($this->deploy ['subtitle']), $width + 70, $page->getHeight () - 80, $this->charEncoding );
 
 
                     //set font
                     $altura = $page->getHeight () - 120;
 
-                    $page->drawText ( $this->deploy ['footer'], 40, 40, $this->charEncoding);
+                    $page->drawText (  $this->__($this->deploy ['footer']), 40, 40, $this->charEncoding);
                     if ($this->deploy ['noPagination'] != 1)
                     {
-                        $page->drawText ( $this->deploy ['page'] . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen ( $this->deploy ['page'] ) * $cellFontSize) - 50, 40 , $this->charEncoding);
+                        $page->drawText (  $this->__($this->deploy ['page'] ). ' ' . $pagina . '/' . $totalPaginas, $page->getWidth () - (strlen (  $this->__($this->deploy ['page']) ) * $cellFontSize) - 50, 40 , $this->charEncoding);
                     }
 
 

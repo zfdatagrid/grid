@@ -87,7 +87,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $grid = '';
         foreach ($titles as $title) {
 
-            $grid .= '"' . $title['value'] . '",';
+            $grid .= '"' . strip_tags($title['value']) . '",';
         }
 
         return substr($grid, 0, - 1) . "\n";
@@ -101,7 +101,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         if (is_array($sql)) {
 
             foreach ($sql as $exp) {
-                $grid .= '"' . $exp['value'] . '",';
+                $grid .= '"' . strip_tags($exp['value']) . '",';
             }
         }
 
@@ -116,7 +116,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         foreach ($grids as $value) {
 
             foreach ($value as $final) {
-                $grid .= '"' . $final['value'] . '",';
+                $grid .= '"' . strip_tags($final['value']) . '",';
             }
 
             $grid = substr($grid, 0, - 1) . " \n";

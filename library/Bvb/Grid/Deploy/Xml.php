@@ -55,7 +55,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
         foreach ($titles as $title) {
 
-            $grid .= "        <" . $title['field'] . "><![CDATA[" . $title['value'] . "]]></" . $title['field'] . ">\n";
+            $grid .= "        <" . $title['field'] . "><![CDATA[" . strip_tags($title['value']) . "]]></" . $title['field'] . ">\n";
 
         }
 
@@ -76,7 +76,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
 
             foreach ($sql as $exp) {
-                $grid .= "        <" . $exp['field'] . "><![CDATA[" . $exp['value'] . "]]></" . $exp['field'] . ">\n";
+                $grid .= "        <" . $exp['field'] . "><![CDATA[" . strip_tags($exp['value']) . "]]></" . $exp['field'] . ">\n";
                 ;
             }
 
@@ -99,7 +99,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         foreach ($grids as $value) {
             $grid .= "        <row>\n";
             foreach ($value as $final) {
-                $grid .= "            <" . $final['field'] . "><![CDATA[" . $final['value'] . "]]></" . $final['field'] . ">\n";
+                $grid .= "            <" . $final['field'] . "><![CDATA[" . strip_tags($final['value']) . "]]></" . $final['field'] . ">\n";
             }
             $grid .= "        </row>\n";
         }

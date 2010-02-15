@@ -333,7 +333,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             foreach ($wsData as $row) {
                 $xml .= $this->temp['ods']->loopStart();
                 foreach ($row as $value) {
-                    $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->loopLoop());
+                    $xml .= str_replace("{{value}}",  utf8_encode(strip_tags($value['value'])), $this->temp['ods']->loopLoop());
                 }
                 $xml .= $this->temp['ods']->loopEnd();
             }
