@@ -299,6 +299,7 @@ Bvb_Grid_Deploy_Interface
         $final ='<div id="' . $this->_chartId . '"></div>';
 
         $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
+        $this->getView()->headScript()->appendFile($this->_filesLocation['json']);
         $this->getView()->headScript()->appendScript($script);
 
         $this->_deploymentContent = $final;

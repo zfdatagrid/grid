@@ -163,7 +163,7 @@ class SiteController extends Zend_Controller_Action
     function basicAction ()
     {
         $grid = $this->grid();
-        $select = $this->_db->select()->from('Country');
+        $select = $this->_db->select()->from('Country')->join('City','Country.Capital = City.ID',array('capital'=>'Name'));
         $grid->query($select);
 
         $grid->setDetailColumns();
@@ -305,11 +305,10 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setModel(new Bugs());
 
-        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status'));
-        $grid->updateColumn('date', array( 'title' => 'Date', 'tooltipField' => 'sempre'));
+        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status','date'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setDetail(1);
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
         $grid->addForm($form);
 
         $grid->export = array();
@@ -336,7 +335,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setChartOptions(array('set_bg_colour' => '#FFFFFF'));
         $grid->setTile('My First Graph');
         $grid->setChartDimensions(900, 400);
-        $grid->setFilesLocation(array('js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
+        $grid->setFilesLocation(array('json' => $this->getFrontController()->getBaseUrl() . '/public/scripts/json/json2.js','js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
 
         if ($type == 'pie') {
             $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));
