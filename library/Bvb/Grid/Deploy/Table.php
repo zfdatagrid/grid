@@ -793,9 +793,8 @@ Bvb_Grid_Deploy_Interface
 
                     } else {
 
-                        if(!isset($this->data['fields'][$title['field']]['order']))
-                        {
-                            $this->data['fields'][$title['field']]['order']  = true;
+                        if (! isset($this->data['fields'][$title['field']]['order'])) {
+                            $this->data['fields'][$title['field']]['order'] = true;
                         }
 
                         if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
@@ -804,11 +803,11 @@ Bvb_Grid_Deploy_Interface
                             $link1 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_DESC')\">{$images['desc']}</a>";
                             $link2 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_ASC')\">{$images['asc']}</a>";
 
-                            if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order']==0) {
+                            if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order'] == 0) {
                                 $link1 = '';
                             }
 
-                            if (($orderField == $title['field'] && $order == 'desc' )  || $this->data['fields'][$title['field']]['order']==0 ) {
+                            if (($orderField == $title['field'] && $order == 'desc') || $this->data['fields'][$title['field']]['order'] == 0) {
                                 $link2 = '';
                             }
 
@@ -823,11 +822,11 @@ Bvb_Grid_Deploy_Interface
                                 $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_DESC'>{$images['desc']}</a>";
                                 $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_ASC'>{$images['asc']}</a>";
 
-                                if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order']==0) {
+                                if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order'] == 0) {
                                     $link1 = '';
                                 }
 
-                                if (($orderField == $title['field'] && $order == 'desc' )  || $this->data['fields'][$title['field']]['order']==0 ) {
+                                if (($orderField == $title['field'] && $order == 'desc') || $this->data['fields'][$title['field']]['order'] == 0) {
                                     $link2 = '';
                                 }
 
@@ -972,11 +971,11 @@ Bvb_Grid_Deploy_Interface
                 unset($search[0]);
             }
 
-            if (isset($search[1]) && ($search[1] == 'D' || $search[1] == 'E' ) ) {
+            if (isset($search[1]) && ($search[1] == 'D' || $search[1] == 'E')) {
                 unset($search[1]);
             }
 
-            if (isset($search[2]) && ($search[2] == 'D' || $search[2] == 'E' ) ) {
+            if (isset($search[2]) && ($search[2] == 'D' || $search[2] == 'E')) {
                 unset($search[2]);
             }
 
@@ -1277,6 +1276,7 @@ Bvb_Grid_Deploy_Interface
 
         parent::deploy();
 
+
         if (! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table) {
             $this->setTemplate('table', 'table', $this->_templateParams);
         } else {
@@ -1352,7 +1352,8 @@ Bvb_Grid_Deploy_Interface
             $grid .= str_replace("{{value}}", $this->message, $this->temp['table']->formMessage($this->messageOk));
         }
 
-        if (((isset($this->ctrlParams['edit' . $this->_gridId]) && $this->ctrlParams['edit' . $this->_gridId] == 1) || (isset($this->ctrlParams['add' . $this->_gridId]) && $this->ctrlParams['add' . $this->_gridId] == 1) || (isset($this->ctrlParams['double_tables' . $this->_gridId]) && $this->ctrlParams['double_tables' . $this->_gridId] == 1))) {
+
+        if (((isset($this->ctrlParams['edit' . $this->_gridId]) && $this->ctrlParams['edit' . $this->_gridId] == 1) || (isset($this->ctrlParams['add' . $this->_gridId]) && $this->ctrlParams['add' . $this->_gridId] == 1) || (isset($this->info['doubleTables']) && $this->info['doubleTables'] == 1))) {
 
             if (($this->allowAdd == 1 || $this->allowEdit == 1) && $this->_noForm == 0) {
 
@@ -1362,7 +1363,6 @@ Bvb_Grid_Deploy_Interface
                 foreach (array_keys($this->info['edit']['fields']) as $key) {
                     array_push($removeParams, $key);
                 }
-
                 $url = $this->getUrl($removeParams);
 
                 $grid .= $this->_form;
@@ -1372,7 +1372,9 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
-        if (((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1) && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1)) || $this->_noForm == 1) {
+        if (((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1)
+         && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1))
+         || $this->_noForm == 1 || (isset($this->info['doubleTables']) && $this->info['doubleTables'] == 1)) {
 
             if ($this->_isDetail == true) {
 
@@ -1400,16 +1402,25 @@ Bvb_Grid_Deploy_Interface
 
             } else {
 
+
+                if($this->info['doubleTables']==1)
+                {
+                  #  $grid .= $this->_form;
+                    $this->_showsForm = true;
+                }
+
                 $grid .= self::_buildHeader();
                 $grid .= self::_buildTitlesTable(parent::_buildTitles());
                 $grid .= self::_buildFiltersTable(parent::_buildFilters());
                 $grid .= self::_buildGridTable(parent::_buildGrid());
                 $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
                 $grid .= self::_pagination();
+
             }
 
             $this->_showsGrid = true;
         }
+
 
         $grid .= $this->temp['table']->globalEnd();
 
@@ -1645,7 +1656,7 @@ Bvb_Grid_Deploy_Interface
 
         $options = $form['options'];
 
-        $this->info['double_tables'] = isset($options['double_tables']) ? $options['double_tables'] : '';
+        $this->info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';
 
         if (isset($options['delete'])) {
             if ($options['delete'] == 1) {
