@@ -203,7 +203,7 @@ class Bvb_Grid_Template_Odt_Odt
 			</text:sequence-decls>
 <table:table table:name="Table1" table:style-name="Table1">
 	<table:table-column table:style-name="Table1.A"
-		table:number-columns-repeated="' . $this->colSpan . '" />';
+		table:number-columns-repeated="' . $this->options['colspan']. '" />';
     }
 
 
@@ -220,10 +220,10 @@ class Bvb_Grid_Template_Odt_Odt
     function header()
     {
 
-        if (@file_exists ( $this->odtOptions ['logo'] ))
+        if (@file_exists ( $this->options ['logo'] ))
         {
 
-            $arrayLogo = explode("/",@$this->odtOptions['logo']);
+            $arrayLogo = explode("/",@$this->options['logo']);
 
             $header = '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles
@@ -990,11 +990,11 @@ class Bvb_Grid_Template_Odt_Odt
         $return = '
 	<table:table-row>
 		<table:table-cell table:style-name="Table1.D2"
-			table:number-columns-spanned="' . $this->colSpan . '" office:value-type="string">
+			table:number-columns-spanned="' .  $this->options['colspan'] . '" office:value-type="string">
 			<text:p text:style-name="P5"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
 
-        for($i = 1; $i < $this->colSpan; $i ++)
+        for($i = 1; $i <  $this->options['colspan']; $i ++)
         {
             $return .= '<table:covered-table-cell />';
         }
@@ -1011,11 +1011,11 @@ class Bvb_Grid_Template_Odt_Odt
 
         $return = '<table:table-row>
 		<table:table-cell table:style-name="Table1.D2"
-			table:number-columns-spanned="' . $this->colSpan . '" office:value-type="string">
+			table:number-columns-spanned="' .  $this->options['colspan']. '" office:value-type="string">
 			<text:p text:style-name="P5"><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
 
-        for($i = 1; $i < $this->colSpan; $i ++)
+        for($i = 1; $i <  $this->options['colspan']; $i ++)
         {
             $return .= '<table:covered-table-cell />';
         }

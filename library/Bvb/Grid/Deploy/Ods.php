@@ -324,7 +324,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $xml .= $this->temp['ods']->titlesStart();
 
         foreach ($titles as $value) {
-            $xml .= str_replace("{{value}}", $value['value'], $this->temp['ods']->titlesLoop());
+            $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->titlesLoop());
         }
         $xml .= $this->temp['ods']->titlesEnd();
 
@@ -333,7 +333,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             foreach ($wsData as $row) {
                 $xml .= $this->temp['ods']->loopStart();
                 foreach ($row as $value) {
-                    $xml .= str_replace("{{value}}", $value['value'], $this->temp['ods']->loopLoop());
+                    $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->loopLoop());
                 }
                 $xml .= $this->temp['ods']->loopEnd();
             }
@@ -343,7 +343,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         if (is_array($sql)) {
             $xml .= $this->temp['ods']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}", $value['value'], $this->temp['ods']->sqlExpLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->sqlExpLoop());
             }
             $xml .= $this->temp['ods']->sqlExpEnd();
         }
@@ -391,7 +391,3 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     }
 
 }
-
-
-
-

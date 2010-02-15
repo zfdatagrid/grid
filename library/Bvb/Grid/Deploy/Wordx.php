@@ -349,7 +349,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-                $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->titlesLoop());
+                $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->temp['wordx']->titlesLoop());
 
             }
         }
@@ -391,7 +391,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 //A linha horizontal
                 if (@$this->info['hRow']['title'] != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
-                        $xml .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->temp['wordx']->hRow());
+                        $xml .= str_replace("{{value}}",  utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->temp['wordx']->hRow());
                     }
                 }
                 ////////////
@@ -409,7 +409,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-                        $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->loopLoop());
+                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['wordx']->loopLoop());
 
                     }
                     $a ++;
@@ -424,7 +424,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         if (is_array($sql)) {
             $xml .= $this->temp['wordx']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}", $value['value'], $this->temp['wordx']->sqlExpLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['wordx']->sqlExpLoop());
             }
             $xml .= $this->temp['wordx']->sqlExpEnd();
         }

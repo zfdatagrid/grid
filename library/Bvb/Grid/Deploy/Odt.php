@@ -326,14 +326,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         /////////////////////////
         #END HEADER
 
-
-
-
-
         #START DOCUMENT.XML
-
-
-
 
 
         $xml = $this->temp['odt']->globalStart();
@@ -344,7 +337,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
             if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-                $xml .= str_replace("{{value}}", $value['value'], $this->temp['odt']->titlesLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['odt']->titlesLoop());
 
             }
         }
@@ -386,7 +379,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
                 //A linha horizontal
                 if (@$this->info['hRow']['title'] != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
-                        $xml .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->temp['odt']->hRow());
+                        $xml .= str_replace("{{value}}", utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->temp['odt']->hRow());
                     }
                 }
                 ////////////
@@ -403,7 +396,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
                     if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
 
-                        $xml .= str_replace("{{value}}", $value['value'], $this->temp['odt']->loopLoop());
+                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['odt']->loopLoop());
 
                     }
                     $a ++;
@@ -419,7 +412,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         if (is_array($sql)) {
             $xml .= $this->temp['odt']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}", $value['value'], $this->temp['odt']->sqlExpLoop());
+                $xml .= str_replace("{{value}}", utf8_encode( $value['value']), $this->temp['odt']->sqlExpLoop());
             }
             $xml .= $this->temp['odt']->sqlExpEnd();
         }

@@ -26,6 +26,8 @@ class Bvb_Grid_Template_Wordx_Wordx
     public $colSpan;
     public  $wordOptions;
 
+    public $options;
+
     function __construct($options = array())
     {
         $this->wordOptions = $options;
@@ -96,7 +98,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
     function logo()
     {
-    	$arrayLogo = explode("/",@$this->wordOptions['logo']);
+    	$arrayLogo = explode("/",@$this->options['logo']);
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'.end($arrayLogo).'"/>
@@ -108,9 +110,9 @@ class Bvb_Grid_Template_Wordx_Wordx
     function header()
     {
 
-        if(@file_exists($this->wordOptions['logo']))
+        if(@file_exists($this->options['logo']))
         {
-         $arrayLogo = explode("/",@$this->wordOptions['logo']);
+         $arrayLogo = explode("/",@$this->options['logo']);
 
             $logo = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -344,7 +346,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 				<w:tc>
 					<w:tcPr>
 						<w:tcW w:w="8516" w:type="dxa" />
-						<w:gridSpan w:val="'.$this->colSpan.'" />
+						<w:gridSpan w:val="'.$this->options['colspan'].'" />
 						<w:shd w:val="clear" w:color="auto" w:fill="7C7C7C" />
 					</w:tcPr>
 					<w:p w:rsidR="0034373E" w:rsidRDefault="0034373E">
@@ -368,7 +370,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 				<w:tc>
 					<w:tcPr>
 						<w:tcW w:w="8516" w:type="dxa" />
-						<w:gridSpan w:val="'.$this->colSpan.'" />
+						<w:gridSpan w:val="'.$this->options['colspan'].'" />
 						<w:shd w:val="clear" w:color="auto" w:fill="7C7C7C" />
 					</w:tcPr>
 					<w:p w:rsidR="0034373E" w:rsidRDefault="0034373E">
