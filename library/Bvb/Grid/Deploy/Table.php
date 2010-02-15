@@ -934,7 +934,9 @@ Bvb_Grid_Deploy_Interface
             $p = 0;
 
             foreach ($grids[0] as $value) {
-                if ($value['field'] == $hbar) {
+
+
+                if (isset($value['field']) && $value['field'] == $hbar) {
                     $hRowIndex = $p;
                 }
 
