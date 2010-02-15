@@ -1341,7 +1341,7 @@ Bvb_Grid_Deploy_Interface
                 $this->extra_fields = array();
             }
 
-            $removeParams = array('filters', 'add', 'edit', 'comm');
+            $removeParams = array( 'add', 'edit', 'comm');
             $url = $this->getUrl($removeParams);
 
             array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
