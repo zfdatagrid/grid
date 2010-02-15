@@ -1403,12 +1403,6 @@ Bvb_Grid_Deploy_Interface
             } else {
 
 
-                if($this->info['doubleTables']==1)
-                {
-                  #  $grid .= $this->_form;
-                    $this->_showsForm = true;
-                }
-
                 $grid .= self::_buildHeader();
                 $grid .= self::_buildTitlesTable(parent::_buildTitles());
                 $grid .= self::_buildFiltersTable(parent::_buildFilters());
