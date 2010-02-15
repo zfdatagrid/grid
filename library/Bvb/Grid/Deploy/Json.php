@@ -47,7 +47,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         $grid = array();
         foreach ($titles as $title) {
 
-            $grid[] = $title['value'];
+            $grid[] = strip_tags($title['value']);
         }
         return $grid;
     }
@@ -59,7 +59,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         if (is_array($sql)) {
 
             foreach ($sql as $exp) {
-                $grid[] = $exp['value'];
+                $grid[] = strip_tags($exp['value']);
             }
         }
         return $grid;
@@ -74,7 +74,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
 
             $grid1 = array();
             foreach ($value as $final) {
-                $grid1[] = $final['value'];
+                $grid1[] = strip_tags($final['value']);
             }
 
             $grid[] = $grid1;
