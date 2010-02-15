@@ -1391,7 +1391,7 @@ class Bvb_Grid_Data
     {
 
         $return = array();
-        if (isset($this->info['noFilters'])) {
+        if (isset($this->info['noFilters']) && $this->info['noFilters']==1 ) {
             return false;
         }
 
