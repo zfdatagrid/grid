@@ -203,6 +203,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             die();
         }
 
+        die();
         return true;
     }
 
