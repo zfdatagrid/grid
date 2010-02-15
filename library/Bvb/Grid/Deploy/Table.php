@@ -490,30 +490,6 @@ Bvb_Grid_Deploy_Interface
     }
 
     /**
-     * Return the fields to be used in a specific table
-     *
-     * @param array $fields
-     * @param string $sufix
-     * @return array
-     */
-    protected function _getFieldsToTable (array $fields, $sufix)
-    {
-
-        $final = array();
-
-        $sufix = rtrim($sufix, '_') . '_';
-
-        foreach ($fields as $key => $field) {
-            if (substr($key, 0, strlen($sufix)) == $sufix) {
-                $final[substr($key, strlen($sufix))] = $field;
-            }
-        }
-
-        return $final;
-    }
-
-
-    /**
      * Remove the record from the table
      * Don't forget to see if the user as set an "extra" WHERE.
      *
@@ -1278,33 +1254,6 @@ Bvb_Grid_Deploy_Interface
         }
 
         return $result2;
-    }
-
-    /**
-     * Remeve the auto-increment field from the array. If a field is auto-increment,
-     * we won't let the user insert data on the field
-     *
-     * @param array $fields
-     * @param string $table
-     * @return array
-     */
-    protected function _removeAutoIncrement ($fields, $table)
-    {
-
-        $table = $this->_getDescribeTable($table);
-
-        foreach ($table as $value) {
-
-            if ($value['IDENTITY'] == true) {
-                $table_fields = $value['COLUMN_NAME'];
-            }
-        }
-
-        if (array_key_exists($table_fields, $fields)) {
-            unset($fields->$table_fields);
-        }
-
-        return $fields;
     }
 
 

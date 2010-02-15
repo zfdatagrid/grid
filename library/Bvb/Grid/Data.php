@@ -500,7 +500,7 @@ class Bvb_Grid_Data
     }
 
     /**
-     * Returns the activa escape functions
+     * Returns the active escape functions
      */
     public function getDefaultEscapeFunction ()
     {
