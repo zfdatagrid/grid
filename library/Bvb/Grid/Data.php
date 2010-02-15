@@ -1266,15 +1266,7 @@ class Bvb_Grid_Data
         $query_order = '';
 
         if (strlen($this->fieldHorizontalRow) > 0) {
-
-            $split = $this->fieldHorizontalRow;
-            if (strlen($query_order) > 4) {
-                $query_order = $split . ' ASC ';
-            } else {
-                $query_order = $this->fieldHorizontalRow . ' ASC ';
-            }
-
-            $this->_select->order($query_order);
+            $this->_select->order($this->fieldHorizontalRow . ' ASC ');
         }
 
 
@@ -2046,10 +2038,13 @@ class Bvb_Grid_Data
         $show = array();
         foreach ($fields as $key => $value) {
             //A parte da order
-            if (isset($value['orderField'])) {
-                $orderFields[$key] = $value['orderField'];
-            } else {
-                $orderFields[$key] = $key;
+
+            if (! isset($value['order']) || $value['order'] == 1) {
+                if (isset($value['orderField'])) {
+                    $orderFields[$key] = $value['orderField'];
+                } else {
+                    $orderFields[$key] = $key;
+                }
             }
 
             if (isset($value['title'])) {

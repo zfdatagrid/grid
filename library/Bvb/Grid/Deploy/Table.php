@@ -772,12 +772,6 @@ Bvb_Grid_Deploy_Interface
 
         foreach ($titles as $title) {
 
-            $imgFinal = '';
-
-            if (isset($title['field']) && $title['field'] == $orderField) {
-                $imgFinal = $images[$order];
-            }
-
             //deal with extra field and template
             if ($title['type'] == 'extraField' && $title['position'] == 'left') {
                 $grid .= str_replace('{{value}}', $title['value'], $this->temp['table']->titlesLoop());
@@ -789,6 +783,7 @@ Bvb_Grid_Deploy_Interface
 
                 if ($title['type'] == 'field') {
 
+
                     $noOrder = isset($this->info['noOrder']) ? $this->info['noOrder'] : '';
 
                     if ($noOrder == 1) {
@@ -798,17 +793,22 @@ Bvb_Grid_Deploy_Interface
 
                     } else {
 
+                        if(!isset($this->data['fields'][$title['field']]['order']))
+                        {
+                            $this->data['fields'][$title['field']]['order']  = true;
+                        }
+
                         if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
 
                             $link1 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_DESC')\">{$images['desc']}</a>";
                             $link2 = "<a  href=\"javascript:gridAjax('{$this->info['ajax']}','{$title['simpleUrl']}/order{$this->_gridId}/{$title['field']}_ASC')\">{$images['asc']}</a>";
 
-                            if ($orderField == $title['field'] && $order == 'asc') {
+                            if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order']==0) {
                                 $link1 = '';
                             }
 
-                            if ($orderField == $title['field'] && $order == 'desc') {
+                            if (($orderField == $title['field'] && $order == 'desc' )  || $this->data['fields'][$title['field']]['order']==0 ) {
                                 $link2 = '';
                             }
 
@@ -823,11 +823,11 @@ Bvb_Grid_Deploy_Interface
                                 $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_DESC'>{$images['desc']}</a>";
                                 $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->_gridId}/{$title['field']}_ASC'>{$images['asc']}</a>";
 
-                                if ($orderField == $title['field'] && $order == 'asc') {
+                                if (($orderField == $title['field'] && $order == 'asc') || $this->data['fields'][$title['field']]['order']==0) {
                                     $link1 = '';
                                 }
 
-                                if ($orderField == $title['field'] && $order == 'desc') {
+                                if (($orderField == $title['field'] && $order == 'desc' )  || $this->data['fields'][$title['field']]['order']==0 ) {
                                     $link2 = '';
                                 }
 
