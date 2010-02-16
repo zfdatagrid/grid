@@ -832,7 +832,9 @@ class Bvb_Grid_Data
         if (substr(strtolower($name), 0, 3) == 'set') {
             $name = substr($name, 3);
 
-            if(!isset($value[0])){$value[0] =null;}
+            if (! isset($value[0])) {
+                $value[0] = null;
+            }
             $this->__set($name, $value[0]);
         } else {
             throw new Bvb_Grid_Exception("call to unknown function $name");
@@ -1035,11 +1037,10 @@ class Bvb_Grid_Data
                 throw new Bvb_Grid_Exception($this->filters[$fieldShorten]['callback']['function'] . ' is not callable');
             }
 
-            if (!isset($this->filters[$fieldShorten]['callback']['params']) || ! is_array($this->filters[$fieldShorten]['callback']['params'])) {
+            if (! isset($this->filters[$fieldShorten]['callback']['params']) || ! is_array($this->filters[$fieldShorten]['callback']['params'])) {
                 $this->filters[$fieldShorten]['callback']['params'] = array();
             }
-            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'],
-            array('field' => $fieldShorten, 'value' => $filtro,'select'=>$this->getSelectObject()));
+            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'], array('field' => $fieldShorten, 'value' => $filtro, 'select' => $this->getSelectObject()));
 
             $result = call_user_func($this->filters[$fieldShorten]['callback']['function'], $this->filters[$fieldShorten]['callback']['params']);
 
@@ -1383,7 +1384,7 @@ class Bvb_Grid_Data
     {
 
         $return = array();
-        if (isset($this->info['noFilters']) && $this->info['noFilters']==1 ) {
+        if (isset($this->info['noFilters']) && $this->info['noFilters'] == 1) {
             return false;
         }
 
@@ -2039,6 +2040,7 @@ class Bvb_Grid_Data
         foreach ($fields as $key => $value) {
             //A parte da order
 
+
             if (! isset($value['order']) || $value['order'] == 1) {
                 if (isset($value['orderField'])) {
                     $orderFields[$key] = $value['orderField'];
@@ -2247,14 +2249,11 @@ class Bvb_Grid_Data
             throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
         }
 
-        if(isset($this->ctrlParams['gridDetail'.$this->_gridId]) && $this->ctrlParams['gridDetail'.$this->_gridId]==1
-             && is_array($this->_detailColumns))
-        {
+        if (isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns)) {
             $this->_isDetail = true;
         }
 
-        if($this->_isDetail===true && is_array($this->_detailColumns))
-        {
+        if ($this->_isDetail === true && is_array($this->_detailColumns)) {
             if (count($this->_detailColumns) > 0) {
 
                 $finalColumns = array_intersect($this->_detailColumns, array_keys($this->data['fields']));
@@ -2269,14 +2268,11 @@ class Bvb_Grid_Data
         }
 
 
-        if($this->_isDetail===false && is_array($this->_gridColumns))
-        {
-            $finalColumns = array_intersect($this->_gridColumns,array_keys($this->data['fields']));
-            foreach ($this->data['fields'] as $key=>$value)
-            {
-                if(!in_array($key,$finalColumns))
-                {
-                    $this->updateColumn($key,array('hidden'=>1));
+        if ($this->_isDetail === false && is_array($this->_gridColumns)) {
+            $finalColumns = array_intersect($this->_gridColumns, array_keys($this->data['fields']));
+            foreach ($this->data['fields'] as $key => $value) {
+                if (! in_array($key, $finalColumns)) {
+                    $this->updateColumn($key, array('hidden' => 1));
                 }
             }
 
@@ -2314,7 +2310,7 @@ class Bvb_Grid_Data
         $this->_buildFiltersValues();
 
         if ($this->_adapter == 'db') {
-             if ($this->_isDetail == false) {
+            if ($this->_isDetail == false) {
                 $this->_buildQuery();
             }
             $this->_builQueryCount();
@@ -2753,7 +2749,7 @@ class Bvb_Grid_Data
             $totalFields ++;
         }
 
-        if (is_array($this->_detailColumns) && $this->_isDetail==false) {
+        if (is_array($this->_detailColumns) && $this->_isDetail == false) {
             $totalFields ++;
         }
 
@@ -3056,14 +3052,21 @@ class Bvb_Grid_Data
             // now we need to find and load the right Bvb deploy class
             $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
-
-
-
-            if (Zend_Loader_Autoloader::autoload($className)) {
-                $grid = new $className($options);
+            if (Zend_Version::compareVersion('1.8.0') == 1) {
+                if (Zend_Loader::autoload($className)) {
+                    $grid = new $className($options);
+                } else {
+                    $grid = new $defaultClass($options);
+                    $lClass = $defaultClass;
+                }
             } else {
-                $grid = new $defaultClass($options);
-                $lClass = $defaultClass;
+
+                if (Zend_Loader_Autoloader::autoload($className)) {
+                    $grid = new $className($options);
+                } else {
+                    $grid = new $defaultClass($options);
+                    $lClass = $defaultClass;
+                }
             }
         }
 
@@ -3125,14 +3128,27 @@ class Bvb_Grid_Data
                 // only export name is passed, we need to get default option
                 $name = $defs;
                 $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
-                if (Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults')) {
-                    // learn the defualt values
-                    $defs = call_user_func(array($className, "getExportDefaults"));
+
+                if (Zend_Version::compareVersion('1.8.0') ==  1) {
+                    if (Zend_Loader::autoload($className) && method_exists($className, 'getExportDefaults')) {
+                        // learn the defualt values
+                        $defs = call_user_func(array($className, "getExportDefaults"));
+                    } else {
+                        // there are no defaults, we need at least some caption
+                        $defs = array('caption' => $name);
+                    }
                 } else {
-                    // there are no defaults, we need at least some caption
-                    $defs = array('caption' => $name);
+                    if (Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults')) {
+                        // learn the defualt values
+                        $defs = call_user_func(array($className, "getExportDefaults"));
+                    } else {
+                        // there are no defaults, we need at least some caption
+                        $defs = array('caption' => $name);
+                    }
+
                 }
                 $defs['_class'] = $className;
+
             }
             $res[$name] = $defs;
         }
@@ -3432,27 +3448,27 @@ class Bvb_Grid_Data
         return $result;
     }
 
-    function setGridColumns(array $columns)
+    function setGridColumns (array $columns)
     {
         $this->_gridColumns = $columns;
         return $this;
     }
 
-    function addGridColumns(array $columns)
+    function addGridColumns (array $columns)
     {
-        $this->_gridColumns = array_merge($this->_gridColumns,$columns);
+        $this->_gridColumns = array_merge($this->_gridColumns, $columns);
         return $this;
     }
 
-    function setDetailColumns( $columns=array())
+    function setDetailColumns ($columns = array())
     {
         $this->_detailColumns = $columns;
         return $this;
     }
 
-    function addDetailColumns(array $columns)
+    function addDetailColumns (array $columns)
     {
-        $this->_detailColumns = array_merge($this->_detailColumns,$columns);
+        $this->_detailColumns = array_merge($this->_detailColumns, $columns);
         return $this;
     }
 
