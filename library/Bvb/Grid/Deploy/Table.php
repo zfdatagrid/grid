@@ -1668,7 +1668,7 @@ Bvb_Grid_Deploy_Interface
                 $options['button'] = 0;
             }
 
-            $this->add = array('allow' => 1, 'button' => $options['button'], 'fields' => $fields, 'force' => @$options['onAddForce']);
+            $this->add = array('allow' => 1, 'button' => $options['addButton'], 'fields' => $fields, 'force' => @$options['onAddForce']);
         }
 
         if (isset($options['edit']) && $options['edit'] == 1) {
