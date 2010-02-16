@@ -1686,7 +1686,6 @@ class Bvb_Grid_Data
             array_walk_recursive($toReplaceArray, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
-
         for ($i = 0; $i <= count($toReplace); $i ++) {
             if (isset($toReplaceArray[$i])) {
                 $toReplace[$i] = $toReplaceArray[$i];

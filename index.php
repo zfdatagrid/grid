@@ -17,6 +17,7 @@ $autoloader->registerNamespace('My_');
 $autoloader->suppressNotFoundWarnings(false);
 $autoloader->setFallbackAutoloader(true);
 
+Zend_Session::start();
 
 // Load Config
 $config = new Zend_Config_Ini ( './application/config.ini', 'general' );
