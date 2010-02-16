@@ -1629,6 +1629,7 @@ class Bvb_Grid_Data
 
     protected function _replaceSpecialTags (&$item, $key, $text)
     {
+
         $item = str_replace($text['find'], $text['replace'], $item);
     }
 
@@ -1659,21 +1660,30 @@ class Bvb_Grid_Data
     protected function _applyFieldCallback ($new_value, $value, $search, $replace)
     {
 
-
         if (! is_callable($value['function'])) {
             throw new Bvb_Grid_Exception($value['function'] . ' not callable');
         }
 
         if (isset($value['params']) && is_array($value['params'])) {
             $toReplace = $value['params'];
+
+            foreach ($toReplace as $key=>$rep)
+            {
+                if(!is_scalar($rep) && !is_array($rep))
+                {
+                    unset($toReplace[$key]);
+                }
+            }
+
         } else {
             return call_user_func($value['function']);
         }
 
         if (is_array($toReplace)) {
+
+
             array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
-
 
        return  call_user_func_array($value['function'], $toReplace);
 
