@@ -1659,6 +1659,7 @@ class Bvb_Grid_Data
     protected function _applyFieldCallback ($new_value, $value, $search, $replace)
     {
 
+
         if (! is_callable($value['function'])) {
             throw new Bvb_Grid_Exception($value['function'] . ' not callable');
         }
@@ -1672,7 +1673,9 @@ class Bvb_Grid_Data
         if (is_array($toReplace)) {
             array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
-        return call_user_func_array($value['function'], $toReplace);
+
+
+       return  call_user_func_array($value['function'], $toReplace);
 
     }
 
@@ -1758,10 +1761,9 @@ class Bvb_Grid_Data
 
         foreach ($this->_result as $dados) {
 
-
             $outputToReplace = array();
-            foreach ($fields as $value) {
-                $outputToReplace[] = $dados[$value];
+            foreach (array_combine($fields,$fields) as $key=>$value) {
+                $outputToReplace[$key] = $dados[$value];
             }
 
 
@@ -1799,16 +1801,20 @@ class Bvb_Grid_Data
 
                 $new_value = $dados[$fields[$is]];
 
-
                 $new_value = $this->_escapeField($fields[$is], $new_value);
+
 
                 if (isset($this->data['fields'][$fields[$is]]['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $this->data['fields'][$fields[$is]]['callback'], $search, $outputToReplace);
+                    $outputToReplace[$fields[$is]] = $new_value;
                 }
+
 
                 if (isset($this->data['fields'][$fields[$is]]['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $this->data['fields'][$fields[$is]]['format'], $search, $outputToReplace);
+                    $outputToReplace[$fields[$is]] = $new_value;
                 }
+
 
                 if (isset($this->data['fields'][$fields[$is]]['decorator'])) {
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $this->data['fields'][$fields[$is]]['decorator']);
