@@ -895,7 +895,7 @@ Bvb_Grid_Deploy_Interface
             $field_explode = explode('.', $f[0]);
             $field = end($field_explode);
 
-            $param .= " AND  " . $this->_getDb()->quoteIdentifier($field) . '=' . $this->_getDb()->quote($f[1]);
+            $param .= " AND  " . $this->_getDb()->quoteIdentifier($this->data['fields'][$field]['field']) . '=' . $this->_getDb()->quote($f[1]);
 
             $returnArray[$f[0]] = $f[1];
         }
