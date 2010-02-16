@@ -1309,7 +1309,7 @@ Bvb_Grid_Deploy_Interface
             }
             // Remove the unnecessary URL params
             #$removeParams = array ('filters', 'add' );
-            $removeParams = array('filters', 'add', 'edit', 'comm');
+            $removeParams = array('add', 'edit', 'comm');
 
             foreach (array_keys($this->info['edit']['fields']) as $key) {
                 array_push($removeParams, $key);
@@ -1664,8 +1664,8 @@ Bvb_Grid_Deploy_Interface
         @$this->info['delete']['cascadeDelete'] = $form['cascadeDelete'];
 
         if ($options['add'] == 1 && $options['add'] == 1) {
-            if (! isset($options['button'])) {
-                $options['button'] = 0;
+            if (! isset($options['addButton'])) {
+                $options['addButton'] = 0;
             }
 
             $this->add = array('allow' => 1, 'button' => $options['addButton'], 'fields' => $fields, 'force' => @$options['onAddForce']);
