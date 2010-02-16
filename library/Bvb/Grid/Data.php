@@ -1629,7 +1629,6 @@ class Bvb_Grid_Data
 
     protected function _replaceSpecialTags (&$item, $key, $text)
     {
-
         $item = str_replace($text['find'], $text['replace'], $item);
     }
 
@@ -1666,12 +1665,16 @@ class Bvb_Grid_Data
 
         if (isset($value['params']) && is_array($value['params'])) {
             $toReplace = $value['params'];
+            $toReplaceArray = array();
+            $toReplaceObj = array();
 
             foreach ($toReplace as $key=>$rep)
             {
-                if(!is_scalar($rep) && !is_array($rep))
+                if(is_scalar($rep) || is_array($rep))
                 {
-                    unset($toReplace[$key]);
+                   $toReplaceArray[$key] = $rep;
+                }else{
+                    $toReplaceObj[$key] = $rep;
                 }
             }
 
@@ -1680,9 +1683,16 @@ class Bvb_Grid_Data
         }
 
         if (is_array($toReplace)) {
+            array_walk_recursive($toReplaceArray, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+        }
 
 
-            array_walk_recursive($toReplace, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+        for ($i = 0; $i <= count($toReplace); $i ++) {
+            if (isset($toReplaceArray[$i])) {
+                $toReplace[$i] = $toReplaceArray[$i];
+            } elseif (isset($toReplaceObj[$i])) {
+                $toReplace[$i] = $toReplaceObj[$i];
+            }
         }
 
        return  call_user_func_array($value['function'], $toReplace);
@@ -2300,6 +2310,7 @@ class Bvb_Grid_Data
             $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
             $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
             $this->_select->where(new Zend_Db_Expr($this->_getPkFromUrl()));
+
 
             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
