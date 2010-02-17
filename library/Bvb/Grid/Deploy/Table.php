@@ -390,7 +390,7 @@ Bvb_Grid_Deploy_Interface
 
                         unset($this->_gridSession->post);
 
-                        $this->_removeFormParams($post, array('comm' . $this->_gridId, 'edit' . $this->_gridId));
+                        $this->_removeFormParams($post, array( 'add' . $this->_gridId));
 
                         if ($this->cache['use'] == 1) {
                             $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
@@ -578,9 +578,9 @@ Bvb_Grid_Deploy_Interface
             }
 
             if ($this->_formHasModel) {
-                $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
+               $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
             } else {
-                $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
+               $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
             }
 
             if ($resultDelete == 1) {
@@ -588,14 +588,16 @@ Bvb_Grid_Deploy_Interface
                     call_user_func_array($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
                 }
             }
+            $this->_gridSession->messageOk = true;
+            $this->_gridSession->message = $this->__('Record deleted');
+            $this->_gridSession->correct = 1;
 
-            $this->messageOk = true;
-            $this->message = $this->__('Record deleted');
+            $this->_redirect($this->getUrl('comm'));
 
         }
         catch (Zend_Exception $e) {
-            $this->messageOk = FALSE;
-            $this->message = $this->__('Error deleting record =>') . $e->getMessage();
+            $this->_gridSession->messageOk = FALSE;
+            $this->_gridSession->message = $this->__('Error deleting record =>') . $e->getMessage();
         }
 
         unset($this->ctrlParams['comm' . $this->_gridId]);
@@ -1289,8 +1291,6 @@ Bvb_Grid_Deploy_Interface
     function deploy ()
     {
 
-        $url = $this->getUrl('comm');
-
         $this->_view = $this->getView();
 
         if ($this->_adapter == 'db') {
@@ -1473,6 +1473,7 @@ Bvb_Grid_Deploy_Interface
                $this->_gridSession->correct++;
            }
         }
+
         $this->_deploymentContent = $grid;
         return $this;
 
