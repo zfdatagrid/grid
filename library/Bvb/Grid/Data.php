@@ -421,6 +421,12 @@ class Bvb_Grid_Data
      */
     protected $_isDetail = false;
 
+
+    /**
+     * @var Zend_View_Interface
+     */
+    protected $_view;
+
     /**
      * Set db
      * @param Zend_Db_Adapter_Abstract $db
@@ -488,6 +494,36 @@ class Bvb_Grid_Data
     }
 
 
+
+    /**
+     * Set view object
+     *
+     * @param Zend_View_Interface $view view object to use
+     *
+     * @return Bvb_Grid_Deploy_JqGrid
+     */
+    public function setView (Zend_View_Interface $view = null)
+    {
+        $this->_view = $view;
+        return $this;
+    }
+
+    /**
+     * Retrieve view object
+     *
+     * If none registered, attempts to pull from ViewRenderer.
+     *
+     * @return Zend_View_Interface|null
+     */
+    public function getView ()
+    {
+        if (null === $this->_view) {
+            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
+            $this->setView($viewRenderer->view);
+        }
+
+        return $this->_view;
+    }
     /**
      * Sets the functions to be used to apply th each value
      * before fisplay
@@ -1642,7 +1678,6 @@ class Bvb_Grid_Data
      */
     protected function _applyFieldFormat ($new_value, $value, $search, $replace)
     {
-
         if (is_array($value)) {
             array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
@@ -1762,6 +1797,26 @@ class Bvb_Grid_Data
 
     }
 
+    function _applyFieldHelper ($new_value, $value, $search, $replace)
+    {
+
+        if (is_array($value)) {
+            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+        }
+
+        $name = $value['name'];
+        $t = $this->getView()->getHelper($name);
+        $re = new ReflectionMethod($t, $name);
+
+        if (isset($value['params']) && is_array($value['params'])) {
+            $new_value = $re->invokeArgs($t, $value['params']);
+        } else {
+            $new_value = $re->invoke($t);
+        }
+
+        return $new_value;
+    }
+
     /**
      * The loop for the results.
      * Check the extra-fields,
@@ -1796,12 +1851,18 @@ class Bvb_Grid_Data
 
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
 
+                $new_value = '';
+
                 if (isset($value['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
                 }
 
                 if (isset($value['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
+                }
+
+                if (isset($value['helper'])) {
+                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $dados);
                 }
 
                 if (isset($value['decorator'])) {
@@ -1836,9 +1897,16 @@ class Bvb_Grid_Data
                 }
 
 
+                if (isset($this->data['fields'][$fields[$is]]['helper'])) {
+                    $new_value = $this->_applyFieldHelper($new_value, $this->data['fields'][$fields[$is]]['helper'], $search, $outputToReplace);
+                    $outputToReplace[$fields[$is]] = $new_value;
+                }
+
+
                 if (isset($this->data['fields'][$fields[$is]]['decorator'])) {
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $this->data['fields'][$fields[$is]]['decorator']);
                 }
+
 
                 if ($this->_displayField($fields[$is])) {
 
@@ -1869,6 +1937,10 @@ class Bvb_Grid_Data
 
                 if (isset($value['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
+                }
+
+                if (isset($value['helper'])) {
+                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $dados);
                 }
 
                 if (isset($value['decorator'])) {

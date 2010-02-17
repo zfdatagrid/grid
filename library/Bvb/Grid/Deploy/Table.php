@@ -174,11 +174,6 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_comm;
 
-    /**
-     * @var Zend_View_Interface
-     */
-    protected $_view;
-
 
     /**
      *
@@ -1015,7 +1010,7 @@ Bvb_Grid_Deploy_Interface
             }
 
 
-            if ($search[0] == 'D' || $search[0] == 'E' || $search[0] == 'V') {
+            if (isset($search[0]) && ($search[0] == 'D' || $search[0] == 'E' || $search[0] == 'V')) {
                 unset($search[0]);
             }
 
@@ -1901,36 +1896,6 @@ Bvb_Grid_Deploy_Interface
         return $valor;
     }
 
-
-    /**
-     * Set view object
-     *
-     * @param Zend_View_Interface $view view object to use
-     *
-     * @return Bvb_Grid_Deploy_JqGrid
-     */
-    public function setView (Zend_View_Interface $view = null)
-    {
-        $this->_view = $view;
-        return $this;
-    }
-
-    /**
-     * Retrieve view object
-     *
-     * If none registered, attempts to pull from ViewRenderer.
-     *
-     * @return Zend_View_Interface|null
-     */
-    public function getView ()
-    {
-        if (null === $this->_view) {
-            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
-            $this->setView($viewRenderer->view);
-        }
-
-        return $this->_view;
-    }
 
     /**
      * Let the user know waht will be displayed.
