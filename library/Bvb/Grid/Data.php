@@ -1326,7 +1326,7 @@ class Bvb_Grid_Data
 
         //this array the a list of params that change name
         //based on grid id. The id is appended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm','gridDetail');
 
         $url = '';
         $params = $this->ctrlParams;
