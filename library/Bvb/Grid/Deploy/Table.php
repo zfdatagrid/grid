@@ -1676,34 +1676,35 @@ Bvb_Grid_Deploy_Interface
 
         $this->_form = $form;
 
+        if (isset($form->options['callbackBeforeDelete'])) {
+            $this->_callbackBeforeDelete = $form->options['callbackBeforeDelete'];
+        }
+
+        if (isset($form->options['callbackBeforeInsert'])) {
+            $this->_callbackBeforeInsert = $form->options['callbackBeforeInsert'];
+        }
+
+        if (isset($form->options['callbackBeforeUpdate'])) {
+            $this->_callbackBeforeUpdate = $form->options['callbackBeforeUpdate'];
+        }
+
+        if (isset($form->options['callbackAfterDelete'])) {
+            $this->_callbackAfterDelete = $form->options['callbackAfterDelete'];
+        }
+
+        if (isset($form->options['callbackAfterInsert'])) {
+            $this->_callbackAfterInsert = $form->options['callbackAfterInsert'];
+        }
+
+        if (isset($form->options['callbackAfterUpdate'])) {
+            $this->_callbackAfterUpdate = $form->options['callbackAfterUpdate'];
+        }
+
         $form = $this->_object2array($form);
 
         $fieldsGet = $form['fields'];
         $fields = array();
 
-        if (isset($form['options']['callbackBeforeDelete'])) {
-            $this->_callbackBeforeDelete = $form['options']['callbackBeforeDelete'];
-        }
-
-        if (isset($form['options']['callbackBeforeInsert'])) {
-            $this->_callbackBeforeInsert = $form['options']['callbackBeforeInsert'];
-        }
-
-        if (isset($form['options']['callbackBeforeUpdate'])) {
-            $this->_callbackBeforeUpdate = $form['options']['callbackBeforeUpdate'];
-        }
-
-        if (isset($form['options']['callbackAfterDelete'])) {
-            $this->_callbackAfterDelete = $form['options']['callbackAfterDelete'];
-        }
-
-        if (isset($form['options']['callbackAfterInsert'])) {
-            $this->_callbackAfterInsert = $form['options']['callbackAfterInsert'];
-        }
-
-        if (isset($form['options']['callbackAfterUpdate'])) {
-            $this->_callbackAfterUpdate = $form['options']['callbackAfterUpdate'];
-        }
 
         if (is_array($fieldsGet)) {
             foreach ($fieldsGet as $value) {

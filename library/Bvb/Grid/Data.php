@@ -1033,6 +1033,7 @@ class Bvb_Grid_Data
 
         if (isset($this->filters[$fieldShorten]['callback']) && is_array($this->filters[$fieldShorten]['callback'])) {
 
+
             if (! is_callable($this->filters[$fieldShorten]['callback']['function'])) {
                 throw new Bvb_Grid_Exception($this->filters[$fieldShorten]['callback']['function'] . ' is not callable');
             }
@@ -2819,10 +2820,21 @@ class Bvb_Grid_Data
      */
     public function addFilters ($filters)
     {
+
+        $filtersObj = $filters;
+
         $filters = $this->_object2array($filters);
         $filters = $filters['_filters'];
-        $this->filters = $filters;
 
+        foreach ($filtersObj->_filters as $key=>$value)
+        {
+            if(isset($filters[$key]['callback']))
+            {
+                $filters[$key]['callback'] = $value['callback'];
+            }
+        }
+
+        $this->filters = $filters;
 
         foreach ($filters as $key => $filter) {
             if (isset($filter['searchType'])) {
