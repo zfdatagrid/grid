@@ -384,8 +384,14 @@ Bvb_Grid_Deploy_Interface
 
                     try {
 
+                        if ($this->_formHasModel) {
+                            $sendCall = array(&$post,$this->_form->getModel());
+                        }else{
+                            $sendCall = array(&$post);
+                        }
+
                         if (null !== $this->_callbackBeforeInsert) {
-                            call_user_func($this->_callbackBeforeInsert, array(&$post));
+                            call_user_func($this->_callbackBeforeInsert, $sendCall);
                         }
 
                         if ($this->_formHasModel) {
@@ -395,7 +401,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
                         if (null !== $this->_callbackAfterInsert) {
-                            call_user_func($this->_callbackAfterInsert, array(&$post));
+                            call_user_func($this->_callbackAfterInsert, $sendCall);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -435,8 +441,14 @@ Bvb_Grid_Deploy_Interface
 
                     try {
 
+                        if ($this->_formHasModel) {
+                            $sendCall = array(&$post,$this->_form->getModel());
+                        }else{
+                            $sendCall = array(&$post);
+                        }
+
                         if (null !== $this->_callbackBeforeUpdate) {
-                            call_user_func($this->_callbackBeforeUpdate, array(&$post));
+                            call_user_func($this->_callbackBeforeUpdate, $sendCall);
                         }
 
                         if ($this->_formHasModel) {
@@ -446,7 +458,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
                         if (null !== $this->_callbackAfterUpdate) {
-                            call_user_func($this->_callbackAfterUpdate, array(&$post));
+                            call_user_func($this->_callbackAfterUpdate, $sendCall);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -590,8 +602,14 @@ Bvb_Grid_Deploy_Interface
                 }
             }
 
+            if ($this->_formHasModel) {
+                $sendCall = array( $this->_getPkFromUrl(false) . $where, $this->_form->getModel());
+            }else{
+                $sendCall = array( $this->_getPkFromUrl(false) . $where);
+            }
+
             if (null !== $this->_callbackBeforeDelete) {
-                call_user_func($this->_callbackBeforeDelete, $this->_getPkFromUrl(false) . $where);
+                call_user_func($this->_callbackBeforeDelete,$sendCall);
             }
 
             if ($this->_formHasModel) {
@@ -602,7 +620,7 @@ Bvb_Grid_Deploy_Interface
 
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
-                    call_user_func($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
+                    call_user_func($this->_callbackAfterDelete, $sendCall);
                 }
             }
 
