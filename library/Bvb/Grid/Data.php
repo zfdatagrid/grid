@@ -1077,7 +1077,7 @@ class Bvb_Grid_Data
             if (! isset($this->filters[$fieldShorten]['callback']['params']) || ! is_array($this->filters[$fieldShorten]['callback']['params'])) {
                 $this->filters[$fieldShorten]['callback']['params'] = array();
             }
-            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'], array('field' => $fieldShorten, 'value' => $filtro, 'select' => $this->getSelectObject()));
+            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'], array('field' => $field, 'value' => $filtro, 'select' => $this->getSelectObject()));
 
             $result = call_user_func($this->filters[$fieldShorten]['callback']['function'], $this->filters[$fieldShorten]['callback']['params']);
 
