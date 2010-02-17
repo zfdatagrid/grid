@@ -65,7 +65,7 @@ class SiteController extends Zend_Controller_Action
 
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
 
-        $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config,$id);
+        $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config, $id);
 
         $grid->setEscapeOutput(false);
         $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
@@ -96,7 +96,7 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('Name', array('title' => 'Country', 'class' => 'width_200'))->updateColumn('Continent', array('title' => 'Continent'))->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'))->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_80'))->updateColumn('GovernmentForm', array('title' => 'Government Form', 'searchType' => '='))->updateColumn('HeadOfState', array('title' => 'Head Of State', 'searchType' => '='));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name'),'searchType'=>'<>'))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
+        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
 
         $grid->addFilters($filters);
 
@@ -153,6 +153,12 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setDataFromXml('http://zfdatagrid.com/feed/', 'channel,item');
         $grid->setPagination(10);
+
+        $grid->updateColumn('title',array('decorator'=>'<a href="{{link}}">{{title}}</a>','style'=>'width:200px;'));
+        $grid->updateColumn('pubDate',array('class'=>'width_200'));
+
+        $grid->setGridColumns(array('title','comments', 'pubDate'));
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -162,12 +168,15 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
-        $grid = $this->grid();
-        $select = $this->_db->select()->from('Country')->join('City','Country.Capital = City.ID',array('capital'=>'Name'));
+        $grid = $this->grid('ois');
+        $select = $this->_db->select()->from('Country');
         $grid->query($select);
 
         $grid->setDetailColumns();
-        $grid->setGridColumns(array('ID','Name','Continent','Population','LocalName','GovernmentForm'));
+        $grid->setDetailColumnsIdentifier();
+        $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+
+        #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
 
         $this->view->pages = $grid->deploy();
 
@@ -176,52 +185,19 @@ class SiteController extends Zend_Controller_Action
 
 
     /**
-     * The 'most' basic example.
+     * Using a model
      */
-    function multiAction ()
+    function modelAction ()
     {
-
-
-        $grid = $this->grid('2');
-        $select = $this->_db->select()->from('City');
-        $grid->query($select);
+        $grid = $this->grid();
+        $grid->setModel(new Bugs());
+        $grid->setColumnsHidden(array('bug_id','next','time','verified_by'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
-        $form->setModel(new Addressbook());
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
         $grid->addForm($form);
 
-
-
-        $grid1 = $this->grid('1');
-        $select1 = $this->_db->select()->from('City');
-        $grid1->query($select1);
-
-        $form1 = new Bvb_Grid_Form();
-        $form1->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
-        $form1->setModel(new Addressbook());
-        $grid1->addForm($form1);
-
         $this->view->pages = $grid->deploy();
-        $this->view->pages1 = $grid1->deploy();
-
-        $this->render('index');
-    }
-
-
-
-    /**
-     * The 'most' basic example.
-     */
-    function ajaxAction ()
-    {
-
-        $grid = $this->grid();
-
-        $grid->query($this->_db->select()->from('City'));
-        $grid->setAjax('ajaxGrid');
-        $this->view->pages = $grid->deploy();
-
         $this->render('index');
     }
 
@@ -256,9 +232,18 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('Name', array('title' => 'Country'));
         $grid->updateColumn('Continent', array('title' => 'Continent', 'hRow' => 1));
         $grid->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'));
-        $grid->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50', 'decorator' => '<b>{{LifeExpectancy}}</b>', 'format' => 'number'));
+        $grid->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50', 'decorator' => '<b>{{LifeExpectancy}}</b>'));
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State'));
+
+        $extra = new Bvb_Grid_ExtraColumns();
+        $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
+
+        $esquerda = new Bvb_Grid_ExtraColumns();
+        $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
+
+        $grid->addExtraColumns($extra, $esquerda);
+
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -305,10 +290,27 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setModel(new Bugs());
 
-        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status','date'));
+        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status', 'date'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
+        $grid->addForm($form);
+
+        $grid->export = array();
+        $grid->setDetailColumns();
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+    function doubleAction ()
+    {
+        $grid = $this->grid();
+        $grid->setModel(new Bugs());
+
+        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status', 'date'));
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setDoubleTables(1);
         $grid->addForm($form);
 
         $grid->export = array();
@@ -335,7 +337,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setChartOptions(array('set_bg_colour' => '#FFFFFF'));
         $grid->setTile('My First Graph');
         $grid->setChartDimensions(900, 400);
-        $grid->setFilesLocation(array('json' => $this->getFrontController()->getBaseUrl() . '/public/scripts/json/json2.js','js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
+        $grid->setFilesLocation(array('json' => $this->getFrontController()->getBaseUrl() . '/public/scripts/json/json2.js', 'js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
 
         if ($type == 'pie') {
             $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));

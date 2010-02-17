@@ -1279,7 +1279,7 @@ class Bvb_Grid_Data
     protected function _buildQuery ()
     {
 
-        @$inicio = (int) $this->ctrlParams['start' . $this->_gridId];
+        @$start = (int) $this->ctrlParams['start' . $this->_gridId];
         $order = @$this->ctrlParams['order' . $this->_gridId];
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
@@ -1309,7 +1309,7 @@ class Bvb_Grid_Data
 
 
         if (false === $this->_forceLimit) {
-            $this->_select->limit($this->pagination, $inicio);
+            $this->_select->limit($this->pagination, $start);
         }
 
         return true;
@@ -1324,8 +1324,8 @@ class Bvb_Grid_Data
     public function getUrl ($situation = '')
     {
 
-        //this array the a list of params that change name
-        //based on grid id. The id is appended to the name
+        //this array the a list of params that name changes
+        //based on grid id. The id is prepended to the name
         $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm','gridDetail');
 
         $url = '';
@@ -1797,7 +1797,7 @@ class Bvb_Grid_Data
 
     }
 
-    function _applyFieldHelper ($new_value, $value, $search, $replace)
+    protected function _applyFieldHelper ($new_value, $value, $search, $replace)
     {
 
         if (is_array($value)) {
