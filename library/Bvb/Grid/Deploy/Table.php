@@ -1723,7 +1723,7 @@ Bvb_Grid_Deploy_Interface
 
         @$this->info['delete']['cascadeDelete'] = $form['cascadeDelete'];
 
-        if ($options['add'] == 1 && $options['add'] == 1) {
+        if (isset($options['add']) && $options['add'] == 1) {
             if (! isset($options['addButton'])) {
                 $options['addButton'] = 0;
             }
