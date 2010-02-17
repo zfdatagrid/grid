@@ -390,7 +390,7 @@ Bvb_Grid_Deploy_Interface
                     try {
 
                         if (null !== $this->_callbackBeforeInsert) {
-                            call_user_func_array($this->_callbackBeforeInsert, $post);
+                            call_user_func($this->_callbackBeforeInsert, $post);
                         }
 
                         if ($this->_formHasModel) {
@@ -400,7 +400,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
                         if (null !== $this->_callbackAfterInsert) {
-                            call_user_func_array($this->_callbackAfterInsert, $post);
+                            call_user_func($this->_callbackAfterInsert, $post);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -441,7 +441,7 @@ Bvb_Grid_Deploy_Interface
                     try {
 
                         if (null !== $this->_callbackBeforeUpdate) {
-                            call_user_func_array($this->_callbackBeforeUpdate, $post);
+                            call_user_func($this->_callbackBeforeUpdate, $post);
                         }
 
                         if ($this->_formHasModel) {
@@ -451,7 +451,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
                         if (null !== $this->_callbackAfterUpdate) {
-                            call_user_func_array($this->_callbackAfterUpdate, $post);
+                            call_user_func($this->_callbackAfterUpdate, $post);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -596,7 +596,7 @@ Bvb_Grid_Deploy_Interface
             }
 
             if (null !== $this->_callbackBeforeDelete) {
-                call_user_func_array($this->_callbackBeforeDelete, $this->_getPkFromUrl(false) . $where);
+                call_user_func($this->_callbackBeforeDelete, $this->_getPkFromUrl(false) . $where);
             }
 
             if ($this->_formHasModel) {
@@ -607,9 +607,10 @@ Bvb_Grid_Deploy_Interface
 
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
-                    call_user_func_array($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
+                    call_user_func($this->_callbackAfterDelete, $this->_getPkFromUrl(false) . $where);
                 }
             }
+
             $this->_gridSession->messageOk = true;
             $this->_gridSession->message = $this->__('Record deleted');
             $this->_gridSession->correct = 1;
