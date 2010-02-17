@@ -308,21 +308,42 @@ Bvb_Grid_Deploy_Interface
 
 
             if (! Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
+
                 if ($mode == 'edit') {
-                    $r = $this->_form->getModel()->fetchRow($queryUrl);
 
-                    if ($r === null) {
-                        $this->message = $this->__('Record Not Found');
-                        $this->_noForm = 1;
+
+                    if ($this->_formHasModel) {
+
+                        $r = $this->_form->getModel()->fetchRow($queryUrl);
+
+                        if ($r === null) {
+                            $this->_gridSession->message = $this->__('Record Not Found');
+                            $this->_gridSession->_noForm = 1;
+                            $this->_gridSession->correct = 1;
+                        } else {
+                            $r = $r->toArray();
+                            $info = $this->_form->getModel()->info();
+                            $info = $info['metadata'];
+                        }
                     } else {
-                        $r = $r->toArray();
 
-                        $info = $this->_form->getModel()->info();
+                        $r = (array) $this->_getDb()->fetchRow('SELECT * FROM ' . $this->data['table'] . ' WHERE ' . $this->_getPkFromUrl());
 
+                        if (count($r) == 1) {
+                            $this->_gridSession->message = $this->__('Record Not Found');
+                            $this->_gridSession->_noForm = 1;
+                            $this->_gridSession->correct = 1;
+                        }
+
+                        $info = $this->_getDescribeTable($this->data['table']);
+
+                    }
+
+                    if (is_array($r)) {
                         foreach ($r as $key => $value) {
                             $isField = $this->_form->getElement($key);
                             if (isset($isField)) {
-                                if (substr($info['metadata'][$key]['DATA_TYPE'], 0, 4) == 'set(') {
+                                if (substr($info[$key]['DATA_TYPE'], 0, 4) == 'set(') {
                                     $value = explode(',', $value);
                                 }
 
@@ -337,6 +358,7 @@ Bvb_Grid_Deploy_Interface
                             }
                         }
                     }
+
                 }
             }
         }
@@ -390,7 +412,7 @@ Bvb_Grid_Deploy_Interface
 
                         unset($this->_gridSession->post);
 
-                        $this->_removeFormParams($post, array( 'add' . $this->_gridId));
+                        $this->_removeFormParams($post, array('add' . $this->_gridId));
 
                         if ($this->cache['use'] == 1) {
                             $this->cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->cache['tag']));
@@ -578,9 +600,9 @@ Bvb_Grid_Deploy_Interface
             }
 
             if ($this->_formHasModel) {
-               $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
+                $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
             } else {
-               $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
+                $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
             }
 
             if ($resultDelete == 1) {
@@ -1377,13 +1399,13 @@ Bvb_Grid_Deploy_Interface
 
         if (! in_array('add' . $this->_gridId, array_keys($this->ctrlParams)) && ! in_array('edit' . $this->_gridId, array_keys($this->ctrlParams))) {
 
-            if ($this->_gridSession->correct === NULL || $this->_gridSession->correct===0) {
+            if ($this->_gridSession->correct === NULL || $this->_gridSession->correct === 0) {
                 $this->_gridSession->unsetAll();
             }
         }
 
         if (strlen($this->_gridSession->message) > 0) {
-            $grid .= str_replace("{{value}}",$this->_gridSession->message, $this->temp['table']->formMessage($this->_gridSession->messageOk));
+            $grid .= str_replace("{{value}}", $this->_gridSession->message, $this->temp['table']->formMessage($this->_gridSession->messageOk));
         }
 
 
@@ -1465,13 +1487,12 @@ Bvb_Grid_Deploy_Interface
 
         $grid = "<div id='{$gridId}'>" . $grid . "</div>";
 
-        if($this->_gridSession->correct>0)
-        {
-           if($this->_gridSession->correct == 2){
-               $this->_gridSession->unsetAll();
-           }else {
-               $this->_gridSession->correct++;
-           }
+        if ($this->_gridSession->correct > 0) {
+            if ($this->_gridSession->correct == 2) {
+                $this->_gridSession->unsetAll();
+            } else {
+                $this->_gridSession->correct ++;
+            }
         }
 
         $this->_deploymentContent = $grid;
