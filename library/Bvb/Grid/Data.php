@@ -1276,7 +1276,7 @@ class Bvb_Grid_Data
      *
      * @return string
      */
-    protected function _buildQuery ()
+    protected function _buildQueryOrderAndLimit ()
     {
 
         @$start = (int) $this->ctrlParams['start' . $this->_gridId];
@@ -2410,7 +2410,7 @@ class Bvb_Grid_Data
 
         if ($this->_adapter == 'db') {
             if ($this->_isDetail == false) {
-                $this->_buildQuery();
+                $this->_buildQueryOrderAndLimit();
             }
             $this->_builQueryCount();
             if ($this->cache['use'] == 1) {
