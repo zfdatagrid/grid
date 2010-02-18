@@ -2767,7 +2767,9 @@ class Bvb_Grid_Data
     public function setTemplate ($template, $output = 'table', $options = array())
     {
 
-        $options['userDefined'] = $options;
+         $tmp = $options;
+         $options['userDefined'] = $tmp;
+
 
         $class = $this->_templates[$output]->load($template, $output);
 
