@@ -333,7 +333,7 @@ class Bvb_Grid_Data
 
     /**
      *
-     * @var Bvb_Grid_Source_Zend_Select
+     * @var Bvb_Grid_Source_Interface
      */
     private $_source;
 

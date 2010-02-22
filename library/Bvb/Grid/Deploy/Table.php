@@ -238,6 +238,7 @@ Bvb_Grid_Deploy_Interface
         parent::__set($var, $value);
     }
 
+
     /**
      * Fetch the field type from the DB
      *
@@ -254,6 +255,7 @@ Bvb_Grid_Deploy_Interface
 
     }
 
+
     /**
      *
      * Process all information forms related
@@ -264,6 +266,10 @@ Bvb_Grid_Deploy_Interface
 
     protected function _processForm ()
     {
+
+        if (! $this->getSource()->hasCrud()) {
+            return false;
+        }
 
         if (isset($this->info['add']['allow']) && $this->info['add']['allow'] == 1) {
             $this->allowAdd = 1;
@@ -303,6 +309,13 @@ Bvb_Grid_Deploy_Interface
 
 
             if (! Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
+
+                foreach ($this->_form->getElements() as $key => $value) {
+                    if (isset($this->_gridSession->errors[$key])) {
+                        $this->_form->getElement($key)->setErrors($this->_gridSession->errors[$key]);
+                    }
+                }
+
 
                 if ($mode == 'edit') {
 
@@ -466,7 +479,9 @@ Bvb_Grid_Deploy_Interface
 
             } else {
 
+
                 $this->_gridSession->post = $_POST;
+                $this->_gridSession->errors = $this->_form->getMessages();
 
                 $this->_gridSession->message = $this->__('Validation failed');
                 $this->_gridSession->messageOk = false;
@@ -492,6 +507,7 @@ Bvb_Grid_Deploy_Interface
         $response->setRedirect($url, $code);
         $response->sendResponse();
     }
+
 
     protected function _removeFormParams ($post, $extra = array())
     {
@@ -581,6 +597,7 @@ Bvb_Grid_Deploy_Interface
         return true;
     }
 
+
     /**
      * Build the first line of the table (Not the TH )
      *
@@ -663,6 +680,7 @@ Bvb_Grid_Deploy_Interface
         return $final;
     }
 
+
     /**
      *
      * Build filters.
@@ -717,6 +735,7 @@ Bvb_Grid_Deploy_Interface
 
         return $grid;
     }
+
 
     /**
      * Buil Table titles.
@@ -846,6 +865,7 @@ Bvb_Grid_Deploy_Interface
         return $grid;
 
     }
+
 
     /**
      * Convert url  params
@@ -994,6 +1014,7 @@ Bvb_Grid_Deploy_Interface
 
     }
 
+
     /**
      * Biuild the table that handles the query result from sql expressions
      *
@@ -1021,6 +1042,7 @@ Bvb_Grid_Deploy_Interface
         return $grid;
 
     }
+
 
     /**
      * Build pagination
@@ -1420,6 +1442,7 @@ Bvb_Grid_Deploy_Interface
 
     }
 
+
     function __toString ()
     {
         if (is_null($this->_deploymentContent)) {
@@ -1429,6 +1452,7 @@ Bvb_Grid_Deploy_Interface
 
         return $this->_deploymentContent;
     }
+
 
     protected function _printScript ()
     {
@@ -1541,7 +1565,6 @@ Bvb_Grid_Deploy_Interface
     }
 
 
-
     /**
      *
      *@var Bvb_Grid_Form
@@ -1638,6 +1661,7 @@ Bvb_Grid_Deploy_Interface
         }
         return $this;
     }
+
 
     /**
      * Field type on the filters area. If the field type is enum, build the options
@@ -1801,6 +1825,7 @@ Bvb_Grid_Deploy_Interface
         return $return;
 
     }
+
 
     /**
      * Apply config options
