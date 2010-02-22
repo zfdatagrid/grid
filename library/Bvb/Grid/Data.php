@@ -1122,9 +1122,8 @@ class Bvb_Grid_Data
 
         $selectOrder = $this->getSource()->getSelectOrder();
 
-
         if (count($selectOrder) == 1) {
-            $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
+            $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0] . '_' . strtoupper($selectOrder[1]);
         }
 
         for ($i = 0; $i < $tcampos; $i ++) {

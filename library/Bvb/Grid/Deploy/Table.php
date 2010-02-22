@@ -310,12 +310,6 @@ Bvb_Grid_Deploy_Interface
 
             if (! Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
 
-                foreach ($this->_form->getElements() as $key => $value) {
-                    if (isset($this->_gridSession->errors[$key])) {
-                        $this->_form->getElement($key)->setErrors($this->_gridSession->errors[$key]);
-                    }
-                }
-
 
                 if ($mode == 'edit') {
 
@@ -767,21 +761,9 @@ Bvb_Grid_Deploy_Interface
             //Lets get the default order using in the query (Zend_Db)
             $queryOrder = $this->getSource()->getSelectOrder();
 
-            if (is_array($queryOrder)) {
-                $finalQueryOrder = array();
-                foreach ($queryOrder as $value) {
-
-                    if (strpos($value[1], '.' === false)) {
-                        $finalQueryOrder = array($value[0], $this->data['table'] . '.' . $value[1]);
-                    } else {
-                        $finalQueryOrder = $value;
-                    }
-
-                    $order = strtolower($value[1]) == 'asc' ? 'desc' : 'asc';
-                    $orderField = $finalQueryOrder[0];
-
-                    break;
-                }
+            if (count($queryOrder)>0) {
+                    $order = strtolower($queryOrder[1]) == 'asc' ? 'desc' : 'asc';
+                    $orderField = $queryOrder[0];
             }
         }
 

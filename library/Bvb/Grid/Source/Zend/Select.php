@@ -333,7 +333,15 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function getSelectOrder ()
     {
-        return $this->_select->getPart(Zend_Db_Select::ORDER);
+
+        $result = $this->_select->getPart(Zend_Db_Select::ORDER);
+
+        if(count($result)==0)
+        {
+            return array();
+        }
+
+        return $result[0];
     }
 
 
