@@ -182,11 +182,8 @@ interface Bvb_Grid_Source_Interface
      *
      *Array
      * (
-     * [0] => Array
-     * (
-     * [0] => Continent
-     * [1] => DESC
-     * )
+     * [0] => field
+     * [1] => ORDER (ASC|DESC)
      * )
      *
      *
