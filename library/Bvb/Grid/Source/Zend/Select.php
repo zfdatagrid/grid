@@ -288,13 +288,18 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $return = array();
 
         $from = $this->_select->getPart(Zend_Db_Select::FROM);
+
         foreach ($from as $key => $tables) {
 
-            if ($tables['joinType'] == 'from') {
+            if ($tables['joinType'] == 'from' || count($from) == 1) {
                 $return['table'] = $tables['tableName'];
-                $return['tableAlias'] = $key;
                 break;
             }
+        }
+
+        if (count($return) == 0) {
+            $table = reset($from);
+            $return['table'] = $table['tableName'];
         }
 
         return $return;
@@ -336,8 +341,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $result = $this->_select->getPart(Zend_Db_Select::ORDER);
 
-        if(count($result)==0)
-        {
+        if (count($result) == 0) {
             return array();
         }
 
@@ -531,7 +535,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function update ($table, array $post, array $condition)
     {
-        return $this->_getDb()->update($this->data['table'], $post, $this->buildWhereCondition($condition));
+        return $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
     }
 
 

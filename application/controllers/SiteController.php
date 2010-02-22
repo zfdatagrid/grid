@@ -210,7 +210,6 @@ class SiteController extends Zend_Controller_Action
     {
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
-        #$grid->query($select);
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 

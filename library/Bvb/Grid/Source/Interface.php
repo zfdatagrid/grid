@@ -42,7 +42,7 @@ interface Bvb_Grid_Source_Interface
     /**
      * builds a key=>value array
      *
-     * they must have to options
+     * they must have two options
      * title and field
      * field is used to perform queries.
      * Must have table name or table alias as a prefix
@@ -135,7 +135,7 @@ interface Bvb_Grid_Source_Interface
 
     /**
      * Returns the "main" table
-     * the one after select * {FROM MAIN_TABLE}
+     * the one after select * FROM {MAIN_TABLE}
      *
      */
     function getMainTable ();
@@ -178,7 +178,7 @@ interface Bvb_Grid_Source_Interface
      *
      *If empty a empty array must be returned.
      *
-     *Else the array mst be like this:
+     *Else the array must be like this:
      *
      *Array
      * (

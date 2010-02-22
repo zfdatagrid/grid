@@ -368,8 +368,6 @@ class Bvb_Grid_Data
         $tables = $this->getSource()->getMainTable();
 
         $this->data['table'] = $tables['table'];
-        $this->data['tableAlias'] = $tables['tableAlias'];
-
 
         $fields = $this->getSource()->buildFields();
         foreach ($fields as $key => $field) {
