@@ -92,7 +92,7 @@ class JqgridController extends Zend_Controller_Action
                 ->where('Country.Region=?', "Polynesia")
             ;
         }
-        $grid->query($select);
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
 
         ////////////////// 2. update column options
         ////////////////// see Bvb documentation

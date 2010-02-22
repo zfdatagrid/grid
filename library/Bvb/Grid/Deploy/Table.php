@@ -306,39 +306,23 @@ Bvb_Grid_Deploy_Interface
 
                 if ($mode == 'edit') {
 
+                    $r = $this->getSource()->getRecord($this->data['table'], $this->_getPkFromUrl());
 
-                    if ($this->_formHasModel) {
-
-                        $r = $this->_form->getModel()->fetchRow($queryUrl);
-
-                        if ($r === null) {
-                            $this->_gridSession->message = $this->__('Record Not Found');
-                            $this->_gridSession->_noForm = 1;
-                            $this->_gridSession->correct = 1;
-                        } else {
-                            $r = $r->toArray();
-                            $info = $this->_form->getModel()->info();
-                            $info = $info['metadata'];
-                        }
-                    } else {
-
-                        $r = (array) $this->_getDb()->fetchRow('SELECT * FROM ' . $this->data['table'] . ' WHERE ' . $this->_getPkFromUrl());
-
-                        if (count($r) == 1) {
-                            $this->_gridSession->message = $this->__('Record Not Found');
-                            $this->_gridSession->_noForm = 1;
-                            $this->_gridSession->correct = 1;
-                        }
-
-                        $info = $this->_getDescribeTable($this->data['table']);
-
+                    if (count($r) == 1) {
+                        $this->_gridSession->message = $this->__('Record Not Found');
+                        $this->_gridSession->_noForm = 1;
+                        $this->_gridSession->correct = 1;
                     }
 
                     if (is_array($r)) {
                         foreach ($r as $key => $value) {
                             $isField = $this->_form->getElement($key);
+
                             if (isset($isField)) {
-                                if (substr($info[$key]['DATA_TYPE'], 0, 4) == 'set(') {
+
+                                $fieldType = $this->getSource()->getFieldType($this->data['fields'][$key]['field']);
+
+                                if ($fieldType == 'set') {
                                     $value = explode(',', $value);
                                 }
 
@@ -375,30 +359,20 @@ Bvb_Grid_Deploy_Interface
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
-                if ($this->_formHasModel) {
-                    $modelInfo = $this->_form->getModel()->info();
-                }
-
                 // Process data
                 if ($mode == 'add') {
 
                     try {
 
-                        if ($this->_formHasModel) {
-                            $sendCall = array(&$post,$this->_form->getModel());
-                        }else{
-                            $sendCall = array(&$post);
-                        }
+                        $sendCall = array(&$post, $this->getSource());
 
                         if (null !== $this->_callbackBeforeInsert) {
                             call_user_func($this->_callbackBeforeInsert, $sendCall);
                         }
 
-                        if ($this->_formHasModel) {
-                            $this->_form->getModel()->insert($post);
-                        } else {
-                            $this->_getDb()->insert($this->data['table'], $post);
-                        }
+
+                        $this->getSource()->insert($this->data['table'], $post);
+
 
                         if (null !== $this->_callbackAfterInsert) {
                             call_user_func($this->_callbackAfterInsert, $sendCall);
@@ -437,25 +411,21 @@ Bvb_Grid_Deploy_Interface
                 // Process data
                 if ($mode == 'edit') {
 
-                    $where = isset($this->info['edit']['where']) ? " AND " . $this->info['edit']['where'] : '';
+                    if (isset($this->info['edit']['where']) && is_array($this->info['edit']['where'])) {
+                        $queryUrl = array_merge($this->info['edit']['where'], $queryUrl);
+                    }
 
                     try {
 
-                        if ($this->_formHasModel) {
-                            $sendCall = array(&$post,$this->_form->getModel());
-                        }else{
-                            $sendCall = array(&$post);
-                        }
+                        $sendCall = array(&$post, $this->getSource());
 
                         if (null !== $this->_callbackBeforeUpdate) {
                             call_user_func($this->_callbackBeforeUpdate, $sendCall);
                         }
 
-                        if ($this->_formHasModel) {
-                            $this->_form->getModel()->update($post, $queryUrl . $where);
-                        } else {
-                            $this->_getDb()->update($this->data['table'], $post, $queryUrl . $where);
-                        }
+
+                        $this->getSource()->update($this->data['table'], $post, $queryUrl);
+
 
                         if (null !== $this->_callbackAfterUpdate) {
                             call_user_func($this->_callbackAfterUpdate, $sendCall);
@@ -563,14 +533,10 @@ Bvb_Grid_Deploy_Interface
             return 0;
         }
 
-        $pkArray = parent::_getPrimaryKey();
-        $id = $this->_getDb()->quoteIdentifier($pkArray[0]);
-
-        if (isset($this->info['delete']['where'])) {
-
-            $where = " AND " . $this->info['delete']['where'];
+        if (isset($this->info['delete']['where']) && is_array($this->info['delete']['where'])) {
+            $condition = array_merge($this->info['delete']['where'], $this->_getPkFromUrl());
         } else {
-            $where = '';
+            $condition = $this->_getPkFromUrl();
         }
 
         try {
@@ -578,45 +544,15 @@ Bvb_Grid_Deploy_Interface
             $pkParentArray = $this->_getPrimaryKey();
             $pkParent = $pkParentArray[0];
 
-            if (is_array($this->info['delete']['cascadeDelete'])) {
-                foreach ($this->info['delete']['cascadeDelete'] as $value) {
-
-                    $operand = isset($value['operand']) ? $value['operand'] : '=';
-                    $parentField = isset($value['parentField']) ? $value['parentField'] : $pkParent;
-
-                    if ($parentField != $pkParent && ! is_array($pkParentArray)) {
-
-                        $select = $this->_getDb()->select();
-                        $select->from($this->data['table'], array('total' => $parentField));
-                        $select->where($this->_getPkFromUrl(true));
-                        $final = $select->query(Zend_Db::FETCH_ASSOC);
-                        $result = $final->fetchAll();
-
-                        $finalValue = $result[0];
-                    } else {
-                        $finalValue = $final['id'];
-                    }
-
-                    $resultDelete = $this->_getDb()->delete($value['table'], $this->_getDb()->quoteIdentifier($value['childField']) . $operand . $this->_getDb()->quote($finalValue));
-
-                }
-            }
-
-            if ($this->_formHasModel) {
-                $sendCall = array( $this->_getPkFromUrl(false) . $where, $this->_form->getModel());
-            }else{
-                $sendCall = array( $this->_getPkFromUrl(false) . $where);
-            }
+            $sendCall = array(&$condition, $this->getSource());
 
             if (null !== $this->_callbackBeforeDelete) {
-                call_user_func($this->_callbackBeforeDelete,$sendCall);
+                call_user_func($this->_callbackBeforeDelete, $sendCall);
             }
 
-            if ($this->_formHasModel) {
-                $resultDelete = $this->_form->getModel()->delete($this->_getPkFromUrl(false) . $where);
-            } else {
-                $resultDelete = $this->_getDb()->delete($this->data['table'], $this->_getPkFromUrl(false) . $where);
-            }
+
+            $resultDelete = $this->getSource()->delete($this->data['table'], $condition);
+
 
             if ($resultDelete == 1) {
                 if (null !== $this->_callbackAfterDelete) {
@@ -657,7 +593,7 @@ Bvb_Grid_Deploy_Interface
 
         $final = '';
 
-        if ($this->_adapter == 'db') {
+        if ($this->getSource()->hasCrud()) {
             if (($this->getInfo('double_tables') == 0 && @$this->ctrlParams['add' . $this->_gridId] != 1 && @$this->ctrlParams['edit' . $this->_gridId] != 1) && $this->_getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1) {
 
                 $final = "<div class=\"addRecord\" ><a href=\"$url/add" . $this->_gridId . "/1\">" . $this->__('Add Record') . "</a></div>";
@@ -738,6 +674,7 @@ Bvb_Grid_Deploy_Interface
     protected function _buildFiltersTable ($filters)
     {
 
+
         //There are no filters.
         if (! is_array($filters)) {
             $this->temp['table']->hasFilters = 0;
@@ -807,12 +744,10 @@ Bvb_Grid_Deploy_Interface
         $grid = $this->temp['table']->titlesStart();
 
         if ($orderField === null) {
-            if ($this->_getAdapter() == "db") {
-                //Lets get the default order using in the query (Zend_Db)
-                $queryOrder = $this->_select->getPart('order');
-            } else {
-                $queryOrder = null;
-            }
+
+            //Lets get the default order using in the query (Zend_Db)
+            $queryOrder = $this->getSource()->getSelectOrder();
+
             if (is_array($queryOrder)) {
                 $finalQueryOrder = array();
                 foreach ($queryOrder as $value) {
@@ -930,43 +865,6 @@ Bvb_Grid_Deploy_Interface
         return $final;
     }
 
-    /**
-     * Get the list of primary keys from the URL
-     *
-     * @return string
-     */
-    protected function _getPkFromUrl ($array = false)
-    {
-
-        if (! isset($this->ctrlParams['comm' . $this->_gridId])) {
-            return false;
-        }
-
-        $param = $this->ctrlParams['comm' . $this->_gridId];
-        $explode = explode(';', $param);
-        $param = end($explode);
-        $param = substr($param, 1, - 1);
-
-        $paramF = explode('-', $param);
-        $param = '';
-
-        $returnArray = array();
-        foreach ($paramF as $value) {
-            $f = explode(':', $value);
-            $field_explode = explode('.', $f[0]);
-            $field = end($field_explode);
-
-            $param .= " AND  " . $this->_getDb()->quoteIdentifier($this->data['fields'][$field]['field']) . '=' . $this->_getDb()->quote($f[1]);
-
-            $returnArray[$f[0]] = $f[1];
-        }
-
-        $param = substr($param, 4);
-
-        return $array != FALSE ? $returnArray : $param;
-
-    }
-
 
     /**
      * Buil the table
@@ -1028,19 +926,27 @@ Bvb_Grid_Deploy_Interface
             }
 
 
-            if (isset($search[0]) && ($search[0] == 'D' || $search[0] == 'E' || $search[0] == 'V')) {
-                unset($search[0]);
-            }
+            if ($this->getSource()->hasCrud()) {
 
-            if (isset($search[1]) && ($search[1] == 'D' || $search[1] == 'E')) {
-                unset($search[1]);
-            }
+                if (isset($search[0]) && ($search[0] === 'D' || $search[0] === 'E' || $search[0] === 'V')) {
+                    unset($search[0]);
+                }
 
-            if (isset($search[2]) && ($search[2] == 'D' || $search[2] == 'E')) {
-                unset($search[2]);
+                if (isset($search[1]) && ($search[1] === 'D' || $search[1] === 'E')) {
+                    unset($search[1]);
+                }
+
+                if (isset($search[2]) && ($search[2] === 'D' || $search[2] === 'E')) {
+                    unset($search[2]);
+                }
+            } else {
+                if (isset($search[0]) && $search[0] === 'V') {
+                    unset($search[0]);
+                }
             }
 
             $search = $this->_reset_keys($search);
+
 
             $finalFields = array_combine($search, $fi);
 
@@ -1329,7 +1235,7 @@ Bvb_Grid_Deploy_Interface
 
         $this->_view = $this->getView();
 
-        if ($this->_adapter == 'db') {
+        if ($this->getSource()->hasCrud()) {
             //Process form, if necessary, before query
             self::_processForm();
         }
@@ -1644,36 +1550,11 @@ Bvb_Grid_Deploy_Interface
     function addForm ($form)
     {
 
-        if (is_null($form->getModel()) && count($form->getElements()) == 0) {
-            if (is_null($this->_model)) {
-                throw new Bvb_Grid_Exception('Please set the model to use');
-            }
-
-            if ($this->getDbServerName() != 'mysql') {
-                throw new Bvb_Grid_Exception('At this moment only models using MySQL can be used for scaffolding');
-            }
-            $form->setModel($this->_model);
-
-            $this->_formHasModel = true;
-
-            foreach ($form->getElements() as $key => $value) {
-
-                if (isset($this->data['fields'][$key]['title'])) {
-                    $value->setLabel($this->data['fields'][$key]['title']);
-                }
-
-                if (isset($this->data['fields'][$key]['tooltipField'])) {
-                    $value->setDescription($this->data['fields'][$key]['tooltipField']);
-                }
-            }
-
-        } elseif (count($form->getElements()) > 0) {
-
+        if (count($form->getElements()) > 0) {
             foreach ($form->getElements() as $key => $value) {
                 $value->setDecorators($form->elementDecorators);
             }
         }
-
 
         $form->setDecorators($form->formDecorator);
 
@@ -1776,38 +1657,17 @@ Bvb_Grid_Deploy_Interface
             return '';
         }
 
-        if ($this->_getAdapter() == 'db') {
-            //check if we need to load  fields for filters
-            if (isset($this->filters[$valor]['distinct']) && is_array($this->filters[$valor]['distinct']) && isset($this->filters[$valor]['distinct']['field'])) {
+        //check if we need to load  fields for filters
+        if (isset($this->filters[$valor]['distinct']) && is_array($this->filters[$valor]['distinct']) && isset($this->filters[$valor]['distinct']['field'])) {
 
-                $distinctField = $this->filters[$valor]['distinct']['field'];
-                $distinctValue = $this->filters[$valor]['distinct']['name'];
+            $distinctField = $this->filters[$valor]['distinct']['field'];
+            $distinctValue = $this->filters[$valor]['distinct']['name'];
 
-                $distinct = clone $this->_select;
+            $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue);
 
-                $distinct->reset(Zend_Db_Select::COLUMNS);
-                $distinct->reset(Zend_Db_Select::ORDER);
-                $distinct->reset(Zend_Db_Select::LIMIT_COUNT);
-                $distinct->reset(Zend_Db_Select::LIMIT_OFFSET);
-
-                $distinct->columns(array('field' => new Zend_Db_Expr("DISTINCT({$this->data['fields'][$distinctField]['field']})")));
-                $distinct->columns(array('value' => $this->data['fields'][$distinctValue]['field']));
-                $distinct->order(' value ASC');
-
-                $result = $distinct->query(Zend_Db::FETCH_ASSOC);
-
-                $final = $result->fetchAll();
-
-                $final = $this->_convertResultSetToArrayKeys($final);
-
-                $this->filters[$valor]['values'] = $final;
-            }
-
+            $this->filters[$valor]['values'] = $final;
         }
 
-        if ($this->_adapter == 'array' && @in_array('distinct', $this->filters[$valor])) {
-            $this->filters[$valor]['values'] = $this->_builFilterFromArray($campo);
-        }
 
         //Remove unwanted url params
         $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo'));
@@ -1819,20 +1679,8 @@ Bvb_Grid_Deploy_Interface
             @$this->_filtersValues[$campo] = $this->_filtersValues[$nkey];
         }
 
-        if ($this->_getAdapter() == 'db') {
-            $tAlias = explode('.', $this->data['fields'][$campo]['field']);
-            $tableName = $this->_tablesList[reset($tAlias)]['tableName'];
-            $table = $this->_getDescribeTable($tableName);
-        }
 
-        @$tipo = $table[$campo];
-        $tipo = $tipo['DATA_TYPE'];
         $help_javascript = '';
-
-        if (substr($tipo, 0, 4) == 'enum') {
-            $enum = str_replace(array('(', ')'), array('', ''), $tipo);
-            $tipo = 'enum';
-        }
 
         $i = 0;
         foreach (array_keys($this->filters) as $value) {
@@ -1852,11 +1700,12 @@ Bvb_Grid_Deploy_Interface
         $attr['onChange'] = "_" . $this->_gridId . "gridChangeFilters('$help_javascript','$url');";
 
         $opcoes = array();
+
         if (isset($this->filters[$campo])) {
             $opcoes = $this->filters[$campo];
         }
 
-        if (isset($opcoes['style']) && strlen($opcoes['style']) > 1) {
+        if (isset($opcoes['style'])) {
             $attr['style'] = $opcoes['style'];
         } else {
             $attr['style'] = " width:95% ";
@@ -1865,8 +1714,18 @@ Bvb_Grid_Deploy_Interface
         $attr['id'] = "filter_" . $this->_gridId . $campo;
 
         $selected = null;
-        if (isset($opcoes['values']) && is_array($opcoes['values'])) {
 
+        $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->data['fields'][$campo]['field']);
+
+        if (is_array($hasValues)) {
+            $opcoes = array();
+            $tipo = 'text';
+            $opcoes['values'] = $hasValues;
+        } else {
+            $tipo = 'text';
+        }
+
+        if (isset($opcoes['values']) && is_array($opcoes['values'])) {
             $tipo = 'invalid';
             $values = array();
             $values[''] = '--' . $this->__('All') . '--';
@@ -1924,12 +1783,10 @@ Bvb_Grid_Deploy_Interface
     {
 
         if (null !== $option && in_array($option, array('grid', 'form'))) {
-
             if ($option == 'form')
                 return $this->_showsForm;
             else
                 return $this->_showsGrid;
-
         }
 
         $return = array();
@@ -1941,9 +1798,20 @@ Bvb_Grid_Deploy_Interface
             $return[] = 'form';
         }
 
-
         return $return;
 
+    }
+
+    /**
+     * Apply config options
+     * @param $options
+     */
+    function _applyConfigOptions ($options)
+    {
+        if (isset($options['imagesUrl'])) {
+            $this->imagesUrl = $options['imagesUrl'];
+        }
+        return true;
     }
 
 }

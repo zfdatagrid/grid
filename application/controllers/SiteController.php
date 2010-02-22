@@ -70,9 +70,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setEscapeOutput(false);
         $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
         $grid->addFormatterDir('My/Formatter', 'My_Formatter');
-        $grid->imagesUrl = $this->getRequest()->getBaseUrl() . '/public/images/';
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
-
 
         return $grid;
     }
@@ -91,9 +89,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
 
-        $grid->query($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState')));
-
-        $grid->updateColumn('Name', array('title' => 'Country', 'class' => 'width_200'))->updateColumn('Continent', array('title' => 'Continent'))->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'))->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_80'))->updateColumn('GovernmentForm', array('title' => 'Government Form', 'searchType' => '='))->updateColumn('HeadOfState', array('title' => 'Head Of State', 'searchType' => '='));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
@@ -116,7 +112,9 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
 
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name')));
+        $select =  $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
+
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
 
         $grid->updateColumn('country', array('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{country}} <em>({{city}})</em>'));
         $grid->updateColumn('city', array('title' => 'Capital', 'hide' => 1));
@@ -138,12 +136,53 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+    function arrayAction()
+    {
+        $array = array(array('nome','idade','sexo'),array('nome','idade','sexo'),array('nome','idade','sexo'),array('nome','idade','sexo'));
+
+        $grid = $this->grid();
+        $grid->setSource(new Bvb_Grid_Source_Array($array,array('nome','idade','sexo')));
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+
+    }
+
 
     function csvAction ()
     {
 
         $grid = $this->grid();
-        $grid->setDataFromCsv('media/files/grid.csv');
+        $grid->setSource(new Bvb_Grid_Source_Csv('media/files/grid.csv'));
+        $grid->sqlexp = array ('Population' => array ('functions' => array ('MIN','AVG'), 'value' => 'Population' ) );
+
+         $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('ID', array('distinct' => array('field' => 'ID', 'name' => 'ID')))
+        ->addFilter('CountryCode', array('distinct' => array('field' => 'CountryCode', 'name' => 'CountryCode')))
+        ->addFilter('Population');
+
+        $grid->addFilters($filters);
+
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+    function jsonAction ()
+    {
+
+        $grid = $this->grid();
+        $grid->setSource(new Bvb_Grid_Source_Json('media/files/json.json','rows'));
+        /*
+        $grid->sqlexp = array ('Population' => array ('functions' => array ('MIN','AVG'), 'value' => 'Population' ) );
+
+         $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('ID', array('distinct' => array('field' => 'ID', 'name' => 'ID')))
+        ->addFilter('CountryCode', array('distinct' => array('field' => 'CountryCode', 'name' => 'CountryCode')))
+        ->addFilter('Population');
+
+        $grid->addFilters($filters);
+
+*/
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -151,7 +190,8 @@ class SiteController extends Zend_Controller_Action
     function feedAction ()
     {
         $grid = $this->grid();
-        $grid->setDataFromXml('http://zfdatagrid.com/feed/', 'channel,item');
+        $grid->setSource(new Bvb_Grid_Source_Xml('http://zfdatagrid.com/feed/', 'channel,item'));
+
         $grid->setPagination(10);
 
         $grid->updateColumn('title',array('decorator'=>'<a href="{{link}}">{{title}}</a>','style'=>'width:200px;'));
@@ -168,8 +208,10 @@ class SiteController extends Zend_Controller_Action
      */
     function basicAction ()
     {
-        $grid = $this->grid('ois');
+        $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
+        #$grid->query($select);
+        #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
         $grid->setDetailColumns();
@@ -177,8 +219,10 @@ class SiteController extends Zend_Controller_Action
         $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
+        #$grid->sqlexp = array ('Name' => array ('functions' => array ('AVG' ), 'value' => 'Population' ) );
 
         $this->view->pages = $grid->deploy();
+
 
         $this->render('index');
     }
@@ -190,11 +234,13 @@ class SiteController extends Zend_Controller_Action
     function modelAction ()
     {
         $grid = $this->grid();
-        $grid->setModel(new Bugs());
+        #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
+        $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id','next','time','verified_by'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        $form->setModel(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->addForm($form);
 
         $this->view->pages = $grid->deploy();
@@ -209,7 +255,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->query($this->_db->select()->from('City'));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('City')));
         $grid->setNoFilters(1)->setPagination(14)->setTemplate('outside', 'table');
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -223,7 +269,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->query($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState')));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
@@ -257,7 +303,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->query($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name')));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name'))));
         $grid->setPagination(15);
 
         $cap = new Bvb_Grid_Column('Country');
@@ -288,13 +334,15 @@ class SiteController extends Zend_Controller_Action
     function crudAction ()
     {
         $grid = $this->grid();
-        $grid->setModel(new Bugs());
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
 
-        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status', 'date'));
+        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'bug_status', 'date'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
+        $form->setModel(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->addForm($form);
+
 
         $grid->export = array();
         $grid->setDetailColumns();
@@ -302,14 +350,15 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    function doubleAction ()
+    function doubleAction()
     {
         $grid = $this->grid();
-        $grid->setModel(new Bugs());
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
 
-        $grid->setColumnsHidden(array('bug_id', 'seguinte', 'time', 'bug_status', 'date'));
+        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'bug_status', 'date'));
 
         $form = new Bvb_Grid_Form();
+        $form->setModel(new Bugs());
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setDoubleTables(1);
         $grid->addForm($form);
 
@@ -351,7 +400,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setXLabels('Name');
 
-        $grid->query($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10)));
 
         $this->view->pages = $grid->deploy();
         $this->render('index');

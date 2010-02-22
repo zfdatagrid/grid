@@ -31,54 +31,12 @@ class Bvb_Grid_Data
 
     public $charEncoding = 'UTF-8';
 
-    /**
-     * Var that holds the Zend_Db_Select object when
-     * using the method queryFromZendDbSelect
-     *
-     * @var Zend_Db_Select
-     */
-    private $_selectZendDb = false;
-
-    /**
-     * The query object containg the total records from Zend_Db_Select
-     *
-     * @var Zend_Db_Select
-     */
-    private $_selectCount = false;
-
-    /**
-     * The query object from Zend_Db_Select
-     *
-     * @var Zend_Db_Select
-     */
-    protected $_select = false;
-
-    /**
-     * Bool to check if the query has already been executed
-     *
-     * @var unknown_type
-     */
-    private $_searchPerformedInArray = false;
-
-    /**
-     * What kind of source do we have
-     *
-     * @var string
-     */
-    protected $_adapter = 'db';
 
     /**
      * DBRM server name
      * @var string
      */
     private $_server = null;
-
-    /**
-     * Array containing all data
-     *
-     * @var unknown_type
-     */
-    public $arrayData = array();
 
     /**
      * Fields order
@@ -143,27 +101,9 @@ class Bvb_Grid_Data
     public $info = array();
 
     /**
-     * Save the result of the describeTables
-     */
-    protected $_describeTables = array();
-
-    /**
      * Registry for PK
      */
     protected $_primaryKey = array();
-
-    /**
-     * Where part from query
-     */
-    protected $_queryWhere = false;
-
-    /**
-     * DB Adapter
-     *
-     * @var Zend_Db_Select
-     * @return Zend_Db_Adapter_Abstract
-     */
-    private $_db;
 
     /**
      * Baseurl
@@ -200,12 +140,6 @@ class Bvb_Grid_Data
      */
     protected $_fields = array();
 
-    /**
-     * Where initially defined by user
-     *
-     * @var string
-     */
-    protected $_where;
 
     /**
      * Filters list
@@ -258,25 +192,10 @@ class Bvb_Grid_Data
     protected $_finalFields;
 
     /**
-     * Check if everything was analyzed
-     *
-     * @var unknown_type
-     */
-    private $consolidated = 0;
-
-    /**
      *Use cache or not.
      * @var bool
      */
     public $cache = false;
-
-    /**
-     * Dir list where to find the validators and filters for CRUD
-     * operations
-     *
-     * @var array
-     */
-    protected $_elements = array();
 
     /**
      * The field to set order by, if we have a horizontal row
@@ -352,12 +271,6 @@ class Bvb_Grid_Data
      */
     protected $_escapeFunction = 'htmlspecialchars';
 
-    /**
-     * array of used tables
-     * @var array
-     */
-    protected $_tablesList = null;
-
 
     /**
      * Grid Options.
@@ -365,7 +278,6 @@ class Bvb_Grid_Data
      * @var array
      */
     protected $_options = array();
-
 
     /**
      * Id used for multiples insatnces onde the same page
@@ -381,19 +293,10 @@ class Bvb_Grid_Data
     protected $_colspan;
 
     /**
-     * Model
-     * @var Zend_Db_Table_Abstract
-     */
-    protected $_model = false;
-
-
-    /**
      * User definid INFO for templates
      * @var array
      */
     protected $_templateParams = array();
-
-
 
     /**
      * To let a user know if the grid will be displayed or not
@@ -427,15 +330,64 @@ class Bvb_Grid_Data
      */
     protected $_view;
 
+
     /**
-     * Set db
-     * @param Zend_Db_Adapter_Abstract $db
+     *
+     * @var Bvb_Grid_Source_Zend_Select
      */
-    protected function _setDb (Zend_Db_Adapter_Abstract $db)
+    private $_source;
+
+
+    /**
+     * temp function
+     * @param $object
+     */
+    function query($object)
     {
-        $this->_db = $db;
+
+        if($object instanceof Zend_Db_Select)
+        {
+            $this->setSource(new Bvb_Grid_Source_Zend_Select($object));
+        }
+
+        if($object instanceof Zend_Db_Table_Abstract)
+        {
+            $this->setSource(new Bvb_Grid_Source_Zend_Table($object));
+        }
+
+        return $this;
+
+    }
+
+
+    function setSource (Bvb_Grid_Source_Interface $source)
+    {
+
+        $this->_source = $source;
+
+        $tables = $this->getSource()->getMainTable();
+
+        $this->data['table'] = $tables['table'];
+        $this->data['tableAlias'] = $tables['tableAlias'];
+
+
+        $fields = $this->getSource()->buildFields();
+        foreach ($fields as $key => $field) {
+            $this->updateColumn($key, $field);
+        }
+
+        $this->_allFieldsAdded = true;
+
         return $this;
     }
+
+
+    function getSource ()
+    {
+        return $this->_source;
+    }
+
+
 
     /**
      * Get db instance
@@ -475,8 +427,6 @@ class Bvb_Grid_Data
          * plugins loaders
          */
         $this->_formatter = new Zend_Loader_PluginLoader();
-        $this->_elements['filter'] = new Zend_Loader_PluginLoader();
-        $this->_elements['validator'] = new Zend_Loader_PluginLoader();
 
         //Templates loading
         if (is_array($this->export)) {
@@ -488,9 +438,9 @@ class Bvb_Grid_Data
         // Add the formatter fir for fields content
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
-
         //Apply options to the fields
         $this->_applyOptionsToFields();
+
     }
 
 
@@ -566,269 +516,6 @@ class Bvb_Grid_Data
     }
 
     /**
-     * Define the adapter to use
-     *
-     * @param string $adapter
-     */
-    private function _setAdapter ($adapter)
-    {
-        $this->_adapter = strtolower($adapter) != 'db' ? 'array' : 'db';
-        return $this;
-    }
-
-    /**
-     * Get the current adapter
-     * @return (array|db)
-     */
-    protected function _getAdapter ()
-    {
-        return $this->_adapter;
-    }
-
-    /**
-     * Enter data using a csv file
-     *
-     * @param string $file
-     * @param string $field
-     * @param string $separator
-     * @return unknown
-     */
-    public function setDataFromCsv ($file, $field = null, $separator = ',')
-    {
-
-        $this->_setAdapter('array');
-
-        if ($this->cache['use'] == 1) {
-            $cache = $this->cache['instance'];
-
-            if (! $final = $cache->load(md5('array' . $file))) {
-
-                $row = 0;
-                $handle = fopen($file, "r");
-                while (($data = fgetcsv($handle, 1000, $separator)) !== FALSE) {
-                    $num = count($data);
-
-                    if (null != $field) {
-                        for ($c = 0; $c < $num; $c ++) {
-                            $final[$row][$field[$c]] = $data[$c];
-                        }
-                    } else {
-                        if ($row == 0) {
-                            for ($c = 0; $c < $num; $c ++) {
-                                $field[] = $data[$c];
-                            }
-
-                        } else {
-                            for ($c = 0; $c < $num; $c ++) {
-                                $final[$row - 1][$field[$c]] = $data[$c];
-                            }
-                        }
-                    }
-
-                    $row ++;
-                }
-
-                fclose($handle);
-
-                $cache->save($final, md5('array' . $file), array($this->cache['tag']));
-                $cache->save($field, md5('field' . $file), array($this->cache['tag']));
-
-            } else {
-                $final = $cache->load(md5('array' . $file));
-                $field = $cache->load(md5('field' . $file));
-            }
-
-        } else {
-
-            $row = 0;
-            $handle = fopen($file, "r");
-            while (($data = fgetcsv($handle, 1000, $separator)) !== FALSE) {
-                $num = count($data);
-
-                if (null != $field) {
-
-                    for ($c = 0; $c < $num; $c ++) {
-                        $final[$row][$field[$c]] = $data[$c];
-                    }
-
-                } else {
-                    if ($row == 0) {
-                        for ($c = 0; $c < $num; $c ++) {
-                            $field[] = $data[$c];
-                        }
-
-                    } else {
-                        for ($c = 0; $c < $num; $c ++) {
-                            $final[$row - 1][$field[$c]] = $data[$c];
-                        }
-                    }
-                }
-
-                $row ++;
-            }
-
-            fclose($handle);
-        }
-
-        $this->addArrayColumns($field);
-        $this->addArrayData($final);
-
-        return $this;
-
-    }
-
-    /**
-     * Set the data using a XML file
-     *
-     * @param string $url
-     * @param bool $loop
-     * @param bool $columns
-     */
-    public function setDataFromXml ($url, $loop = null, $columns = null)
-    {
-
-        $this->_setAdapter('array');
-
-        if ($this->cache['use'] == 1) {
-            $cache = $this->cache['instance'];
-
-            if (! $xml = $cache->load(md5($url))) {
-
-                if (strstr($url, '<?xml')) {
-                    $xml = simplexml_load_string($url);
-                } else {
-                    $xml = simplexml_load_file($url);
-                }
-                $xml = $this->_object2array($xml);
-                $cache->save($xml, md5($url), array($this->cache['tag']));
-            } else {
-                $xml = $cache->load(md5($url));
-            }
-        } else {
-
-            if (strstr($url, '<?xml')) {
-                $xml = simplexml_load_string($url);
-            } else {
-                $xml = simplexml_load_file($url);
-            }
-            $xml = $this->_object2array($xml);
-        }
-
-        $cols = explode(',', $loop);
-        if (is_array($cols)) {
-            foreach ($cols as $value) {
-                $xml = $xml[$value];
-            }
-        }
-
-        //Remove possible arrays
-        for ($i = 0; $i < count($xml); $i ++) {
-            foreach ($xml[$i] as $key => $final) {
-                if (! is_string($final)) {
-                    unset($xml[$i][$key]);
-                }
-            }
-        }
-
-        if (is_array($columns)) {
-            foreach ($columns as $value) {
-                $columns = $columns[$value];
-            }
-        } else {
-            $columns = array_keys($xml[0]);
-        }
-
-        $this->addArrayColumns($columns);
-        $this->addArrayData($xml);
-
-        return $this;
-
-    }
-
-    /**
-     * Set the data using a JSON formatted value
-     *
-     * @param string $array
-     * @param bool $file
-     * @param bool $loop
-     * @param bool $columns
-     */
-    public function setDataFromJson ($array, $file = false, $loop = null, $columns = null)
-    {
-
-        $this->_setAdapter('array');
-
-        if (true === $file) {
-
-            if ($this->cache['use'] == 1) {
-                $cache = $this->cache['instance'];
-
-                if (! $result = $cache->load(md5($array))) {
-                    $result = file_get_contents($array);
-
-                    $cache->save($result, md5($array), array($this->cache['tag']));
-                } else {
-                    $result = $cache->load(md5($array));
-                }
-            } else {
-                $result = file_get_contents($array);
-            }
-
-        } else {
-            $result = $array;
-        }
-
-        $xml = Zend_Json::decode($result, true);
-
-        $cols = explode(',', $loop);
-        if (is_array($cols)) {
-            foreach ($cols as $value) {
-                $xml = $xml[$value];
-            }
-        }
-
-        //Remove possible arrays
-        for ($i = 0; $i < count($xml); $i ++) {
-            foreach ($xml[$i] as $key => $final) {
-                if (! is_string($final)) {
-                    unset($xml[$i][$key]);
-                }
-            }
-        }
-
-        if (is_array($columns)) {
-            foreach ($columns as $value) {
-                if (is_string($value)) $columns = $columns[$value];
-            }
-        } else {
-            $columns = array_keys($xml[0]);
-        }
-
-        $this->addArrayColumns($columns);
-        $this->addArrayData($xml);
-
-        return $this;
-
-    }
-
-    /**
-     * Set the data using an array
-     *
-     * @param array $array
-     */
-    public function setDataFromArray ($array)
-    {
-
-        $this->_setAdapter('array');
-
-        $this->addArrayColumns(array_keys($array[0]));
-        $this->addArrayData($array);
-
-        return $this;
-
-    }
-
-    /**
      * The translator
      *
      * @param string $message
@@ -855,6 +542,17 @@ class Bvb_Grid_Data
     public function __call ($name, $value)
     {
 
+        if (substr(strtolower($name), 0, 6) == 'source') {
+
+            $meth = substr($name, 6);
+            $meth[0] = strtolower($meth[0]);
+
+            if (is_object($this->getSource()) && method_exists($this->getSource(), $meth)) {
+                 $this->getSource()->$meth();
+                 return $this;
+            }
+        }
+
         $deploy = explode('_', get_class($this));
         $class = strtolower(end($deploy));
 
@@ -862,7 +560,7 @@ class Bvb_Grid_Data
             $name = substr($name, strlen($class) + 3);
             $name[0] = strtolower($name[0]);
             $this->deploy[$name] = $value[0];
-            return;
+            return $this;
         }
 
         if (substr(strtolower($name), 0, 3) == 'set') {
@@ -901,13 +599,11 @@ class Bvb_Grid_Data
 
     public function updateColumn ($field, $options = array())
     {
-
-        if (! isset($this->data['table']) && $this->_selectZendDb == false && $this->_getAdapter() == 'db') {
+        if (null == $this->getSource()) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
              * @var $_updateColumnQueue Bvb_Grid_DataGrid
              */
-
             if (isset($this->_updateColumnQueue[$field])) {
                 $this->_updateColumnQueue[$field] = array_merge($this->_updateColumnQueue[$field], $options);
             } else {
@@ -915,7 +611,6 @@ class Bvb_Grid_Data
             }
 
             return true;
-
         }
 
         if ($this->_allFieldsAdded == false) {
@@ -930,7 +625,6 @@ class Bvb_Grid_Data
             }
 
             $this->data['fields'][$field] = array_merge($this->data['fields'][$field], $options);
-
         }
 
         return $this;
@@ -1015,7 +709,7 @@ class Bvb_Grid_Data
     protected function _getTableFields ($table)
     {
 
-        $table = $this->_getDescribeTable($table);
+        $table = $this->getSource()->getDescribeTable($table);
         foreach (array_keys($table) as $key) {
             $val[$key] = $key;
         }
@@ -1042,174 +736,8 @@ class Bvb_Grid_Data
      * @param string $key
      * @return unknown
      */
-    protected function _buildSearchType ($filtro, $field)
+    protected function _buildSearchType ($filtro, $field, $completeField)
     {
-
-        $fieldShorten = $field;
-
-        $columns = $this->_select->getPart('columns');
-
-        foreach ($columns as $value) {
-            if ($field == $value[2]) {
-                if (is_object($value[1])) {
-                    $field = $value[1]->__toString();
-                } else {
-                    $field = $value[0] . '.' . $value[1];
-                }
-                break;
-            } elseif ($field == $value[0]) {
-                $field = $value[0] . '.' . $value[1];
-                break;
-            }
-        }
-
-        if (strpos($field, '.') === false) {
-            $field = $this->data['fields'][$field]['field'];
-        }
-
-        if (isset($this->filters[$fieldShorten]['callback']) && is_array($this->filters[$fieldShorten]['callback'])) {
-
-
-            if (! is_callable($this->filters[$fieldShorten]['callback']['function'])) {
-                throw new Bvb_Grid_Exception($this->filters[$fieldShorten]['callback']['function'] . ' is not callable');
-            }
-
-            if (! isset($this->filters[$fieldShorten]['callback']['params']) || ! is_array($this->filters[$fieldShorten]['callback']['params'])) {
-                $this->filters[$fieldShorten]['callback']['params'] = array();
-            }
-            $this->filters[$fieldShorten]['callback']['params'] = array_merge($this->filters[$fieldShorten]['callback']['params'], array('field' => $field, 'value' => $filtro, 'select' => $this->getSelectObject()));
-
-            $result = call_user_func($this->filters[$fieldShorten]['callback']['function'], $this->filters[$fieldShorten]['callback']['params']);
-
-            return;
-
-        }
-
-        if ($this->getDbServerName() == 'mysql') {
-
-            if (isset($this->data['fields'][$field]['search']) and is_array($this->data['fields'][$field]['search']) && $this->data['fields'][$field]['search']['fulltext'] == true) {
-
-                $full = $this->data['fields'][$field]['search'];
-
-                if (! isset($full['indexes'])) {
-                    $indexes = $this->data['fields'][$field]['field'];
-                } elseif (is_array($full['indexes'])) {
-                    $indexes = implode(',', array_values($full['indexes']));
-                } elseif (is_string($full['indexes'])) {
-                    $indexes = $full['indexes'];
-                }
-
-                $extra = isset($full['extra']) ? $full['extra'] : 'boolean';
-
-                if (! in_array($extra, array('boolean', 'queryExpansion', false))) {
-                    throw new Bvb_Grid_Exception('Unrecognized value in extra key');
-                }
-
-                if ($extra == 'boolean') {
-                    $extra = 'IN BOOLEAN MODE';
-                } elseif ($extra == 'queryExpansion') {
-                    $extra = ' WITH QUERY EXPANSION ';
-                } else {
-                    $extra = '';
-                }
-
-                if ($extra == 'IN BOOLEAN MODE') {
-                    $filtro = preg_replace("/\s+/", " +", $this->_getDb()->quote(' ' . $filtro));
-                } else {
-                    $filtro = $this->_getDb()->quote($filtro);
-                }
-
-                $this->_select->where(new Zend_Db_Expr("MATCH ($indexes) AGAINST ($filtro $extra) "));
-                return;
-            }
-        }
-
-        if (! isset($this->data['fields'][$fieldShorten]['searchType'])) {
-            $this->data['fields'][$fieldShorten]['searchType'] = 'like';
-        }
-
-
-        $op = strtolower($this->data['fields'][$fieldShorten]['searchType']);
-
-        if (substr(strtoupper($filtro), 0, 2) == 'R:') {
-            $op = 'REGEX';
-            $filtro = substr($filtro, 2);
-        } elseif (strpos($filtro, '<>') !== false && substr($filtro, 0, 2) != '<>') {
-            $op = 'range';
-        } elseif (substr($filtro, 0, 1) == '=') {
-            $op = '=';
-            $filtro = substr($filtro, 1);
-        } elseif (substr($filtro, 0, 2) == '>=') {
-            $op = '>=';
-            $filtro = substr($filtro, 2);
-        } elseif ($filtro[0] == '>') {
-            $op = '>';
-            $filtro = substr($filtro, 1);
-        } elseif (substr($filtro, 0, 2) == '<=') {
-            $op = '<=';
-            $filtro = substr($filtro, 2);
-        } elseif (substr($filtro, 0, 2) == '<>' || substr($filtro, 0, 2) == '!=') {
-            $op = '<>';
-            $filtro = substr($filtro, 2);
-        } elseif ($filtro[0] == '<') {
-            $op = '<';
-            $filtro = substr($filtro, 1);
-        } elseif ($filtro[0] == '*' and substr($filtro, - 1) == '*') {
-            $op = 'like';
-            $filtro = substr($filtro, 1, - 1);
-        } elseif ($filtro[0] == '*' and substr($filtro, - 1) != '*') {
-            $op = 'llike';
-            $filtro = substr($filtro, 1);
-        } elseif ($filtro[0] != '*' and substr($filtro, - 1) == '*') {
-            $op = 'rlike';
-            $filtro = substr($filtro, 0, - 1);
-        }
-
-        if (isset($this->data['fields'][$field]['searchTypeFixed']) && $this->data['fields'][$field]['searchTypeFixed'] === true && $op != $this->data['fields'][$field]['searchType']) {
-            $op = $this->data['fields'][$field]['searchType'];
-        }
-
-        switch ($op) {
-            case 'equal':
-            case '=':
-                $this->_select->where($field . ' = ?', $filtro);
-                break;
-            case 'REGEX':
-                $this->_select->where(new Zend_Db_Expr($field . " REGEXP " . $this->_getDb()->quote($filtro)));
-                break;
-            case 'rlike':
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote($filtro . "%")));
-                break;
-            case 'llike':
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote("%" . $filtro)));
-                break;
-            case '>=':
-                $this->_select->where($field . " >= ?", $filtro);
-                break;
-            case '>':
-                $this->_select->where($field . " > ?", $filtro);
-                break;
-            case '<>':
-            case '!=':
-                $this->_select->where($field . " <> ?", $filtro);
-                break;
-            case '<=':
-                $this->_select->where($field . " <= ?", $filtro);
-                break;
-            case '<':
-                $this->_select->where($field . " < ?", $filtro);
-                break;
-            case 'range':
-
-                $start = substr($filtro, 0, strpos($filtro, '<>'));
-                $end = substr($filtro, strpos($filtro, '<>') + 2);
-                $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
-                break;
-            case 'like':
-            default:
-                $this->_select->where(new Zend_Db_Expr($field . " LIKE " . $this->_getDb()->quote("%" . $filtro . "%")));
-                break;
-        }
 
     }
 
@@ -1232,10 +760,6 @@ class Bvb_Grid_Data
     protected function _buildFiltersValues ()
     {
 
-        if ($this->_queryWhere) {
-            return;
-        }
-
         //Build an array to know filters values
         $valor_filters = array();
         $filters = @urldecode($this->ctrlParams['filters' . $this->_gridId]);
@@ -1248,19 +772,39 @@ class Bvb_Grid_Data
         $fieldsSemAsFinal = $this->data['fields'];
 
         if (is_array($filters)) {
-            foreach ($filters as $key => $filtro) {
+            foreach ($filters as $key => $filter) {
                 $key = str_replace("bvbdot", ".", $key);
-                if (strlen($filtro) == 0 || ! in_array($key, $this->_fields)) {
+                if (strlen($filter) == 0 || ! in_array($key, $this->_fields)) {
                     unset($filters[$key]);
                 } else {
                     if (isset($fieldsSemAsFinal[$key]['searchField'])) {
                         $key = $fieldsSemAsFinal[$key]['searchField'];
                     }
 
-                    if ($this->_getAdapter() == 'db') {
-                        $this->_buildSearchType($filtro, $key);
+                    if (isset($this->filters[$key]['callback']) && is_array($this->filters[$key]['callback'])) {
+
+                        if (! is_callable($this->filters[$key]['callback']['function'])) {
+                            throw new Bvb_Grid_Exception($this->filters[$key]['callback']['function'] . ' is not callable');
+                        }
+
+                        if (! isset($this->filters[$key]['callback']['params']) || ! is_array($this->filters[$key]['callback']['params'])) {
+                            $this->filters[$key]['callback']['params'] = array();
+                        }
+
+                        $this->filters[$key]['callback']['params'] = array_merge($this->filters[$key]['callback']['params'], array('field' => $key, 'value' => $filter, 'select' => $this->getSource()->getSelectObject()));
+
+                        $result = call_user_func($this->filters[$key]['callback']['function'], $this->filters[$key]['callback']['params']);
+
+                    } elseif (isset($this->data['fields'][$key]['search']) && is_array($this->data['fields'][$key]['search']) && $this->data['fields'][$key]['search']['fulltext'] == true) {
+                        $this->getSource()->addFullTextSearch($filter, $key, $this->data['fields'][$key]);
+                    } else {
+
+                        $op = $this->getFilterOp($key, $filter);
+
+                        $this->getSource()->addCondition($op['filter'], $op['op'], $this->data['fields'][$key]);
                     }
-                    $valor_filters[$key] = $filtro;
+
+                    $valor_filters[$key] = $filter;
                 }
 
             }
@@ -1269,6 +813,57 @@ class Bvb_Grid_Data
         $this->_filtersValues = $valor_filters;
 
         return $this;
+    }
+
+
+    function getFilterOp ($field, $filter)
+    {
+
+        if (! isset($this->data['fields'][$field]['searchType'])) {
+            $this->data['fields'][$field]['searchType'] = 'like';
+        }
+
+        $op = strtolower($this->data['fields'][$field]['searchType']);
+
+        if (substr(strtoupper($filter), 0, 2) == 'R:') {
+            $op = 'REGEX';
+            $filter = substr($filter, 2);
+        } elseif (strpos($filter, '<>') !== false && substr($filter, 0, 2) != '<>') {
+            $op = 'range';
+        } elseif (substr($filter, 0, 1) == '=') {
+            $op = '=';
+            $filter = substr($filter, 1);
+        } elseif (substr($filter, 0, 2) == '>=') {
+            $op = '>=';
+            $filter = substr($filter, 2);
+        } elseif ($filter[0] == '>') {
+            $op = '>';
+            $filter = substr($filter, 1);
+        } elseif (substr($filter, 0, 2) == '<=') {
+            $op = '<=';
+            $filter = substr($filter, 2);
+        } elseif (substr($filter, 0, 2) == '<>' || substr($filter, 0, 2) == '!=') {
+            $op = '<>';
+            $filter = substr($filter, 2);
+        } elseif ($filter[0] == '<') {
+            $op = '<';
+            $filter = substr($filter, 1);
+        } elseif ($filter[0] == '*' and substr($filter, - 1) == '*') {
+            $op = 'like';
+            $filter = substr($filter, 1, - 1);
+        } elseif ($filter[0] == '*' and substr($filter, - 1) != '*') {
+            $op = 'llike';
+            $filter = substr($filter, 1);
+        } elseif ($filter[0] != '*' and substr($filter, - 1) == '*') {
+            $op = 'rlike';
+            $filter = substr($filter, 0, - 1);
+        }
+
+        if (isset($this->data['fields']['searchTypeFixed']) && $this->data['fields']['searchTypeFixed'] === true && $op != $this->data['fields']['searchType']) {
+            $op = $this->data['fields']['searchType'];
+        }
+
+        return array('op' => $op, 'filter' => $filter);
     }
 
     /**
@@ -1287,29 +882,20 @@ class Bvb_Grid_Data
         if ($orderf == 'DESC' || $orderf == 'ASC') {
             array_pop($order1);
             $order_field = implode("_", $order1);
-            $query_order = $order_field . " $orderf ";
 
-            foreach ($this->_select->getPart(Zend_Db_Select::COLUMNS) as $col) {
-                if (($col[0] . '.' . $col[2] == $order_field) && is_object($col[1])) {
-                    $query_order = $col[2] . " $orderf ";
-                }
-            }
+            $this->getSource()->buildQueryOrder($order_field, $orderf);
 
             if (in_array($order_field, $this->_fieldsOrder)) {
-                $this->_select->reset('order');
-                $this->_select->order($query_order);
+                $this->getSource()->buildQueryOrder($order_field, $orderf, true);
             }
         }
 
-        $query_order = '';
-
         if (strlen($this->fieldHorizontalRow) > 0) {
-            $this->_select->order($this->fieldHorizontalRow . ' ASC ');
+            $this->getSource()->buildQueryOrder($this->fieldHorizontalRow, 'ASC', true);
         }
 
-
         if (false === $this->_forceLimit) {
-            $this->_select->limit($this->pagination, $start);
+            $this->getSource()->buildQueryLimit($this->pagination, $start);
         }
 
         return true;
@@ -1326,7 +912,7 @@ class Bvb_Grid_Data
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm','gridDetail');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm', 'gridDetail');
 
         $url = '';
         $params = $this->ctrlParams;
@@ -1463,7 +1049,6 @@ class Bvb_Grid_Data
             }
         }
 
-
         return $return;
     }
 
@@ -1534,12 +1119,12 @@ class Bvb_Grid_Data
 
         $links = $this->_fields;
 
-        if ($this->_getAdapter() == 'db') {
-            $selectOrder = $this->_select->getPart(Zend_Db_Select::ORDER);
 
-            if (count($selectOrder) == 1) {
-                $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
-            }
+        $selectOrder = $this->getSource()->getSelectOrder();
+
+
+        if (count($selectOrder) == 1) {
+            $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0][0] . '_' . strtoupper($selectOrder[0][1]);
         }
 
         for ($i = 0; $i < $tcampos; $i ++) {
@@ -1589,62 +1174,6 @@ class Bvb_Grid_Data
 
 
     /**
-     * Add the columns using an array
-     *
-     * @param array $columns
-     * @return bool
-     */
-    public function addArrayColumns (array $columns)
-    {
-
-        $filter = array();
-
-        if ($this->_getAdapter() != 'array') return false;
-
-        foreach ($columns as $value) {
-            if (is_array($value)) {
-                $this->addArrayColumns($value);
-            } else {
-                $this->updateColumn($value);
-                $filter[$value] = $value;
-            }
-        }
-
-        $this->filters = $filter;
-
-        return true;
-    }
-
-    /**
-     * Add the records using an array
-     */
-    public function addArrayData ($data)
-    {
-
-        if ($this->_adapter != 'array') return false;
-
-        $this->_result = $data;
-        $this->_resultRaw = $data;
-        return $this;
-    }
-
-    /**
-     *
-     * @param string $field
-     * @return array
-     */
-    protected function _builFilterFromArray ($field)
-    {
-
-        $filter = array();
-        foreach ($this->_resultRaw as $value) {
-            $filter[$value[$field]] = $value[$field];
-        }
-
-        return array_unique($filter);
-    }
-
-    /**
      * Similar to fetchPairs
      *
      * @param array $array
@@ -1654,11 +1183,9 @@ class Bvb_Grid_Data
     {
 
         $final = array();
-
         foreach ($array as $value) {
             $final[$value['field']] = $value['value'];
         }
-
         return $final;
 
     }
@@ -1704,12 +1231,10 @@ class Bvb_Grid_Data
             $toReplaceArray = array();
             $toReplaceObj = array();
 
-            foreach ($toReplace as $key=>$rep)
-            {
-                if(is_scalar($rep) || is_array($rep))
-                {
-                   $toReplaceArray[$key] = $rep;
-                }else{
+            foreach ($toReplace as $key => $rep) {
+                if (is_scalar($rep) || is_array($rep)) {
+                    $toReplaceArray[$key] = $rep;
+                } else {
                     $toReplaceObj[$key] = $rep;
                 }
             }
@@ -1730,7 +1255,7 @@ class Bvb_Grid_Data
             }
         }
 
-       return  call_user_func_array($value['function'], $toReplace);
+        return call_user_func_array($value['function'], $toReplace);
 
     }
 
@@ -1837,7 +1362,7 @@ class Bvb_Grid_Data
         foreach ($this->_result as $dados) {
 
             $outputToReplace = array();
-            foreach (array_combine($fields,$fields) as $key=>$value) {
+            foreach (array_combine($fields, $fields) as $key => $value) {
                 $outputToReplace[$key] = $dados[$value];
             }
 
@@ -1997,50 +1522,7 @@ class Bvb_Grid_Data
         return $novo_array;
     }
 
-    /**
-     * Applies the SQL EXP options to an array
-     * @param $field
-     * @param $operation
-     * @param $option
-     */
-    protected function _applySqlExpToArray ($field, $operation, $option = 0)
-    {
 
-        foreach ($this->_resultRaw as $value) {
-
-            $array[] = $value[$field];
-
-        }
-
-        $operation = trim(strtolower($operation));
-
-        switch ($operation) {
-            case 'product':
-                return array_product($array);
-                break;
-            case 'sum':
-                return array_sum($array);
-                break;
-            case 'count':
-                return count($array);
-                break;
-            case 'min':
-                sort($array);
-                return array_shift($array);
-                break;
-            case 'max':
-                sort($array);
-                return array_pop($array);
-                break;
-            case 'avg':
-                $option = (int) $option;
-                return round(array_sum($array) / count($array), $option);
-                break;
-            default:
-                throw new Bvb_Grid_Exception('Operation not found');
-                break;
-        }
-    }
 
     /**
      * Apply SQL Functions
@@ -2057,54 +1539,19 @@ class Bvb_Grid_Data
             return false;
         }
 
-        if ($this->_adapter == 'array') {
 
-            foreach ($final as $key => $value) {
+        foreach ($final as $key => $value) {
 
-                $result[$key] = $this->_applySqlExpToArray($key, $value);
+            if (! array_key_exists($key, $this->data['fields'])) continue;
 
+            $resultExp = $this->getSource()->getSqlExp($value);
+
+            if (isset($value['format'])) {
+                $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
 
-        } else {
+            $result[$key] = $resultExp;
 
-            foreach ($final as $key => $value) {
-
-                if (! array_key_exists($key, $this->data['fields'])) continue;
-
-                if (is_array($value)) {
-                    $valor = '';
-                    foreach ($value['functions'] as $final) {
-                        $valor .= $final . '(';
-                    }
-
-                    $valor .= $value['value'] . str_repeat(')', count($value['functions']));
-                } else {
-                    $valor = "$value(" . $value['value'] . ")";
-                }
-
-                $select = clone $this->_select;
-
-                $select->reset(Zend_Db_Select::COLUMNS);
-                $select->reset(Zend_Db_Select::ORDER);
-                $select->reset(Zend_Db_Select::LIMIT_COUNT);
-                $select->reset(Zend_Db_Select::LIMIT_OFFSET);
-                $select->reset(Zend_Db_Select::GROUP);
-
-                $select->columns(new Zend_Db_Expr($valor . ' AS TOTAL'));
-
-                $final = $select->query(Zend_Db::FETCH_ASSOC);
-
-                $result1 = $final->fetchAll();
-
-                if (isset($value['format'])) {
-                    $finalResult = $this->_applyFormat($result1[0]['TOTAL'], $value['format']);
-                } else {
-                    $finalResult = $result1[0]['TOTAL'];
-                }
-
-                $result[$key] = $finalResult;
-
-            }
 
         }
 
@@ -2137,6 +1584,7 @@ class Bvb_Grid_Data
         $show = array();
         foreach ($fields as $key => $value) {
             //A parte da order
+
 
 
             if (! isset($value['order']) || $value['order'] == 1) {
@@ -2240,7 +1688,7 @@ class Bvb_Grid_Data
 
         if (is_array($this->filters)) {
             return $this->filters;
-        } elseif ($this->_adapter == 'db') {
+        } else {
             $filters = array_combine($this->_fields, $this->_fields);
         }
 
@@ -2268,7 +1716,7 @@ class Bvb_Grid_Data
             return $this->_primaryKey[$table];
         }
 
-        $pk = $this->_getDescribeTable($table);
+        $pk = $this->getSource()->getDescribeTable($table);
 
         $keys = array();
 
@@ -2283,25 +1731,6 @@ class Bvb_Grid_Data
         return $this->_primaryKey[$table];
     }
 
-    /**
-     * Count the rows total without the limit
-     *
-     * @return void
-     */
-    protected function _builQueryCount ()
-    {
-
-        $this->_selectCount = clone $this->_select;
-
-        $this->_selectCount->reset(Zend_Db_Select::COLUMNS);
-        $this->_selectCount->reset(Zend_Db_Select::LIMIT_OFFSET);
-        $this->_selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
-        $this->_selectCount->reset(Zend_Db_Select::ORDER);
-
-        $this->_selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL '));
-
-        return;
-    }
 
     /**
      * Build user defined filters
@@ -2322,7 +1751,6 @@ class Bvb_Grid_Data
                 } else {
                     $df['filter_' . $key] = '';
                 }
-
             }
 
             $defaultFilters = $df;
@@ -2340,12 +1768,9 @@ class Bvb_Grid_Data
      */
     public function deploy ()
     {
+
         // apply additional configuration
         $this->_runConfigCallbacks();
-
-        if ($this->_selectZendDb !== true && $this->_getAdapter() == 'db') {
-            throw new Bvb_Grid_Exception('You must specify the query object using a Zend_Db_Select instance');
-        }
 
         if (isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns)) {
             $this->_isDetail = true;
@@ -2366,6 +1791,7 @@ class Bvb_Grid_Data
         }
 
 
+
         if ($this->_isDetail === false && is_array($this->_gridColumns)) {
             $finalColumns = array_intersect($this->_gridColumns, array_keys($this->data['fields']));
             foreach ($this->data['fields'] as $key => $value) {
@@ -2376,25 +1802,16 @@ class Bvb_Grid_Data
 
         }
 
-
         if ($this->_isDetail == true) {
-
-            $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
-            $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
-            $this->_select->where(new Zend_Db_Expr($this->_getPkFromUrl()));
-
-
-            $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
-            $result = $final->fetchAll();
-
+            $result = $this->getSource()->fetchDetail($this->_getPkFromUrl());
             if (count($result) == 0) {
                 $this->message = $this->__('Record Not Found');
                 $this->_isDetail = false;
             } else {
                 $result = $result[0];
             }
-
         }
+
 
 
         $this->_buildDefaultFilters();
@@ -2408,172 +1825,29 @@ class Bvb_Grid_Data
 
         $this->_buildFiltersValues();
 
-        if ($this->_adapter == 'db') {
-            if ($this->_isDetail == false) {
-                $this->_buildQueryOrderAndLimit();
-            }
-            $this->_builQueryCount();
-            if ($this->cache['use'] == 1) {
-                $cache = $this->cache['instance'];
-
-                if (! $result = $cache->load(md5($this->_select->__toString()))) {
-
-                    $stmt = $this->_select->query(Zend_Db::FETCH_ASSOC);
-
-                    $result = $stmt->fetchAll();
-
-                    if ($this->_forceLimit === false) {
-
-                        $selectZendDb = clone $this->_select;
-                        if ($this->_forceLimit == false) {
-                            $selectZendDb->reset(Zend_Db_Select::LIMIT_COUNT);
-                            $selectZendDb->reset(Zend_Db_Select::LIMIT_OFFSET);
-                        }
-                        $selectZendDb->reset(Zend_Db_Select::GROUP);
-                        $selectZendDb->reset(Zend_Db_Select::COLUMNS);
-                        $selectZendDb->reset(Zend_Db_Select::ORDER);
-                        $selectZendDb->columns(array('TOTAL' => new Zend_Db_Expr("COUNT(*)")));
-
-                        $stmt = $selectZendDb->query(Zend_Db::FETCH_ASSOC);
-
-                        $resultZendDb = $stmt->fetchAll();
-
-                        if (count($resultZendDb) == 1) {
-                            $resultCount = $resultZendDb[0]['TOTAL'];
-                        } else {
-                            $resultCount = count($resultZendDb);
-                        }
-
-                    } else {
-
-                        $resultCount = $this->_forceLimit;
-
-                        if (count($result) < $resultCount) {
-                            $resultCount = count($result);
-                        }
-                    }
-
-                    $cache->save($result, md5($this->_select->__toString()), array($this->cache['tag']));
-                    $cache->save($resultCount, md5($this->_selectCount->__toString()), array($this->cache['tag']));
-
-                } else {
-                    $result = $cache->load(md5($this->_select->__toString()));
-                    $resultCount = $cache->load(md5($this->_selectCount->__toString()));
-                }
-
-            } else {
-                $stmt = $this->_select->query(Zend_Db::FETCH_ASSOC);
-
-                $result = $stmt->fetchAll();
-
-                if ($this->_forceLimit === false) {
-
-                    $selectZendDb = clone $this->_select;
-                    if ($this->_forceLimit == false) {
-                        $selectZendDb->reset(Zend_Db_Select::LIMIT_COUNT);
-                        $selectZendDb->reset(Zend_Db_Select::LIMIT_OFFSET);
-                    }
-                    $selectZendDb->reset(Zend_Db_Select::GROUP);
-                    $selectZendDb->reset(Zend_Db_Select::COLUMNS);
-                    $selectZendDb->reset(Zend_Db_Select::ORDER);
-                    $selectZendDb->columns(array('TOTAL' => new Zend_Db_Expr("COUNT(*)")));
-
-                    $stmt = $selectZendDb->query(Zend_Db::FETCH_ASSOC);
-
-                    $resultZendDb = $stmt->fetchAll();
-
-                    if (count($resultZendDb) == 1) {
-                        $resultCount = $resultZendDb[0]['TOTAL'];
-                    } else {
-                        $resultCount = count($resultZendDb);
-                    }
-
-                } else {
-
-                    $resultCount = $this->_forceLimit;
-
-                    if (count($result) < $resultCount) {
-                        $resultCount = count($result);
-                    }
-                }
-            }
-
-            //Total records found
-            $this->_totalRecords = $resultCount;
-
-            //The result
-            $this->_result = $result;
-
-        } else {
-
-            $filters = Zend_Json::decode(@$this->ctrlParams['filters' . $this->_gridId]);
-            if (is_array($filters)) {
-
-                foreach ($filters as $key => $filter) {
-                    $explode = explode('_', $key);
-                    $key = end($explode);
-                    $filterValue[$key] = $filter;
-                }
-
-                $filters = $filterValue;
-
-                $find = $this->_findInArray($filters);
-
-                $this->_filtersValues = $filterValue;
-
-                if (count($find) > 0) {
-                    $this->_result = $find;
-
-                } elseif ($this->_searchPerformedInArray === true) {
-                    $this->_result = array();
-                }
-
-            }
-
-            if (isset($this->ctrlParams['order' . $this->_gridId]) || strlen(@$this->data['order' . $this->_gridId]) > 3) {
-
-                if (strlen($this->data['order']) > 3 && ! isset($this->ctrlParams['order' . $this->_gridId])) {
-
-                    $explode = explode(' ', $this->data['order']);
-
-                    $order = reset($explode);
-                    $orderType = end($explode);
-                    if (strtoupper($orderType) != 'ASC' && strtoupper($orderType) != 'DESC') {
-                        $orderType = 'ASC';
-                    }
-
-                    $orderType = strtoupper($orderType) == 'ASC' ? SORT_ASC : SORT_DESC;
-
-                } else {
-
-                    $explode = explode('_', $this->ctrlParams['order' . $this->_gridId]);
-                    $order = reset($explode);
-                    $orderType = end($explode);
-
-                    $orderType = strtoupper($orderType) == 'ASC' ? SORT_ASC : SORT_DESC;
-                }
-
-                // Obtain a list of columns
-                foreach ($this->_result as $key => $row) {
-                    $result[$key] = $row[$order];
-                }
-
-                @array_multisort($result, $orderType, $this->_result);
-
-            }
-
-            if ($this->pagination == 0) {
-                $this->_totalRecords = count($this->_result);
-                $result = $this->_result;
-
-            } else {
-                $this->_totalRecords = count($this->_result);
-                $result = array_slice($this->_result, (int) @$this->ctrlParams['start' . $this->_gridId] < $this->_totalRecords ? (int) @$this->ctrlParams['start' . $this->_gridId] : 0, $this->pagination);
-            }
-
-            $this->_result = $result;
-
+        if ($this->_isDetail == false) {
+            $this->_buildQueryOrderAndLimit();
         }
+
+
+        $result = $this->getSource()->execute();
+
+        if ($this->_forceLimit === false) {
+            $resultCount = $this->getSource()->getTotalRecords();
+        } else {
+            $resultCount = $this->_forceLimit;
+            if (count($result) < $resultCount) {
+                $resultCount = count($result);
+            }
+        }
+
+
+        //Total records found
+        $this->_totalRecords = $resultCount;
+
+        //The result
+        $this->_result = $result;
+
 
         $this->_colspan();
         return $this;
@@ -2635,96 +1909,6 @@ class Bvb_Grid_Data
     }
 
     /**
-     * Apply the search to a give field when the adaptar is an array
-     */
-    protected function _applySearchTypeToArray ($final, $filtro, $key)
-    {
-
-        if (! isset($this->data['fields'][$key]['searchType'])) {
-            $this->data['fields'][$key]['searchType'] = 'like';
-        }
-
-        $op = strtolower($this->data['fields'][$key]['searchType']);
-
-        if (substr(strtoupper($filtro), 0, 2) == 'R:') {
-            $op = 'REGEX';
-            $filtro = substr($filtro, 2);
-        } elseif (substr($filtro, 0, 1) == '=') {
-            $op = '=';
-            $filtro = substr($filtro, 1);
-        } elseif (substr($filtro, 0, 2) == '>=') {
-            $op = '>=';
-            $filtro = substr($filtro, 2);
-        } elseif ($filtro[0] == '>') {
-            $op = '>';
-            $filtro = substr($filtro, 1);
-        } elseif (substr($filtro, 0, 2) == '<=') {
-            $op = '<=';
-            $filtro = substr($filtro, 2);
-        } elseif (substr($filtro, 0, 2) == '<>' || substr($filtro, 0, 2) == '!=') {
-            $op = '<>';
-            $filtro = substr($filtro, 2);
-        } elseif ($filtro[0] == '<') {
-            $op = '<';
-            $filtro = substr($filtro, 1);
-        } elseif ($filtro[0] == '*' and substr($filtro, - 1) == '*') {
-            $op = 'like';
-            $filtro = substr($filtro, 1, - 1);
-        } elseif ($filtro[0] == '*' and substr($filtro, - 1) != '*') {
-            $op = 'llike';
-            $filtro = substr($filtro, 1);
-        } elseif ($filtro[0] != '*' and substr($filtro, - 1) == '*') {
-            $op = 'rlike';
-            $filtro = substr($filtro, 0, - 1);
-        }
-
-        if (isset($this->data['fields'][$key]['searchTypeFixed']) && $this->data['fields'][$key]['searchTypeFixed'] === true && $op != $this->data['fields'][$key]['searchType']) {
-            $op = $this->data['fields'][$key]['searchType'];
-        }
-
-        switch ($op) {
-            case 'equal':
-            case '=':
-                if ($filtro == $final) return true;
-                break;
-            case 'REGEXP':
-                if (preg_match($filtro, $final)) return true;
-                break;
-            case 'rlike':
-                if (substr($final, 0, strlen($filtro)) == $filtro) return true;
-                break;
-            case 'llike':
-                if (substr($final, - strlen($filtro)) == $filtro) return true;
-                break;
-            case '>=':
-                if ($final >= $filtro) return true;
-                break;
-            case '>':
-                if ($final > $filtro) return true;
-                break;
-            case '<>':
-            case '!=':
-                if ($final != $filtro) return true;
-                break;
-            case '<=':
-                if ($final <= $filtro) return true;
-                break;
-            case '<':
-                if ($final < $filtro) return true;
-                break;
-            default:
-                $enc = stripos((string) $final, $filtro);
-                if ($enc !== false) {
-                    return true;
-                }
-                break;
-        }
-
-        return false;
-
-    }
-
-    /**
      *Convert Object to Array
      * @param object $object
      * @return array
@@ -2767,8 +1951,8 @@ class Bvb_Grid_Data
     public function setTemplate ($template, $output = 'table', $options = array())
     {
 
-         $tmp = $options;
-         $options['userDefined'] = $tmp;
+        $tmp = $options;
+        $options['userDefined'] = $tmp;
 
 
         $class = $this->_templates[$output]->load($template, $output);
@@ -2900,10 +2084,8 @@ class Bvb_Grid_Data
         $filters = $this->_object2array($filters);
         $filters = $filters['_filters'];
 
-        foreach ($filtersObj->_filters as $key=>$value)
-        {
-            if(isset($filters[$key]['callback']))
-            {
+        foreach ($filtersObj->_filters as $key => $value) {
+            if (isset($filters[$key]['callback'])) {
                 $filters[$key]['callback'] = $value['callback'];
             }
         }
@@ -2951,159 +2133,6 @@ class Bvb_Grid_Data
         return $this;
     }
 
-    /**
-     * Get table description and then save it to a array.
-     *
-     * @param array|string $table
-     * @return array
-     */
-    protected function _getDescribeTable ($table)
-    {
-
-        if ($this->_getAdapter() != 'db') {
-            return false;
-        }
-
-        if (is_null($table)) {
-            return;
-        }
-
-        if (! isset($this->_describeTables[$table]) || ! @is_array($this->_describeTables[$table])) {
-
-            if ($this->cache['use'] == 1) {
-                $cache = $this->cache['instance'];
-                if (! $describe = $cache->load(md5('describe' . $table))) {
-                    $describe = $this->_getDb()->describeTable($table);
-                    $cache->save($describe, md5('describe' . $table), array($this->cache['tag']));
-                } else {
-                    $describe = $cache->load(md5('describe' . $table));
-                }
-            } else {
-                $describe = $this->_getDb()->describeTable($table);
-            }
-
-            $this->_describeTables[$table] = $describe;
-        }
-
-        return $this->_describeTables[$table];
-    }
-
-    /**
-     * Build the fields based on Zend_Db_Select
-     * @param $fields
-     * @param $tables
-     */
-    protected function _getFieldsFromQuery (array $fields, array $tables)
-    {
-
-        foreach ($fields as $key => $value) {
-
-            /**
-             * Select all fields from the table
-             */
-            if ($value[1] == '*') {
-
-                if (array_key_exists($value[0], $tables)) {
-                    $tableFields = $this->_getDescribeTable($tables[$value[0]]['tableName']);
-                }
-
-                $tableFields = array_keys($tableFields);
-
-                foreach ($tableFields as $field) {
-                    $title = ucwords(str_replace('_', ' ', $field));
-                    $this->updateColumn($field, array('title' => $title, 'field' => $value[0] . '.' . $field));
-                }
-
-            } else {
-
-                $explode = explode('.', $value[1]);
-                $title = ucwords(str_replace("_", ' ', end($explode)));
-
-                if (is_object($value[1])) {
-                    $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[2]));
-                } elseif (strlen($value[2]) > 0) {
-                    $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $this->updateColumn($value[2], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
-                } else {
-                    $title = ucwords(str_replace('_', ' ', $value[1]));
-                    $this->updateColumn($value[1], array('title' => $title, 'field' => $value[0] . '.' . $value[1]));
-                }
-
-            }
-        }
-
-        $this->_allFieldsAdded = true;
-
-        if (count($this->_updateColumnQueue) > 0) {
-            foreach ($this->_updateColumnQueue as $field => $options) {
-
-                if (! array_key_exists($field, $this->data['fields'])) continue;
-
-                $this->updateColumn($field, $options);
-            }
-
-            $this->_updateColumnQueue = array();
-        }
-
-        return $this;
-    }
-
-    /**
-     * Define the query using Zend_Db_Select instance
-     *
-     * @param Zend_Db_Select $select
-     * @return $this
-     */
-    public function query (Zend_Db_Select $select)
-    {
-
-        if ($this->_selectZendDb === true) {
-            throw new Bvb_Grid_Exception('Cannot redeclare query()');
-        }
-
-        $this->_setDb($select->getAdapter());
-        $this->_setAdapter('db');
-
-        $adapter = get_class($select->getAdapter());
-        $adapter = str_replace("Zend_Db_Adapter_", "", $adapter);
-
-        if (stripos($adapter, 'mysql') !== false) {
-            $this->_server = 'mysql';
-        } else {
-            $adapter = str_replace('Pdo_', '', $adapter);
-            $this->_server = strtolower($adapter);
-        }
-
-        //To know if the query has already been performed
-        $this->_selectZendDb = true;
-
-        $this->_select = $select;
-
-
-        //A list of tables in the query
-        $this->_tablesList = $this->_select->getPart(Zend_Db_Select::FROM);
-
-        $this->_getFieldsFromQuery($this->_select->getPart(Zend_Db_Select::COLUMNS), $this->_select->getPart(Zend_Db_Select::FROM));
-
-        $from = $this->_select->getPart(Zend_Db_Select::FROM);
-
-        if ($this->_select->getPart(Zend_Db_Select::LIMIT_COUNT) > 0) {
-            $this->_forceLimit = $this->_select->getPart(Zend_Db_Select::LIMIT_COUNT);
-            $this->setPagination($this->_forceLimit);
-        }
-
-        foreach ($from as $key => $tables) {
-
-            if ($tables['joinType'] == 'from') {
-                $this->data['table'] = $tables['tableName'];
-                $this->data['tableAlias'] = $key;
-                break;
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * Returns the grid version
@@ -3123,13 +2152,7 @@ class Bvb_Grid_Data
         return (int) $this->_totalRecords;
     }
 
-    /**
-     * Return the query object
-     */
-    public function getSelectObject ()
-    {
-        return $this->_select;
-    }
+
 
     /**
      * Automates export functionality
@@ -3163,6 +2186,9 @@ class Bvb_Grid_Data
 
             // now we need to find and load the right Bvb deploy class
             $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
+
+
+
 
             if (Zend_Version::compareVersion('1.8.0') == 1) {
                 if (Zend_Loader::autoload($className)) {
@@ -3241,7 +2267,10 @@ class Bvb_Grid_Data
                 $name = $defs;
                 $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
 
-                if (Zend_Version::compareVersion('1.8.0') ==  1) {
+
+
+
+                if (Zend_Version::compareVersion('1.8.0') == 1) {
                     if (Zend_Loader::autoload($className) && method_exists($className, 'getExportDefaults')) {
                         // learn the defualt values
                         $defs = call_user_func(array($className, "getExportDefaults"));
@@ -3382,85 +2411,6 @@ class Bvb_Grid_Data
     }
 
 
-    /**
-     * Get Model
-     */
-    function getModel ()
-    {
-        return $this->_model;
-    }
-
-    /**
-     * Creating a query using a Model.
-     * @param Zend_Db_Table_Abstract $model
-     * @return $this
-     */
-    function setModel (Zend_Db_Table_Abstract $model)
-    {
-        $this->_model = $model;
-        $info = $model->info();
-
-        $select = new Zend_Db_Select($model->getAdapter());
-
-        $map = $info['referenceMap'];
-
-        if (is_array($map) && count($map) > 0) {
-            $columnsToRemove = array();
-
-            foreach ($map as $sel) {
-                if (is_array($sel['columns'])) {
-                    $columnsToRemove = array_merge($columnsToRemove, $sel['columns']);
-                } else {
-                    $columnsToRemove[] = $sel['columns'];
-                }
-            }
-
-            $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
-
-            $select->from($info['name'], $columnsMainTable);
-
-            $i = 0;
-            foreach ($map as $sel) {
-
-                if ($i > 0) {
-                    $alias = '_' . $i;
-                } else {
-                    $alias = '';
-                }
-
-                $newClass = new $sel['refTableClass']();
-                $infoNewClass = $newClass->info();
-
-                if (is_array($sel['columns'])) {
-                    $cols = array_combine($sel['columns'], $sel['refColumns']);
-
-                    foreach ($sel['columns'] as $key => $value) {
-
-                        if ($i > 0) {
-                            $alias = '_' . $i;
-                        } else {
-                            $alias = '';
-                        }
-                        $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
-                        $i ++;
-                    }
-
-                } else {
-                    $cols = array($sel['columns'] => $sel['refColumns']);
-
-                    $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
-                }
-
-                $i ++;
-            }
-        } else {
-            $select->from($info['name']);
-        }
-
-        $this->query($select);
-
-        return $this;
-    }
 
     /**
      *Set user definied params for templates.
@@ -3531,14 +2481,6 @@ class Bvb_Grid_Data
     }
 
     /**
-     * Returns server name (mysql|pgsql|etc)
-     */
-    function getDbServerName ()
-    {
-        return $this->_server;
-    }
-
-    /**
      * Some debug info
      */
     function debug ($returnSerialized = false)
@@ -3548,9 +2490,7 @@ class Bvb_Grid_Data
         $result['colspan'] = $this->_colspan();
         $result['filters'] = $this->filters;
         $result['filtersValues'] = $this->_filtersValues;
-        $result['mainSelect'] = $this->getSelectObject()->__toString();
-        $result['countSelect'] = $this->_selectCount->__toString();
-        $result['model'] = isset($this->_model) ? $this->_model->info() : null;
+        $result['mainSelect'] = $this->getSource()->getSelectObject()->__toString();
         $result['form'] = isset($this->_form) ? $this->_form : null;
 
         if ($returnSerialized === true) {
@@ -3582,6 +2522,34 @@ class Bvb_Grid_Data
     {
         $this->_detailColumns = array_merge($this->_detailColumns, $columns);
         return $this;
+    }
+
+    /**
+     * Get the list of primary keys from the URL
+     *
+     * @return string
+     */
+    protected function _getPkFromUrl ()
+    {
+        if (! isset($this->ctrlParams['comm' . $this->_gridId])) {
+            return array();
+        }
+
+        $param = $this->ctrlParams['comm' . $this->_gridId];
+        $explode = explode(';', $param);
+        $param = end($explode);
+        $param = substr($param, 1, - 1);
+
+        $paramF = explode('-', $param);
+        $param = '';
+
+        $returnArray = array();
+        foreach ($paramF as $value) {
+            $f = explode(':', $value);
+            $returnArray[$f[0]] = $f[1];
+        }
+        $param = substr($param, 4);
+        return $returnArray;
     }
 
 }
