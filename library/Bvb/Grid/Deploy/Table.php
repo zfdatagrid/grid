@@ -267,6 +267,7 @@ Bvb_Grid_Deploy_Interface
     protected function _processForm ()
     {
 
+
         if (! $this->getSource()->hasCrud()) {
             return false;
         }
@@ -365,6 +366,7 @@ Bvb_Grid_Deploy_Interface
                 unset($post['form_reset' . $this->_gridId]);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
+
 
                 // Process data
                 if ($mode == 'add') {

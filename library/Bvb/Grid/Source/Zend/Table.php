@@ -151,8 +151,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                 case 'mediumint':
                 case 'smallint':
                 case 'tinyint':
-                    $defaultIsZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($defaultIsZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $isZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
+                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 case 'float':

@@ -214,14 +214,12 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
         $grid->setDetailColumns();
-        $grid->setDetailColumnsIdentifier();
         $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        #$grid->sqlexp = array ('Name' => array ('functions' => array ('AVG' ), 'value' => 'Population' ) );
+        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
 
         $this->view->pages = $grid->deploy();
-
 
         $this->render('index');
     }
@@ -338,8 +336,9 @@ class SiteController extends Zend_Controller_Action
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'bug_status', 'date'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setButton(1);
-        $form->setModel(new Bvb_Grid_Source_Zend_Table(new Bugs()));
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        $form->addElement('text','next',array('label'=>'Sim ou sopas'));
+        $form->addElement('text','bug_id',array('label'=>'Sim ou sopas'));
         $grid->addForm($form);
 
 

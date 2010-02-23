@@ -551,7 +551,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         foreach ($condition as $field => $value) {
             $where .= 'AND ' . $this->_getDb()->quoteIdentifier($field) . ' = ' . $this->_getDb()->quote($value) . ' ';
         }
-        return substr($where, 3);
+        return " ( ".substr($where, 3)." )";
 
     }
 }
