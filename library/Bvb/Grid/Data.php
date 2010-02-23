@@ -866,6 +866,9 @@ class Bvb_Grid_Data
         } elseif ($filter[0] != '*' and substr($filter, - 1) == '*') {
             $op = 'rlike';
             $filter = substr($filter, 0, - 1);
+        }elseif(stripos($filter,',')!==false)
+        {
+            $op = 'IN';
         }
 
         if (isset($this->data['fields']['searchTypeFixed']) && $this->data['fields']['searchTypeFixed'] === true && $op != $this->data['fields']['searchType']) {

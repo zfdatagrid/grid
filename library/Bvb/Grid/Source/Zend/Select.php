@@ -503,8 +503,11 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             case '<':
                 $this->_select->where($field . " < ?", $filter);
                 break;
+            case 'IN':
+                $filter = explode(',',$filter);
+                $this->_select->where($field . " IN  (?)", $filter);
+                break;
             case 'range':
-
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
                 $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
