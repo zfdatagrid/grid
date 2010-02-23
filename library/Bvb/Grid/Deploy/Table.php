@@ -240,23 +240,6 @@ Bvb_Grid_Deploy_Interface
 
 
     /**
-     * Fetch the field type from the DB
-     *
-     * @param string $type
-     * @param string $table
-     * @return string
-     */
-    protected function _getFieldType ($type, $table)
-    {
-
-        $fields = $this->_getDescribeTable($table);
-
-        return $fields[$type]['DATA_TYPE'];
-
-    }
-
-
-    /**
      *
      * Process all information forms related
      * First we check for permissions to add, edit, delete
@@ -380,7 +363,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
 
-                        $this->getSource()->insert($this->data['table'], $post);
+                        $this->getSource()->insert($this->_crudTable, $post);
 
 
                         if (null !== $this->_callbackAfterInsert) {
@@ -433,7 +416,7 @@ Bvb_Grid_Deploy_Interface
                         }
 
 
-                        $this->getSource()->update($this->data['table'], $post, $queryUrl);
+                        $this->getSource()->update($this->_crudTable, $post, $queryUrl);
 
 
                         if (null !== $this->_callbackAfterUpdate) {
@@ -563,7 +546,7 @@ Bvb_Grid_Deploy_Interface
             }
 
 
-            $resultDelete = $this->getSource()->delete($this->data['table'], $condition);
+            $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
 
 
             if ($resultDelete == 1) {
@@ -763,9 +746,9 @@ Bvb_Grid_Deploy_Interface
             //Lets get the default order using in the query (Zend_Db)
             $queryOrder = $this->getSource()->getSelectOrder();
 
-            if (count($queryOrder)>0) {
-                    $order = strtolower($queryOrder[1]) == 'asc' ? 'desc' : 'asc';
-                    $orderField = $queryOrder[0];
+            if (count($queryOrder) > 0) {
+                $order = strtolower($queryOrder[1]) == 'asc' ? 'desc' : 'asc';
+                $orderField = $queryOrder[0];
             }
         }
 
@@ -1606,7 +1589,6 @@ Bvb_Grid_Deploy_Interface
         $fieldsGet = $form['fields'];
         $fields = array();
 
-
         if (is_array($fieldsGet)) {
             foreach ($fieldsGet as $value) {
                 $fields[$value['options']['field']] = $value['options'];
@@ -1615,6 +1597,10 @@ Bvb_Grid_Deploy_Interface
 
 
         $options = $form['options'];
+
+        if (isset($options['table'])) {
+            $this->_crudTable = trim($options['table']);
+        }
 
         $this->info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';
 

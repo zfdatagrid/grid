@@ -339,6 +339,16 @@ class Bvb_Grid_Data
 
 
     /**
+     * The table where srud operations
+     * should be performed.
+     * by defeult the table is fetched from the quaery
+     * but the user can set other manually
+     * @var unknown_type
+     */
+    protected $_crudTable;
+
+
+    /**
      * temp function
      * @param $object
      */
@@ -368,6 +378,7 @@ class Bvb_Grid_Data
         $tables = $this->getSource()->getMainTable();
 
         $this->data['table'] = $tables['table'];
+        $this->_crudTable = $this->data['table'];
 
         $fields = $this->getSource()->buildFields();
         foreach ($fields as $key => $field) {
