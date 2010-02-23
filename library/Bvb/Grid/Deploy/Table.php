@@ -590,7 +590,7 @@ Bvb_Grid_Deploy_Interface
         $final = '';
 
         if ($this->getSource()->hasCrud()) {
-            if (($this->getInfo('double_tables') == 0 && @$this->ctrlParams['add' . $this->_gridId] != 1 && @$this->ctrlParams['edit' . $this->_gridId] != 1) && $this->_getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1) {
+            if (($this->getInfo('doubleTables') == 0 && @$this->ctrlParams['add' . $this->_gridId] != 1 && @$this->ctrlParams['edit' . $this->_gridId] != 1) && $this->_getPrimaryKey() && @$this->info['add']['allow'] == 1 && @$this->info['add']['button'] == 1 && @$this->info['add']['no_button'] != 1) {
 
                 $final = "<div class=\"addRecord\" ><a href=\"$url/add" . $this->_gridId . "/1\">" . $this->__('Add Record') . "</a></div>";
             }
@@ -651,7 +651,10 @@ Bvb_Grid_Deploy_Interface
             }
 
             //Replace values
+            if(count($this->_filtersValues)>0)
+            {
             $final .= str_replace("{{value}}", $final1, $this->temp['table']->extra());
+            }
 
         //close cycle
         }
