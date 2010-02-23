@@ -298,4 +298,10 @@ interface Bvb_Grid_Source_Interface
      */
     function delete ($table, array $condition);
 
+
+    /**
+     * Removes any order in que query
+     */
+    function resetOrder();
+
 }

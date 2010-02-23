@@ -554,4 +554,9 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         return " ( ".substr($where, 3)." )";
 
     }
+
+    function resetOrder()
+    {
+        $this->_select->reset('order');
+    }
 }

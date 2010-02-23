@@ -339,7 +339,7 @@ class Bvb_Grid_Data
 
 
     /**
-     * The table where srud operations
+     * The table where crud operations
      * should be performed.
      * by defeult the table is fetched from the quaery
      * but the user can set other manually
@@ -921,7 +921,7 @@ class Bvb_Grid_Data
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'comm', 'gridDetail');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit','noOrder', 'comm', 'gridDetail');
 
         $url = '';
         $params = $this->ctrlParams;
@@ -1105,7 +1105,7 @@ class Bvb_Grid_Data
     {
 
         $return = array();
-        $url = $this->getUrl(array('order', 'start', 'comm'));
+        $url = $this->getUrl(array('order', 'start', 'comm','noOrder'));
 
         $tcampos = count($this->_fields);
 
@@ -1128,11 +1128,13 @@ class Bvb_Grid_Data
 
         $links = $this->_fields;
 
+        if(!isset($this->ctrlParams['noOrder'.$this->_gridId]))
+        {
+            $selectOrder = $this->getSource()->getSelectOrder();
 
-        $selectOrder = $this->getSource()->getSelectOrder();
-
-        if (count($selectOrder) == 1) {
-            $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0] . '_' . strtoupper($selectOrder[1]);
+            if (count($selectOrder) == 1) {
+                $this->ctrlParams['order' . $this->_gridId] = $selectOrder[0] . '_' . strtoupper($selectOrder[1]);
+            }
         }
 
         for ($i = 0; $i < $tcampos; $i ++) {
@@ -1821,6 +1823,15 @@ class Bvb_Grid_Data
         }
 
 
+        if(count($this->getSource()->getSelectOrder())>0 && !isset($this->ctrlParams['order'.$this->_gridId]))
+        {
+            $norder = $this->getSource()->getSelectOrder();
+            $this->ctrlParams['order'.$this->_gridId] = $norder[0].'_'.strtoupper($norder[1]);
+        }
+
+
+
+
 
         $this->_buildDefaultFilters();
 
@@ -1837,6 +1848,9 @@ class Bvb_Grid_Data
             $this->_buildQueryOrderAndLimit();
         }
 
+        if (isset($this->ctrlParams['noOrder' . $this->_gridId]) && $this->ctrlParams['noOrder' . $this->_gridId] == 1) {
+            $this->getSource()->resetOrder();
+        }
 
         $result = $this->getSource()->execute();
 

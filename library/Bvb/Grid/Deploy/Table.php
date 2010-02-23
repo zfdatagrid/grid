@@ -607,19 +607,25 @@ Bvb_Grid_Deploy_Interface
         if (isset($this->ctrlParams['filters' . $this->_gridId]) || isset($this->ctrlParams['order' . $this->_gridId])) {
 
             $url = $this->getUrl('filters', 'nofilters');
-            $url2 = $this->getUrl('order');
-            $url3 = $this->getUrl(array('filters', 'order', 'nofilters'));
+            $url2 = $this->getUrl(array('order','noOrder'));
+            $url3 = $this->getUrl(array('filters', 'order', 'noFilters', 'noOrder'));
 
             if (is_array($this->_defaultFilters)) {
                 $url .= '/nofilters/1';
                 $url3 .= '/nofilters/1';
             }
 
+            if(is_array($this->getSource()->getSelectOrder()))
+            {
+
+                $url3 .= '/noOrder/1';
+                $url2 .= '/noOrder/1';
+            }
+
             $this->temp['table']->hasExtraRow = 1;
 
-
             //Filters and order
-            if (isset($this->ctrlParams['filters' . $this->_gridId]) and isset($this->ctrlParams['order' . $this->_gridId])) {
+            if (isset($this->ctrlParams['filters' . $this->_gridId]) and isset($this->ctrlParams['order' . $this->_gridId]) && !isset($this->ctrlParams['noOrder' . $this->_gridId])) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
                     $final1 = "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "')\">" . $this->__('Remove Filters') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url2 . "')\">" . $this->__('Remove Order') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters &amp; Order') . "</a>";
@@ -627,9 +633,10 @@ Bvb_Grid_Deploy_Interface
                 } else {
                     $final1 = "<a href=\"$url\">" . $this->__('Remove Filters') . "</a> | <a href=\"$url2\">" . $this->__('Remove Order') . "</a> | <a href=\"$url3\">" . $this->__('Remove Filters &amp; Order') . "</a>";
                 }
-
             //Only filters
-            } elseif (isset($this->ctrlParams['filters' . $this->_gridId]) && ! isset($this->ctrlParams['order' . $this->_gridId])) {
+            } elseif (isset($this->ctrlParams['filters' . $this->_gridId]) && (! isset($this->ctrlParams['order' . $this->_gridId]) || isset($this->ctrlParams['noOrder'.$this->_gridId]) ) ) {
+
+
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
                     $final1 = "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "') \">" . $this->__('Remove Filters') . "</a>";
@@ -639,7 +646,7 @@ Bvb_Grid_Deploy_Interface
                 }
 
             //Only order
-            } elseif (! isset($this->ctrlParams['filters' . $this->_gridId]) && isset($this->ctrlParams['order' . $this->_gridId])) {
+            } elseif (! isset($this->ctrlParams['filters' . $this->_gridId]) && (isset($this->ctrlParams['order' . $this->_gridId]) && !isset($this->ctrlParams['noOrder' . $this->_gridId]) )) {
 
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
@@ -650,10 +657,11 @@ Bvb_Grid_Deploy_Interface
                 }
             }
 
+
             //Replace values
-            if(count($this->_filtersValues)>0)
+            if(count($this->_filtersValues)>0 || (isset($this->ctrlParams['order'.$this->_gridId]) && !isset($this->ctrlParams['noOrder'.$this->_gridId]) ))
             {
-            $final .= str_replace("{{value}}", $final1, $this->temp['table']->extra());
+               $final .= str_replace("{{value}}", $final1, $this->temp['table']->extra());
             }
 
         //close cycle
@@ -745,7 +753,6 @@ Bvb_Grid_Deploy_Interface
         $grid = $this->temp['table']->titlesStart();
 
         if ($orderField === null) {
-
             //Lets get the default order using in the query (Zend_Db)
             $queryOrder = $this->getSource()->getSelectOrder();
 
@@ -753,6 +760,11 @@ Bvb_Grid_Deploy_Interface
                 $order = strtolower($queryOrder[1]) == 'asc' ? 'desc' : 'asc';
                 $orderField = $queryOrder[0];
             }
+        }
+
+        if(isset($this->ctrlParams['noOrder'.$this->_gridId]))
+        {
+            $orderField = null;
         }
 
         foreach ($titles as $title) {
@@ -1239,6 +1251,8 @@ Bvb_Grid_Deploy_Interface
         } else {
             $this->setTemplate($this->temp['table']->options['name'], 'table', $this->_templateParams);
         }
+
+
 
         // The extra fields, they are not part of database table.
         // Usefull for adding links (a least for me :D )
