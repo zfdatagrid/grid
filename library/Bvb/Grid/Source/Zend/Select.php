@@ -90,7 +90,14 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $final = $select->query(Zend_Db::FETCH_ASSOC);
 
-        return $final->fetchAll();
+        $return = $final->fetchAll();
+
+
+        if (count($return) == 0) {
+            return false;
+        }
+
+        return $return;
     }
 
 
@@ -504,7 +511,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 $this->_select->where($field . " < ?", $filter);
                 break;
             case 'IN':
-                $filter = explode(',',$filter);
+                $filter = explode(',', $filter);
                 $this->_select->where($field . " IN  (?)", $filter);
                 break;
             case 'range':
@@ -554,11 +561,12 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         foreach ($condition as $field => $value) {
             $where .= 'AND ' . $this->_getDb()->quoteIdentifier($field) . ' = ' . $this->_getDb()->quote($value) . ' ';
         }
-        return " ( ".substr($where, 3)." )";
+        return " ( " . substr($where, 3) . " )";
 
     }
 
-    function resetOrder()
+
+    function resetOrder ()
     {
         $this->_select->reset('order');
     }

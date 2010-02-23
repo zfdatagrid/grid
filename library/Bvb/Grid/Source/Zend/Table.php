@@ -245,7 +245,16 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     function getRecord ($table, array $condition)
     {
-        $final = $this->getModel()->fetchRow($condition);
+
+        $final = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+
+        if ($final === null) {
+            return false;
+        }
+
+        $result = $final->toArray();
+
+
         return $final->toArray();
     }
 

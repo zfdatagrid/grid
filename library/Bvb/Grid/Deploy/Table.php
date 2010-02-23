@@ -297,9 +297,8 @@ Bvb_Grid_Deploy_Interface
 
                 if ($mode == 'edit') {
 
-                    $r = $this->getSource()->getRecord($this->data['table'], $this->_getPkFromUrl());
-
-                    if (count($r) == 1) {
+                    $r = $this->getSource()->getRecord('Country', $this->_getPkFromUrl());
+                    if ($r === false) {
                         $this->_gridSession->message = $this->__('Record Not Found');
                         $this->_gridSession->_noForm = 1;
                         $this->_gridSession->correct = 1;
