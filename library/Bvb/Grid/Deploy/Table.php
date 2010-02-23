@@ -1755,30 +1755,9 @@ Bvb_Grid_Deploy_Interface
 
         }
 
-        switch ($tipo) {
-            case 'invalid':
-                break;
-            case 'enum':
-                $values = array();
-                $values[''] = '--' . $this->__('All') . '--';
-                $avalor = explode(",", substr($enum, 4));
-
-                foreach ($avalor as $value) {
-                    $value = substr($value, 1);
-                    $value = substr($value, 0, - 1);
-
-                    if (isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $value) {
-                        $selected = $value;
-                    }
-                    $values[$value] = $value;
-                }
-
-                $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
-
-                break;
-            default:
-                $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
-                break;
+        if($tipo!='invalid')
+        {
+            $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
         }
 
         return $valor;
