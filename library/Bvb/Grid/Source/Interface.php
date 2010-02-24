@@ -304,4 +304,9 @@ interface Bvb_Grid_Source_Interface
      */
     function resetOrder();
 
+    /**
+     * Cache handler.
+     */
+    function setCache($cache);
+
 }

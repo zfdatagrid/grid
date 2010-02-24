@@ -216,7 +216,7 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('Population',array('format'=>'currency'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+        $grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
 
         $this->view->pages = $grid->deploy();
 

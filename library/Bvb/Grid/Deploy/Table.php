@@ -252,7 +252,6 @@ Bvb_Grid_Deploy_Interface
     protected function _processForm ()
     {
 
-
         if (! $this->getSource()->hasCrud()) {
             return false;
         }
@@ -296,6 +295,11 @@ Bvb_Grid_Deploy_Interface
 
             if (! Zend_Controller_Front::getInstance()->getRequest()->isPost()) {
 
+                foreach (array_keys($this->_form->getElements()) as $element) {
+                    if (isset($this->_gridSession->errors[$element])) {
+                        $this->_form->getElement($element)->setErrors($this->_gridSession->errors[$element]);
+                    }
+                }
 
                 if ($mode == 'edit') {
 
@@ -334,8 +338,10 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
+
         //Check if the request method is POST
         if (Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit' . $this->_gridId) == 1) {
+
 
             if ($this->_form->isValid($_POST)) {
 
@@ -415,7 +421,6 @@ Bvb_Grid_Deploy_Interface
                         if (null !== $this->_callbackBeforeUpdate) {
                             call_user_func($this->_callbackBeforeUpdate, $sendCall);
                         }
-
 
                         $this->getSource()->update($this->_crudTable, $post, $queryUrl);
 
@@ -1237,10 +1242,7 @@ Bvb_Grid_Deploy_Interface
 
         $this->_view = $this->getView();
 
-        if ($this->getSource()->hasCrud()) {
-            //Process form, if necessary, before query
-            self::_processForm();
-        }
+        $this->_processForm();
 
         parent::deploy();
 
@@ -1809,7 +1811,7 @@ Bvb_Grid_Deploy_Interface
                 foreach ($this->_deployOptions['templateDir'] as $templates) {
                     $temp = $templates;
                     $temp = str_replace('_', '/', $temp);
-                    $this->addTemplateDir($temp, $templates,'table');
+                    $this->addTemplateDir($temp, $templates, 'table');
                 }
             }
 

@@ -375,6 +375,8 @@ class Bvb_Grid_Data
 
         $this->_source = $source;
 
+        $this->getSource()->setCache($this->cache);
+
         $tables = $this->getSource()->getMainTable();
 
         $this->data['table'] = $tables['table'];
@@ -1783,6 +1785,7 @@ class Bvb_Grid_Data
         // apply additional configuration
         $this->_runConfigCallbacks();
 
+
         if (isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns)) {
             $this->_isDetail = true;
         }
@@ -1829,9 +1832,6 @@ class Bvb_Grid_Data
             $norder = $this->getSource()->getSelectOrder();
             $this->ctrlParams['order'.$this->_gridId] = $norder[0].'_'.strtoupper($norder[1]);
         }
-
-
-
 
 
         $this->_buildDefaultFilters();
@@ -2586,5 +2586,6 @@ class Bvb_Grid_Data
         $param = substr($param, 4);
         return $returnArray;
     }
+
 
 }

@@ -28,6 +28,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     protected $_describeTables;
 
+    protected $_cache;
+
 
     function __construct (Zend_Db_Select $select)
     {
@@ -88,10 +90,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             $select->where($field . '=?', $value);
         }
 
-        $final = $select->query(Zend_Db::FETCH_ASSOC);
-
-        $return = $final->fetchAll();
-
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($select->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $final = $select->query(Zend_Db::FETCH_ASSOC);
+                $return = $final->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $final = $select->query(Zend_Db::FETCH_ASSOC);
+            $return = $final->fetchAll();
+        }
 
         if (count($return) == 0) {
             return false;
@@ -175,8 +184,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     {
         if (! isset($this->_describeTables[$table]) || ! is_array($this->_describeTables[$table])) {
 
-            $describe = $this->_getDb()->describeTable($table);
-            $this->_describeTables[$table] = $describe;
+            if ($this->_cache['use'] == 1) {
+                $hash = 'Bvb_Grid' . md5($table);
+                if (! $result = $this->_cache['instance']->load($hash)) {
+                    $result = $this->_getDb()->describeTable($table);
+                    $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+                }
+
+            } else {
+                $result = $this->_getDb()->describeTable($table);
+            }
+            $this->_describeTables[$table] = $result;
         }
 
         return $this->_describeTables[$table];
@@ -192,7 +210,18 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     function execute ()
     {
         $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
-        return $final->fetchAll();
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($this->_select->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $result = $final->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $result = $final->fetchAll();
+        }
+
+        return $result;
     }
 
 
@@ -204,9 +233,21 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
         $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
-        $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
 
-        return $final->fetchAll();
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($this->_select->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
+                $result = $final->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
+            $result = $final->fetchAll();
+        }
+
+        return $result;
     }
 
 
@@ -225,9 +266,20 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL '));
 
-        $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
 
-        return $final->fetchColumn();
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($selectCount->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
+                $result = $final->fetchColumn();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
+            $result = $final->fetchColumn();
+        }
+
+        return $result;
 
     }
 
@@ -370,9 +422,19 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $distinct->columns(array('value' => $value));
         $distinct->order(' value ASC');
 
-        $result = $distinct->query(Zend_Db::FETCH_ASSOC);
 
-        $result = $result->fetchAll();
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($distinct->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $result = $distinct->query(Zend_Db::FETCH_ASSOC);
+                $result = $result->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $result = $distinct->query(Zend_Db::FETCH_ASSOC);
+            $result = $result->fetchAll();
+        }
+
 
         $final = array();
 
@@ -405,8 +467,21 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $select->reset(Zend_Db_Select::GROUP);
         $select->columns(new Zend_Db_Expr($valor . ' AS TOTAL'));
 
-        $final = $select->query(Zend_Db::FETCH_ASSOC);
-        return $final->fetchColumn();
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($select->__toString());
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $final = $select->query(Zend_Db::FETCH_ASSOC);
+                $result = $final->fetchColumn();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+
+            $final = $select->query(Zend_Db::FETCH_ASSOC);
+            $result = $final->fetchColumn();
+        }
+
+        return $result;
     }
 
 
@@ -539,18 +614,27 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function insert ($table, array $post)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->_getDb()->insert($table, $post);
     }
 
 
     function update ($table, array $post, array $condition)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
     }
 
 
     function delete ($table, array $condition)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->_getDb()->delete($table, $this->buildWhereCondition($condition));
     }
 
@@ -570,4 +654,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     {
         $this->_select->reset('order');
     }
+
+
+    function setCache ($cache)
+    {
+        if(!is_array($cache))
+        {
+            $cache = array('use'=>0);
+        }
+
+        $this->_cache = $cache;
+    }
+
+
 }

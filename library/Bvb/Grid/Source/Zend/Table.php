@@ -246,33 +246,47 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     function getRecord ($table, array $condition)
     {
 
-        $final = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+         if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($condition));
+            if (! $result = $this->_cache['instance']->load($hash)) {
+                $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+           $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+        }
 
-        if ($final === null) {
+        if ($result === null) {
             return false;
         }
 
-        $result = $final->toArray();
-
-
-        return $final->toArray();
+        return $result->toArray();
     }
 
 
     function delete ($table, array $condition)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->getModel()->delete($this->buildWhereCondition($condition));
     }
 
 
     function update ($table, array $post, array $condition)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->getModel()->update($post, $this->buildWhereCondition($condition));
     }
 
 
     function insert ($table, array $post)
     {
+        if ($this->_cache['use'] == 1) {
+            $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
+        }
         return $this->getModel()->insert($post);
     }
 

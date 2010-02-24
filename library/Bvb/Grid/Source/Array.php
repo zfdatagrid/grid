@@ -34,6 +34,8 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
 
     protected $_sourceName;
 
+    protected $_cache;
+
 
     function __construct (array $array)
     {
@@ -335,7 +337,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     }
 
 
-    function addFullTextSearch ($filter, $key, $field)
+    function addFullTextSearch ($filter, $field)
     {
 
     }
@@ -363,5 +365,18 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     {
 
     }
+
+
+
+    function setCache ($cache)
+    {
+        if(!is_array($cache))
+        {
+            $cache = array('use'=>0);
+        }
+
+        $this->_cache = $cache;
+    }
+
 
 }
