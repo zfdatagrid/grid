@@ -43,6 +43,11 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     }
 
 
+    function resetOrder()
+    {
+        return true;
+    }
+
     function getSourceName ()
     {
         return $this->_sourceName;
