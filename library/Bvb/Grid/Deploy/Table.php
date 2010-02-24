@@ -30,6 +30,8 @@ Bvb_Grid_Deploy_Interface
      */
     public $deploy = array();
 
+    protected $_deployOptions = null;
+
     /**
      * Information about the template
      *
@@ -224,7 +226,7 @@ Bvb_Grid_Deploy_Interface
 
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
 
-        $this->_gridSession = new Zend_Session_Namespace('grid');
+        $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid');
     }
 
 
@@ -606,7 +608,7 @@ Bvb_Grid_Deploy_Interface
         if (isset($this->ctrlParams['filters' . $this->_gridId]) || isset($this->ctrlParams['order' . $this->_gridId])) {
 
             $url = $this->getUrl('filters', 'nofilters');
-            $url2 = $this->getUrl(array('order','noOrder'));
+            $url2 = $this->getUrl(array('order', 'noOrder'));
             $url3 = $this->getUrl(array('filters', 'order', 'noFilters', 'noOrder'));
 
             if (is_array($this->_defaultFilters)) {
@@ -614,8 +616,7 @@ Bvb_Grid_Deploy_Interface
                 $url3 .= '/nofilters/1';
             }
 
-            if(is_array($this->getSource()->getSelectOrder()))
-            {
+            if (is_array($this->getSource()->getSelectOrder())) {
 
                 $url3 .= '/noOrder/1';
                 $url2 .= '/noOrder/1';
@@ -624,7 +625,7 @@ Bvb_Grid_Deploy_Interface
             $this->temp['table']->hasExtraRow = 1;
 
             //Filters and order
-            if (isset($this->ctrlParams['filters' . $this->_gridId]) and isset($this->ctrlParams['order' . $this->_gridId]) && !isset($this->ctrlParams['noOrder' . $this->_gridId])) {
+            if (isset($this->ctrlParams['filters' . $this->_gridId]) and isset($this->ctrlParams['order' . $this->_gridId]) && ! isset($this->ctrlParams['noOrder' . $this->_gridId])) {
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
                     $final1 = "<a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url . "')\">" . $this->__('Remove Filters') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url2 . "')\">" . $this->__('Remove Order') . "</a> | <a href=\"javascript:gridAjax('{$this->info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters &amp; Order') . "</a>";
@@ -632,8 +633,8 @@ Bvb_Grid_Deploy_Interface
                 } else {
                     $final1 = "<a href=\"$url\">" . $this->__('Remove Filters') . "</a> | <a href=\"$url2\">" . $this->__('Remove Order') . "</a> | <a href=\"$url3\">" . $this->__('Remove Filters &amp; Order') . "</a>";
                 }
-            //Only filters
-            } elseif (isset($this->ctrlParams['filters' . $this->_gridId]) && (! isset($this->ctrlParams['order' . $this->_gridId]) || isset($this->ctrlParams['noOrder'.$this->_gridId]) ) ) {
+                //Only filters
+            } elseif (isset($this->ctrlParams['filters' . $this->_gridId]) && (! isset($this->ctrlParams['order' . $this->_gridId]) || isset($this->ctrlParams['noOrder' . $this->_gridId]))) {
 
 
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
@@ -645,7 +646,7 @@ Bvb_Grid_Deploy_Interface
                 }
 
             //Only order
-            } elseif (! isset($this->ctrlParams['filters' . $this->_gridId]) && (isset($this->ctrlParams['order' . $this->_gridId]) && !isset($this->ctrlParams['noOrder' . $this->_gridId]) )) {
+            } elseif (! isset($this->ctrlParams['filters' . $this->_gridId]) && (isset($this->ctrlParams['order' . $this->_gridId]) && ! isset($this->ctrlParams['noOrder' . $this->_gridId]))) {
 
                 if (isset($this->info['ajax']) && $this->info['ajax'] !== false) {
 
@@ -658,9 +659,8 @@ Bvb_Grid_Deploy_Interface
 
 
             //Replace values
-            if(count($this->_filtersValues)>0 || (isset($this->ctrlParams['order'.$this->_gridId]) && !isset($this->ctrlParams['noOrder'.$this->_gridId]) ))
-            {
-               $final .= str_replace("{{value}}", $final1, $this->temp['table']->extra());
+            if (count($this->_filtersValues) > 0 || (isset($this->ctrlParams['order' . $this->_gridId]) && ! isset($this->ctrlParams['noOrder' . $this->_gridId]))) {
+                $final .= str_replace("{{value}}", $final1, $this->temp['table']->extra());
             }
 
         //close cycle
@@ -761,8 +761,7 @@ Bvb_Grid_Deploy_Interface
             }
         }
 
-        if(isset($this->ctrlParams['noOrder'.$this->_gridId]))
-        {
+        if (isset($this->ctrlParams['noOrder' . $this->_gridId])) {
             $orderField = null;
         }
 
@@ -1245,12 +1244,14 @@ Bvb_Grid_Deploy_Interface
 
         parent::deploy();
 
+        $this->_applyConfigOptions(array(), true);
+
+
         if (! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table) {
             $this->setTemplate('table', 'table', $this->_templateParams);
         } else {
             $this->setTemplate($this->temp['table']->options['name'], 'table', $this->_templateParams);
         }
-
 
 
         // The extra fields, they are not part of database table.
@@ -1754,8 +1755,7 @@ Bvb_Grid_Deploy_Interface
 
         }
 
-        if($tipo!='invalid')
-        {
+        if ($tipo != 'invalid') {
             $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
         }
 
@@ -1796,11 +1796,36 @@ Bvb_Grid_Deploy_Interface
      * Apply config options
      * @param $options
      */
-    function _applyConfigOptions ($options)
+    protected function _applyConfigOptions ($options, $final = false)
     {
-        if (isset($options['imagesUrl'])) {
-            $this->imagesUrl = $options['imagesUrl'];
+
+        if ($final == false) {
+            $this->_deployOptions = $options;
+
+            if (isset($this->_deployOptions['templateDir'])) {
+
+                $this->_deployOptions['templateDir'] = (array) $this->_deployOptions['templateDir'];
+
+                foreach ($this->_deployOptions['templateDir'] as $templates) {
+                    $temp = $templates;
+                    $temp = str_replace('_', '/', $temp);
+                    $this->addTemplateDir($temp, $templates,'table');
+                }
+            }
+
+        } else {
+
+            if (isset($this->_deployOptions['imagesUrl'])) {
+                $this->imagesUrl = $this->_deployOptions['imagesUrl'];
+            }
+
+            if (isset($this->_deployOptions['template'])) {
+                $this->setTemplate($this->_deployOptions['template'], 'table');
+            }
+
+
         }
+
         return true;
     }
 

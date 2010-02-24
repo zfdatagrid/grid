@@ -2411,6 +2411,18 @@ class Bvb_Grid_Data
             $this->setTemplateParams($this->_options['template'][$name]);
         }
 
+        if(isset($this->_options['grid']['formatter']))
+        {
+            $this->_options['grid']['formatter'] = (array)$this->_options['grid']['formatter'];
+
+            foreach ($this->_options['grid']['formatter'] as $formatter) {
+                $temp = $formatter;
+                $temp = str_replace('_', '/', $temp);
+                $this->addFormatterDir($temp, $formatter);
+            }
+
+        }
+
     }
 
 

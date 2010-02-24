@@ -62,16 +62,10 @@ class SiteController extends Zend_Controller_Action
      */
     function grid ($id = '')
     {
-
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
-
         $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config, $id);
-
         $grid->setEscapeOutput(false);
-        $grid->addTemplateDir('My/Template/Table', 'My_Template_Table', 'table');
-        $grid->addFormatterDir('My/Formatter', 'My_Formatter');
         $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
-
         return $grid;
     }
 
@@ -92,13 +86,16 @@ class SiteController extends Zend_Controller_Action
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')))->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')))->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')))->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')))->addFilter('HeadOfState')->addFilter('Population');
+        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')));
+        $filters->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')));
+        $filters->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
+        $filters->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')));
+        $filters->addFilter('HeadOfState');
+        $filters->addFilter('Population');
 
         $grid->addFilters($filters);
 
         $this->view->pages = $grid->deploy();
-
-
         $this->render('index');
     }
 
@@ -215,6 +212,8 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setDetailColumns();
         $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+
+        $grid->updateColumn('Population',array('format'=>'currency'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );

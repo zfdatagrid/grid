@@ -14,18 +14,23 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.1   
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    0.1
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
-class My_Formatter_Currency 
+class My_Formatter_Currency
 {
-    
+
     function format($value)
     {
-        $currency = new Zend_Currency(Zend_Registry::get('locale'));
+        if(!Zend_Registry::isRegistered('Zend_Locale'))
+        {
+            return $value;
+        }
+
+        $currency = new Zend_Currency(Zend_Registry::get('Zend_Locale'));
         return $currency->toCurrency($value);
     }
-    
+
 }
