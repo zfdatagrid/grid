@@ -211,7 +211,7 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
         $grid->setDetailColumns();
-        $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->setTableGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         $grid->updateColumn('Population',array('format'=>'currency'));
 
@@ -227,7 +227,7 @@ class SiteController extends Zend_Controller_Action
     /**
      * Using a model
      */
-    function modelAction ()
+    function crudAction ()
     {
         $grid = $this->grid();
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
@@ -326,27 +326,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-
-    function crudAction ()
-    {
-        $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
-
-        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'bug_status', 'date'));
-
-        $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
-        $form->addElement('text','next',array('label'=>'Sim ou sopas'));
-        $form->addElement('text','bug_description',array('label'=>'Sim ou sopas'));
-        $form->setTable('crud');
-        $grid->addForm($form);
-
-
-        $grid->export = array();
-        $grid->setDetailColumns();
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
 
     function doubleAction()
     {
