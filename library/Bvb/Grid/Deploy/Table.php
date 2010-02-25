@@ -1724,10 +1724,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $selected = null;
 
-        if ( ! isset($this->filters[$valor]['distinct']) ) {
-            $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->data['fields'][$campo]['field']);
-        } else {
+        if ( isset($this->filters[$valor]['values']) && is_array($this->filters[$valor]['values']) ) {
             $hasValues = false;
+        } else {
+            $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->data['fields'][$campo]['field']);
         }
 
         if ( is_array($hasValues) ) {
