@@ -24,9 +24,6 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
 
     function __construct ($dataSource, $field = null, $separator = ',')
     {
-        if (! Zend_Loader::isReadable($dataSource)) {
-            throw new Bvb_Grid_Exception("$dataSource is not readable");
-        }
 
         $final = array();
 

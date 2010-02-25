@@ -28,21 +28,12 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
         $array = trim($array);
 
         if ($array[0] != '{') {
-
-
-            if (! Zend_Loader::isReadable($array)) {
-                throw new Bvb_Grid_Exception("$array is not readable");
-            }
-
             $result = file_get_contents($array);
-
-
         } else {
             $result = $array;
         }
 
         $xml = Zend_Json::decode($result, true);
-
 
         $cols = explode(',', $loop);
         if (is_array($cols)) {

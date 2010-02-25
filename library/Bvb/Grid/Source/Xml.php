@@ -28,9 +28,6 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
         if (strstr($url, '<?xml')) {
             $xml = simplexml_load_string($url);
         } else {
-            if (! Zend_Loader::isReadable($url)) {
-                throw new Bvb_Grid_Exception("$url is not readable");
-            }
             $xml = simplexml_load_file($url);
         }
 
