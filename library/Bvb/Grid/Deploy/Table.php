@@ -1755,7 +1755,7 @@ Bvb_Grid_Deploy_Interface
                     $selected = $key;
                 }
 
-                $values[$key] = $value;
+                $values[$key] = $this->__($value);
             }
 
             $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
@@ -1836,5 +1836,12 @@ Bvb_Grid_Deploy_Interface
         return true;
     }
 
+    /**
+     * Returns form instance
+     */
+    function getForm()
+    {
+        return $this->_form;
+    }
 }
 
