@@ -1676,6 +1676,11 @@ Bvb_Grid_Deploy_Interface
             $distinctField = $this->filters[$valor]['distinct']['field'];
             $distinctValue = $this->filters[$valor]['distinct']['name'];
 
+            if(isset($this->data['fields'][$distinctField]['field']))
+            {
+                $distinctField = $this->data['fields'][$distinctField]['field'];
+            }
+
             $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue);
 
             $this->filters[$valor]['values'] = $final;
