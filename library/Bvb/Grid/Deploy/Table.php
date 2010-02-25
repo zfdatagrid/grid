@@ -185,12 +185,6 @@ Bvb_Grid_Deploy_Interface
 
 
     /**
-     * If the form is based on a model or set by the user
-     * @var bool
-     */
-    protected $_formHasModel = false;
-
-    /**
      * To let the user know if a form will be displayed or not
      * @var bool
      */
@@ -202,6 +196,10 @@ Bvb_Grid_Deploy_Interface
      * @var unknown_type
      */
     protected $_showsGrid = false;
+
+
+
+    protected $_willShow = array();
 
 
     /**
@@ -303,7 +301,7 @@ Bvb_Grid_Deploy_Interface
 
                 if ($mode == 'edit') {
 
-                    $r = $this->getSource()->getRecord('Country', $this->_getPkFromUrl());
+                    $r = $this->getSource()->getRecord($this->_crudTable, $this->_getPkFromUrl());
                     if ($r === false) {
                         $this->_gridSession->message = $this->__('Record Not Found');
                         $this->_gridSession->_noForm = 1;
