@@ -1089,14 +1089,11 @@ class Bvb_Grid_Data
 
             if ( $this->_displayField($nf) ) {
 
-                if ( ! isset($this->data['fields'][$nf]['tooltipFilter']) ) {
-                    $this->data['fields'][$nf]['tooltipFilter'] = '';
-                }
 
                 if ( @array_key_exists($data[$i], $this->filters) && $this->data['fields'][$nf]['search'] != false ) {
-                    $return[] = array('type' => 'field', 'tooltip' => $this->data['fields'][$nf]['tooltipFilter'], 'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field',  'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
-                    $return[] = array('type' => 'field', 'tooltip' => $this->data['fields'][$nf]['tooltipFilter'], 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
                 }
             }
         }
@@ -1208,14 +1205,10 @@ class Bvb_Grid_Data
 
                 $noOrder = isset($this->info['noOrder']) ? $this->info['noOrder'] : '';
 
-                if ( ! isset($this->data['fields'][$titles[$i]]['tooltipTitle']) ) {
-                    $this->data['fields'][$titles[$i]]['tooltipTitle'] = '';
-                }
-
                 if ( $noOrder == 1 ) {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field',  'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'tooltip' => $this->__($this->data['fields'][$titles[$i]]['tooltipTitle']), 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->__($this->_titles[$links[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->__($this->_titles[$links[$i]]));
                 }
             }
         }
