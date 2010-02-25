@@ -410,7 +410,6 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function getDistinctValuesForFilters ($field, $value)
     {
-
         $distinct = clone $this->_select;
 
         $distinct->reset(Zend_Db_Select::COLUMNS);

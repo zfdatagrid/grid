@@ -348,7 +348,18 @@ class Bvb_Grid_Data
     protected $_crudTable;
 
 
+    /**
+     * Last name from deploy class (table|pdf|csv|etc...)
+     * @var unknown_type
+     */
     private $_deployName = null;
+
+
+    /**
+     * What is beeing done with this request
+     * @var unknown_type
+     */
+    protected $_willShow = array();
 
 
     /**
@@ -1828,7 +1839,7 @@ class Bvb_Grid_Data
         $this->_runConfigCallbacks();
 
         if ( isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->_deployName=='table' && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns) ) {
-            $this->_isDetail = true;
+           $this->_isDetail = true;
         }
 
         if ( $this->_isDetail === true && is_array($this->_detailColumns) ) {
@@ -2604,5 +2615,16 @@ class Bvb_Grid_Data
         return $returnArray;
     }
 
+
+    /**
+     * Let the user know waht will be displayed.
+     * @param $option (grid|form)
+     * @return array|bool
+     */
+    public function willShow ()
+    {
+        return $this->_willShow;
+
+    }
 
 }
