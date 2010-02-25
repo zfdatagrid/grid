@@ -280,7 +280,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     }
                 }
 
-                if ( isset($this->ctrlParams['add'.$this->_gridId]) && $this->ctrlParams['add'.$this->_gridId]==1 ) {
+                if ( isset($this->ctrlParams['add' . $this->_gridId]) && $this->ctrlParams['add' . $this->_gridId] == 1 ) {
                     $this->_willShow['form'] = true;
                     $this->_willShow['formAdd'] = true;
                 }
@@ -1724,7 +1724,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $selected = null;
 
-        $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->data['fields'][$campo]['field']);
+        if ( ! isset($this->filters[$valor]['distinct']) ) {
+            $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->data['fields'][$campo]['field']);
+        } else {
+            $hasValues = false;
+        }
 
         if ( is_array($hasValues) ) {
             $opcoes = array();
