@@ -727,16 +727,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     protected function _buildTitlesTable ($titles)
     {
+        $orderField = null;
 
-        //We must now the field that is being ordered. So we can grab the image
-        $order = @array_keys($this->order);
-        $order2 = @array_keys(array_flip($this->order));
+        if ( is_array($this->order) ) {
+            //We must now the field that is being ordered. So we can grab the image
+            $order = array_keys($this->order);
+            $order2 = array_keys(array_flip($this->order));
 
-        //The field that is being ordered
-        $orderField = $order[0];
+            //The field that is being ordered
+            $orderField = $order[0];
 
-        //The oposite order
-        $order = strtolower($order2[0]);
+            //The oposite order
+            $order = strtolower($order2[0]);
+        }
 
         //Lets get the images for defining the order
         $images = $this->temp['table']->images($this->imagesUrl);
@@ -1002,7 +1005,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $grid .= $this->temp['table']->sqlExpStart();
 
             foreach ( $sql as $exp ) {
-                if ( $exp['field'] != @$this->info['hRow']['field'] ) {
+                if (!isset($this->info['hRow']['field']) || $exp['field'] != @$this->info['hRow']['field'] ) {
                     $grid .= str_replace(array("{{value}}", '{{class}}'), array($exp['value'], $exp['class']), $this->temp['table']->sqlExpLoop());
                 }
             }
@@ -1758,6 +1761,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         if ( $tipo != 'invalid' ) {
+            $this->_filtersValues[$campo] = isset($this->_filtersValues[$campo])?$this->_filtersValues[$campo]:'';
             $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
         }
 

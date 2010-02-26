@@ -446,6 +446,7 @@ class Bvb_Grid_Data
         $this->ctrlParams = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
 
+
         /**
          * plugins loaders
          */
@@ -464,8 +465,8 @@ class Bvb_Grid_Data
         //Apply options to the fields
         $this->_applyOptionsToFields();
 
-        $deploy = explode('_',get_class($this));
-        $this->_deployName = strtolower( end($deploy));
+        $deploy = explode('_', get_class($this));
+        $this->_deployName = strtolower(end($deploy));
 
     }
 
@@ -589,14 +590,12 @@ class Bvb_Grid_Data
         $class = $this->_deployName;
 
 
-        if($name == 'set'.ucfirst($class).'GridColumns')
-        {
+        if ( $name == 'set' . ucfirst($class) . 'GridColumns' ) {
             $this->setGridColumns($value[0]);
             return $this;
         }
 
-        if($name == 'set'.ucfirst($class).'DetailColumns')
-        {
+        if ( $name == 'set' . ucfirst($class) . 'DetailColumns' ) {
             $this->setDetailColumns($value[0]);
             return $this;
         }
@@ -1091,7 +1090,7 @@ class Bvb_Grid_Data
 
 
                 if ( @array_key_exists($data[$i], $this->filters) && $this->data['fields'][$nf]['search'] != false ) {
-                    $return[] = array('type' => 'field',  'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
                     $return[] = array('type' => 'field', 'class' => $this->template['classes']['filter'], 'field' => $data[$i]);
                 }
@@ -1199,6 +1198,7 @@ class Bvb_Grid_Data
                 $orderFinal = $titles[$i];
             }
 
+
             $order = $orderFinal == @key($this->order) ? $this->order[$orderFinal] : 'ASC';
 
             if ( $this->_displayField($titles[$i]) ) {
@@ -1206,7 +1206,7 @@ class Bvb_Grid_Data
                 $noOrder = isset($this->info['noOrder']) ? $this->info['noOrder'] : '';
 
                 if ( $noOrder == 1 ) {
-                    $return[$titles[$i]] = array('type' => 'field',  'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
                 } else {
                     $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order$this->_gridId/{$orderFinal}_$order", 'value' => $this->__($this->_titles[$links[$i]]));
                 }
@@ -1223,24 +1223,6 @@ class Bvb_Grid_Data
 
 
         return $return;
-    }
-
-
-    /**
-     * Similar to fetchPairs
-     *
-     * @param array $array
-     * @return array
-     */
-    protected function _convertResultSetToArrayKeys ($array)
-    {
-
-        $final = array();
-        foreach ( $array as $value ) {
-            $final[$value['field']] = $value['value'];
-        }
-        return $final;
-
     }
 
 
@@ -1333,11 +1315,9 @@ class Bvb_Grid_Data
      */
     protected function _applyFieldEscape ($value)
     {
-
         if ( $this->_escapeFunction === false ) {
             return $value;
         }
-
 
         if ( ! is_callable($this->_escapeFunction) ) {
             throw new Bvb_Grid_Exception($this->_escapeFunction . ' not callable');
@@ -1831,8 +1811,8 @@ class Bvb_Grid_Data
         // apply additional configuration
         $this->_runConfigCallbacks();
 
-        if ( isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->_deployName=='table' && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns) ) {
-           $this->_isDetail = true;
+        if ( isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->_deployName == 'table' && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns) ) {
+            $this->_isDetail = true;
         }
 
         if ( $this->_isDetail === true && is_array($this->_detailColumns) ) {
@@ -1932,7 +1912,6 @@ class Bvb_Grid_Data
         return isset($this->data['fields'][$column]) ? $this->data['fields'][$column] : null;
 
     }
-
 
 
     /**
