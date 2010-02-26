@@ -1,4 +1,5 @@
 <?php
+
 error_reporting(-1);
 ini_set('display_errors',1);
 ini_set('max_execution_time',0);
@@ -36,7 +37,6 @@ $frontendOptions = array('lifetime' => 7200,'automatic_serialization' => true);
 $backendOptions = array('cache_dir' => './data/cache/');
 $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
 Zend_Registry::set('cache',$cache);
-
 
 //Locale
 $locale = new Zend_Locale ( 'en_US' );

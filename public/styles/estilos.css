@@ -4,17 +4,17 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
-.buttons{
-	text-align:center;
-	background-color:#DEDEDE;
+.buttons {
+	text-align: center;
+	background-color: #DEDEDE;
 }
 
-input[type='checkbox'] ,input[type='radio'] {
+input[type='checkbox'],input[type='radio'] {
 	width: 14px !important;
 	height: 14px !important;
-	border:0px;
-	padding:0px;
-	margin:2px;
+	border: 0px;
+	padding: 0px;
+	margin: 2px;
 }
 
 td div input[type='text'] {
@@ -34,13 +34,13 @@ td div input[type='text'] {
 	color: #333;
 }
 
-
 .addRecord {
 	padding: 2px;
 	margin: 4px;
 	display: block;
 	width: 120px;
-	text-align: center; border : 1px solid #333;
+	text-align: center;
+	border: 1px solid #333;
 	background-color: #DEDEDE;
 	border: 1px solid #333;
 }
@@ -57,7 +57,7 @@ td input:focus,td textarea:focus {
 
 table.borders {
 	border: 2px solid #FFa500;
-	border-collapse:collapse;
+	border-collapse: collapse;
 }
 
 body {
@@ -100,7 +100,7 @@ div .element label {
 div .element {
 	font-style: italic;
 	margin-right: 10px;
-	width:650px;
+	width: 650px;
 }
 
 td.esquerda {
@@ -112,15 +112,17 @@ td.esquerda {
 	color: #FF0000;
 }
 
-.errors{
-	padding-left:15;margin:0;margin-top:5px;
+.errors {
+	padding-left: 15;
+	margin: 0;
+	margin-top: 5px;
 }
+
 .formLabel {
 	text-align: right;
 	display: block;
 	margin-right: 10px;
 }
-
 
 .hbar {
 	text-align: center;
@@ -277,7 +279,7 @@ th a {
 	color: #FFF;
 }
 
-th, .elementLabel {
+th,.elementLabel {
 	font: 11px Verdana, Arial, Helvetica, sans-serif;
 	color: #FFFFFF;
 	border-right: 1px solid #ffa500;
@@ -375,8 +377,16 @@ th a {
 	width: 200px;
 }
 
-.detailLeft{
-	width:150px;
-	font-weight:bold;
-	background-color:#DDD;
+.detailLeft {
+	width: 150px;
+	font-weight: bold;
+	background-color: #DDD;
+}
+
+.red {
+	background-color: red !important;
+}
+
+.green {
+	background-color: green !important;
 }

@@ -135,7 +135,7 @@ class SiteController extends Zend_Controller_Action
 
     function arrayAction()
     {
-        $array = array(array('nome','idade','sexo'),array('nome','idade','sexo'),array('nome','idade','sexo'),array('nome','idade','sexo'));
+        $array = array(array('Marcel','12','M'),array('Katty','34','F'),array('Richard','87','M'),array('Dany','33','F'));
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Array($array,array('nome','idade','sexo')));
@@ -213,7 +213,8 @@ class SiteController extends Zend_Controller_Action
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
-        $grid->updateColumn('Population',array('format'=>'currency'));
+        #$grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red");
+        #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
@@ -221,6 +222,19 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
+    }
+
+    /**
+     * The 'most' basic example.
+     */
+    function excelAction ()
+    {
+        $grid = $this->grid();
+
+        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd().'/1.xlsx','sheet1'));
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+
     }
 
 
@@ -240,6 +254,7 @@ class SiteController extends Zend_Controller_Action
         $grid->addForm($form);
 
         $this->view->pages = $grid->deploy();
+
         $this->render('index');
     }
 

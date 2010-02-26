@@ -22,8 +22,7 @@
 class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
 {
 
-
-    function __construct ($file, $sheet = '')
+    function __construct ($file, $sheet = '', $titles=null)
     {
         if ( ! $file instanceof PHPExcel_Reader_Excel2007 ) {
             $objReader = new PHPExcel_Reader_Excel2007();
@@ -31,23 +30,28 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
             $objPHPExcel = $objReader->load($file);
 
 
-            $result = $objPHPExcel->getSheetByName('Sheet1')->toArray();
+            $result = $objPHPExcel->getSheetByName($sheet)->toArray();
         } else {
             $result = $file->toArray();
         }
 
         $empty = array();
-        foreach ( reset($result) as $key => $hasContent ) {
-            if ( $hasContent == '' ) {
+        foreach(reset($result) as $key=>$hasContent)
+        {
+            if($hasContent=='')
+            {
                 $empty[$key] = $key;
             }
 
         }
 
-        foreach ( $result as $c => $hasContent ) {
+        foreach($result as $c=>$hasContent)
+        {
 
-            foreach ( $hasContent as $key => $cell ) {
-                if ( array_key_exists($key, $empty) ) {
+            foreach($hasContent as $key=>$cell)
+            {
+                if(array_key_exists($key,$empty))
+                {
                     unset($hasContent[$key]);
                 }
             }
@@ -56,22 +60,34 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
 
         }
 
-        foreach ( $result as $key => $value ) {
+        foreach($result as $key=>$value)
+        {
             $r = 0;
 
-            foreach ( $value as $c => $cell ) {
-                if ( $cell == '' ) {
-                    $r ++;
+            foreach($value as $c=>$cell)
+            {
+                 if($cell=='')
+                {
+                    $r++;
                 }
             }
 
 
-            if ( $r == count($value) ) {
+            if($r == count($value))
+            {
                 unset($result[$key]);
             }
 
         }
 
+         if ( $titles === null || count($titles) != count(reset($result)) ) {
+                $this->_fields = array_keys(reset($result));
+            } else {
+                $this->_fields = $titles;
+                foreach ( $result as $key => $value ) {
+                    $result[$key] = array_combine($titles, $value);
+                }
+            }
 
         $this->_fields = array_keys(reset($result));
         $this->_rawResult = $result;

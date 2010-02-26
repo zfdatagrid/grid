@@ -100,13 +100,17 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopStart ($values)
+    function loopStart ($class)
     {
         $this->i ++;
-
         $this->insideLoop = 1;
 
-        return "<tr>";
+        if(strlen($class)>0)
+        {
+            $class = " class='$class' ";
+        }
+
+        return "<tr $class>";
     }
 
 

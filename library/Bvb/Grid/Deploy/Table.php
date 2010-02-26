@@ -900,6 +900,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         $aa = 0;
+        $class = 0;
         $fi = array();
         foreach ( $grids as $value ) {
 
@@ -959,7 +960,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $i ++;
 
             //loop tr
-            $grid .= $this->temp['table']->loopStart($finalFields);
+            $grid .= $this->temp['table']->loopStart(isset($this->_classRowConditionResult[$class])?$this->_classRowConditionResult[$class]:'');
 
             $set = 0;
             foreach ( $value as $final ) {
@@ -980,6 +981,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $grid .= $this->temp['table']->loopEnd($finalFields);
 
             @$aa ++;
+            $class++;
         }
 
         if ( $this->_totalRecords == 0 ) {
