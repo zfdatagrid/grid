@@ -14,7 +14,7 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id: Csv.php 685 2010-02-25 20:20:43Z pao.fresco $
+ * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
@@ -29,12 +29,51 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
             $objReader = new PHPExcel_Reader_Excel2007();
             $objReader->setReadDataOnly(true);
             $objPHPExcel = $objReader->load($file);
-            $result = $objPHPExcel->getSheetByName($sheet)->toArray();
+
+
+            $result = $objPHPExcel->getSheetByName('Sheet1')->toArray();
         } else {
             $result = $file->toArray();
         }
 
-        $this->_fields = array_keys($result[0]);
+        $empty = array();
+        foreach ( reset($result) as $key => $hasContent ) {
+            if ( $hasContent == '' ) {
+                $empty[$key] = $key;
+            }
+
+        }
+
+        foreach ( $result as $c => $hasContent ) {
+
+            foreach ( $hasContent as $key => $cell ) {
+                if ( array_key_exists($key, $empty) ) {
+                    unset($hasContent[$key]);
+                }
+            }
+
+            $result[$c] = $hasContent;
+
+        }
+
+        foreach ( $result as $key => $value ) {
+            $r = 0;
+
+            foreach ( $value as $c => $cell ) {
+                if ( $cell == '' ) {
+                    $r ++;
+                }
+            }
+
+
+            if ( $r == count($value) ) {
+                unset($result[$key]);
+            }
+
+        }
+
+
+        $this->_fields = array_keys(reset($result));
         $this->_rawResult = $result;
         $this->_sourceName = 'excel';
     }
