@@ -37,18 +37,28 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     protected $_cache;
 
 
-    function __construct (array $array)
+    function __construct (array $array, $titles = null)
     {
-        $this->_fields = array_keys($array[0]);
+        if ( $titles === null || count($titles) != count($array[0]) ) {
+            $this->_fields = array_keys($array[0]);
+        } else {
+            $this->_fields = $titles;
+            foreach ( $array as $key => $value ) {
+                $array[$key] = array_combine($titles, $value);
+            }
+        }
+
+
         $this->_rawResult = $array;
         $this->_sourceName = 'array';
     }
 
 
-    function resetOrder()
+    function resetOrder ()
     {
         return true;
     }
+
 
     function getSourceName ()
     {
@@ -68,7 +78,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
 
         $final = array();
 
-        foreach ($fields as $value) {
+        foreach ( $fields as $value ) {
             $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)), 'field' => $value);
         }
 
@@ -89,11 +99,11 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
-        foreach ($this->_rawResult as $key => $result) {
+        foreach ( $this->_rawResult as $key => $result ) {
 
-            foreach ($result as $fieldKey => $fieldValue) {
-                if (strlen($filter) > 0 && $fieldKey == $field) {
-                    if (! $this->_applySearchType($fieldValue, $filter, $op)) {
+            foreach ( $result as $fieldKey => $fieldValue ) {
+                if ( strlen($filter) > 0 && $fieldKey == $field ) {
+                    if ( ! $this->_applySearchType($fieldValue, $filter, $op) ) {
                         unset($this->_rawResult[$key]);
                     }
                 }
@@ -113,36 +123,36 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
         switch ($op) {
             case 'equal':
             case '=':
-                if ($filtro == $final) return true;
+                if ( $filtro == $final ) return true;
                 break;
             case 'REGEXP':
-                if (preg_match($filtro, $final)) return true;
+                if ( preg_match($filtro, $final) ) return true;
                 break;
             case 'rlike':
-                if (substr($final, 0, strlen($filtro)) == $filtro) return true;
+                if ( substr($final, 0, strlen($filtro)) == $filtro ) return true;
                 break;
             case 'llike':
-                if (substr($final, - strlen($filtro)) == $filtro) return true;
+                if ( substr($final, - strlen($filtro)) == $filtro ) return true;
                 break;
             case '>=':
-                if ($final >= $filtro) return true;
+                if ( $final >= $filtro ) return true;
                 break;
             case '>':
-                if ($final > $filtro) return true;
+                if ( $final > $filtro ) return true;
                 break;
             case '<>':
             case '!=':
-                if ($final != $filtro) return true;
+                if ( $final != $filtro ) return true;
                 break;
             case '<=':
-                if ($final <= $filtro) return true;
+                if ( $final <= $filtro ) return true;
                 break;
             case '<':
-                if ($final < $filtro) return true;
+                if ( $final < $filtro ) return true;
                 break;
             default:
                 $enc = stripos((string) $final, $filtro);
-                if ($enc !== false) {
+                if ( $enc !== false ) {
                     return true;
                 }
                 break;
@@ -182,7 +192,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
         $this->_totalRecords = count($this->_rawResult);
 
 
-        if ($this->_offset == 0) {
+        if ( $this->_offset == 0 ) {
             return array_slice($this->_rawResult, $this->_start);
         }
 
@@ -206,14 +216,14 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     function buildQueryOrder ($field, $order, $reset = false)
     {
 
-        if (strtolower($order) == 'desc') {
+        if ( strtolower($order) == 'desc' ) {
             $sort = SORT_DESC;
         } else {
             $sort = SORT_ASC;
         }
 
         // Obtain a list of columns
-        foreach ($this->_rawResult as $key => $row) {
+        foreach ( $this->_rawResult as $key => $row ) {
             $result[$key] = $row[$field];
         }
 
@@ -226,9 +236,9 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     protected function _object2array ($data)
     {
 
-        if (! is_object($data) && ! is_array($data)) return $data;
+        if ( ! is_object($data) && ! is_array($data) ) return $data;
 
-        if (is_object($data)) $data = get_object_vars($data);
+        if ( is_object($data) ) $data = get_object_vars($data);
 
         return array_map(array($this, '_object2array'), $data);
 
@@ -237,12 +247,12 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
 
     function getSqlExp (array $value)
     {
-        if (is_array($value['functions'])) {
+        if ( is_array($value['functions']) ) {
 
             $i = 0;
-            foreach ($value['functions'] as $final) {
+            foreach ( $value['functions'] as $final ) {
 
-                if ($i == 0) {
+                if ( $i == 0 ) {
                     $valor = $this->_applySqlExpToArray($value['value'], $final);
                 } else {
                     $valor = $this->_applySqlExpToArray($value['value'], $final, $valor);
@@ -269,8 +279,8 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     {
         $field = trim($field);
 
-        if (null === $value) {
-            foreach ($this->_rawResult as $value) {
+        if ( null === $value ) {
+            foreach ( $this->_rawResult as $value ) {
                 $array[] = $value[$field];
             }
         } else {
@@ -311,7 +321,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     {
 
         $filter = array();
-        foreach ($this->_rawResult as $value) {
+        foreach ( $this->_rawResult as $value ) {
             $filter[$value[$field]] = $value[$fieldValue];
         }
 
@@ -367,12 +377,10 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     }
 
 
-
     function setCache ($cache)
     {
-        if(!is_array($cache))
-        {
-            $cache = array('use'=>0);
+        if ( ! is_array($cache) ) {
+            $cache = array('use' => 0);
         }
 
         $this->_cache = $cache;
