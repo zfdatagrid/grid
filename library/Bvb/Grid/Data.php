@@ -363,6 +363,17 @@ class Bvb_Grid_Data
 
 
     /**
+     * Print class based on conditions
+     * @var array
+     */
+    protected $_classRowCondition = array();
+
+    protected $_classRowConditionResult = array();
+
+    protected $_classCellCondition = array();
+
+
+    /**
      * temp function
      * @param $object
      */
@@ -1396,12 +1407,38 @@ class Bvb_Grid_Data
         $fields = $this->_fields;
 
         $i = 0;
-
+        $classConditional = array();
         foreach ( $this->_result as $dados ) {
 
             $outputToReplace = array();
             foreach ( array_combine($fields, $fields) as $key => $value ) {
                 $outputToReplace[$key] = $dados[$value];
+            }
+
+
+            if ( count($this->_classRowCondition) > 0 ) {
+                foreach ( $this->_classRowCondition as $key => $value ) {
+
+                    $this->_classRowConditionResult[$i] = '';
+                    foreach ( $value as $rowFinal ) {
+                        $cond = str_replace($search, $outputToReplace, $rowFinal['condition']);
+                        $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                        $this->_classRowConditionResult[$i] .= $final == true ? $rowFinal['class'] . ' ' : ' ';
+                    }
+
+                }
+            }
+
+
+            if ( count($this->_classCellCondition) > 0 ) {
+                foreach ( $this->_classCellCondition as $key => $value ) {
+                    $classConditional[$key] = '';
+                    foreach ( $value as $condFinal ) {
+                        $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
+                        $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : ' ';
+                    }
+                }
             }
 
 
@@ -1417,15 +1454,15 @@ class Bvb_Grid_Data
                 $new_value = '';
 
                 if ( isset($value['format']) ) {
-                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
+                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['callback']['function']) ) {
-                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
+                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['helper']) ) {
-                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $dados);
+                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['decorator']) ) {
@@ -1476,7 +1513,7 @@ class Bvb_Grid_Data
                     $style = ! isset($this->data['fields'][$fields[$is]]['style']) ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
 
-                    $return[$i][] = @array('class' => $fieldClass, 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
+                    $return[$i][] = @array('class' => $fieldClass . ' ' . $classConditional[$fields[$is]], 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
 
                 $is ++;
@@ -1495,15 +1532,15 @@ class Bvb_Grid_Data
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
 
                 if ( isset($value['callback']['function']) ) {
-                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $dados);
+                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['format']) ) {
-                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $dados);
+                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['helper']) ) {
-                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $dados);
+                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $outputToReplace);
                 }
 
                 if ( isset($value['decorator']) ) {
@@ -2597,6 +2634,60 @@ class Bvb_Grid_Data
     {
         return $this->_willShow;
 
+    }
+
+
+    /**
+     * Adds a row class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function addClassRowCondition ($column, $condition, $class)
+    {
+        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Adds a cell class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function addClassCellCondition ($column, $condition, $class)
+    {
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Sets a row class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function setClassRowCondition ($column, $condition, $class)
+    {
+        $this->_classRowCondition = array();
+        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Set a cell class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function setClassCellCondition ($column, $condition, $class)
+    {
+        $this->_classCellCondition = array();
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
     }
 
 }
