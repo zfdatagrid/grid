@@ -190,6 +190,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected $_gridSession = null;
 
 
+
+    /**
+     * Print class based on conditions
+     * @var array
+     */
+    protected $_classRowCondition = array();
+
+    protected $_classRowConditionResult = array();
+
+    protected $_classCellCondition = array();
+
+    protected $_extraRows = array();
+
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
      * it here.
@@ -593,6 +606,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         //Template start
         $final .= $this->temp['table']->globalStart();
 
+        $final .= self::_buildExtraRows('beforeHeader');
         /**
          * We must check if there is a filter set or an order, to show the extra th on top
          */
@@ -1382,12 +1396,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $this->_willShow['grid'] = true;
 
                 $grid .= self::_buildHeader();
+                $grid .= self::_buildExtraRows('afterHeader');
+                $grid .= self::_buildExtraRows('beforeTitles');
                 $grid .= self::_buildTitlesTable(parent::_buildTitles());
+                $grid .= self::_buildExtraRows('afterTitles');
+                $grid .= self::_buildExtraRows('beforeFilters');
                 $grid .= self::_buildFiltersTable(parent::_buildFilters());
+                $grid .= self::_buildExtraRows('afterFilters');
                 $grid .= self::_buildGridTable(parent::_buildGrid());
+                $grid .= self::_buildExtraRows('beforeSqlExpTable');
                 $grid .= self::_buildSqlexpTable(parent::_buildSqlExp());
+                $grid .= self::_buildExtraRows('afterSqlExpTable');
+                $grid .= self::_buildExtraRows('beforePagination');
                 $grid .= self::_pagination();
-
+                $grid .= self::_buildExtraRows('afterPagination');
             }
 
             $this->_showsGrid = true;
@@ -1815,6 +1837,122 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     function getForm ()
     {
         return $this->_form;
+    }
+
+
+    /**
+     * Adds a row class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function addClassRowCondition ($column, $condition, $class)
+    {
+        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Adds a cell class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function addClassCellCondition ($column, $condition, $class)
+    {
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Sets a row class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function setClassRowCondition ($column, $condition, $class)
+    {
+        $this->_classRowCondition = array();
+        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    /**
+     * Set a cell class based on a condition
+     * @param $column
+     * @param $condition
+     * @param $class
+     */
+    function setClassCellCondition ($column, $condition, $class)
+    {
+        $this->_classCellCondition = array();
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        return $this;
+    }
+
+
+    function addExtraRows(Bvb_Grid_ExtraRows $rows)
+    {
+        $rows = $this->_object2array($rows);
+        $this->_extraRows = $rows['_rows'];
+
+        return $this;
+    }
+
+    function _buildExtraRows($position)
+    {
+
+        if(count($this->_extraRows)==0)
+        {
+
+            return false;
+        }
+
+        $start = '<tr>';
+        $middle = '';
+        $end = '';
+        $hasReturn = false;
+
+        if(count($this->_getExtraFields('left'))>0)
+        {
+            $start .= " <td colspan='".count($this->_getExtraFields('left'))."'></td>";
+        }
+
+        if(count($this->_getExtraFields('right'))>0)
+        {
+            $end .= " <td colspan='".count($this->_getExtraFields('left'))."'></td>";
+        }
+
+        foreach ($this->_extraRows as $key=>$value)
+        {
+
+            if($value['position']!=$position)
+            continue;
+
+            foreach ($value['values'] as $final)
+            {
+                $colspan = isset($final['colspan'])?"colspan='".$final['colspan']."'":'';
+                $class = isset($final['class'])?"class='".$final['class']."'":'';
+                if(!isset($final['content'])){$final['content']='';}
+
+                $middle .= "<td $colspan $class >{$final['content']}</td>";
+
+                $hasReturn = true;
+            }
+        }
+
+        if($hasReturn===false)
+        {
+            return false;
+        }
+
+        $end .= '</tr>';
+
+        return $start.$middle.$end;
+
     }
 }
 
