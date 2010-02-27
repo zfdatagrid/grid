@@ -309,6 +309,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $this->_willShow['formEditId'] = $this->_getPkFromUrl();
 
                     $r = $this->getSource()->getRecord($this->_crudTable, $this->_getPkFromUrl());
+
                     if ( $r === false ) {
                         $this->_gridSession->message = $this->__('Record Not Found');
                         $this->_gridSession->_noForm = 1;
