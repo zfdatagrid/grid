@@ -1401,7 +1401,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     $this->_render['detail'] .= str_replace('{{button}}', $buttonRemove.' '.$buttonCancel, $this->temp['table']->detailDelete());
                 } else {
-                    $this->_render['detail'] .= str_replace('{{url}}', $this->getUrl(array('gridDetail', 'comm')), $this->temp['table']->detailEnd());
+                    $this->_render['detail'] .= str_replace(array('{{url}}','{{return}}'), array($this->getUrl(array('gridDetail', 'comm')),$this->__('Return')), $this->temp['table']->detailEnd());
                 }
 
                 $this->_render['detail'] .= $this->temp['table']->globalEnd();
@@ -2006,5 +2006,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         return $start . $middle . $end;
 
     }
+
+
 }
 
