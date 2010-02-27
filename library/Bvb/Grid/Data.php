@@ -21,7 +21,7 @@
 class Bvb_Grid_Data
 {
 
-    const VERSION = "0.6 alpha";
+    const VERSION = "0.6 beta";
 
     /**
      * Char encoding
