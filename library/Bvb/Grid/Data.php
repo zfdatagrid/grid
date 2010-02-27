@@ -1891,9 +1891,7 @@ class Bvb_Grid_Data
         if ( count($this->getSource()->getSelectOrder()) > 0 && ! isset($this->ctrlParams['order' . $this->_gridId]) ) {
             $norder = $this->getSource()->getSelectOrder();
 
-            if ( $norder instanceof Zend_Db_Expr ) {
-                 $this->ctrlParams['order' . $this->_gridId] = $norder->__toString();
-            } else {
+            if (! $norder instanceof Zend_Db_Expr ) {
                 $this->ctrlParams['order' . $this->_gridId] = $norder[0] . '_' . strtoupper($norder[1]);
             }
         }
