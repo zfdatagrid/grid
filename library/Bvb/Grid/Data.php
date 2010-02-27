@@ -363,17 +363,6 @@ class Bvb_Grid_Data
 
 
     /**
-     * Print class based on conditions
-     * @var array
-     */
-    protected $_classRowCondition = array();
-
-    protected $_classRowConditionResult = array();
-
-    protected $_classCellCondition = array();
-
-
-    /**
      * temp function
      * @param $object
      */
@@ -2634,60 +2623,6 @@ class Bvb_Grid_Data
     {
         return $this->_willShow;
 
-    }
-
-
-    /**
-     * Adds a row class based on a condition
-     * @param $column
-     * @param $condition
-     * @param $class
-     */
-    function addClassRowCondition ($column, $condition, $class)
-    {
-        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
-        return $this;
-    }
-
-
-    /**
-     * Adds a cell class based on a condition
-     * @param $column
-     * @param $condition
-     * @param $class
-     */
-    function addClassCellCondition ($column, $condition, $class)
-    {
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
-        return $this;
-    }
-
-
-    /**
-     * Sets a row class based on a condition
-     * @param $column
-     * @param $condition
-     * @param $class
-     */
-    function setClassRowCondition ($column, $condition, $class)
-    {
-        $this->_classRowCondition = array();
-        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
-        return $this;
-    }
-
-
-    /**
-     * Set a cell class based on a condition
-     * @param $column
-     * @param $condition
-     * @param $class
-     */
-    function setClassCellCondition ($column, $condition, $class)
-    {
-        $this->_classCellCondition = array();
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
-        return $this;
     }
 
 }
