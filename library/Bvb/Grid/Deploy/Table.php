@@ -189,17 +189,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     protected $_gridSession = null;
 
-
-    /**
-     * Print class based on conditions
-     * @var array
-     */
-    protected $_classRowCondition = array();
-
-    protected $_classRowConditionResult = array();
-
-    protected $_classCellCondition = array();
-
     protected $_extraRows = array();
 
     protected $_render = array();

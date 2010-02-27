@@ -362,6 +362,17 @@ class Bvb_Grid_Data
     protected $_willShow = array();
 
 
+
+    /**
+     * Print class based on conditions
+     * @var array
+     */
+    protected $_classRowCondition = array();
+
+    protected $_classRowConditionResult = array();
+
+    protected $_classCellCondition = array();
+
     /**
      * temp function
      * @param $object
@@ -1879,7 +1890,12 @@ class Bvb_Grid_Data
 
         if ( count($this->getSource()->getSelectOrder()) > 0 && ! isset($this->ctrlParams['order' . $this->_gridId]) ) {
             $norder = $this->getSource()->getSelectOrder();
-            $this->ctrlParams['order' . $this->_gridId] = $norder[0] . '_' . strtoupper($norder[1]);
+
+            if ( $norder instanceof Zend_Db_Expr ) {
+                 $this->ctrlParams['order' . $this->_gridId] = $norder->__toString();
+            } else {
+                $this->ctrlParams['order' . $this->_gridId] = $norder[0] . '_' . strtoupper($norder[1]);
+            }
         }
 
 

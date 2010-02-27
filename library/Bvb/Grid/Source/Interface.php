@@ -309,5 +309,6 @@ interface Bvb_Grid_Source_Interface
      */
     function setCache($cache);
 
+    function buildForm($decorators);
 
 }
