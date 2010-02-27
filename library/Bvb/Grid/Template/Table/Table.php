@@ -190,5 +190,10 @@ class Bvb_Grid_Template_Table_Table
         return "<tr><td colspan='2'><a href='{{url}}'>Return</a></td></tr>";
     }
 
+    function detailDelete()
+    {
+        return "<tr><td colspan='2'>{{button}}</td></tr>";
+    }
+
 }
 

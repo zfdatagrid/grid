@@ -1302,7 +1302,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $this->extra_fields = array();
             }
 
-            array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+            if ( count($this->_gridColumns) > 0 ) {
+                array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
+            } else {
+                array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+            }
+
         }
 
 
@@ -1384,11 +1389,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $this->_render['detail'] .= str_replace(array('{{field}}', '{{value}}'), array($value['field'], $value['value']), $this->temp['table']->detail());
                 }
 
-                $this->_render['detail'] .= str_replace('{{url}}', $this->getUrl(array('gridDetail', 'comm')), $this->temp['table']->detailEnd());
+                if ( isset($this->ctrlParams['gridRemove' . $this->_gridId]) && $this->ctrlParams['gridRemove' . $this->_gridId] == 1 ) {
+
+                    $localCancel = $this->getUrl(array('comm','gridDetail','gridRemove'));
+
+                    $localDelete = $this->getUrl(array('gridRemove', 'gridDetail', 'comm'));
+                    $localDelete .= "/comm" . $this->_gridId . "/" . str_replace("view", 'delete', $this->ctrlParams['comm' . $this->_gridId]);
+
+                    $buttonRemove = $this->getView()->formButton('delRecordGrid', $this->__('Remove Record'), array('onclick' => "window.location='$localDelete'"));
+                    $buttonCancel =  $this->getView()->formButton('delRecordGrid', $this->__('Cancel'), array('onclick' => "window.location='$localCancel'"));
+
+                    $this->_render['detail'] .= str_replace('{{button}}', $buttonRemove.' '.$buttonCancel, $this->temp['table']->detailDelete());
+                } else {
+                    $this->_render['detail'] .= str_replace('{{url}}', $this->getUrl(array('gridDetail', 'comm')), $this->temp['table']->detailEnd());
+                }
+
                 $this->_render['detail'] .= $this->temp['table']->globalEnd();
 
                 $this->_renderDeploy['detail'] = $this->_render['detail'];
-
 
             } else {
 
