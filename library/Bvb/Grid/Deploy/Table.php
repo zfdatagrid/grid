@@ -1622,7 +1622,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      *@var Bvb_Grid_Form
      * @return unknown
      */
-    function addForm ($crud)
+    function setForm ($crud)
     {
 
         $form = $this->getSource()->buildForm($crud);
