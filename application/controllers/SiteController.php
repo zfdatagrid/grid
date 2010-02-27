@@ -209,15 +209,14 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
+       # $grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red");
+        #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
 
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
-        #$grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red");
-        #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
-
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        $grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
 
         $this->view->pages = $grid->deploy();
 
@@ -236,7 +235,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
 
     }
-
 
     /**
      * Using a model
