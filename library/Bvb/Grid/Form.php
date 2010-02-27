@@ -18,8 +18,10 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Form extends Zend_Form
+class Bvb_Grid_Form
 {
+
+    public $form;
 
     public $options;
 
@@ -54,8 +56,14 @@ class Bvb_Grid_Form extends Zend_Form
             return $this;
         }
 
-        parent::__call($name, $args);
+        $this->form->__call($name, $args);
 
+    }
+
+
+    function __construct($formClass='Zend_Form',$formOptions=array())
+    {
+        $this->form = new $formClass($formOptions);
     }
 
     function setCallbackBeforeDelete ($callback)
@@ -134,32 +142,6 @@ class Bvb_Grid_Form extends Zend_Form
         $this->cascadeDelete[] = $options;
         return $this;
 
-    }
-
-    /**
-     *
-     * @param Zend_Db_Table_Abstract $model
-     */
-    public function setModel ($model)
-    {
-        $form = $model->buildForm($this);
-
-        $this->_model = $form;
-
-        $this->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
-
-        $this->setOptions($form);
-
-
-        return $this;
-    }
-
-    /**
-     * @var Zend_From
-     */
-    function getModel ()
-    {
-        return $this->_model;
     }
 
 }

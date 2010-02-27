@@ -246,13 +246,8 @@ class SiteController extends Zend_Controller_Action
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id','next','time','verified_by'));
 
-
-        $grid->setDetailColumns();
-        $grid->setTableGridColumns(array( 'bug_description', 'bug_status', 'date', 'reported_by', 'assigned_to'));
-
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
-        $form->setModel(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->addForm($form);
 
         $this->view->pages = $grid->deploy();

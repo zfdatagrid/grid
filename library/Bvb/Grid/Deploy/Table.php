@@ -411,10 +411,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 // Process data
                 if ( $mode == 'edit' ) {
 
-                    if ( isset($this->info['edit']['where']) && is_array($this->info['edit']['where']) ) {
-                        $queryUrl = array_merge($this->info['edit']['where'], $queryUrl);
-                    }
-
                     try {
 
                         $sendCall = array(&$post, $this->getSource());
@@ -1281,9 +1277,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             #$removeParams = array ('filters', 'add' );
             $removeParams = array('add', 'edit', 'comm');
 
-            foreach ( array_keys($this->info['edit']['fields']) as $key ) {
-                array_push($removeParams, $key);
-            }
             $url = $this->getUrl($removeParams);
 
             if ( $this->allowEdit == 1 && isset($this->info['ajax']) && $this->info['ajax'] !== false ) {
@@ -1348,9 +1341,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 // Remove the unnecessary URL params
                 $removeParams = array('filters', 'add');
 
-                foreach ( array_keys($this->info['edit']['fields']) as $key ) {
-                    array_push($removeParams, $key);
-                }
                 $url = $this->getUrl($removeParams);
 
                 $this->_renderDeploy['form'] = $this->_form;
@@ -1631,66 +1621,62 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      *@var Bvb_Grid_Form
      * @return unknown
      */
-    function addForm ($form)
+    function addForm ($crud)
     {
 
-        if ( count($form->getElements()) > 0 ) {
-            foreach ( $form->getElements() as $key => $value ) {
-                $value->setDecorators($form->elementDecorators);
+        $form = $this->getSource()->buildForm($crud);
+
+        $crud->form->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
+        $crud->form->setOptions($form);
+
+        if ( count($crud->form->getElements()) > 0 ) {
+            foreach ( $crud->form->getElements() as $key => $value ) {
+                $value->setDecorators($crud->elementDecorators);
             }
         }
 
-        $form->setDecorators($form->formDecorator);
+        $crud->form->setDecorators($crud->formDecorator);
 
-        $form->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $form->buttonHidden));
-        $form->addElement('hidden', '_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $form->buttonHidden));
+        $crud->form->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->buttonHidden));
+        $crud->form->addElement('hidden', '_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $crud->buttonHidden));
 
-        $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($form->getElements())));
+        $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->form->getElements())));
 
-        $form->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $form->buttonHidden));
-        $form->addDisplayGroup(array('form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $form->groupDecorators));
+        $crud->form->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->buttonHidden));
+        $crud->form->addDisplayGroup(array('form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->groupDecorators));
 
-        $form->setAction($this->getUrl(array_keys($form->getElements())));
+        $crud->setAction($this->getUrl(array_keys($crud->form->getElements())));
 
-        $this->_form = $form;
+        $this->_form = $crud->form;
 
-        if ( isset($form->options['callbackBeforeDelete']) ) {
-            $this->_callbackBeforeDelete = $form->options['callbackBeforeDelete'];
+        if ( isset($crud->options['callbackBeforeDelete']) ) {
+            $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
         }
 
-        if ( isset($form->options['callbackBeforeInsert']) ) {
-            $this->_callbackBeforeInsert = $form->options['callbackBeforeInsert'];
+        if ( isset($crud->options['callbackBeforeInsert']) ) {
+            $this->_callbackBeforeInsert = $crud->options['callbackBeforeInsert'];
         }
 
-        if ( isset($form->options['callbackBeforeUpdate']) ) {
-            $this->_callbackBeforeUpdate = $form->options['callbackBeforeUpdate'];
+        if ( isset($crud->options['callbackBeforeUpdate']) ) {
+            $this->_callbackBeforeUpdate = $crud->options['callbackBeforeUpdate'];
         }
 
-        if ( isset($form->options['callbackAfterDelete']) ) {
-            $this->_callbackAfterDelete = $form->options['callbackAfterDelete'];
+        if ( isset($crud->options['callbackAfterDelete']) ) {
+            $this->_callbackAfterDelete = $crud->options['callbackAfterDelete'];
         }
 
-        if ( isset($form->options['callbackAfterInsert']) ) {
-            $this->_callbackAfterInsert = $form->options['callbackAfterInsert'];
+        if ( isset($crud->options['callbackAfterInsert']) ) {
+            $this->_callbackAfterInsert = $crud->options['callbackAfterInsert'];
         }
 
-        if ( isset($form->options['callbackAfterUpdate']) ) {
-            $this->_callbackAfterUpdate = $form->options['callbackAfterUpdate'];
+        if ( isset($crud->options['callbackAfterUpdate']) ) {
+            $this->_callbackAfterUpdate = $crud->options['callbackAfterUpdate'];
         }
 
-        $form = $this->_object2array($form);
-
-        $fieldsGet = $form['fields'];
-        $fields = array();
-
-        if ( is_array($fieldsGet) ) {
-            foreach ( $fieldsGet as $value ) {
-                $fields[$value['options']['field']] = $value['options'];
-            }
-        }
+        $crud = $this->_object2array($crud);
 
 
-        $options = $form['options'];
+        $options = $crud['options'];
 
         if ( isset($options['table']) ) {
             $this->_crudTable = trim($options['table']);
@@ -1707,22 +1693,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
         }
 
-        @$this->info['delete']['cascadeDelete'] = $form['cascadeDelete'];
+        @$this->info['delete']['cascadeDelete'] = $crud['cascadeDelete'];
 
         if ( isset($options['add']) && $options['add'] == 1 ) {
             if ( ! isset($options['addButton']) ) {
                 $options['addButton'] = 0;
             }
 
-            $this->add = array('allow' => 1, 'button' => $options['addButton'], 'fields' => $fields, 'force' => @$options['onAddForce']);
+            $this->add = array('allow' => 1, 'button' => $options['addButton']);
         }
 
         if ( isset($options['edit']) && $options['edit'] == 1 ) {
-            $this->edit = array('allow' => 1, 'fields' => $fields, 'force' => @$options['onEditForce']);
+            $this->edit = array('allow' => 1);
         }
-        if ( isset($options['onUpdateAddWhere']) ) {
-            $this->info['edit']['where'] = $options['onUpdateAddWhere'];
-        }
+
         return $this;
     }
 
