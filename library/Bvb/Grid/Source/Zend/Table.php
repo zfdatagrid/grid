@@ -74,25 +74,26 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
             foreach ( $map as $sel ) {
 
-                if ( ! isset($tAlias[$sel['refTableClass']]) ) {
-                    $tAlias[$sel['refTableClass']] = 0;
-                }
-
-                $alias = $tAlias[$sel['refTableClass']] > 0 ? '_' . $tAlias[$sel['refTableClass']] : '';
-
 
                 $newClass = new $sel['refTableClass']();
                 $infoNewClass = $newClass->info();
+
+                if ( ! isset($tAlias[$infoNewClass['name']]) ) {
+                    $tAlias[$infoNewClass['name']] = 0;
+                }
+
+                $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : '';
+
 
                 if ( is_array($sel['columns']) ) {
                     $cols = array_combine($sel['columns'], $sel['refColumns']);
 
                     foreach ( $sel['columns'] as $key => $value ) {
 
-                        $alias = $tAlias[$sel['refTableClass']] > 0 ? '_' . $tAlias[$sel['refTableClass']] : '';
+                        $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : '';
 
                         $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . reset($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
-                        $tAlias[$sel['refTableClass']] ++;
+                        $tAlias[$infoNewClass['name']] ++;
                     }
 
 
@@ -101,7 +102,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                     $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
                 }
 
-                $tAlias[$sel['refTableClass']] ++;
+                $tAlias[$infoNewClass['name']] ++;
             }
         } else {
             $select->from($info['name']);
