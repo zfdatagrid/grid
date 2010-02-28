@@ -1796,7 +1796,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $selected = $key;
                 }
 
-                $values[$key] = $this->__($value);
+                $values[$key] = $value;
             }
 
             $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
