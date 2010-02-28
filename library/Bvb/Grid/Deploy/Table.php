@@ -216,17 +216,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
     /**
-     * @param string $var
-     * @param string $value
-     */
-
-    function __set ($var, $value)
-    {
-        parent::__set($var, $value);
-    }
-
-
-    /**
      *
      * Process all information forms related
      * First we check for permissions to add, edit, delete
@@ -1230,7 +1219,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $this->_applyConfigOptions(array(), true);
 
-
         if ( ! $this->temp['table'] instanceof Bvb_Grid_Template_Table_Table ) {
             $this->setTemplate('table', 'table', $this->_templateParams);
         } else {
@@ -1285,7 +1273,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $this->extra_fields = array();
             }
 
-            if ( count($this->_gridColumns) > 0 ) {
+
+            if ( count($this->_gridColumns) > 0 || count($this->_detailColumns)>0 ) {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
