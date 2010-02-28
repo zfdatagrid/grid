@@ -1348,7 +1348,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     }
 
                     if ( isset($this->data['fields'][$value['field']]['title']) ) {
-                        $value['field'] = $this->data['fields'][$value['field']]['title'];
+                        $value['field'] = $this->__($this->data['fields'][$value['field']]['title']);
                     } else {
                         $value['field'] = $this->__(ucwords(str_replace('_', ' ', $value['field'])));
                     }
