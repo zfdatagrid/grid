@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Data
+abstract class Bvb_Grid_Data
 {
 
     const VERSION = "0.6 beta";
