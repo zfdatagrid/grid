@@ -1239,7 +1239,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             if ( is_array($pkUrl) ) {
                 foreach ( $pkUrl as $value ) {
-                    $urlFinal .= $value . ':{{' . $value . '}}-';
+                    $urlFinal .= $value . ':{{' . substr($value,strpos($value,'.')+1) . '}}-';
                 }
             }
 
@@ -1352,7 +1352,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     if ( isset($this->data['fields'][$value['field']]['title']) ) {
                         $value['field'] = $this->data['fields'][$value['field']]['title'];
                     } else {
-                        $value['field'] = ucwords(str_replace('_', ' ', $value['field']));
+                        $value['field'] = $this->__(ucwords(str_replace('_', ' ', $value['field'])));
                     }
 
                     $this->_render['detail'] .= str_replace(array('{{field}}', '{{value}}'), array($value['field'], $value['value']), $this->temp['table']->detail());

@@ -174,14 +174,14 @@ class Bvb_Grid_Data
      *
      * @var string
      */
-    public $ctrlParams;
+    public $ctrlParams = array();
 
     /**
      * Extra fields array
      *
      * @var array
      */
-    public $extra_fields;
+    public $extra_fields = array();
 
     /**
      * Final fields list (after all procedures).
@@ -1792,14 +1792,26 @@ class Bvb_Grid_Data
         }
 
         $pk = $this->getSource()->getDescribeTable($table);
+        $tb = $this->getSource()->getTableList();
 
         $keys = array();
 
         foreach ( $pk as $pkk => $primary ) {
             if ( $primary['PRIMARY'] == 1 ) {
-                $keys[] = $pkk;
+
+                foreach ($tb as $key=>$value)
+                {
+                    if($value['tableName']== $primary['TABLE_NAME'])
+                    {
+                        $prefix = $key.'.';
+                        break;
+                    }
+                }
+
+                $keys[] = $prefix.$pkk;
             }
         }
+
 
         $this->_primaryKey[$table] = $keys;
 

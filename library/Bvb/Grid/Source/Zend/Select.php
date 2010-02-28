@@ -30,6 +30,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     protected $_cache;
 
+    protected $_fields;
+
 
     function __construct (Zend_Db_Select $select)
     {
@@ -104,8 +106,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $final = array();
 
-        foreach ($return[0] as $key=>$value)
-        {
+        foreach ( $return[0] as $key => $value ) {
             $final[$key] = $value;
         }
 
@@ -166,6 +167,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
             }
         }
+
+        $this->_fields = $returnFields;
 
         return $returnFields;
 
@@ -235,13 +238,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function fetchDetail (array $where)
     {
+
         foreach ( $where as $field => $value ) {
+
+            if ( array_key_exists($field, $this->_fields) ) {
+                $field = $this->_fields[$field]['field'];
+            }
             $this->_select->where($field . '=?', $value);
         }
 
         $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
         $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
-
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
@@ -673,16 +680,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     }
 
 
-    function buildForm($decorators)
+    function buildForm ($decorators)
     {
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table']);
 
-        return $this->buildFormElements($cols,$decorators);
+        return $this->buildFormElements($cols, $decorators);
 
     }
 
-    function buildFormElements ($cols,$decorators,$info = array())
+
+    function buildFormElements ($cols, $decorators, $info = array())
     {
         $final = array();
         $form = array();
@@ -697,8 +705,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 continue;
             }
 
-            if(!isset($info['referenceMap']))
-            {
+            if ( ! isset($info['referenceMap']) ) {
                 $info['referenceMap'] = array();
             }
 
