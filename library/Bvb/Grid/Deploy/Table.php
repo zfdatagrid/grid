@@ -633,9 +633,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
 
 
-            $this->_render['titles'] = self::_buildExtraRows('beforeHeader');
-            $this->_renderDeploy['titles'] = self::_buildExtraRows('beforeHeader');
-            //close cycle
+        //close cycle
         }
 
         return;
@@ -1239,7 +1237,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             if ( is_array($pkUrl) ) {
                 foreach ( $pkUrl as $value ) {
-                    $urlFinal .= $value . ':{{' . substr($value,strpos($value,'.')+1) . '}}-';
+                    $urlFinal .= $value . ':{{' . substr($value, strpos($value, '.') + 1) . '}}-';
                 }
             }
 
@@ -1274,7 +1272,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
 
 
-            if ( count($this->_gridColumns) > 0 || count($this->_detailColumns)>0 ) {
+            if ( count($this->_gridColumns) > 0 || count($this->_detailColumns) > 0 ) {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
@@ -1360,17 +1358,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                 if ( isset($this->ctrlParams['gridRemove' . $this->_gridId]) && $this->ctrlParams['gridRemove' . $this->_gridId] == 1 ) {
 
-                    $localCancel = $this->getUrl(array('comm','gridDetail','gridRemove'));
+                    $localCancel = $this->getUrl(array('comm', 'gridDetail', 'gridRemove'));
 
                     $localDelete = $this->getUrl(array('gridRemove', 'gridDetail', 'comm'));
                     $localDelete .= "/comm" . $this->_gridId . "/" . str_replace("view", 'delete', $this->ctrlParams['comm' . $this->_gridId]);
 
                     $buttonRemove = $this->getView()->formButton('delRecordGrid', $this->__('Remove Record'), array('onclick' => "window.location='$localDelete'"));
-                    $buttonCancel =  $this->getView()->formButton('delRecordGrid', $this->__('Cancel'), array('onclick' => "window.location='$localCancel'"));
+                    $buttonCancel = $this->getView()->formButton('delRecordGrid', $this->__('Cancel'), array('onclick' => "window.location='$localCancel'"));
 
-                    $this->_render['detail'] .= str_replace('{{button}}', $buttonRemove.' '.$buttonCancel, $this->temp['table']->detailDelete());
+                    $this->_render['detail'] .= str_replace('{{button}}', $buttonRemove . ' ' . $buttonCancel, $this->temp['table']->detailDelete());
                 } else {
-                    $this->_render['detail'] .= str_replace(array('{{url}}','{{return}}'), array($this->getUrl(array('gridDetail', 'comm')),$this->__('Return')), $this->temp['table']->detailEnd());
+                    $this->_render['detail'] .= str_replace(array('{{url}}', '{{return}}'), array($this->getUrl(array('gridDetail', 'comm')), $this->__('Return')), $this->temp['table']->detailEnd());
                 }
 
                 $this->_render['detail'] .= $this->temp['table']->globalEnd();
@@ -1381,7 +1379,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                 $this->_willShow['grid'] = true;
 
-                $bHeader = self::_buildHeader();
+
+                $bHeader = self::_buildExtraRows('beforeHeader');
+                $bHeader .= self::_buildHeader();
                 $bHeader .= self::_buildExtraRows('afterHeader');
                 $bTitles = self::_buildExtraRows('beforeTitles');
                 $bTitles .= self::_buildTitlesTable(parent::_buildTitles());
