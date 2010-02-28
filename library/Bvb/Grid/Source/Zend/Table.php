@@ -35,7 +35,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
         $info = $this->getModel()->info();
         $cols = $info['metadata'];
-        $form = $this->buildFormElements($cols,$decorators,$info);
+        $form = $this->buildFormElements($cols, $decorators, $info);
         return $form;
     }
 
@@ -54,11 +54,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
         $map = $info['referenceMap'];
 
-        if (is_array($map) && count($map) > 0) {
+        if ( is_array($map) && count($map) > 0 ) {
             $columnsToRemove = array();
 
-            foreach ($map as $sel) {
-                if (is_array($sel['columns'])) {
+            foreach ( $map as $sel ) {
+                if ( is_array($sel['columns']) ) {
                     $columnsToRemove = array_merge($columnsToRemove, $sel['columns']);
                 } else {
                     $columnsToRemove[] = $sel['columns'];
@@ -69,39 +69,39 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
             $select->from($info['name'], $columnsMainTable);
 
-            $i = 0;
-            foreach ($map as $sel) {
 
-                if ($i > 0) {
-                    $alias = '_' . $i;
-                } else {
-                    $alias = '';
+            $tAlias = array();
+
+            foreach ( $map as $sel ) {
+
+                if ( ! isset($tAlias[$sel['refTableClass']]) ) {
+                    $tAlias[$sel['refTableClass']] = 0;
                 }
+
+                $alias = $tAlias[$sel['refTableClass']] > 0 ? '_' . $tAlias[$sel['refTableClass']] : '';
+
 
                 $newClass = new $sel['refTableClass']();
                 $infoNewClass = $newClass->info();
 
-                if (is_array($sel['columns'])) {
+                if ( is_array($sel['columns']) ) {
                     $cols = array_combine($sel['columns'], $sel['refColumns']);
 
-                    foreach ($sel['columns'] as $key => $value) {
+                    foreach ( $sel['columns'] as $key => $value ) {
 
-                        if ($i > 0) {
-                            $alias = '_' . $i;
-                        } else {
-                            $alias = '';
-                        }
-                        $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
-                        $i ++;
+                        $alias = $tAlias[$sel['refTableClass']] > 0 ? '_' . $tAlias[$sel['refTableClass']] : '';
+
+                        $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . reset($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols);
+                        $tAlias[$sel['refTableClass']] ++;
                     }
+
 
                 } else {
                     $cols = array($sel['columns'] => $sel['refColumns']);
-
                     $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols);
                 }
 
-                $i ++;
+                $tAlias[$sel['refTableClass']] ++;
             }
         } else {
             $select->from($info['name']);
@@ -116,17 +116,17 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     function getRecord ($table, array $condition)
     {
 
-         if ($this->_cache['use'] == 1) {
+        if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($condition));
-            if (! $result = $this->_cache['instance']->load($hash)) {
+            if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
-           $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+            $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
         }
 
-        if ($result === null) {
+        if ( $result === null ) {
             return false;
         }
 
@@ -136,7 +136,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     function delete ($table, array $condition)
     {
-        if ($this->_cache['use'] == 1) {
+        if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         return $this->getModel()->delete($this->buildWhereCondition($condition));
@@ -145,7 +145,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     function update ($table, array $post, array $condition)
     {
-        if ($this->_cache['use'] == 1) {
+        if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         return $this->getModel()->update($post, $this->buildWhereCondition($condition));
@@ -154,7 +154,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     function insert ($table, array $post)
     {
-        if ($this->_cache['use'] == 1) {
+        if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         return $this->getModel()->insert($post);
