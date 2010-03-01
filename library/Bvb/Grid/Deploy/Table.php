@@ -189,10 +189,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     protected $_gridSession = null;
 
+    /**
+     * Extra Rows
+     * @var unknown_typearray
+     */
     protected $_extraRows = array();
 
+    /**
+     * An array with all the parts that can be rendered
+     * even
+     * @var unknown_type
+     */
     protected $_render = array();
 
+    /**
+     * An array with all parts that will be rendered
+     * @var array
+     */
     protected $_renderDeploy = array();
 
 

@@ -1425,8 +1425,10 @@ abstract class Bvb_Grid_Data
                 }
 
             }else{
-                $this->_classRowCondition[$i]='';
+                $this->_classRowConditionResult[$i]='';
             }
+
+           $this->_classRowConditionResult[$i] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
 
             if ( count($this->_classCellCondition) > 0 ) {
@@ -1451,7 +1453,6 @@ abstract class Bvb_Grid_Data
 
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
 
-                $value['class'] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                 $new_value = '';
 
@@ -1513,7 +1514,6 @@ abstract class Bvb_Grid_Data
 
                     $style = ! isset($this->data['fields'][$fields[$is]]['style']) ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
-                    $fieldClass .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                     $return[$i][] = @array('class' => $fieldClass . ' ' . $classConditional[$fields[$is]], 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
@@ -1532,7 +1532,6 @@ abstract class Bvb_Grid_Data
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
-                $value['class'] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                 if ( isset($value['callback']['function']) ) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
@@ -2650,7 +2649,6 @@ abstract class Bvb_Grid_Data
     public function willShow ()
     {
         return $this->_willShow;
-
     }
 
 }
