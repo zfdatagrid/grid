@@ -196,6 +196,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected $_renderDeploy = array();
 
 
+    protected $_cssClasses = array('odd'=>'alt','even'=>'');
+
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
      * it here.
@@ -936,7 +938,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $i ++;
 
             //loop tr
-            $grid .= $this->temp['table']->loopStart(isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '');
+            $grid .= $this->temp['table']->loopStart(isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '' );
 
             $set = 0;
             foreach ( $value as $final ) {
@@ -1223,11 +1225,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $this->setTemplate($this->temp['table']->options['name'], 'table', $this->_templateParams);
         }
 
-
-        // The extra fields, they are not part of database table.
-        // Usefull for adding links (a least for me :D )
         $this->_printScript();
-
 
         $images = $this->temp['table']->images($this->imagesUrl);
 
@@ -1249,8 +1247,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             if ( ! is_array($this->extra_fields) ) {
                 $this->extra_fields = array();
             }
-            // Remove the unnecessary URL params
-            #$removeParams = array ('filters', 'add' );
+
+
             $removeParams = array('add', 'edit', 'comm');
 
             $url = $this->getUrl($removeParams);
@@ -1878,9 +1876,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function addClassCellCondition ($column, $condition, $class)
+    function addClassCellCondition ($column, $condition, $class,$else='')
     {
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class,'else'=>$else);
         return $this;
     }
 
@@ -1891,10 +1889,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function setClassRowCondition ($column, $condition, $class)
+    function setClassRowCondition ($condition, $class,$else='')
     {
         $this->_classRowCondition = array();
-        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class,'else'=>$else);
         return $this;
     }
 
@@ -1970,6 +1968,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
     }
 
+
+    function setGridCssClasses($odd,$even='')
+    {
+        $this->_cssClasses = array('odd'=>$odd,'even'=>$even);
+        return $this;
+    }
 
 }
 

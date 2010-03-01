@@ -362,7 +362,6 @@ abstract class Bvb_Grid_Data
     protected $_willShow = array();
 
 
-
     /**
      * Print class based on conditions
      * @var array
@@ -372,6 +371,7 @@ abstract class Bvb_Grid_Data
     protected $_classRowConditionResult = array();
 
     protected $_classCellCondition = array();
+
 
     /**
      * temp function
@@ -1415,18 +1415,17 @@ abstract class Bvb_Grid_Data
                 $outputToReplace[$key] = $dados[$value];
             }
 
+            if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
+                $this->_classRowConditionResult[$i] = '';
 
-            if ( count($this->_classRowCondition) > 0 ) {
                 foreach ( $this->_classRowCondition as $key => $value ) {
-
-                    $this->_classRowConditionResult[$i] = '';
-                    foreach ( $value as $rowFinal ) {
-                        $cond = str_replace($search, $outputToReplace, $rowFinal['condition']);
-                        $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                        $this->_classRowConditionResult[$i] .= $final == true ? $rowFinal['class'] . ' ' : ' ';
-                    }
-
+                    $cond = str_replace($search, $outputToReplace, $value['condition']);
+                    $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'].' ';
                 }
+
+            }else{
+                $this->_classRowCondition[$i]='';
             }
 
 
@@ -1436,7 +1435,7 @@ abstract class Bvb_Grid_Data
                     foreach ( $value as $condFinal ) {
                         $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
                         $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : ' ';
+                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'].' ';
                     }
                 }
             }
@@ -1445,11 +1444,15 @@ abstract class Bvb_Grid_Data
             /**
              *Deal with extrafield from the left
              */
+
+            $cssClass = 0;
             foreach ( $this->_getExtraFields('left') as $value ) {
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
 
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
+
+                $value['class'] .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
 
                 $new_value = '';
 
@@ -1471,7 +1474,7 @@ abstract class Bvb_Grid_Data
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
 
-
+                $cssClass++;
             }
 
             /**
@@ -1512,6 +1515,7 @@ abstract class Bvb_Grid_Data
 
                     $style = ! isset($this->data['fields'][$fields[$is]]['style']) ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
+                    $fieldClass .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
 
                     $return[$i][] = @array('class' => $fieldClass . ' ' . $classConditional[$fields[$is]], 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
@@ -1526,10 +1530,12 @@ abstract class Bvb_Grid_Data
 
             //Reset the value. This is an extra field.
             $new_value = null;
+            $cssClass = 0;
             foreach ( $this->_getExtraFields('right') as $value ) {
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
+                $value['class'] .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
 
                 if ( isset($value['callback']['function']) ) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
@@ -1548,6 +1554,8 @@ abstract class Bvb_Grid_Data
                 }
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+
+                $cssClass++;
             }
             $i ++;
         }
@@ -1799,16 +1807,14 @@ abstract class Bvb_Grid_Data
         foreach ( $pk as $pkk => $primary ) {
             if ( $primary['PRIMARY'] == 1 ) {
 
-                foreach ($tb as $key=>$value)
-                {
-                    if($value['tableName']== $primary['TABLE_NAME'])
-                    {
-                        $prefix = $key.'.';
+                foreach ( $tb as $key => $value ) {
+                    if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+                        $prefix = $key . '.';
                         break;
                     }
                 }
 
-                $keys[] = $prefix.$pkk;
+                $keys[] = $prefix . $pkk;
             }
         }
 
@@ -1903,7 +1909,7 @@ abstract class Bvb_Grid_Data
         if ( count($this->getSource()->getSelectOrder()) > 0 && ! isset($this->ctrlParams['order' . $this->_gridId]) ) {
             $norder = $this->getSource()->getSelectOrder();
 
-            if (! $norder instanceof Zend_Db_Expr ) {
+            if ( ! $norder instanceof Zend_Db_Expr ) {
                 $this->ctrlParams['order' . $this->_gridId] = $norder[0] . '_' . strtoupper($norder[1]);
             }
         }
