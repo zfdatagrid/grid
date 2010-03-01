@@ -209,7 +209,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     protected $_renderDeploy = array();
 
 
-    protected $_cssClasses = array('odd'=>'alt','even'=>'');
+    protected $_cssClasses = array('odd' => 'alt', 'even' => '');
+
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
@@ -219,14 +220,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     function __construct ($options)
     {
-
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid');
         $this->_setRemoveHiddenFields(true);
 
         parent::__construct($options);
-
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
-
     }
 
 
@@ -951,7 +949,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $i ++;
 
             //loop tr
-            $grid .= $this->temp['table']->loopStart(isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '' );
+            $grid .= $this->temp['table']->loopStart(isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '');
 
             $set = 0;
             foreach ( $value as $final ) {
@@ -1614,10 +1612,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     function setForm ($crud)
     {
 
+        $oldElements = $crud->getElements();
+
         $form = $this->getSource()->buildForm($crud);
 
         $crud->form->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
         $crud->form->setOptions($form);
+
+
+        foreach ( $oldElements as $key => $value ) {
+            $crud->form->addElement($value);
+        }
 
         if ( count($crud->form->getElements()) > 0 ) {
             foreach ( $crud->form->getElements() as $key => $value ) {
@@ -1889,9 +1894,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function addClassCellCondition ($column, $condition, $class,$else='')
+    function addClassCellCondition ($column, $condition, $class, $else = '')
     {
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class,'else'=>$else);
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
 
@@ -1902,10 +1907,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function setClassRowCondition ($condition, $class,$else='')
+    function setClassRowCondition ($condition, $class, $else = '')
     {
         $this->_classRowCondition = array();
-        $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class,'else'=>$else);
+        $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
 
@@ -1982,9 +1987,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     }
 
 
-    function setRowAltClasses($odd,$even='')
+    function setRowAltClasses ($odd, $even = '')
     {
-        $this->_cssClasses = array('odd'=>$odd,'even'=>$even);
+        $this->_cssClasses = array('odd' => $odd, 'even' => $even);
         return $this;
     }
 

@@ -33,22 +33,21 @@ class Bvb_Grid_Form
 
     public $groupDecorators = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper');
 
-    public $elementDecorators = array(
-                                    'ViewHelper',
-                                    'Description',
-                                    'Errors',
-                                    array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')),
-                                    array(array('label' => 'Label'), array('tag' => 'td')),
-                                    array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    public $elementDecorators = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     public $buttonHidden = array('ViewHelper');
 
-    public $formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%','class'=>'borders')), 'Form');
+    public $formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%', 'class' => 'borders')), 'Form');
 
 
     function __call ($name, $args)
     {
-        if (substr(strtolower($name), 0, 3) == 'set') {
+        if ( method_exists($this->form, $name) ) {
+
+           return  call_user_func_array(array($this->form,$name),$args);
+        }
+
+        if ( substr(strtolower($name), 0, 3) == 'set' ) {
             $name = substr($name, 3);
             $name[0] = strtolower($name[0]);
             $this->options[$name] = $args[0];
@@ -57,19 +56,19 @@ class Bvb_Grid_Form
         }
 
         $this->form->__call($name, $args);
-
     }
 
 
-    function __construct($formClass='Zend_Form',$formOptions=array())
+    function __construct ($formClass = 'Zend_Form', $formOptions = array())
     {
         $this->form = new $formClass($formOptions);
     }
 
+
     function setCallbackBeforeDelete ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
         $this->options['callbackBeforeDelete'] = $callback;
@@ -77,10 +76,11 @@ class Bvb_Grid_Form
         return $this;
     }
 
+
     function setCallbackBeforeUpdate ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -89,10 +89,11 @@ class Bvb_Grid_Form
         return $this;
     }
 
+
     function setCallbackBeforeInsert ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -101,10 +102,11 @@ class Bvb_Grid_Form
         return $this;
     }
 
+
     function setCallbackAfterDelete ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -113,10 +115,11 @@ class Bvb_Grid_Form
         return $this;
     }
 
+
     function setCallbackAfterUpdate ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -125,10 +128,11 @@ class Bvb_Grid_Form
         return $this;
     }
 
+
     function setCallbackAfterInsert ($callback)
     {
 
-        if (! is_callable($callback)) {
+        if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -136,6 +140,7 @@ class Bvb_Grid_Form
 
         return $this;
     }
+
 
     function onDeleteCascade ($options)
     {
