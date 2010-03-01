@@ -1982,7 +1982,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     }
 
 
-    function setGridCssClasses($odd,$even='')
+    function setRowAltClasses($odd,$even='')
     {
         $this->_cssClasses = array('odd'=>$odd,'even'=>$even);
         return $this;
