@@ -43,7 +43,6 @@ class Bvb_Grid_Form
     function __call ($name, $args)
     {
         if ( method_exists($this->form, $name) ) {
-
            return  call_user_func_array(array($this->form,$name),$args);
         }
 
@@ -51,11 +50,9 @@ class Bvb_Grid_Form
             $name = substr($name, 3);
             $name[0] = strtolower($name[0]);
             $this->options[$name] = $args[0];
-
             return $this;
         }
 
-        $this->form->__call($name, $args);
     }
 
 
