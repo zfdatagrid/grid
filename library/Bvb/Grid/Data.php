@@ -1445,14 +1445,13 @@ abstract class Bvb_Grid_Data
              *Deal with extrafield from the left
              */
 
-            $cssClass = 0;
             foreach ( $this->_getExtraFields('left') as $value ) {
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
 
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
 
-                $value['class'] .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
+                $value['class'] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                 $new_value = '';
 
@@ -1474,7 +1473,6 @@ abstract class Bvb_Grid_Data
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
 
-                $cssClass++;
             }
 
             /**
@@ -1515,7 +1513,7 @@ abstract class Bvb_Grid_Data
 
                     $style = ! isset($this->data['fields'][$fields[$is]]['style']) ? '' : $this->data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->data['fields'][$fields[$is]]['class']) ? $this->data['fields'][$fields[$is]]['class'] : '';
-                    $fieldClass .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
+                    $fieldClass .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                     $return[$i][] = @array('class' => $fieldClass . ' ' . $classConditional[$fields[$is]], 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
@@ -1530,12 +1528,11 @@ abstract class Bvb_Grid_Data
 
             //Reset the value. This is an extra field.
             $new_value = null;
-            $cssClass = 0;
             foreach ( $this->_getExtraFields('right') as $value ) {
 
                 $value['class'] = ! isset($value['class']) ? '' : $value['class'];
                 $value['style'] = ! isset($value['style']) ? '' : $value['style'];
-                $value['class'] .= ($i%2)?$this->_cssClasses['odd']:$this->_cssClasses['even'];
+                $value['class'] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
 
                 if ( isset($value['callback']['function']) ) {
                     $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
@@ -1555,7 +1552,6 @@ abstract class Bvb_Grid_Data
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
 
-                $cssClass++;
             }
             $i ++;
         }
