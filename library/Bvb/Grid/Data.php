@@ -1608,6 +1608,12 @@ abstract class Bvb_Grid_Data
 
             if ( ! array_key_exists($key, $this->data['fields']) ) continue;
 
+
+            if(!isset($value['value']))
+            {
+                $value['value']=$key;
+            }
+
             $resultExp = $this->getSource()->getSqlExp($value);
 
             if ( ! isset($value['format']) && isset($this->data['fields'][$key]['format']) ) {
