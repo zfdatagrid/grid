@@ -829,4 +829,36 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         return $form;
     }
 
+
+    /**
+     * Get the primary table key
+     * This is important because we only allow edit, add or remove records
+     * From tables that have on primary key
+     *
+     * @return string
+     */
+     function getPrimaryKey ($table)
+    {
+
+        $pk = $this->getDescribeTable($table);
+        $tb = $this->getTableList();
+
+        $keys = array();
+
+        foreach ( $pk as $pkk => $primary ) {
+            if ( $primary['PRIMARY'] == 1 ) {
+
+                foreach ( $tb as $key => $value ) {
+                    if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+                        $prefix = $key . '.';
+                        break;
+                    }
+                }
+                $keys[] = $prefix . $pkk;
+            }
+        }
+
+        return $keys;
+    }
+
 }

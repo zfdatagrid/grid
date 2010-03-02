@@ -1765,52 +1765,6 @@ abstract class Bvb_Grid_Data
     }
 
 
-    /**
-     * Get the primary table key
-     * This is important because we only allow edit, add or remove records
-     * From tables that have on primary key
-     *
-     * @return string
-     */
-    protected function _getPrimaryKey ($table = null)
-    {
-
-        if ( null === $table ) {
-            if ( ! isset($this->data['table']) ) {
-                return;
-            }
-            $table = $this->data['table'];
-        }
-
-        if ( isset($this->_primaryKey[$table]) ) {
-            return $this->_primaryKey[$table];
-        }
-
-        $pk = $this->getSource()->getDescribeTable($table);
-        $tb = $this->getSource()->getTableList();
-
-        $keys = array();
-
-        foreach ( $pk as $pkk => $primary ) {
-            if ( $primary['PRIMARY'] == 1 ) {
-
-                foreach ( $tb as $key => $value ) {
-                    if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
-                        $prefix = $key . '.';
-                        break;
-                    }
-                }
-
-                $keys[] = $prefix . $pkk;
-            }
-        }
-
-
-        $this->_primaryKey[$table] = $keys;
-
-        return $this->_primaryKey[$table];
-    }
-
 
     /**
      * Build user defined filters

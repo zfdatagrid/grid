@@ -79,7 +79,14 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
         $final = array();
 
         foreach ( $fields as $value ) {
-            $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)), 'field' => $value);
+
+
+            if ( $value == '_zfgId' ) {
+                $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)), 'field' => $value, 'remove' => 1);
+            } else {
+                $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)), 'field' => $value);
+            }
+
         }
 
         return $final;
@@ -389,6 +396,29 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
 
     function buildForm ($decorators)
     {
-        return array();
+
+        $form = array();
+
+        foreach ($this->_fields as $elements)
+        {
+            if($elements =='_zfgId')
+            continue;
+
+            $label = ucwords(str_replace('_', ' ', $elements));
+            $form['elements'][$elements] = array('text', array('decorators' => $decorators->elementDecorators,  'size' => 10, 'label' => $label));
+        }
+
+
+        return $form;
     }
+
+
+    function getPrimaryKey ($table)
+    {
+        if ( in_array('_zfgId', $this->_fields) ) {
+            return array('_zfgId');
+        }
+        return false;
+    }
+
 }
