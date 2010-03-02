@@ -213,6 +213,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
     protected $_formSettings = array();
 
+    protected $_deleteConfirmationPage = false;
+
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
@@ -1282,7 +1284,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
 
 
-            if ( count($this->_gridColumns) > 0 || count($this->_detailColumns) > 0 ) {
+            if ( $this->_deleteConfirmationPage ===true) {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
                 array_unshift($this->extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
@@ -1343,7 +1345,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         if ( ((! isset($this->ctrlParams['edit' . $this->_gridId]) || $this->ctrlParams['edit' . $this->_gridId] != 1) && (! isset($this->ctrlParams['add' . $this->_gridId]) || $this->ctrlParams['add' . $this->_gridId] != 1)) || $this->_gridSession->_noForm == 1 || (isset($this->info['doubleTables']) && $this->info['doubleTables'] == 1) ) {
 
-            if ( $this->_isDetail == true ) {
+            if ( $this->_isDetail == true || ( $this->_deleteConfirmationPage==true && $this->getParam('gridRemove')==1 ) ) {
 
                 $columns = parent::_buildGrid();
 
@@ -2040,5 +2042,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         return $this->_formSettings;
     }
 
+    function setDeleteConfirmationPage($status)
+    {
+        $this->_deleteConfirmationPage = (bool) $status;
+        return $this;
+    }
 }
 
