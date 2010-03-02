@@ -211,6 +211,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
     protected $_cssClasses = array('odd' => 'alt', 'even' => '');
 
+    protected $_formSettings = array();
+
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instanciate
@@ -225,6 +227,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         parent::__construct($options);
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
+
+
+    }
+
+
+    /**
+     * Get a param from the $this->ctrlParams appending the grid id
+     * @param $param
+     * @param $default
+     */
+    function getParam($param,$default=false)
+    {
+            return isset($this->ctrlParams[$param.$this->_gridId])?$this->ctrlParams[$param.$this->_gridId]:$default;
     }
 
 
@@ -366,8 +381,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         }
 
 
-                        if($this->_crudTable !==false)
-                        {
+                        if ( $this->_crudTable !== false ) {
                             $this->getSource()->insert($this->_crudTable, $post);
                         }
 
@@ -1682,8 +1696,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $options = $crud['options'];
 
 
-        if (  isset($options['table'])) {
+        if ( isset($options['table']) && is_string($options['table']) ) {
             $this->_crudTable = $options['table'];
+        }
+
+        if ( isset($options['isPerformCrudAllowed']) && $options['isPerformCrudAllowed'] == 0 ) {
+            $this->_crudTable = false;
         }
 
         $this->info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';
@@ -1930,10 +1948,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function setClassCellCondition ($column, $condition, $class,$else)
+    function setClassCellCondition ($column, $condition, $class, $else)
     {
         $this->_classCellCondition = array();
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class,'else'=>$else);
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
 
@@ -2000,6 +2018,48 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     {
         $this->_cssClasses = array('odd' => $odd, 'even' => $even);
         return $this;
+    }
+
+
+       /**
+     * So user can know what is going to be done
+     */
+    function buildFormDefinitions()
+    {
+
+        if($this->getParam('add')==1)
+        {
+            $this->_formSettings['add']  =1;
+            $this->_formSettings['action']  = $this->getForm()->getAction();
+        }
+
+        if($this->getParam('edit')==1)
+        {
+            $this->_formSettings['edit']  =1;
+            $this->_formSettings['id']  = $this->getPkFromUrl();
+            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
+            $this->_formSettings['action']  = $this->getForm()->getAction();
+        }
+
+        if($this->getParam('delete')==1)
+        {
+            $this->_formSettings['delete']  = 1;
+            $this->_formSettings['id']  = $this->getPkFromUrl();
+            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
+            $this->_formSettings['action']  = $this->getForm()->getAction();
+        }
+
+    }
+
+
+    /**
+     * Return action action fro form
+     */
+    function getFormSettings()
+    {
+
+        $this->buildFormDefinitions();
+        return $this->_formSettings;
     }
 
 }
