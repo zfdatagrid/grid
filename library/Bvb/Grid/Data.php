@@ -1883,12 +1883,10 @@ abstract class Bvb_Grid_Data
         }
 
         if ( $this->_isDetail == true ) {
-            $result = $this->getSource()->fetchDetail($this->_getPkFromUrl());
+            $result = $this->getSource()->fetchDetail($this->getPkFromUrl());
             if ( count($result) == 0 ) {
                 $this->message = $this->__('Record Not Found');
                 $this->_isDetail = false;
-            } else {
-                $result = $result[0];
             }
         }
 
@@ -2609,7 +2607,7 @@ abstract class Bvb_Grid_Data
      *
      * @return string
      */
-    protected function _getPkFromUrl ()
+     function getPkFromUrl ()
     {
         if ( ! isset($this->ctrlParams['comm' . $this->_gridId]) ) {
             return array();

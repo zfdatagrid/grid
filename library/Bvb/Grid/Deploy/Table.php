@@ -277,7 +277,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             $mode = isset($this->ctrlParams['edit' . $this->_gridId]) ? 'edit' : 'add';
 
-            $queryUrl = $this->_getPkFromUrl();
+            $queryUrl = $this->getPkFromUrl();
 
 
             if ( ! Zend_Controller_Front::getInstance()->getRequest()->isPost() ) {
@@ -297,9 +297,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     $this->_willShow['form'] = true;
                     $this->_willShow['formEdit'] = true;
-                    $this->_willShow['formEditId'] = $this->_getPkFromUrl();
+                    $this->_willShow['formEditId'] = $this->getPkFromUrl();
 
-                    $r = $this->getSource()->getRecord($this->_crudTable, $this->_getPkFromUrl());
+                    $r = $this->getSource()->getRecord($this->_crudTable, $this->getPkFromUrl());
 
                     if ( $r === false ) {
                         $this->_gridSession->message = $this->__('Record Not Found');
@@ -350,9 +350,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 unset($post['form_submit' . $this->_gridId]);
                 unset($post['_form_edit' . $this->_gridId]);
                 unset($post['form_reset' . $this->_gridId]);
+                unset($post['_csrf' . $this->_gridId]);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
-
 
                 // Process data
                 if ( $mode == 'add' ) {
@@ -366,7 +366,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         }
 
 
-                        $this->getSource()->insert($this->_crudTable, $post);
+                        if($this->_crudTable !==false)
+                        {
+                            $this->getSource()->insert($this->_crudTable, $post);
+                        }
 
 
                         if ( null !== $this->_callbackAfterInsert ) {
@@ -411,7 +414,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                             call_user_func($this->_callbackBeforeUpdate, $sendCall);
                         }
 
-                        $this->getSource()->update($this->_crudTable, $post, $queryUrl);
+                        if ( $this->_crudTable !== false ) {
+                            $this->getSource()->update($this->_crudTable, $post, $queryUrl);
+                        }
 
 
                         if ( null !== $this->_callbackAfterUpdate ) {
@@ -489,6 +494,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         unset($this->ctrlParams['form_submit' . $this->_gridId]);
         unset($this->ctrlParams['_form_edit' . $this->_gridId]);
+        unset($this->ctrlParams['_csrf' . $this->_gridId]);
 
 
         return true;
@@ -518,9 +524,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         if ( isset($this->info['delete']['where']) && is_array($this->info['delete']['where']) ) {
-            $condition = array_merge($this->info['delete']['where'], $this->_getPkFromUrl());
+            $condition = array_merge($this->info['delete']['where'], $this->getPkFromUrl());
         } else {
-            $condition = $this->_getPkFromUrl();
+            $condition = $this->getPkFromUrl();
         }
 
         try {
@@ -534,9 +540,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 call_user_func($this->_callbackBeforeDelete, $sendCall);
             }
 
-
-            $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
-
+            if ( $this->_crudTable !== false ) {
+                $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
+            }
 
             if ( $resultDelete == 1 ) {
                 if ( null !== $this->_callbackAfterDelete ) {
@@ -1347,7 +1353,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $columns = parent::_buildGrid();
 
                 $this->_willShow['detail'] = true;
-                $this->_willShow['detailId'] = $this->_getPkFromUrl();
+                $this->_willShow['detailId'] = $this->getPkFromUrl();
 
                 $this->_render['detail'] = $this->temp['table']->globalStart();
 
@@ -1642,6 +1648,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $crud->setAction($this->getUrl(array_keys($crud->form->getElements())));
 
+        $crud->addElement('hash', '_csrf' . $this->_gridId, array('decorators' => $crud->buttonHidden));
+
         $this->_form = $crud->form;
 
         if ( isset($crud->options['callbackBeforeDelete']) ) {
@@ -1673,8 +1681,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $options = $crud['options'];
 
-        if ( isset($options['table']) ) {
-            $this->_crudTable = trim($options['table']);
+
+        if (  isset($options['table'])) {
+            $this->_crudTable = $options['table'];
         }
 
         $this->info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';

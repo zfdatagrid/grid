@@ -262,7 +262,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             $result = $final->fetchAll();
         }
 
-        return $result;
+        return $result[0];
     }
 
 
