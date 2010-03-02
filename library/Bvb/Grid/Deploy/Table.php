@@ -1174,30 +1174,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             $images = $this->temp['table']->images($this->imagesUrl);
 
-            $exp = '';
+            $this->_render['export'] =  $this->temp['table']->export($this->getExports(),$this->imagesUrl,$url ,$this->_gridId);
 
-
-            foreach ( $this->getExports() as $export ) {
-
-                $export['newWindow'] = isset($export['newWindow']) ? $export['newWindow'] : true;
-                $class = isset($export['cssClass']) ? 'class="' . $export['cssClass'] . '"' : '';
-
-                $blank = $export['newWindow'] == false ? '' : "target='_blank'";
-
-                if ( isset($this->imagesUrl) ) {
-                    $export['img'] = $this->imagesUrl . $export['caption'] . '.gif';
-
-                }
-
-                if ( isset($export['img']) ) {
-                    $exp .= "<a title='{$export['caption'] }' $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'><img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
-                } else {
-                    $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo{$this->_gridId}/{$export['caption']}'>" . $export['caption'] . "</a>";
-                }
-            }
 
             if ( isset($this->info['limit']) && (int) @$this->info['limit'] > 0 ) {
-                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, '', (int) $this->info['limit']), $this->temp['table']->pagination());
+                $result2 = str_replace(array( '{{pagination}}', '{{numberRecords}}'), array( '', (int) $this->info['limit']), $this->temp['table']->pagination());
 
             } elseif ( $npaginas > 1 && count($this->export) > 0 ) {
 
@@ -1206,7 +1187,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $f = '';
                 }
 
-                $result2 = str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, $pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}'), array( $pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif ( $npaginas < 2 && count($this->export) > 0 ) {
 
@@ -1214,7 +1195,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array($exp, '', $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array( '{{pagination}}', '{{numberRecords}}'), array( '', $this->_totalRecords), $this->temp['table']->pagination());
 
             } elseif ( count($this->export) == 0 ) {
 
@@ -1222,7 +1203,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $pag = '';
                     $f = '';
                 }
-                $result2 .= str_replace(array('{{export}}', '{{pagination}}', '{{numberRecords}}'), array('', $pag, $this->_totalRecords), $this->temp['table']->pagination());
+                $result2 .= str_replace(array( '{{pagination}}', '{{numberRecords}}'), array( $pag, $this->_totalRecords), $this->temp['table']->pagination());
 
             }
 
@@ -2027,26 +2008,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     function buildFormDefinitions()
     {
 
-        if($this->getParam('add')==1)
-        {
-            $this->_formSettings['add']  =1;
-            $this->_formSettings['action']  = $this->getForm()->getAction();
+        if($this->getParam('add')==1) {
+            $this->_formSettings['mode'] = 'add';
+            $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
-        if($this->getParam('edit')==1)
-        {
-            $this->_formSettings['edit']  =1;
-            $this->_formSettings['id']  = $this->getPkFromUrl();
+        if ( $this->getParam('edit') == 1 ) {
+            $this->_formSettings['mode'] = 'edit';
+            $this->_formSettings['id'] = $this->getPkFromUrl();
             $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
-            $this->_formSettings['action']  = $this->getForm()->getAction();
+            $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
-        if($this->getParam('delete')==1)
-        {
-            $this->_formSettings['delete']  = 1;
-            $this->_formSettings['id']  = $this->getPkFromUrl();
+        if ( $this->getParam('delete') == 1 ) {
+            $this->_formSettings['mode'] = 'delete';
+            $this->_formSettings['id'] = $this->getPkFromUrl();
             $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
-            $this->_formSettings['action']  = $this->getForm()->getAction();
+            $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
     }

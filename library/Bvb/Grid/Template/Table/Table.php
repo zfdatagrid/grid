@@ -32,6 +32,8 @@ class Bvb_Grid_Template_Table_Table
 
     public $options;
 
+    public $export;
+
 
     function globalStart ()
     {
@@ -50,16 +52,17 @@ class Bvb_Grid_Template_Table_Table
         return "<tr><td  colspan=\"{$this->options['colspan']}\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
 
+
     function titlesStart ()
     {
         return "<tr>";
     }
 
+
     function titlesEnd ()
     {
         return "</tr>";
     }
-
 
 
     function titlesLoop ()
@@ -68,12 +71,10 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
     function filtersStart ()
     {
         return "<tr>";
     }
-
 
 
     function filtersEnd ()
@@ -105,14 +106,12 @@ class Bvb_Grid_Template_Table_Table
         $this->i ++;
         $this->insideLoop = 1;
 
-        if(strlen($class)>0)
-        {
+        if ( strlen($class) > 0 ) {
             $class = " class='$class' ";
         }
 
         return "<tr $class>";
     }
-
 
 
     function loopEnd ($values)
@@ -124,13 +123,14 @@ class Bvb_Grid_Template_Table_Table
     function formMessage ($ok = false)
     {
 
-        if ($ok) {
+        if ( $ok ) {
             $class = "";
         } else {
             $class = "_red";
         }
         return "<div class=\"alerta$class\">{{value}}</div>";
     }
+
 
     function loopLoop ()
     {
@@ -150,7 +150,6 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-
     function sqlExpLoop ()
     {
         return "<td class=\"sum {{class}}\">{{value}}</td>";
@@ -160,7 +159,7 @@ class Bvb_Grid_Template_Table_Table
     function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
-        <div style=\"float:left;width:250px;\">{{export}}</div>
+        <div style=\"float:left;width:250px;\">" . $this->export . "</div>
         <div style=\"float:left;text-align:center;width:630px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
         </div>
         </td></tr>";
@@ -169,29 +168,52 @@ class Bvb_Grid_Template_Table_Table
 
     function images ($url)
     {
-        return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">",
-        'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">",
-        'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">",
-        'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\">",
-         'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">"
-         );
+        return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">", 'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">", 'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\">", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">");
     }
 
 
-    function detail()
+    function detail ()
     {
         return "<tr><td class='detailLeft'>{{field}}</td><td class='detailRight'>{{value}}</td></tr>";
     }
 
 
-    function detailEnd()
+    function detailEnd ()
     {
         return "<tr><td colspan='2'><a href='{{url}}'>{{return}}</a></td></tr>";
     }
 
-    function detailDelete()
+
+    function detailDelete ()
     {
         return "<tr><td colspan='2'>{{button}}</td></tr>";
+    }
+
+
+    function export ($exportDeploy, $images, $url, $gridId)
+    {
+
+        $exp = '';
+        foreach ( $exportDeploy as $export ) {
+            $export['newWindow'] = isset($export['newWindow']) ? $export['newWindow'] : true;
+            $class = isset($export['cssClass']) ? 'class="' . $export['cssClass'] . '"' : '';
+
+            $blank = $export['newWindow'] == false ? '' : "target='_blank'";
+
+            if ( strlen($images)>1) {
+                $export['img'] = $images . $export['caption'] . '.gif';
+            }
+
+            if ( isset($export['img']) ) {
+                $exp .= "<a title='{$export['caption'] }' $class $blank href='$url/_exportTo$gridId/{$export['caption']}'><img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
+            } else {
+                $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>" . $export['caption'] . "</a>";
+            }
+        }
+
+        $this->export = $exp;
+
+        return $exp;
     }
 
 }
