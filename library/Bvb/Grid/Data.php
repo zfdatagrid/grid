@@ -788,21 +788,6 @@ abstract class Bvb_Grid_Data
 
 
     /**
-     * Searchj type to be used in filters
-     * By default its LIKE
-     *
-     * @param unknown_type $filtro
-     * @param unknown_type $key
-     * @param string $key
-     * @return unknown
-     */
-    protected function _buildSearchType ($filtro, $field, $completeField)
-    {
-
-    }
-
-
-    /**
      * Default values for filters.
      * Thy will be applied before displaying. However the user can still remove them.
      * @param $filters
@@ -1415,20 +1400,20 @@ abstract class Bvb_Grid_Data
                 $outputToReplace[$key] = $dados[$value];
             }
 
-            if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
+            if ( isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
                 $this->_classRowConditionResult[$i] = '';
 
                 foreach ( $this->_classRowCondition as $key => $value ) {
                     $cond = str_replace($search, $outputToReplace, $value['condition']);
                     $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'].' ';
+                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                 }
 
-            }else{
-                $this->_classRowConditionResult[$i]='';
+            } else {
+                $this->_classRowConditionResult[$i] = '';
             }
 
-           $this->_classRowConditionResult[$i] .= ($i%2)?$this->_cssClasses['even']:$this->_cssClasses['odd'];
+            $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
 
 
             if ( count($this->_classCellCondition) > 0 ) {
@@ -1437,7 +1422,7 @@ abstract class Bvb_Grid_Data
                     foreach ( $value as $condFinal ) {
                         $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
                         $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'].' ';
+                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
                     }
                 }
             }
@@ -1625,12 +1610,13 @@ abstract class Bvb_Grid_Data
 
             $resultExp = $this->getSource()->getSqlExp($value);
 
-            if ( isset($value['format']) ) {
+            if ( ! isset($value['format']) && isset($this->data['fields'][$key]['format']) ) {
+                $resultExp = $this->_applyFormat($resultExp, $this->data['fields'][$key]['format']);
+            } elseif ( isset($value['format']) && strlen(isset($value['format'])) > 2  && false !== $value['format']) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
 
             $result[$key] = $resultExp;
-
 
         }
 

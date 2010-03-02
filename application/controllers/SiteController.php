@@ -209,14 +209,16 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
-       # $grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red");
+
+        #$grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
+        #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
         $grid->setDetailColumns();
-        $grid->setTableGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
-        #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+       $grid->updateColumn('Population',array('format'=>'number'));
+        $grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
 
         $this->view->pages = $grid->deploy();
 
@@ -248,7 +250,7 @@ class SiteController extends Zend_Controller_Action
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
-        $grid->addForm($form);
+        $grid->setForm($form);
 
         $this->view->pages = $grid->deploy();
 

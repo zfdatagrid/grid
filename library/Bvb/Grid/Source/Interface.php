@@ -309,6 +309,10 @@ interface Bvb_Grid_Source_Interface
      */
     function setCache($cache);
 
+    /**
+     * Build the form based on a Model or query
+     * @param $decorators
+     */
     function buildForm($decorators);
 
 }
