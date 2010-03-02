@@ -1930,10 +1930,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      * @param $condition
      * @param $class
      */
-    function setClassCellCondition ($column, $condition, $class)
+    function setClassCellCondition ($column, $condition, $class,$else)
     {
         $this->_classCellCondition = array();
-        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class,'else'=>$else);
         return $this;
     }
 
