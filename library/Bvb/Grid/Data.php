@@ -1180,7 +1180,7 @@ abstract class Bvb_Grid_Data
         }
 
         for ( $i = 0; $i < $tcampos; $i ++ ) {
-            if ( $this->getParam('order')) {
+            if ( $this->getParam('order') ) {
                 $explode = explode('_', $this->getParam('order'));
                 $name = str_replace('_' . end($explode), '', $this->getParam('order'));
                 $this->order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
@@ -1392,42 +1392,46 @@ abstract class Bvb_Grid_Data
         $fields = $this->_fields;
 
         $i = 0;
+
+
         $classConditional = array();
         foreach ( $this->_result as $dados ) {
 
-            $outputToReplace = array();
-            foreach ( array_combine($fields, $fields) as $key => $value ) {
-                $outputToReplace[$key] = $dados[$value];
-            }
 
-            if ( isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
-                $this->_classRowConditionResult[$i] = '';
-
-                foreach ( $this->_classRowCondition as $key => $value ) {
-                    $cond = str_replace($search, $outputToReplace, $value['condition']);
-                    $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
+            if ( $this->_deployName == 'table' ) {
+                $outputToReplace = array();
+                foreach ( array_combine($fields, $fields) as $key => $value ) {
+                    $outputToReplace[$key] = $dados[$value];
                 }
 
-            } else {
-                $this->_classRowConditionResult[$i] = '';
-            }
+                if ( isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
+                    $this->_classRowConditionResult[$i] = '';
 
-            $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
-
-
-            if ( count($this->_classCellCondition) > 0 ) {
-                foreach ( $this->_classCellCondition as $key => $value ) {
-                    $classConditional[$key] = '';
-                    foreach ( $value as $condFinal ) {
-                        $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
+                    foreach ( $this->_classRowCondition as $key => $value ) {
+                        $cond = str_replace($search, $outputToReplace, $value['condition']);
                         $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
+                        $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
+                    }
+
+                } else {
+                    $this->_classRowConditionResult[$i] = '';
+                }
+
+                $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
+
+
+                if ( count($this->_classCellCondition) > 0 ) {
+                    foreach ( $this->_classCellCondition as $key => $value ) {
+                        $classConditional[$key] = '';
+                        foreach ( $value as $condFinal ) {
+                            $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
+                            $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                            $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
+                        }
                     }
                 }
+
             }
-
-
             /**
              *Deal with extrafield from the left
              */
@@ -1609,16 +1613,15 @@ abstract class Bvb_Grid_Data
             if ( ! array_key_exists($key, $this->data['fields']) ) continue;
 
 
-            if(!isset($value['value']))
-            {
-                $value['value']=$key;
+            if ( ! isset($value['value']) ) {
+                $value['value'] = $key;
             }
 
             $resultExp = $this->getSource()->getSqlExp($value);
 
             if ( ! isset($value['format']) && isset($this->data['fields'][$key]['format']) ) {
                 $resultExp = $this->_applyFormat($resultExp, $this->data['fields'][$key]['format']);
-            } elseif ( isset($value['format']) && strlen(isset($value['format'])) > 2  && false !== $value['format']) {
+            } elseif ( isset($value['format']) && strlen(isset($value['format'])) > 2 && false !== $value['format'] ) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
 
@@ -1763,7 +1766,6 @@ abstract class Bvb_Grid_Data
 
         return $filters;
     }
-
 
 
     /**
@@ -2561,9 +2563,9 @@ abstract class Bvb_Grid_Data
      *
      * @return string
      */
-     function getPkFromUrl ()
+    function getPkFromUrl ()
     {
-        if ( ! $this->getParam('comm')) {
+        if ( ! $this->getParam('comm') ) {
             return array();
         }
 
