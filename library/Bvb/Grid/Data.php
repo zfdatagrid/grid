@@ -341,12 +341,14 @@ abstract class Bvb_Grid_Data
     /**
      * The table where crud operations
      * should be performed.
-     * by defeult the table is fetched from the quaery
+     * by default the table is fetched from the quaery
      * but the user can set other manually
      * @var unknown_type
      */
     protected $_crudTable;
 
+
+    protected $_crudTableOptions = array('add'=>1,'edit'=>1,'delete'=>1);
 
     /**
      * Last name from deploy class (table|pdf|csv|etc...)

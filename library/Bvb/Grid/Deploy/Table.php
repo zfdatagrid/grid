@@ -323,7 +323,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                                 if ( isset($this->data['fields'][$key]) ) {
                                     $fieldType = $this->getSource()->getFieldType($this->data['fields'][$key]['field']);
-                                }else{
+                                } else {
                                     $fieldType = 'text';
                                 }
 
@@ -379,7 +379,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         }
 
 
-                        if ( $this->_crudTable !== false ) {
+                        if ( $this->_crudTableOptions['add'] == true ) {
                             $this->getSource()->insert($this->_crudTable, $post);
                         }
 
@@ -426,7 +426,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                             call_user_func($this->_callbackBeforeUpdate, $sendCall);
                         }
 
-                        if ( $this->_crudTable !== false ) {
+                        if ( $this->_crudTableOptions['edit'] == true ) {
                             $this->getSource()->update($this->_crudTable, $post, $queryUrl);
                         }
 
@@ -552,7 +552,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 call_user_func($this->_callbackBeforeDelete, $sendCall);
             }
 
-            if ( $this->_crudTable !== false ) {
+            if ( $this->_crudTableOptions['delete'] == true ) {
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
             }
 
@@ -1722,7 +1722,41 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         if ( isset($options['isPerformCrudAllowed']) && $options['isPerformCrudAllowed'] == 0 ) {
-            $this->_crudTable = false;
+            $this->_crudTableOptions['add'] = 0;
+        } else {
+            $this->_crudTableOptions['add'] = 1;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 0 ) {
+            $this->_crudTableOptions['add'] = 0;
+        } else {
+            $this->_crudTableOptions['add'] = 1;
+        }
+
+
+        if ( isset($options['isPerformCrudAllowed']) && $options['isPerformCrudAllowed'] == 0 ) {
+            $this->_crudTableOptions['edit'] = 0;
+        } else {
+            $this->_crudTableOptions['edit'] = 1;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
+            $this->_crudTableOptions['edit'] = 0;
+        } else {
+            $this->_crudTableOptions['edit'] = 1;
+        }
+
+
+        if ( isset($options['isPerformCrudAllowed']) && $options['isPerformCrudAllowed'] == 0 ) {
+            $this->_crudTableOptions['delete'] = 0;
+        } else {
+            $this->_crudTableOptions['delete'] = 1;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 0 ) {
+            $this->_crudTableOptions['delete'] = 0;
+        } else {
+            $this->_crudTableOptions['delete'] = 1;
         }
 
         $this->info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';
