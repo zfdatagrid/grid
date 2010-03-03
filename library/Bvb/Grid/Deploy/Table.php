@@ -1644,7 +1644,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $crud->getForm()->setOptions($form);
 
         foreach ( $oldElements as $key => $value ) {
-            $crud->form->addElement($value);
+            $crud->getForm()->addElement($value);
         }
 
         if ( count($crud->getForm()->getElements()) > 0 ) {
@@ -1652,6 +1652,25 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $value->setDecorators($crud->getElementDecorator());
             }
         }
+
+        if ( isset($crud->options['fieldsBasedOnQuery']) && $crud->options['fieldsBasedOnQuery'] == 1 ) {
+
+            $finalFieldsForm = array();
+            $fieldsToForm = $this->getFields(true);
+
+            foreach ( $fieldsToForm as $key => $value ) {
+                $field = substr($value['field'], strpos($value['field'], '.') + 1);
+                $finalFieldsForm[] = $field;
+            }
+            foreach ( $crud->getForm()->getElements() as $key => $value ) {
+
+                if ( ! in_array($key, $finalFieldsForm) ) {
+                    $crud->getForm()->removeElement($key);
+                }
+            }
+
+        }
+
 
         $crud->getForm()->setDecorators($crud->getFormDecorator());
         $crud->getForm()->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
@@ -1694,7 +1713,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $crud = $this->_object2array($crud);
 
+
         $options = $crud['options'];
+
 
         if ( isset($options['table']) && is_string($options['table']) ) {
             $this->_crudTable = $options['table'];
@@ -1719,7 +1740,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             if ( ! isset($options['addButton']) ) {
                 $options['addButton'] = 0;
             }
-
             $this->add = array('allow' => 1, 'button' => $options['addButton']);
         }
 

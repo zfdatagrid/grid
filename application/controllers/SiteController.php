@@ -165,6 +165,7 @@ class SiteController extends Zend_Controller_Action
         #$form->addElement('text','my');
 
 
+
         $grid->setForm($form);
 
 
@@ -226,11 +227,13 @@ class SiteController extends Zend_Controller_Action
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
 
+
         $grid->setDetailColumns();
         $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+
 
 
         $this->view->pages = $grid->deploy();
@@ -252,21 +255,24 @@ class SiteController extends Zend_Controller_Action
 
     }
 
-     function joinAction ()
-        {
 
-            $grid = $this->grid();
-            $select = $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name','Code', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
-            $grid->query($select);
+    function joinAction ()
+    {
 
-            $form = new Bvb_Grid_Form();
-            $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
-            $grid->setForm($form);
+        $grid = $this->grid();
+        $select = $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Code', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
+        $grid->query($select);
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        $form->setFieldsBasedOnQuery(true);
+        $grid->setForm($form);
 
 
-            $this->view->pages = $grid->deploy();
-            $this->render('index');
-        }
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
 
     /**
      * Using a model
@@ -283,16 +289,16 @@ class SiteController extends Zend_Controller_Action
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
 
 
-
         $grid->setDeleteConfirmationPage(true);
 
         #$form->addElement('text','my');
 
 
+
         $grid->setForm($form);
 
-        foreach ( $grid->getFields() as $field ) {    # $grid->getForm()->removeElement($field);
-        }
+        foreach ( $grid->getFields() as $field ) {# $grid->getForm()->removeElement($field);
+}
 
         $this->view->pages = $grid->deploy();
 
