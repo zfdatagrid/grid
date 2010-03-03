@@ -809,7 +809,7 @@ abstract class Bvb_Grid_Data
 
         //Build an array to know filters values
         $valor_filters = array();
-        $filters = @urldecode($this->ctrlParams['filters' . $this->_gridId]);
+        $filters = @urldecode($this->getParam('filters'));
         $filters = str_replace("filter_", "", $filters);
 
         if ( strlen($filters) > 5 ) {
@@ -924,8 +924,8 @@ abstract class Bvb_Grid_Data
     protected function _buildQueryOrderAndLimit ()
     {
 
-        @$start = (int) $this->ctrlParams['start' . $this->_gridId];
-        $order = @$this->ctrlParams['order' . $this->_gridId];
+        @$start = (int) $this->getParam('start');
+        $order = $this->getParam('order');
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
 
@@ -1171,7 +1171,7 @@ abstract class Bvb_Grid_Data
 
         $links = $this->_fields;
 
-        if ( ! isset($this->ctrlParams['noOrder' . $this->_gridId]) ) {
+        if ( ! $this->getParam('noOrder') ) {
             $selectOrder = $this->getSource()->getSelectOrder();
 
             if ( count($selectOrder) == 1 ) {
@@ -1180,9 +1180,9 @@ abstract class Bvb_Grid_Data
         }
 
         for ( $i = 0; $i < $tcampos; $i ++ ) {
-            if ( isset($this->ctrlParams['order' . $this->_gridId]) ) {
-                $explode = explode('_', $this->ctrlParams['order' . $this->_gridId]);
-                $name = str_replace('_' . end($explode), '', $this->ctrlParams['order' . $this->_gridId]);
+            if ( $this->getParam('order')) {
+                $explode = explode('_', $this->getParam('order'));
+                $name = str_replace('_' . end($explode), '', $this->getParam('order'));
                 $this->order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
             }
 
@@ -1772,7 +1772,7 @@ abstract class Bvb_Grid_Data
     protected function _buildDefaultFilters ()
     {
 
-        if ( is_array($this->_defaultFilters) && ! isset($this->ctrlParams['filters' . $this->_gridId]) && ! isset($this->ctrlParams['nofilters']) ) {
+        if ( is_array($this->_defaultFilters) && ! $this->getParam('filters') && ! $this->getParam('noFilters') ) {
             $df = array();
             foreach ( $this->data['fields'] as $key => $value ) {
 
@@ -1807,7 +1807,7 @@ abstract class Bvb_Grid_Data
         // apply additional configuration
         $this->_runConfigCallbacks();
 
-        if ( isset($this->ctrlParams['gridDetail' . $this->_gridId]) && $this->_deployName == 'table' && $this->ctrlParams['gridDetail' . $this->_gridId] == 1 && is_array($this->_detailColumns) ) {
+        if ( $this->getParam('gridDetail') == 1 && $this->_deployName == 'table' && is_array($this->_detailColumns) ) {
             $this->_isDetail = true;
         }
 
@@ -1845,7 +1845,7 @@ abstract class Bvb_Grid_Data
         }
 
 
-        if ( count($this->getSource()->getSelectOrder()) > 0 && ! isset($this->ctrlParams['order' . $this->_gridId]) ) {
+        if ( count($this->getSource()->getSelectOrder()) > 0 && ! $this->getParam('order') ) {
             $norder = $this->getSource()->getSelectOrder();
 
             if ( ! $norder instanceof Zend_Db_Expr ) {
@@ -1869,7 +1869,7 @@ abstract class Bvb_Grid_Data
             $this->_buildQueryOrderAndLimit();
         }
 
-        if ( isset($this->ctrlParams['noOrder' . $this->_gridId]) && $this->ctrlParams['noOrder' . $this->_gridId] == 1 ) {
+        if ( $this->getParam('noOrder') == 1 ) {
             $this->getSource()->resetOrder();
         }
 
@@ -2563,7 +2563,7 @@ abstract class Bvb_Grid_Data
      */
      function getPkFromUrl ()
     {
-        if ( ! isset($this->ctrlParams['comm' . $this->_gridId]) ) {
+        if ( ! $this->getParam('comm')) {
             return array();
         }
 
@@ -2595,4 +2595,14 @@ abstract class Bvb_Grid_Data
         return $this->_willShow;
     }
 
+
+    /**
+     * Get a param from the $this->ctrlParams appending the grid id
+     * @param $param
+     * @param $default
+     */
+    function getParam ($param, $default = false)
+    {
+        return isset($this->ctrlParams[$param . $this->_gridId]) ? $this->ctrlParams[$param . $this->_gridId] : $default;
+    }
 }
