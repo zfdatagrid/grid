@@ -341,7 +341,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
         //Check if the request method is POST
-        if ( Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('_form_edit' . $this->_gridId) == 1 ) {
+        if ( Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('zfg_form_edit' . $this->_gridId) == 1 ) {
 
 
             if ( $this->_form->isValid($_POST) ) {
@@ -353,9 +353,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 }
 
                 unset($post['form_submit' . $this->_gridId]);
-                unset($post['_form_edit' . $this->_gridId]);
+                unset($post['zfg_form_edit' . $this->_gridId]);
                 unset($post['form_reset' . $this->_gridId]);
-                unset($post['_csrf' . $this->_gridId]);
+                unset($post['zfg_csrf' . $this->_gridId]);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
@@ -497,8 +497,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         unset($this->ctrlParams['form_submit' . $this->_gridId]);
-        unset($this->ctrlParams['_form_edit' . $this->_gridId]);
-        unset($this->ctrlParams['_csrf' . $this->_gridId]);
+        unset($this->ctrlParams['zfg_form_edit' . $this->_gridId]);
+        unset($this->ctrlParams['zfg_csrf' . $this->_gridId]);
 
 
         return true;
@@ -1325,15 +1325,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $url = $this->getUrl($removeParams);
 
                 $this->_renderDeploy['form'] = $this->_form;
+                $this->_render['form'] = $this->_form;
 
                 $this->_showsForm = true;
             }
         }
 
 
-        //Template start
-        $this->_render['start'] = $this->temp['table']->globalStart();
-        $this->_renderDeploy['start'] = $this->_render['start'];
+        $showsForm = $this->willShow();
+
+
+        if( (isset($showsForm['form']) &&  $showsForm['form'] ==1 && $this->info['doubleTables']==1 ) || !isset($showsForm['form']))
+        {
+            $this->_render['start'] = $this->temp['table']->globalStart();
+            $this->_renderDeploy['start'] = $this->_render['start'];
+        }
 
         if ( ((! $this->getParam('edit') || $this->getParam('edit') != 1) && (! $this->getParam('add') || $this->getParam('add') != 1)) || $this->_gridSession->_noForm == 1 || (isset($this->info['doubleTables']) && $this->info['doubleTables'] == 1) ) {
 
@@ -1420,8 +1426,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $this->_showsGrid = true;
         }
 
-        $this->_render['end'] = $this->temp['table']->globalEnd();
-        $this->_renderDeploy['end'] = $this->_render['end'];
+
+        if( (isset($showsForm['form']) &&  $showsForm['form'] ==1 && $this->info['doubleTables']==1 ) || !isset($showsForm['form']))
+        {
+           $this->_render['end'] = $this->temp['table']->globalEnd();
+           $this->_renderDeploy['end'] = $this->_render['end'];
+        }
+
 
 
         $gridId = $this->_gridId;
@@ -1609,11 +1620,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $oldElements = $crud->getElements();
 
-        $form = $this->getSource()->buildForm($crud);
+        $form = $this->getSource()->buildForm();
 
-        $crud->form->setDecorators(array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%')), 'Form'));
         $crud->form->setOptions($form);
-
 
         foreach ( $oldElements as $key => $value ) {
             $crud->form->addElement($value);
@@ -1628,16 +1637,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $crud->form->setDecorators($crud->formDecorator);
 
         $crud->form->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->buttonHidden));
-        $crud->form->addElement('hidden', '_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $crud->buttonHidden));
+        $crud->form->addElement('hidden', 'zfg_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $crud->buttonHidden));
+
+        $crud->addElement('hash', 'zfg_csrf' . $this->_gridId, array('decorators' => $crud->buttonHidden));
 
         $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->form->getElements())));
 
         $crud->form->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->buttonHidden));
-        $crud->form->addDisplayGroup(array('form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->groupDecorators));
+        $crud->form->addDisplayGroup(array( 'zfg_csrf' . $this->_gridId, 'zfg_form_edit' . $this->_gridId,'form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->groupDecorators));
 
         $crud->setAction($this->getUrl(array_keys($crud->form->getElements())));
-
-        $crud->addElement('hash', '_csrf' . $this->_gridId, array('decorators' => $crud->buttonHidden));
 
         $this->_form = $crud->form;
 

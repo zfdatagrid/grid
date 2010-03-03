@@ -680,17 +680,17 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     }
 
 
-    function buildForm ($decorators)
+    function buildForm ()
     {
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table']);
 
-        return $this->buildFormElements($cols, $decorators);
+        return $this->buildFormElements($cols);
 
     }
 
 
-    function buildFormElements ($cols, $decorators, $info = array())
+    function buildFormElements ($cols,$info = array())
     {
         $final = array();
         $form = array();
@@ -746,7 +746,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                         $final['values'][$column][$field[$field1]] = $field[$field2];
                     }
 
-                    $form['elements'][$column] = array('select', array('decorators' => $decorators->elementDecorators, 'multiOptions' => $final['values'][$column], 'label' => $label));
+                    $form['elements'][$column] = array('select', array('multiOptions' => $final['values'][$column], 'label' => $label));
 
                     $next = true;
 
@@ -766,7 +766,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('select', array('decorators' => $decorators->elementDecorators, 'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
+                $form['elements'][$column] = array('select', array('multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
 
                 continue;
             }
@@ -779,7 +779,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('multiCheckbox', array('decorators' => $decorators->elementDecorators, 'multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
+                $form['elements'][$column] = array('multiCheckbox', array('multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
 
                 continue;
             }
@@ -789,21 +789,21 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 case 'varchar':
                 case 'char':
                     $length = $detail['LENGTH'];
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
                 case 'date':
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
                 case 'datetime':
                 case 'timestamp':
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
                 case 'smalltext':
-                    $form['elements'][$column] = array('textarea', array('decorators' => $decorators->elementDecorators, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
                     break;
 
                 case 'int':
@@ -812,13 +812,13 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 case 'smallint':
                 case 'tinyint':
                     $isZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 case 'float':
                 case 'decimal':
                 case 'double':
-                    $form['elements'][$column] = array('text', array('decorators' => $decorators->elementDecorators, 'validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
                     break;
 
                 default:

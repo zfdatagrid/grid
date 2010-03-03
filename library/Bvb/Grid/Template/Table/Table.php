@@ -114,7 +114,7 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopEnd ($values)
+    function loopEnd ()
     {
         return "</tr>";
     }

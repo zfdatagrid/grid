@@ -31,7 +31,7 @@ class Bvb_Grid_Form
 
     protected $_model;
 
-    public $groupDecorators = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), 'DtDdWrapper');
+    public $groupDecorators = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     public $elementDecorators = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
