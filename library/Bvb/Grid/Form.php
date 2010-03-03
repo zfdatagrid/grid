@@ -21,7 +21,7 @@
 class Bvb_Grid_Form
 {
 
-    public $form;
+    protected $_form;
 
     public $options;
 
@@ -29,27 +29,52 @@ class Bvb_Grid_Form
 
     public $cascadeDelete;
 
-    protected $_model;
+    protected $_groupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
-    public $groupDecorators = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    protected $_elementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
-    public $elementDecorators = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    protected $_buttonHiddenDecorator = array('ViewHelper');
 
-    public $buttonHidden = array('ViewHelper');
+    protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:99%', 'class' => 'borders')), 'Form');
 
-    public $formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:98%', 'class' => 'borders')), 'Form');
+
+    function getForm ()
+    {
+        return $this->_form;
+    }
 
 
     function __call ($name, $args)
     {
-        if ( method_exists($this->form, $name) ) {
-           return  call_user_func_array(array($this->form,$name),$args);
+        if ( method_exists($this->getForm(), $name) ) {
+            return call_user_func_array(array($this->getForm(), $name), $args);
         }
 
         if ( substr(strtolower($name), 0, 3) == 'set' ) {
             $name = substr($name, 3);
             $name[0] = strtolower($name[0]);
+
+            $decorator = '_' . $name;
+
+            if ( isset($this->$decorator) ) {
+                $this->$decorator = $args[0];
+                return $this;
+            }
+
             $this->options[$name] = $args[0];
+            return $this;
+        }
+
+        if ( substr(strtolower($name), 0, 3) == 'get' ) {
+            $name = substr($name, 3);
+            $name[0] = strtolower($name[0]);
+
+            $decorator = '_' . $name;
+
+            if ( isset($this->$decorator) ) {
+                return $this->$decorator;
+            }
+
             return $this;
         }
 
@@ -58,7 +83,7 @@ class Bvb_Grid_Form
 
     function __construct ($formClass = 'Zend_Form', $formOptions = array())
     {
-        $this->form = new $formClass($formOptions);
+        $this->_form = new $formClass($formOptions);
     }
 
 
@@ -136,14 +161,6 @@ class Bvb_Grid_Form
         $this->options['callbackAfterInsert'] = $callback;
 
         return $this;
-    }
-
-
-    function onDeleteCascade ($options)
-    {
-        $this->cascadeDelete[] = $options;
-        return $this;
-
     }
 
 }

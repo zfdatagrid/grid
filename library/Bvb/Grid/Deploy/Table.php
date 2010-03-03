@@ -1622,33 +1622,32 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $form = $this->getSource()->buildForm();
 
-        $crud->form->setOptions($form);
+        $crud->getForm()->setOptions($form);
 
         foreach ( $oldElements as $key => $value ) {
             $crud->form->addElement($value);
         }
 
-        if ( count($crud->form->getElements()) > 0 ) {
-            foreach ( $crud->form->getElements() as $key => $value ) {
-                $value->setDecorators($crud->elementDecorators);
+        if ( count($crud->getForm()->getElements()) > 0 ) {
+            foreach ( $crud->getForm()->getElements() as $key => $value ) {
+                $value->setDecorators($crud->getElementDecorator());
             }
         }
 
-        $crud->form->setDecorators($crud->formDecorator);
+        $crud->getForm()->setDecorators($crud->getFormDecorator());
+        $crud->getForm()->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
 
-        $crud->form->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->buttonHidden));
-        $crud->form->addElement('hidden', 'zfg_form_edit' . $this->_gridId, array('value' => 1, 'decorators' => $crud->buttonHidden));
+        $crud->addElement('hash', 'zfg_csrf' . $this->_gridId, array('decorators' => $crud->getButtonHiddenDecorator()));
 
-        $crud->addElement('hash', 'zfg_csrf' . $this->_gridId, array('decorators' => $crud->buttonHidden));
+        $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
-        $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->form->getElements())));
+        $crud->getForm()->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->getForm()->addDisplayGroup(array( 'zfg_csrf' . $this->_gridId, 'zfg_form_edit' . $this->_gridId,'form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->getGroupDecorator()));
 
-        $crud->form->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->buttonHidden));
-        $crud->form->addDisplayGroup(array( 'zfg_csrf' . $this->_gridId, 'zfg_form_edit' . $this->_gridId,'form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->groupDecorators));
+        $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
 
-        $crud->setAction($this->getUrl(array_keys($crud->form->getElements())));
-
-        $this->_form = $crud->form;
+        $this->_form = $crud->getForm();
 
         if ( isset($crud->options['callbackBeforeDelete']) ) {
             $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
@@ -1676,9 +1675,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $crud = $this->_object2array($crud);
 
-
         $options = $crud['options'];
-
 
         if ( isset($options['table']) && is_string($options['table']) ) {
             $this->_crudTable = $options['table'];
@@ -1698,8 +1695,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 }
             }
         }
-
-        @$this->info['delete']['cascadeDelete'] = $crud['cascadeDelete'];
 
         if ( isset($options['add']) && $options['add'] == 1 ) {
             if ( ! isset($options['addButton']) ) {
