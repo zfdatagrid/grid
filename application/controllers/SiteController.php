@@ -11,6 +11,7 @@ class SiteController extends Zend_Controller_Action
 
     private $_db;
 
+
     /**
      * If a action don't exist, just redirect to the basic
      *
@@ -22,6 +23,7 @@ class SiteController extends Zend_Controller_Action
         $this->_redirect('default/site/basic', array('exit' => 1));
         return false;
     }
+
 
     /**
      * I think this is needed for something. can't remember
@@ -38,6 +40,7 @@ class SiteController extends Zend_Controller_Action
 
     }
 
+
     /**
      * Same as __call
      *
@@ -47,6 +50,7 @@ class SiteController extends Zend_Controller_Action
         $this->_forward('basic');
     }
 
+
     /**
      * Show the source code for this controller
      *
@@ -55,6 +59,7 @@ class SiteController extends Zend_Controller_Action
     {
         $this->render('code');
     }
+
 
     /**
      * Simplify the datagrid creation process
@@ -99,6 +104,7 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
      * Also notice that you can use fields values to populate the fields by surrounding the field name with {{}}
@@ -109,7 +115,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
 
-        $select =  $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
+        $select = $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
 
@@ -133,12 +139,13 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    function arrayAction()
+
+    function arrayAction ()
     {
-        $array = array(array('Marcel','12','M'),array('Katty','34','F'),array('Richard','87','M'),array('Dany','33','F'));
+        $array = array(array('Marcel', '12', 'M'), array('Katty', '34', 'F'), array('Richard', '87', 'M'), array('Dany', '33', 'F'));
 
         $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Array($array,array('nome','idade','sexo')));
+        $grid->setSource(new Bvb_Grid_Source_Array($array, array('nome', 'idade', 'sexo')));
         $this->view->pages = $grid->deploy();
         $this->render('index');
 
@@ -150,25 +157,27 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Csv('media/files/grid.csv'));
-        $grid->sqlexp = array ('Population' => array ('functions' => array ('MIN','AVG'), 'value' => 'Population' ) );
+        $grid->sqlexp = array('Population' => array('functions' => array('SUM'), 'value' => 'Population'));
 
-         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('ID', array('distinct' => array('field' => 'ID', 'name' => 'ID')))
-        ->addFilter('CountryCode', array('distinct' => array('field' => 'CountryCode', 'name' => 'CountryCode')))
-        ->addFilter('Population');
+        $form = new Bvb_Grid_Form();
+        #$form->setIsPerformCrudAllowed(false);
+        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        #$form->addElement('text','my');
 
-        $grid->addFilters($filters);
+
+        $grid->setForm($form);
 
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
 
+
     function jsonAction ()
     {
 
         $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Json('media/files/json.json','rows'));
+        $grid->setSource(new Bvb_Grid_Source_Json('media/files/json.json', 'rows'));
         /*
         $grid->sqlexp = array ('Population' => array ('functions' => array ('MIN','AVG'), 'value' => 'Population' ) );
 
@@ -184,6 +193,7 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
     function feedAction ()
     {
         $grid = $this->grid();
@@ -191,14 +201,15 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setPagination(10);
 
-        $grid->updateColumn('title',array('decorator'=>'<a href="{{link}}">{{title}}</a>','style'=>'width:200px;'));
-        $grid->updateColumn('pubDate',array('class'=>'width_200'));
+        $grid->updateColumn('title', array('decorator' => '<a href="{{link}}">{{title}}</a>', 'style' => 'width:200px;'));
+        $grid->updateColumn('pubDate', array('class' => 'width_200'));
 
-        $grid->setGridColumns(array('title','comments', 'pubDate'));
+        $grid->setGridColumns(array('title', 'comments', 'pubDate'));
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+
 
     /**
      * The 'most' basic example.
@@ -210,20 +221,23 @@ class SiteController extends Zend_Controller_Action
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
-        #$grid->addClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
+        #$grid->setClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
-        $grid->setDetailColumns();
-        $grid->setGridColumns(array( 'Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
-       $grid->updateColumn('Population',array('format'=>'number'));
-        $grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+        $grid->setDetailColumns();
+        $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+
+        #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
+        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
+
 
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
     }
+
 
     /**
      * The 'most' basic example.
@@ -232,11 +246,27 @@ class SiteController extends Zend_Controller_Action
     {
         $grid = $this->grid();
 
-        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd().'/1.xlsx','sheet1'));
+        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd() . '/1.xlsx', 'sheet1'));
         $this->view->pages = $grid->deploy();
         $this->render('index');
 
     }
+
+     function joinAction ()
+        {
+
+            $grid = $this->grid();
+            $select = $this->_db->select()->from(array('c' => 'Country'), array('country' => 'Name','Code', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('city' => 'Name'));
+            $grid->query($select);
+
+            $form = new Bvb_Grid_Form();
+            $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+            $grid->setForm($form);
+
+
+            $this->view->pages = $grid->deploy();
+            $this->render('index');
+        }
 
     /**
      * Using a model
@@ -246,16 +276,29 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->query(new Bugs());
-        $grid->setColumnsHidden(array('bug_id','next','time','verified_by'));
+        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
         $form = new Bvb_Grid_Form();
+        #$form->setIsPerformCrudAllowed(false);
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+
+
+
+        $grid->setDeleteConfirmationPage(true);
+
+        #$form->addElement('text','my');
+
+
         $grid->setForm($form);
+
+        foreach ( $grid->getFields() as $field ) {    # $grid->getForm()->removeElement($field);
+        }
 
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
     }
+
 
     /**
      * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
@@ -270,6 +313,7 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+
 
     /**
      * This example allow you to create an horizontal row, for every distinct value from a field
@@ -304,6 +348,7 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+
 
     /**
      * If you don't like to work with array when adding columns, you can work by dereferencing objects
@@ -341,7 +386,7 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    function doubleAction()
+    function doubleAction ()
     {
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
@@ -359,6 +404,7 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
     function ofcAction ()
     {
 
@@ -366,7 +412,7 @@ class SiteController extends Zend_Controller_Action
 
         $type = $this->_getParam('type');
 
-        if (! in_array($type, $allowedGraphs)) {
+        if ( ! in_array($type, $allowedGraphs) ) {
             $type = 'bar_glass';
         }
 
@@ -379,9 +425,9 @@ class SiteController extends Zend_Controller_Action
         $grid->setChartDimensions(900, 400);
         $grid->setFilesLocation(array('json' => $this->getFrontController()->getBaseUrl() . '/public/scripts/json/json2.js', 'js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
 
-        if ($type == 'pie') {
+        if ( $type == 'pie' ) {
             $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));
-        } elseif ($type == 'mixed') {
+        } elseif ( $type == 'mixed' ) {
             $grid->addValues('GNP', array('set_colour' => '#FF0000', 'set_key' => 'Gross National Product', 'chartType' => 'Bar_Glass'));
             $grid->addValues('SurfaceArea', array('set_colour' => '#00FF00', 'set_key' => 'Surface', 'chartType' => 'line'));
         } else {

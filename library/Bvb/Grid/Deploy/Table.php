@@ -224,7 +224,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      */
     function __construct ($options)
     {
-        $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid');
+        $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->_gridId);
         $this->_setRemoveHiddenFields(true);
 
         parent::__construct($options);
@@ -232,6 +232,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
     }
+
 
     /**
      *
@@ -293,7 +294,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     }
                 }
 
-                if ( $this->getParam('add')== 1 ) {
+                if ( $this->getParam('add') == 1 ) {
                     $this->_willShow['form'] = true;
                     $this->_willShow['formAdd'] = true;
                 }
@@ -312,13 +313,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->correct = 1;
                     }
 
+
                     if ( is_array($r) ) {
                         foreach ( $r as $key => $value ) {
                             $isField = $this->_form->getElement($key);
 
                             if ( isset($isField) ) {
 
-                                $fieldType = $this->getSource()->getFieldType($this->data['fields'][$key]['field']);
+
+                                if ( isset($this->data['fields'][$key]) ) {
+                                    $fieldType = $this->getSource()->getFieldType($this->data['fields'][$key]['field']);
+                                }else{
+                                    $fieldType = 'text';
+                                }
+
 
                                 if ( $fieldType == 'set' ) {
                                     $value = explode(',', $value);
@@ -596,7 +604,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
          */
 
 
-        if ( $this->getParam('filters') || $this->getParam('order')) {
+        if ( $this->getParam('filters') || $this->getParam('order') ) {
 
             $url = $this->getUrl('filters', 'nofilters');
             $url2 = $this->getUrl(array('order', 'noOrder'));
@@ -756,7 +764,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
         }
 
-        if ( $this->getParam('noOrder')) {
+        if ( $this->getParam('noOrder') ) {
             $orderField = null;
         }
 
@@ -1232,16 +1240,30 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $images = $this->temp['table']->images($this->imagesUrl);
 
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false) ) {
+
             $pkUrl = $this->getSource()->getPrimaryKey($this->data['table']);
             $urlFinal = '';
 
-            if ( is_array($pkUrl) ) {
-                foreach ( $pkUrl as $value ) {
-                    if ( strpos($value, '.') !== false ) {
-                        $urlFinal .= $value . ':{{' . substr($value, strpos($value, '.') + 1) . '}}-';
-                    } else {
-                         $urlFinal .= $value . ':{{' .  $value . '}}-';
+            $failPk = false;
+            $pkUrl2 = $pkUrl;
+            foreach ( $pkUrl as $key => $value ) {
+                foreach ( $this->getFields(true) as $field ) {
+                    if ( $field['field'] == $value ) {
+                        unset($pkUrl2[$key]);
+                        break 2;
                     }
+                }
+
+                throw new Bvb_Grid_Exception("You don't have your primary key in your query.
+                So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
+            }
+
+
+            foreach ( $pkUrl as $value ) {
+                if ( strpos($value, '.') !== false ) {
+                    $urlFinal .= $value . ':{{' . substr($value, strpos($value, '.') + 1) . '}}-';
+                } else {
+                    $urlFinal .= $value . ':{{' . $value . '}}-';
                 }
             }
 
@@ -1335,8 +1357,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $showsForm = $this->willShow();
 
 
-        if( (isset($showsForm['form']) &&  $showsForm['form'] ==1 && $this->info['doubleTables']==1 ) || !isset($showsForm['form']))
-        {
+        if ( (isset($showsForm['form']) && $showsForm['form'] == 1 && $this->info['doubleTables'] == 1) || ! isset($showsForm['form']) ) {
             $this->_render['start'] = $this->temp['table']->globalStart();
             $this->_renderDeploy['start'] = $this->_render['start'];
         }
@@ -1366,12 +1387,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     $this->_render['detail'] .= str_replace(array('{{field}}', '{{value}}'), array($value['field'], $value['value']), $this->temp['table']->detail());
                 }
 
-                if ( $this->getParam('gridRemove')  == 1 ) {
+                if ( $this->getParam('gridRemove') == 1 ) {
 
                     $localCancel = $this->getUrl(array('comm', 'gridDetail', 'gridRemove'));
 
                     $localDelete = $this->getUrl(array('gridRemove', 'gridDetail', 'comm'));
-                    $localDelete .= "/comm" . $this->_gridId . "/" . str_replace("view", 'delete',$this->getParam('comm'));
+                    $localDelete .= "/comm" . $this->_gridId . "/" . str_replace("view", 'delete', $this->getParam('comm'));
 
                     $buttonRemove = $this->getView()->formButton('delRecordGrid', $this->__('Remove Record'), array('onclick' => "window.location='$localDelete'"));
                     $buttonCancel = $this->getView()->formButton('delRecordGrid', $this->__('Cancel'), array('onclick' => "window.location='$localCancel'"));
@@ -1427,17 +1448,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
 
-        if( (isset($showsForm['form']) &&  $showsForm['form'] ==1 && $this->info['doubleTables']==1 ) || !isset($showsForm['form']))
-        {
-           $this->_render['end'] = $this->temp['table']->globalEnd();
-           $this->_renderDeploy['end'] = $this->_render['end'];
+        if ( (isset($showsForm['form']) && $showsForm['form'] == 1 && $this->info['doubleTables'] == 1) || ! isset($showsForm['form']) ) {
+            $this->_render['end'] = $this->temp['table']->globalEnd();
+            $this->_renderDeploy['end'] = $this->_render['end'];
         }
-
 
 
         $gridId = $this->_gridId;
 
-        if ($this->getParam('gridmod') == 'ajax' && $this->info['ajax'] !== false ) {
+        if ( $this->getParam('gridmod') == 'ajax' && $this->info['ajax'] !== false ) {
 
             $response = Zend_Controller_Front::getInstance()->getResponse();
             $response->clearBody();
@@ -1643,7 +1662,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
         $crud->getForm()->addElement('button', 'form_reset' . $this->_gridId, array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
-        $crud->getForm()->addDisplayGroup(array( 'zfg_csrf' . $this->_gridId, 'zfg_form_edit' . $this->_gridId,'form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->getGroupDecorator()));
+        $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->_gridId, 'zfg_form_edit' . $this->_gridId, 'form_submit' . $this->_gridId, 'form_reset' . $this->_gridId), 'buttons', array('decorators' => $crud->getGroupDecorator()));
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
 

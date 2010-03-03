@@ -89,6 +89,11 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $select->from($table);
 
         foreach ( $condition as $field => $value ) {
+
+            if ( stripos($field, '.') !== false ) {
+                $field = substr($field, stripos($field, '.') + 1);
+            }
+
             $select->where($field . '=?', $value);
         }
 
@@ -193,6 +198,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
      */
     function getDescribeTable ($table)
     {
+
         if ( ! isset($this->_describeTables[$table]) || ! is_array($this->_describeTables[$table]) ) {
 
             if ( $this->_cache['use'] == 1 ) {
@@ -336,6 +342,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function getFieldType ($field)
     {
+
         $tableList = $this->getTableList();
 
         $explode = explode('.', $field);
@@ -657,6 +664,12 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     {
         $where = '';
         foreach ( $condition as $field => $value ) {
+
+            if ( stripos($field, '.') !== false ) {
+                $field = substr($field, stripos($field, '.') + 1);
+            }
+
+
             $where .= 'AND ' . $this->_getDb()->quoteIdentifier($field) . ' = ' . $this->_getDb()->quote($value) . ' ';
         }
         return " ( " . substr($where, 3) . " )";
@@ -690,7 +703,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
     }
 
 
-    function buildFormElements ($cols,$info = array())
+    function buildFormElements ($cols, $info = array())
     {
         $final = array();
         $form = array();
@@ -837,7 +850,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
      *
      * @return string
      */
-     function getPrimaryKey ($table)
+    function getPrimaryKey ($table)
     {
 
         $pk = $this->getDescribeTable($table);
