@@ -203,6 +203,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
             return array_slice($this->_rawResult, $this->_start);
         }
 
+
         return array_slice($this->_rawResult, $this->_start, $this->_offset);
 
     }
@@ -394,7 +395,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
     }
 
 
-    function buildForm ($decorators)
+    function buildForm ()
     {
 
         $form = array();
@@ -405,7 +406,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
             continue;
 
             $label = ucwords(str_replace('_', ' ', $elements));
-            $form['elements'][$elements] = array('text', array('decorators' => $decorators->elementDecorators,  'size' => 10, 'label' => $label));
+            $form['elements'][$elements] = array('text', array( 'size' => 10, 'label' => $label));
         }
 
 

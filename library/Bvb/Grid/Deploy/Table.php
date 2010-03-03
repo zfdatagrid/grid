@@ -2039,6 +2039,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     }
 
 
+    /**
+     * Show a confirmation page instead a alert window
+     * @param $status
+     */
     function setDeleteConfirmationPage ($status)
     {
         $this->_deleteConfirmationPage = (bool) $status;
