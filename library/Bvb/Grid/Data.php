@@ -348,7 +348,7 @@ abstract class Bvb_Grid_Data
     protected $_crudTable;
 
 
-    protected $_crudTableOptions = array('add'=>1,'edit'=>1,'delete'=>1);
+    protected $_crudTableOptions = array('add' => 1, 'edit' => 1, 'delete' => 1);
 
     /**
      * Last name from deploy class (table|pdf|csv|etc...)
@@ -1005,7 +1005,7 @@ abstract class Bvb_Grid_Data
         unset($params_clean['gridmod']);
 
         foreach ( $params_clean as $key => $param ) {
-            // Apply the urldecode function to the filtros param, because its  JSON
+            // Apply the urldecode function to the filtros param, because its JSON
             if ( $key == 'filters' . $this->_gridId ) {
                 $url .= "/" . trim($key) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
             } else {
@@ -1399,12 +1399,13 @@ abstract class Bvb_Grid_Data
         $classConditional = array();
         foreach ( $this->_result as $dados ) {
 
+            $outputToReplace = array();
+            foreach ( array_combine($fields, $fields) as $key => $value ) {
+                $outputToReplace[$key] = $dados[$value];
+            }
 
             if ( $this->_deployName == 'table' ) {
-                $outputToReplace = array();
-                foreach ( array_combine($fields, $fields) as $key => $value ) {
-                    $outputToReplace[$key] = $dados[$value];
-                }
+
 
                 if ( isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
                     $this->_classRowConditionResult[$i] = '';
@@ -1842,9 +1843,9 @@ abstract class Bvb_Grid_Data
 
         if ( $this->_isDetail == true ) {
             $result = $this->getSource()->fetchDetail($this->getPkFromUrl());
-            if ( count($result) == 0 ) {
-                $this->message = $this->__('Record Not Found');
-                $this->_isDetail = false;
+
+            if ( $result == false ) {
+                $this->_redirect($this->getUrl(array('comm', 'gridDetail')));
             }
         }
 
@@ -2609,4 +2610,14 @@ abstract class Bvb_Grid_Data
     {
         return isset($this->ctrlParams[$param . $this->_gridId]) ? $this->ctrlParams[$param . $this->_gridId] : $default;
     }
+
+
+    protected function _redirect ($url, $code = 302)
+    {
+        $response = Zend_Controller_Front::getInstance()->getResponse();
+        $response->setRedirect($url, $code);
+        $response->sendResponse();
+        die();
+    }
+
 }

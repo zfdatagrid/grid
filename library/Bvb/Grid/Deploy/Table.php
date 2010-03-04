@@ -485,15 +485,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     }
 
 
-    protected function _redirect ($url, $code = 302)
-    {
-        $response = Zend_Controller_Front::getInstance()->getResponse();
-        $response->setRedirect($url, $code);
-        $response->sendResponse();
-        die();
-    }
-
-
     protected function _removeFormParams ($post, $extra = array())
     {
 

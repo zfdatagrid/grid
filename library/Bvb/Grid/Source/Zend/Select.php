@@ -226,6 +226,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function execute ()
     {
+
         $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
 
         if ( $this->_cache['use'] == 1 ) {
@@ -292,7 +293,6 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $selectCount->reset(Zend_Db_Select::ORDER);
 
         $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL '));
-
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
@@ -575,6 +575,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
+
+
         $columns = $this->getColumns();
 
         foreach ( $columns as $value ) {
@@ -595,19 +597,33 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             $field = $completeField['field'];
         }
 
+
+        /**
+         * Reserved words from myslq dont contain any special charaters.
+         * But select expressions may.
+         *
+         * SELECT IF(City.Population>500000,1,0)....
+         *
+         * We can not quoteIdentifier this fields...
+         */
+        if(preg_match("/^[a-z_]$/i",$field))
+        {
+            $field = $this->_getDb()->quoteIdentifier($field);
+        }
+
         switch ($op) {
             case 'equal':
             case '=':
                 $this->_select->where($field . ' = ?', $filter);
                 break;
             case 'REGEX':
-                $this->_select->where(new Zend_Db_Expr($this->_getDb()->quoteIdentifier($field) . " REGEXP " . $this->_getDb()->quote($filter)));
+                $this->_select->where($field . " REGEXP " . $this->_getDb()->quote($filter));
                 break;
             case 'rlike':
-                $this->_select->where(new Zend_Db_Expr($this->_getDb()->quoteIdentifier($field) . " LIKE " . $this->_getDb()->quote($filter . "%")));
+                $this->_select->where($field . " LIKE " . $this->_getDb()->quote($filter . "%"));
                 break;
             case 'llike':
-                $this->_select->where(new Zend_Db_Expr($this->_getDb()->quoteIdentifier($field) . " LIKE " . $this->_getDb()->quote("%" . $filter)));
+                $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter));
                 break;
             case '>=':
                 $this->_select->where($field . " >= ?", $filter);
@@ -636,7 +652,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 break;
             case 'like':
             default:
-                $this->_select->where(new Zend_Db_Expr($this->_getDb()->quoteIdentifier($field) . " LIKE " . $this->_getDb()->quote("%" . $filter . "%")));
+                $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
                 break;
         }
 

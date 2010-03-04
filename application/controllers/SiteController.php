@@ -226,8 +226,6 @@ class SiteController extends Zend_Controller_Action
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
-
-
         $grid->setDetailColumns();
         $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
@@ -285,20 +283,15 @@ class SiteController extends Zend_Controller_Action
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
         $form = new Bvb_Grid_Form();
-        #$form->setIsPerformCrudAllowed(false);
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
 
-
-        $grid->setDeleteConfirmationPage(true);
-
-        #$form->addElement('text','my');
-
-
+//        $form->setIsPerformCrudAllowed(false);
+//        $form->setIsPerformCrudAllowedForAddition(true);
+//        $form->setIsPerformCrudAllowedForEdition(true);
+//        $form->setIsPerformCrudAllowedForDeletion(false);
+//        $grid->setDeleteConfirmationPage(true);
 
         $grid->setForm($form);
-
-        foreach ( $grid->getFields() as $field ) {# $grid->getForm()->removeElement($field);
-}
 
         $this->view->pages = $grid->deploy();
 
