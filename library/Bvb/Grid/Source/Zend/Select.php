@@ -268,6 +268,12 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             $result = $final->fetchAll();
         }
 
+
+        if(!isset($result[0]))
+        {
+            return false;
+        }
+
         return $result[0];
     }
 
@@ -292,12 +298,25 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-                $result = $final->fetchColumn();
+                $result = $final->fetchAll();
+
+                if ( count($result) > 1 ) {
+                    $result = count($result);
+                } else {
+                    $result = $result[0]['TOTAL'];
+                }
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-            $result = $final->fetchColumn();
+            $result = $final->fetchAll();
+
+            if ( count($result) > 1 ) {
+                $result = count($result);
+            } else {
+                $result = $result[0]['TOTAL'];
+            }
+
         }
 
         return $result;
