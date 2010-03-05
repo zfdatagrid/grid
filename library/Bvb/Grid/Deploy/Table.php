@@ -1644,7 +1644,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
         }
 
-        if ( isset($crud->options['fieldsBasedOnQuery']) && $crud->options['fieldsBasedOnQuery'] == 1 ) {
+        if ( $crud->getFieldsBasedOnQuery() == 1 ) {
 
             $finalFieldsForm = array();
             $fieldsToForm = $this->getFields(true);
@@ -1662,6 +1662,36 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         }
 
+        if(count($crud->getAllowedFields())>0)
+        {
+
+            foreach ($crud->getForm()->getElements() as $key=>$value)
+            {
+                if(!in_array($key,$crud->getAllowedFields()))
+                {
+                    $crud->getForm()->removeElement($key);
+                }
+            }
+
+        }
+
+        if(count($crud->getDisallowedFields())>0)
+        {
+
+            foreach ($crud->getForm()->getElements() as $key=>$value)
+            {
+                if(in_array($key,$crud->getDisallowedFields()))
+                {
+                    $crud->getForm()->removeElement($key);
+                }
+            }
+
+        }
+
+        if(count($crud->getForm()->getElements())==0)
+        {
+            throw new Bvb_Grid_Exception($this->__("Your form don't not have any field"));
+        }
 
         $crud->getForm()->setDecorators($crud->getFormDecorator());
         $crud->getForm()->addElement('submit', 'form_submit' . $this->_gridId, array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));

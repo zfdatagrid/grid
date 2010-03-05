@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,11 +10,11 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c) Pétala Azul (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright ZFDatagrid 2010
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
  */
 
 abstract class Bvb_Grid_Data

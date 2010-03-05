@@ -27,6 +27,8 @@ class Bvb_Grid_Form
 
     public $fields;
 
+    protected $_fieldsBasedOnQuery = false;
+
     protected $_groupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     protected $_elementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
@@ -35,6 +37,9 @@ class Bvb_Grid_Form
 
     protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:99%', 'class' => 'borders')), 'Form');
 
+    protected $_allowedFields = array();
+
+    protected $_disallowedFields = array();
 
     function getForm ()
     {
@@ -54,7 +59,7 @@ class Bvb_Grid_Form
 
             $decorator = '_' . $name;
 
-            if ( isset($this->$decorator) ) {
+            if ( isset($this->$decorator)  && gettype($this->$decorator) == gettype($args[0])) {
                 $this->$decorator = $args[0];
                 return $this;
             }
