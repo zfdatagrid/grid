@@ -180,7 +180,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $this->_allFieldsAdded = true;
         if ( count($this->_updateColumnQueue) > 0 ) {
             foreach ( $this->_updateColumnQueue as $field => $options ) {
-                if ( ! array_key_exists($field, $this->data['fields']) ) continue;
+                if ( ! array_key_exists($field, $this->_data['fields']) ) continue;
                 $this->updateColumn($field, $options);
             }
             $this->_updateColumnQueue = array();

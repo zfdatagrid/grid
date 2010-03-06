@@ -58,7 +58,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -175,7 +175,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
         if ($this->downloadData) {
             // send first headers
-            header('Content-type: text/plain; charset=' . $this->charEncoding);
+            header('Content-type: text/plain; charset=' . $this->getCharEncoding());
             header('Content-Disposition: attachment; filename="' .$this->deploy['name'] . '.csv"');
         }
         if ($this->storeData) {
@@ -187,11 +187,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles()));
         $i = 0;
         do {
-            $i += $this->pagination;
+            $i += $this->_pagination;
             $this->csvAddData(self::buildGridCsv(parent::_buildGrid()));
             $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp()));
             // get next data
-            $this->_select->limit($this->pagination, $i);
+            $this->_select->limit($this->_pagination, $i);
             $stmt = $this->_getDb()->query($this->_select);
             $this->_result = $stmt->fetchAll();
         } while (count($this->_result));

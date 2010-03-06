@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');
         }
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -225,11 +225,11 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
         parent::deploy();
 
-        if (! $this->temp['odt'] instanceof Bvb_Grid_Template_Odt_Odt) {
+        if (! $this->_temp['odt'] instanceof Bvb_Grid_Template_Odt_Odt) {
             $this->setTemplate('odt', 'odt');
         }
 
-        $this->templateInfo = $this->temp['odt']->options;
+        $this->templateInfo = $this->_temp['odt']->options;
 
         if (! isset($this->deploy['title'])) {
             $this->deploy['title'] = '';
@@ -288,16 +288,16 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/' . ucfirst($this->deploy['name']) . '/';
 
         if (! defined('APPLICATION_PATH')) {
-            $pathTemplate = rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         } else {
-            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         }
 
         $this->deldir($this->deploy['dir']);
 
         $this->copyDir($pathTemplate, $this->deploy['dir']);
 
-        $xml = $this->temp['odt']->globalStart();
+        $xml = $this->_temp['odt']->globalStart();
 
 
         $titles = parent::_buildTitles();
@@ -317,7 +317,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         }
 
 
-        $header = str_replace(array('{{title}}', '{{subtitle}}', '{{footer}}'), array($this->deploy['title'], $this->deploy['subtitle'], $this->deploy['footer']), $this->temp['odt']->header());
+        $header = str_replace(array('{{title}}', '{{subtitle}}', '{{footer}}'), array($this->deploy['title'], $this->deploy['subtitle'], $this->deploy['footer']), $this->_temp['odt']->header());
 
         file_put_contents($this->deploy['dir'] . "styles.xml", $header);
 
@@ -329,29 +329,29 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         #START DOCUMENT.XML
 
 
-        $xml = $this->temp['odt']->globalStart();
+        $xml = $this->_temp['odt']->globalStart();
 
-        $xml .= $this->temp['odt']->titlesStart();
+        $xml .= $this->_temp['odt']->titlesStart();
 
         foreach ($titles as $value) {
 
-            if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+            if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
-                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['odt']->titlesLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['odt']->titlesLoop());
 
             }
         }
-        $xml .= $this->temp['odt']->titlesEnd();
+        $xml .= $this->_temp['odt']->titlesEnd();
 
         if (is_array($wsData)) {
 
             /////////////////
             /////////////////
             /////////////////
-            if (@$this->info['hRow']['title'] != '') {
+            if (@$this->_info['hRow']['title'] != '') {
                 $bar = $wsData;
 
-                $hbar = trim($this->info['hRow']['field']);
+                $hbar = trim($this->_info['hRow']['field']);
 
                 $p = 0;
                 foreach ($wsData[0] as $value) {
@@ -377,16 +377,16 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
                 ////////////
                 ////////////
                 //A linha horizontal
-                if (@$this->info['hRow']['title'] != '') {
+                if (@$this->_info['hRow']['title'] != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
-                        $xml .= str_replace("{{value}}", utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->temp['odt']->hRow());
+                        $xml .= str_replace("{{value}}", utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->_temp['odt']->hRow());
                     }
                 }
                 ////////////
                 ////////////
 
 
-                $xml .= $this->temp['odt']->loopStart();
+                $xml .= $this->_temp['odt']->loopStart();
 
                 $a = 1;
 
@@ -394,15 +394,15 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
                     $value['value'] = strip_tags($value['value']);
 
-                    if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                    if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
-                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['odt']->loopLoop());
+                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['odt']->loopLoop());
 
                     }
                     $a ++;
 
                 }
-                $xml .= $this->temp['odt']->loopEnd();
+                $xml .= $this->_temp['odt']->loopEnd();
                 $aa ++;
                 $i ++;
             }
@@ -410,14 +410,14 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
 
         if (is_array($sql)) {
-            $xml .= $this->temp['odt']->sqlExpStart();
+            $xml .= $this->_temp['odt']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}", utf8_encode( $value['value']), $this->temp['odt']->sqlExpLoop());
+                $xml .= str_replace("{{value}}", utf8_encode( $value['value']), $this->_temp['odt']->sqlExpLoop());
             }
-            $xml .= $this->temp['odt']->sqlExpEnd();
+            $xml .= $this->_temp['odt']->sqlExpEnd();
         }
 
-        $xml .= $this->temp['odt']->globalEnd();
+        $xml .= $this->_temp['odt']->globalEnd();
 
 
         file_put_contents($this->deploy['dir'] . "content.xml", $xml);

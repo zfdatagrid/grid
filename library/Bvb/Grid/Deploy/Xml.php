@@ -37,7 +37,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     function __construct ($options = array('download'))
     {
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -117,7 +117,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         parent::deploy();
 
         $grid = '';
-        $grid .= '<?xml version="1.0" encoding="' . $this->charEncoding . '"?>' . "\n";
+        $grid .= '<?xml version="1.0" encoding="' . $this->getCharEncoding() . '"?>' . "\n";
         $grid .= "<grid>\n";
 
         $grid .= self::buildTitltesXml(parent::_buildTitles());

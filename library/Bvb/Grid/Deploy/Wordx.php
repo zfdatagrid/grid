@@ -43,7 +43,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');
         }
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -222,7 +222,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         parent::deploy();
 
-        if (! $this->temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
+        if (! $this->_temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
             $this->setTemplate('wordx', 'wordx');
         }
 
@@ -290,9 +290,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/' . ucfirst($this->deploy['name']) . '/';
 
         if (! defined('APPLICATION_PATH')) {
-            $pathTemplate = rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         } else {
-            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         }
 
 
@@ -300,7 +300,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $this->copyDir($pathTemplate, $this->deploy['dir']);
 
-        $xml = $this->temp['wordx']->globalStart();
+        $xml = $this->_temp['wordx']->globalStart();
 
         $titles = parent::_buildTitles();
         $wsData = parent::_buildGrid();
@@ -313,15 +313,15 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $data = explode("/", $this->deploy['logo']);
             copy($this->deploy['logo'], $this->deploy['dir'] . 'word/media/' . end($data));
 
-            $logo = $this->temp['wordx']->logo();
+            $logo = $this->_temp['wordx']->logo();
 
             file_put_contents($this->dir . "word/_rels/header1.xml.rels", $logo);
 
-            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->temp['wordx']->header());
+            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->_temp['wordx']->header());
 
         } else {
 
-            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->temp['wordx']->header());
+            $header = str_replace(array('{{title}}', '{{subtitle}}'), array($this->deploy['title'], $this->deploy['subtitle']), $this->_temp['wordx']->header());
 
         }
 
@@ -334,36 +334,36 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
         #BEGIN FOOTER
-        $footer = str_replace("{{value}}", $this->deploy['footer'], $this->temp['wordx']->footer());
+        $footer = str_replace("{{value}}", $this->deploy['footer'], $this->_temp['wordx']->footer());
         file_put_contents($this->deploy['dir'] . "word/footer2.xml", $footer);
         #END footer
 
 
 
         #START DOCUMENT.XML
-        $xml = $this->temp['wordx']->globalStart();
+        $xml = $this->_temp['wordx']->globalStart();
 
-        $xml .= $this->temp['wordx']->titlesStart();
+        $xml .= $this->_temp['wordx']->titlesStart();
 
         foreach ($titles as $value) {
 
-            if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+            if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
-                $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->temp['wordx']->titlesLoop());
+                $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->_temp['wordx']->titlesLoop());
 
             }
         }
-        $xml .= $this->temp['wordx']->titlesEnd();
+        $xml .= $this->_temp['wordx']->titlesEnd();
 
         if (is_array($wsData)) {
 
             /////////////////
             /////////////////
             /////////////////
-            if (@$this->info['hRow']['title'] != '') {
+            if (@$this->_info['hRow']['title'] != '') {
                 $bar = $wsData;
 
-                $hbar = trim($this->info['hRow']['field']);
+                $hbar = trim($this->_info['hRow']['field']);
 
                 $p = 0;
                 foreach ($wsData[0] as $value) {
@@ -389,9 +389,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 ////////////
                 ////////////
                 //A linha horizontal
-                if (@$this->info['hRow']['title'] != '') {
+                if (@$this->_info['hRow']['title'] != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
-                        $xml .= str_replace("{{value}}",  utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->temp['wordx']->hRow());
+                        $xml .= str_replace("{{value}}",  utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->_temp['wordx']->hRow());
                     }
                 }
                 ////////////
@@ -399,7 +399,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
 
 
-                $xml .= $this->temp['wordx']->loopStart();
+                $xml .= $this->_temp['wordx']->loopStart();
 
                 $a = 1;
 
@@ -407,29 +407,29 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     $value['value'] = strip_tags($value['value']);
 
-                    if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                    if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
-                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['wordx']->loopLoop());
+                        $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['wordx']->loopLoop());
 
                     }
                     $a ++;
 
                 }
-                $xml .= $this->temp['wordx']->loopEnd();
+                $xml .= $this->_temp['wordx']->loopEnd();
                 $aa ++;
                 $i ++;
             }
         }
 
         if (is_array($sql)) {
-            $xml .= $this->temp['wordx']->sqlExpStart();
+            $xml .= $this->_temp['wordx']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['wordx']->sqlExpLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['wordx']->sqlExpLoop());
             }
-            $xml .= $this->temp['wordx']->sqlExpEnd();
+            $xml .= $this->_temp['wordx']->sqlExpEnd();
         }
 
-        $xml .= $this->temp['wordx']->globalEnd();
+        $xml .= $this->_temp['wordx']->globalEnd();
 
         file_put_contents($this->deploy['dir'] . "word/document.xml", $xml);
 

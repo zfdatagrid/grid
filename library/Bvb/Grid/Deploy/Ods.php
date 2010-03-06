@@ -43,7 +43,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         }
 
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -230,11 +230,11 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         parent::deploy();
 
 
-        if (! $this->temp['ods'] instanceof Bvb_Grid_Template_Ods_Ods) {
+        if (! $this->_temp['ods'] instanceof Bvb_Grid_Template_Ods_Ods) {
             $this->setTemplate('ods', 'ods');
         }
 
-        $this->templateInfo = $this->temp['ods']->options;
+        $this->templateInfo = $this->_temp['ods']->options;
 
         if (! isset($this->deploy['title'])) {
             $this->deploy['title'] = '';
@@ -294,9 +294,9 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/' . ucfirst($this->deploy['name']) . '/';
 
         if (! defined('APPLICATION_PATH')) {
-            $pathTemplate = rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         } else {
-            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->libraryDir, '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
+            $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
         }
 
         $this->deldir($this->deploy['dir']);
@@ -304,7 +304,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
         $this->copyDir($pathTemplate, $this->deploy['dir']);
 
-        $xml = $this->temp['ods']->globalStart();
+        $xml = $this->_temp['ods']->globalStart();
 
 
         $titles = parent::_buildTitles();
@@ -319,36 +319,36 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         #START CONTENT.XML
 
 
-        $xml = $this->temp['ods']->globalStart();
+        $xml = $this->_temp['ods']->globalStart();
 
-        $xml .= $this->temp['ods']->titlesStart();
+        $xml .= $this->_temp['ods']->titlesStart();
 
         foreach ($titles as $value) {
-            $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->titlesLoop());
+            $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['ods']->titlesLoop());
         }
-        $xml .= $this->temp['ods']->titlesEnd();
+        $xml .= $this->_temp['ods']->titlesEnd();
 
         if (is_array($wsData)) {
 
             foreach ($wsData as $row) {
-                $xml .= $this->temp['ods']->loopStart();
+                $xml .= $this->_temp['ods']->loopStart();
                 foreach ($row as $value) {
-                    $xml .= str_replace("{{value}}",  utf8_encode(strip_tags($value['value'])), $this->temp['ods']->loopLoop());
+                    $xml .= str_replace("{{value}}",  utf8_encode(strip_tags($value['value'])), $this->_temp['ods']->loopLoop());
                 }
-                $xml .= $this->temp['ods']->loopEnd();
+                $xml .= $this->_temp['ods']->loopEnd();
             }
         }
 
 
         if (is_array($sql)) {
-            $xml .= $this->temp['ods']->sqlExpStart();
+            $xml .= $this->_temp['ods']->sqlExpStart();
             foreach ($sql as $value) {
-                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->temp['ods']->sqlExpLoop());
+                $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['ods']->sqlExpLoop());
             }
-            $xml .= $this->temp['ods']->sqlExpEnd();
+            $xml .= $this->_temp['ods']->sqlExpEnd();
         }
 
-        $xml .= $this->temp['ods']->globalEnd();
+        $xml .= $this->_temp['ods']->globalEnd();
 
 
         file_put_contents($this->deploy['dir'] . "content.xml", $xml);

@@ -211,7 +211,7 @@ class Bvb_Grid_Template_Table_Table
             }
         }
 
-        $this->export = $exp;
+       $this->export = $exp;
 
         return $exp;
     }

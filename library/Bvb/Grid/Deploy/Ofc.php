@@ -122,7 +122,7 @@ Bvb_Grid_Deploy_Interface
     */
     function __construct ($options)
     {
-        if (! in_array(self::OUTPUT, $this->export)) {#  echo $this->__("You dont' have permission to export the results to this format");
+        if (! in_array(self::OUTPUT, $this->_export)) {#  echo $this->__("You dont' have permission to export the results to this format");
 #  die();
         }
         $this->options = $options;

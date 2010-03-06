@@ -70,7 +70,7 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->cache = array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid');
+        #$grid->setCache(array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
 
@@ -226,6 +226,8 @@ class SiteController extends Zend_Controller_Action
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
+
+
         $grid->setDetailColumns();
         $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
@@ -247,7 +249,7 @@ class SiteController extends Zend_Controller_Action
     {
         $grid = $this->grid();
 
-        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd() . '/1.xlsx', 'sheet1'));
+        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd() . '/1.xlsx', 'Sheet1'));
         $this->view->pages = $grid->deploy();
         $this->render('index');
 
@@ -285,13 +287,19 @@ class SiteController extends Zend_Controller_Action
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
 
-//        $form->setIsPerformCrudAllowed(false);
-//        $form->setIsPerformCrudAllowedForAddition(true);
-//        $form->setIsPerformCrudAllowedForEdition(true);
-//        $form->setIsPerformCrudAllowedForDeletion(false);
-//        $grid->setDeleteConfirmationPage(true);
+        #$form->setAllowedFields(array('times','nexst'));
+        #$form->setDisallowedFields(array('time','next'));
+        #$form->setFieldsBasedOnQuery(false);
+
+
+        //$form->setIsPerformCrudAllowed(false);
+        //$form->setIsPerformCrudAllowedForAddition(true);
+        //$form->setIsPerformCrudAllowedForEdition(true);
+        //$form->setIsPerformCrudAllowedForDeletion(false);
+        //$grid->setDeleteConfirmationPage(true);
 
         $grid->setForm($form);
+
 
         $this->view->pages = $grid->deploy();
 

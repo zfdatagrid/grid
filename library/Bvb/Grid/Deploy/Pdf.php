@@ -30,7 +30,7 @@ Bvb_Grid_Deploy_Interface
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
@@ -75,7 +75,7 @@ Bvb_Grid_Deploy_Interface
 
         foreach ($titles as $titulos) {
 
-            if ((@$titulos['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+            if ((@$titulos['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
                 $larg[$i] = $this->widthForStringUsingFontSize($titulos['value'], $font, 8);
                 $i ++;
             }
@@ -85,7 +85,7 @@ Bvb_Grid_Deploy_Interface
 
         if (is_array($sqlexp)) {
             foreach ($sqlexp as $sql) {
-                if (($sql['field'] != $this->info['hRow']['field'] && $this->info['hRow']['title'] != '') || $this->info['hRow']['title'] == '') {
+                if (($sql['field'] != $this->_info['hRow']['field'] && $this->_info['hRow']['title'] != '') || $this->_info['hRow']['title'] == '') {
                     if ($larg[$i] < strlen($sql['value'])) {
                         $larg[$i] = strlen($sql['value']);
                     }
@@ -98,10 +98,10 @@ Bvb_Grid_Deploy_Interface
         /////////////////
         /////////////////
         /////////////////
-        if (@$this->info['hRow']['title'] != '') {
+        if (@$this->_info['hRow']['title'] != '') {
             $bar = $grid;
 
-            $hbar = trim($this->info['hRow']['field']);
+            $hbar = trim($this->_info['hRow']['field']);
 
             $p = 0;
             foreach ($grid[0] as $value) {
@@ -132,7 +132,7 @@ Bvb_Grid_Deploy_Interface
                 $value['value'] = strip_tags($value['value']);
 
 
-                if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
                     if ($larg[$i] < strlen($value['value'])) {
                         $larg[$i] = strlen($value['value']);
@@ -215,8 +215,8 @@ Bvb_Grid_Deploy_Interface
         $sql = parent::_buildSqlExp();
         $grid = parent::_BuildGrid();
 
-        if (! isset($this->info['hRow']['field'])) {
-            $this->info['hRow']['field'] = '';
+        if (! isset($this->_info['hRow']['field'])) {
+            $this->_info['hRow']['field'] = '';
         }
 
 
@@ -290,18 +290,18 @@ Bvb_Grid_Deploy_Interface
             $page->drawImage($image, 40, $page->getHeight() - $height - 40, 40 + $width, $page->getHeight() - 40);
         }
 
-        $page->drawText($this->__($this->deploy['title']), $width + 70, $page->getHeight() - 70, $this->charEncoding);
+        $page->drawText($this->__($this->deploy['title']), $width + 70, $page->getHeight() - 70, $this->getCharEncoding());
         $page->setFont($font, $cellFontSize);
 
-        $page->drawText($this->__($this->deploy['subtitle']), $width + 70, $page->getHeight() - 80, $this->charEncoding);
+        $page->drawText($this->__($this->deploy['subtitle']), $width + 70, $page->getHeight() - 80, $this->getCharEncoding());
 
         //Iniciar a contagem de páginas
         $pagina = 1;
 
 
-        $page->drawText($this->deploy['footer'], 40, 40, $this->charEncoding);
+        $page->drawText($this->deploy['footer'], 40, 40, $this->getCharEncoding());
         if (@$this->deploy['noPagination'] != 1) {
-            $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->charEncoding);
+            $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
         }
 
 
@@ -318,7 +318,7 @@ Bvb_Grid_Deploy_Interface
 
 
         $total_celulas = count($titulos);
-        if (@$this->info['hRow']['title'] != '') {
+        if (@$this->_info['hRow']['title'] != '') {
             $total_celulas --;
         }
         $largura = ($page->getWidth() - 80) / $total_celulas;
@@ -328,7 +328,7 @@ Bvb_Grid_Deploy_Interface
         $i = 0;
         $page->setFont($font, $cellFontSize + 1);
         foreach ($titulos as $value) {
-            if (($value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+            if (($value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
                 if ((int) $la == 0) {
                     $largura1 = 40;
@@ -339,7 +339,7 @@ Bvb_Grid_Deploy_Interface
                 $page->setStyle($topo);
                 $page->drawRectangle($largura1, $altura - 4, $largura1 + $cell[$i] + 1, $altura + 12);
                 $page->setStyle($styleText);
-                $page->drawText($value['value'], $largura1 + 2, $altura, $this->charEncoding);
+                $page->drawText($value['value'], $largura1 + 2, $altura, $this->getCharEncoding());
                 $la = $largura1;
 
                 $i ++;
@@ -356,10 +356,10 @@ Bvb_Grid_Deploy_Interface
 
         if (is_array($grid)) {
             /////////////////
-            if (@$this->info['hRow']['title'] != '') {
+            if (@$this->_info['hRow']['title'] != '') {
                 $bar = $grid;
 
-                $hbar = trim($this->info['hRow']['field']);
+                $hbar = trim($this->_info['hRow']['field']);
 
                 $p = 0;
                 foreach ($grid[0] as $value) {
@@ -411,18 +411,18 @@ Bvb_Grid_Deploy_Interface
                         $page->drawImage($image, 40, $page->getHeight() - $height - 40, 40 + $width, $page->getHeight() - 40);
                     }
 
-                    $page->drawText($this->__($this->deploy['title']), $width + 70, $page->getHeight() - 70, $this->charEncoding);
+                    $page->drawText($this->__($this->deploy['title']), $width + 70, $page->getHeight() - 70, $this->getCharEncoding());
                     $page->setFont($font, $cellFontSize);
 
-                    $page->drawText($this->__($this->deploy['subtitle']), $width + 70, $page->getHeight() - 80, $this->charEncoding);
+                    $page->drawText($this->__($this->deploy['subtitle']), $width + 70, $page->getHeight() - 80, $this->getCharEncoding());
 
 
                     //set font
                     $altura = $page->getHeight() - 120;
 
-                    $page->drawText($this->__($this->deploy['footer']), 40, 40, $this->charEncoding);
+                    $page->drawText($this->__($this->deploy['footer']), 40, 40, $this->getCharEncoding());
                     if ($this->deploy['noPagination'] != 1) {
-                        $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->charEncoding);
+                        $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
                     }
 
 
@@ -433,7 +433,7 @@ Bvb_Grid_Deploy_Interface
                     $page->setFont($font, $cellFontSize + 1);
                     foreach ($titulos as $title) {
 
-                        if (($title['field'] != $this->info['hRow']['field'] && $this->info['hRow']['title'] != '') || $this->info['hRow']['title'] == '') {
+                        if (($title['field'] != $this->_info['hRow']['field'] && $this->_info['hRow']['title'] != '') || $this->_info['hRow']['title'] == '') {
 
                             if ((int) $la == 0) {
                                 $largura1 = 40;
@@ -444,7 +444,7 @@ Bvb_Grid_Deploy_Interface
                             $page->setStyle($topo);
                             $page->drawRectangle($largura1, $altura - 4, $largura1 + $cell[$i] + 1, $altura + 12);
                             $page->setStyle($style);
-                            $page->drawText($title['value'], $largura1 + 2, $altura, $this->charEncoding);
+                            $page->drawText($title['value'], $largura1 + 2, $altura, $this->getCharEncoding());
                             $la = $largura1;
 
                             $i ++;
@@ -464,7 +464,7 @@ Bvb_Grid_Deploy_Interface
 
                 ////////////
                 //A linha horizontal
-                if (@$this->info['hRow']['title'] != '') {
+                if (@$this->_info['hRow']['title'] != '') {
 
                     if ($bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value']) {
 
@@ -480,7 +480,7 @@ Bvb_Grid_Deploy_Interface
                         $page->setStyle($hRowStyle);
                         $page->drawRectangle($largura1, $altura - 4, $page->getWidth() - 40, $altura + 12);
                         $page->setStyle($styleText);
-                        $page->drawText($bar[$aa][$hRowIndex]['value'], $centrar, $altura, $this->charEncoding);
+                        $page->drawText($bar[$aa][$hRowIndex]['value'], $centrar, $altura, $this->getCharEncoding());
                         $la = 0;
                         $altura = $altura - 16;
 
@@ -509,7 +509,7 @@ Bvb_Grid_Deploy_Interface
 
                     $value1['value'] = strip_tags(trim($value1['value']));
 
-                    if (($value1['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
+                    if (($value1['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
 
 
                         if ((int) $la == 0) {
@@ -521,7 +521,7 @@ Bvb_Grid_Deploy_Interface
                         $page->setStyle($tdf);
                         $page->drawRectangle($largura1, $altura - 4, $largura1 + $cell[$i] + 1, $altura + 12);
                         $page->setStyle($styleText);
-                        $page->drawText($value1['value'], $largura1 + 2, $altura, $this->charEncoding);
+                        $page->drawText($value1['value'], $largura1 + 2, $altura, $this->getCharEncoding());
 
 
                         $la = $largura1;
@@ -557,7 +557,7 @@ Bvb_Grid_Deploy_Interface
                 $page->setStyle($styleSql);
                 $page->drawRectangle($largura1, $altura - 4, $largura1 + $cell[$i], $altura + 12);
                 $page->setStyle($styleText);
-                $page->drawText($value['value'], $largura1 + 2, $altura, $this->charEncoding);
+                $page->drawText($value['value'], $largura1 + 2, $altura, $this->getCharEncoding());
                 $la = $largura1;
 
                 $la = $largura1;

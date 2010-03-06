@@ -155,9 +155,9 @@ class JqgridController extends Zend_Controller_Action
         ////////////////// 4. configure jqGrid options
         ////////////////// for setJqgOptions see http://www.trirand.com/jqgridwiki/doku.php?id=wiki:options
         ////////////////// see also other Bvb_Grid_Deploy_JqGrid::setJqg*() and Bvb_Grid_Deploy_JqGrid::jqg*() methods
-        $grid->export = array(
+        $grid->setExport(array(
             // define parameters for csv export, see Bvb_Grid_DataGrid::getExports
-            'csv'=>array('caption'=>'Csv')
+            'csv'=>array('caption'=>'Csv'))
         );
         $grid->setJqgParams(array(
             'caption' => 'jqGrid Example',

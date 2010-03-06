@@ -32,7 +32,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }

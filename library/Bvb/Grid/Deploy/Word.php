@@ -33,7 +33,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
     function __construct( $options )
     {
 
-        if (! in_array ( self::OUTPUT, $this->export ))
+        if (! in_array ( self::OUTPUT, $this->_export ))
         {
             echo $this->__ ( "You dont' have permission to export the results to this format" );
             die ();
@@ -54,7 +54,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         parent::deploy ();
 
 
-        if (! $this->temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
+        if (! $this->_temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
             $this->setTemplate('word', 'word');
         }
 
@@ -70,7 +70,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
 
         foreach ( $titles as $value )
         {
-            if (($value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
+            if (($value ['field'] != @$this->_info ['hRow'] ['field'] && @$this->_info ['hRow'] ['title'] != '') || @$this->_info ['hRow'] ['title'] == '')
             {
                 $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->titlesLoop () );
             }
@@ -81,11 +81,11 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         if (is_array ( $wsData ))
         {
             /////////////////
-            if (@$this->info ['hRow'] ['title'] != '')
+            if (@$this->_info ['hRow'] ['title'] != '')
             {
                 $bar = $wsData;
 
-                $hbar = trim ( $this->info ['hRow'] ['field'] );
+                $hbar = trim ( $this->_info ['hRow'] ['field'] );
 
                 $p = 0;
                 foreach ( $wsData [0] as $value )
@@ -110,7 +110,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
             {
                 ////////////
                 //A linha horizontal
-                if (@$this->info ['hRow'] ['title'] != '')
+                if (@$this->_info ['hRow'] ['title'] != '')
                 {
 
                     if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value'])
@@ -126,7 +126,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
                 {
                     $value ['value'] = strip_tags ( $value ['value'] );
 
-                    if ((@$value ['field'] != @$this->info ['hRow'] ['field'] && @$this->info ['hRow'] ['title'] != '') || @$this->info ['hRow'] ['title'] == '')
+                    if ((@$value ['field'] != @$this->_info ['hRow'] ['field'] && @$this->_info ['hRow'] ['title'] != '') || @$this->_info ['hRow'] ['title'] == '')
                     {
                         $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->loopLoop ( 2 ) );
                     }

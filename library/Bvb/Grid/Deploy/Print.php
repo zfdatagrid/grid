@@ -33,7 +33,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->export)) {
+        if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results into this format");
             die();
         }
@@ -53,7 +53,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         parent::deploy();
 
 
-        if (! $this->temp['print'] instanceof Bvb_Grid_Template_Print_Print) {
+        if (! $this->_temp['print'] instanceof Bvb_Grid_Template_Print_Print) {
             $this->setTemplate('print', 'print');
         }
 
@@ -65,33 +65,33 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $this->deploy['title'] = '';
         }
 
-        $print = $this->temp['print']->globalStart();
-        $print .= $this->temp['print']->header();
+        $print = $this->_temp['print']->globalStart();
+        $print .= $this->_temp['print']->header();
 
 
 
         //[PT] Títulos
-        $print .= $this->temp['print']->titlesStart();
+        $print .= $this->_temp['print']->titlesStart();
 
         foreach ($titles as $value) {
 
-            if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
-                $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->titlesLoop());
+            if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+                $print .= str_replace("{{value}}", $value['value'], $this->_temp['print']->titlesLoop());
 
             }
         }
 
 
-        $print .= $this->temp['print']->titlesEnd();
+        $print .= $this->_temp['print']->titlesEnd();
 
 
         //[PT] O Loop
         if (is_array($wsData)) {
             /////////////////
-            if (@$this->info['hRow']['title'] != '') {
+            if (@$this->_info['hRow']['title'] != '') {
                 $bar = $wsData;
 
-                $hbar = trim($this->info['hRow']['field']);
+                $hbar = trim($this->_info['hRow']['field']);
 
                 $p = 0;
                 foreach ($wsData[0] as $value) {
@@ -113,26 +113,26 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             foreach ($wsData as $row) {
                 ////////////
                 //horizontal row
-                if (@$this->info['hRow']['title'] != '') {
+                if (@$this->_info['hRow']['title'] != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
-                        $print .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->temp['print']->hRow());
+                        $print .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->_temp['print']->hRow());
                     }
                 }
                 ////////////
                 $i ++;
 
-                $print .= $this->temp['print']->loopStart();
+                $print .= $this->_temp['print']->loopStart();
                 $a = 1;
                 foreach ($row as $value) {
 
                     $value['value'] = strip_tags($value['value']);
 
-                    if ((@$value['field'] != @$this->info['hRow']['field'] && @$this->info['hRow']['title'] != '') || @$this->info['hRow']['title'] == '') {
-                        $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->loopLoop());
+                    if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+                        $print .= str_replace("{{value}}", $value['value'], $this->_temp['print']->loopLoop());
                     }
                 }
 
-                $print .= $this->temp['print']->loopEnd();
+                $print .= $this->_temp['print']->loopEnd();
                 $aa ++;
                 $i ++;
             }
@@ -140,14 +140,14 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         //////////////////SQL EXPRESSIONS
         if (is_array($sql)) {
-            $print .= $this->temp['print']->sqlExpStart();
+            $print .= $this->_temp['print']->sqlExpStart();
             foreach ($sql as $value) {
-                $print .= str_replace("{{value}}", $value['value'], $this->temp['print']->sqlExpLoop());
+                $print .= str_replace("{{value}}", $value['value'], $this->_temp['print']->sqlExpLoop());
             }
-            $print .= $this->temp['print']->sqlExpEnd();
+            $print .= $this->_temp['print']->sqlExpEnd();
         }
 
-        $print .= $this->temp['print']->globalEnd();
+        $print .= $this->_temp['print']->globalEnd();
 
 
         if (! isset($this->deploy['save'])) {

@@ -132,7 +132,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_In
         $this->_view = null;
 
         // prepare request parameters sent by jqGrid
-        $this->ctrlParams = array();
+        $this->removeAllParams();
         $this->convertRequestParams();
     }
     /**
@@ -474,8 +474,8 @@ HTML;
     function renderPartData()
     {
         // clarify the values
-        $page = $this->ctrlParams ['page']; // get the requested page
-        $limit = $this->pagination; // get how many rows we want to have into the grid
+        $page = $this->getParam('page'); // get the requested page
+        $limit = $this->_pagination; // get how many rows we want to have into the grid
         $count =  $this->_totalRecords;
         // decide if we should pass PK as ID to each row
         $passPk = false;
@@ -559,7 +559,7 @@ HTML;
         ///////////////////////////////////////////////////////////
         $this->_jqgParams['url'] = $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
-        $this->_jqgParams['rowNum'] = $this->pagination;
+        $this->_jqgParams['rowNum'] = $this->_pagination;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
@@ -702,7 +702,7 @@ HTML;
 
         $titles = $this->_buildTitles();
         //$fields = $this->removeAsFromFields();
-        $fields = $this->data['fields'];
+        $fields = $this->_data['fields'];
         foreach ($titles as $key=>$title) {
             // basic options
             $options = array("name" => $title['name'], "label" => $title['value']);
@@ -832,10 +832,7 @@ HTML;
     {
         return $this->_select;
     }
-    /**
-     * @var Zend_View_Interface
-     */
-    protected $_view = null;
+
     /**
      * Ajax ID
      * @var string
@@ -854,36 +851,6 @@ HTML;
     public static $debug = false;
 
     /**
-     * Set view object
-     *
-     * @param Zend_View_Interface $view view object to use
-     *
-     * @return Bvb_Grid_Deploy_JqGrid
-     */
-    public function setView(Zend_View_Interface $view = null)
-    {
-        $this->_view = $view;
-        return $this;
-    }
-
-    /**
-     * Retrieve view object
-     *
-     * If none registered, attempts to pull from ViewRenderer.
-     *
-     * @return Zend_View_Interface|null
-     */
-    public function getView()
-    {
-        if (null === $this->_view) {
-            include_once 'Zend/Controller/Action/HelperBroker.php';
-            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
-            $this->setView($viewRenderer->view);
-        }
-
-        return $this->_view;
-    }
-    /**
      * Use to detect if we should return plain JSON data or full table definition
      *
      * @return boolean
@@ -891,7 +858,7 @@ HTML;
     protected function isAjaxRequest()
     {
         return Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()
-            || isset($this->ctrlParams['_search']);
+            || $this->getParam('_search');
     }
     /**
      * Return value used to build HTML element ID attributes
@@ -968,9 +935,9 @@ HTML;
         //////////////////////////////////////////////////////////////////
 
         // add Zend parameters
-        $this->ctrlParams['module'] = $params['module'];
-        $this->ctrlParams['controller'] = $params['controller'];
-        $this->ctrlParams['action'] = $params['action'];
+        $this->setParam('module',$params['module']);
+        $this->setParam('controller', $params['controller']);
+        $this->setParam('action', $params['action']);
 
         // number of rows to be shown on page, could be changed in jqGrid
         if (isset($params['rows'])) {
@@ -983,14 +950,14 @@ HTML;
         } else {
             $page = 1;
         }
-        $this->ctrlParams['page'] = $page;
-        $this->ctrlParams['start'] = $this->pagination * ($page-1);
+        $this->setParam('page', $page);
+         $this->setParam('start', $this->_pagination * ($page-1));
 
         // sort order
         $sidx = isset($params['sidx']) ? $params['sidx'] : "";
         $sord = isset($params['sord']) ? $params['sord'] : "asc";
         if ($sidx!=="") {
-            $this->ctrlParams['order'] = $sidx . '_' . strtoupper($sord);
+            $this->setParam('order', $sidx . '_' . strtoupper($sord));
         }
 
 
@@ -1017,7 +984,7 @@ HTML;
                 foreach ($filteredFields as $filter=>$val) {
                     $flts->$filter = $val;
                 }
-                $this->ctrlParams['filters'] = urlencode(Zend_Json::encode($flts));
+                $this->setParam('filters', urlencode(Zend_Json::encode($flts)));
             }
         }
     }
