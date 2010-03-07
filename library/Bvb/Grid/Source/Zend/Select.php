@@ -344,6 +344,10 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $table = $this->getDescribeTable($tableName);
 
+        if(!isset($table[$field]))
+        {
+            return 'text';
+        }
         $type = $table[$field]['DATA_TYPE'];
 
         $return = 'text';
@@ -575,7 +579,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
-
+        $simpleField = false;
 
         $columns = $this->getColumns();
 
@@ -583,6 +587,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             if ( $field == $value[2] ) {
                 if ( is_object($value[1]) ) {
                     $field = $value[1]->__toString();
+                    $simpleField = true;
                 } else {
                     $field = $value[0] . '.' . $value[1];
                 }
@@ -593,9 +598,10 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             }
         }
 
-        if ( strpos($field, '.') === false ) {
+        if ( strpos($field, '.') === false && $simpleField ===false ) {
             $field = $completeField['field'];
         }
+
 
 
         /**
