@@ -1010,7 +1010,7 @@ abstract class Bvb_Grid_Data
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail','gridRemove');
 
         $url = '';
         $params = $this->getAllParams();
@@ -2616,7 +2616,7 @@ abstract class Bvb_Grid_Data
             return array();
         }
 
-        $param = $this->getParam('comm' . $this->_gridId);
+        $param = $this->getParam('comm');
         $explode = explode(';', $param);
         $param = end($explode);
         $param = substr($param, 1, - 1);
