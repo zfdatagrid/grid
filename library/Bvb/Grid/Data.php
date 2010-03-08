@@ -175,7 +175,7 @@ abstract class Bvb_Grid_Data
      *
      * @var array
      */
-    protected $_extra_fields = array();
+    protected $_extraFields = array();
 
     /**
      * Final fields list (after all procedures).
@@ -378,9 +378,9 @@ abstract class Bvb_Grid_Data
 
         if ( $object instanceof Zend_Db_Select ) {
             $this->setSource(new Bvb_Grid_Source_Zend_Select($object));
-        }elseif ( $object instanceof Zend_Db_Table_Abstract ) {
+        } elseif ( $object instanceof Zend_Db_Table_Abstract ) {
             $this->setSource(new Bvb_Grid_Source_Zend_Table($object));
-        }else{
+        } else {
             throw new Bvb_Grid_Exception('Please use the setSource() method instead');
         }
 
@@ -424,35 +424,35 @@ abstract class Bvb_Grid_Data
      * Usally is lib or library
      * @param $dir
      */
-    function setLibraryDir($dir)
+    function setLibraryDir ($dir)
     {
         $this->_libraryDir = $dir;
         return $this;
     }
 
+
     /**
      * Returns the actual library path
      */
-    function getLibraryDir()
+    function getLibraryDir ()
     {
         return $this->_libraryDir;
     }
+
 
     /**
      * Sets grid cache
      * @param bool|array $cache
      */
-    function setCache($cache)
+    function setCache ($cache)
     {
 
-        if($cache == false || (is_array($cache) && isset($cache['use']) && $cache['use']==0 ))
-        {
-            $this->_cache = array('use'=>0);
+        if ( $cache == false || (is_array($cache) && isset($cache['use']) && $cache['use'] == 0) ) {
+            $this->_cache = array('use' => 0);
             return $this;
         }
 
-        if(is_array($cache) && isset($cache['use']) && isset($cache['instance']) && isset($cache['tag']) )
-        {
+        if ( is_array($cache) && isset($cache['use']) && isset($cache['instance']) && isset($cache['tag']) ) {
             $this->_cache = $cache;
             return $this;
         }
@@ -461,10 +461,12 @@ abstract class Bvb_Grid_Data
 
     }
 
-    function getCache()
+
+    function getCache ()
     {
         return $this->_cache;
     }
+
 
     /**
      * Returns the actual source object
@@ -600,7 +602,8 @@ abstract class Bvb_Grid_Data
         return $this;
     }
 
-    function getCharEncoding()
+
+    function getCharEncoding ()
     {
         return $this->_charEncoding;
     }
@@ -1010,11 +1013,10 @@ abstract class Bvb_Grid_Data
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail','gridRemove');
+        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
 
         $url = '';
         $params = $this->getAllParams();
-
 
         if ( is_array($situation) ) {
             foreach ( $situation as $value ) {
@@ -1115,8 +1117,8 @@ abstract class Bvb_Grid_Data
 
         $tcampos = count($data);
 
-        for ( $i = 0; $i < count($this->_extra_fields); $i ++ ) {
-            if ( $this->_extra_fields[$i]['position'] == 'left' ) {
+        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
+            if ( $this->_extraFields[$i]['position'] == 'left' ) {
                 $return[] = array('type' => 'extraField', 'class' => @$this->_template['classes']['filter'], 'position' => 'left');
             }
         }
@@ -1140,8 +1142,8 @@ abstract class Bvb_Grid_Data
             }
         }
 
-        for ( $i = 0; $i < count($this->_extra_fields); $i ++ ) {
-            if ( $this->_extra_fields[$i]['position'] == 'right' ) {
+        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
+            if ( $this->_extraFields[$i]['position'] == 'right' ) {
                 $return[] = array('type' => 'extraField', 'class' => @$this->_template['classes']['filter'], 'position' => 'right');
             }
         }
@@ -1199,9 +1201,9 @@ abstract class Bvb_Grid_Data
 
         $tcampos = count($this->_fields);
 
-        for ( $i = 0; $i < count($this->_extra_fields); $i ++ ) {
-            if ( $this->_extra_fields[$i]['position'] == 'left' ) {
-                $return[$this->_extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extra_fields[$i]['name']), 'position' => 'left');
+        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
+            if ( $this->_extraFields[$i]['position'] == 'left' ) {
+                $return[$this->_extraFields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extraFields[$i]['name']), 'position' => 'left');
             }
         }
 
@@ -1222,7 +1224,7 @@ abstract class Bvb_Grid_Data
             $selectOrder = $this->getSource()->getSelectOrder();
 
             if ( count($selectOrder) == 1 ) {
-                $this->setParam('order' . $this->_gridId , $selectOrder[0] . '_' . strtoupper($selectOrder[1]));
+                $this->setParam('order' . $this->_gridId, $selectOrder[0] . '_' . strtoupper($selectOrder[1]));
             }
         }
 
@@ -1256,9 +1258,9 @@ abstract class Bvb_Grid_Data
             }
         }
 
-        for ( $i = 0; $i < count($this->_extra_fields); $i ++ ) {
-            if ( $this->_extra_fields[$i]['position'] == 'right' ) {
-                $return[$this->_extra_fields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extra_fields[$i]['name']), 'position' => 'right');
+        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
+            if ( $this->_extraFields[$i]['position'] == 'right' ) {
+                $return[$this->_extraFields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extraFields[$i]['name']), 'position' => 'right');
             }
         }
 
@@ -1605,13 +1607,13 @@ abstract class Bvb_Grid_Data
     protected function _getExtraFields ($position = 'left')
     {
 
-        if ( ! is_array($this->_extra_fields) ) {
+        if ( ! is_array($this->_extraFields) ) {
             return array();
         }
 
         $final = array();
 
-        foreach ( $this->_extra_fields as $value ) {
+        foreach ( $this->_extraFields as $value ) {
             if ( $value['position'] == $position ) {
                 $final[] = $value;
             }
@@ -1627,7 +1629,7 @@ abstract class Bvb_Grid_Data
      * @param unknown_type $array
      * @return unknown
      */
-    protected function _reset_keys (array $array)
+    protected function _resetKeys (array $array)
     {
 
         $novo_array = array();
@@ -1776,7 +1778,7 @@ abstract class Bvb_Grid_Data
 
         ksort($fields_final);
 
-        $fields_final = $this->_reset_keys($fields_final);
+        $fields_final = $this->_resetKeys($fields_final);
 
         //Put the hidden fields on the end of the array
         foreach ( $hidden as $value ) {
@@ -1839,7 +1841,7 @@ abstract class Bvb_Grid_Data
 
             $defaultFilters = $df;
 
-            $this->setParam('filters' . $this->_gridId , Zend_Json_Encoder::encode($defaultFilters));
+            $this->setParam('filters' . $this->_gridId, Zend_Json_Encoder::encode($defaultFilters));
         }
 
         return $this;
@@ -2092,7 +2094,7 @@ abstract class Bvb_Grid_Data
             $totalFields ++;
         }
 
-        $colspan = $totalFields + count($this->_extra_fields);
+        $colspan = $totalFields + count($this->_extraFields);
 
         $this->_colspan = $colspan;
 
@@ -2173,8 +2175,8 @@ abstract class Bvb_Grid_Data
 
         $extra_fields = func_get_args();
 
-        if ( is_array($this->_extra_fields) ) {
-            $final = $this->_extra_fields;
+        if ( is_array($this->_extraFields) ) {
+            $final = $this->_extraFields;
         } else {
             $final = array();
         }
@@ -2185,7 +2187,7 @@ abstract class Bvb_Grid_Data
                 array_push($final, $value['_field']);
             }
         }
-        $this->_extra_fields = $final;
+        $this->_extraFields = $final;
         return $this;
     }
 
@@ -2655,7 +2657,8 @@ abstract class Bvb_Grid_Data
         return isset($this->_ctrlParams[$param . $this->_gridId]) ? $this->_ctrlParams[$param . $this->_gridId] : $default;
     }
 
-    function getAllParams()
+
+    function getAllParams ()
     {
         return $this->_ctrlParams;
     }
@@ -2693,28 +2696,40 @@ abstract class Bvb_Grid_Data
         return $this;
     }
 
-    function removeAllParams()
+
+    function removeAllParams ()
     {
         $this->_ctrlParams = array();
         return $this;
     }
 
 
-    function setParams(array $params)
+    function setParams (array $params)
     {
         $this->_ctrlParams = $params;
         return $this;
     }
 
-    function setExport(array $export)
+
+    function setExport (array $export)
     {
         $this->_export = $export;
         return $this;
     }
 
-    function getExport()
+
+    function getExport ()
     {
         return $this->_export;
+    }
+
+
+    function setSqlExp (array $exp)
+    {
+
+        $this->_info['sqlexp'] = $exp;
+
+        return $this;
     }
 
 

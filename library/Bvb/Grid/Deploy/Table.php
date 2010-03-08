@@ -370,7 +370,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                         $this->_gridSession->message = $this->__('Record saved');
                         $this->_gridSession->messageOk = true;
-                        $this->_gridSession->_comm = false;
                         $this->_gridSession->_noForm = 1;
 
                         $this->_gridSession->correct = 1;
@@ -418,7 +417,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->message = $this->__('Record saved');
                         $this->_gridSession->messageOk = true;
 
-                        $this->_gridSession->_comm = false;
                         $this->_gridSession->_noForm = 1;
 
                         $this->_gridSession->correct = 1;
@@ -901,7 +899,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 }
             }
 
-            $search = $this->_reset_keys($search);
+            $search = $this->_resetKeys($search);
 
 
             $finalFields = array_combine($search, $fi);
@@ -1224,8 +1222,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         if ( $this->allowEdit == 1 ) {
-            if ( ! is_array($this->_extra_fields) ) {
-                $this->_extra_fields = array();
+            if ( ! is_array($this->_extraFields) ) {
+                $this->_extraFields = array();
             }
 
             $removeParams = array('add', 'edit', 'comm');
@@ -1238,36 +1236,36 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $urlEdit = $url;
             }
 
-            array_unshift($this->_extra_fields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
+            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
 
 
         }
 
 
         if ( $this->allowDelete ) {
-            if ( ! is_array($this->_extra_fields) ) {
-                $this->_extra_fields = array();
+            if ( ! is_array($this->_extraFields) ) {
+                $this->_extraFields = array();
             }
 
 
-            if ( $this->_deleteConfirmationPage === true ) {
-                array_unshift($this->_extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
+            if ( $this->_deleteConfirmationPage == true ) {
+                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->_gridId . "/1/gridRemove" . $this->_gridId . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
-                array_unshift($this->_extra_fields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->_gridId . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->_gridId . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
             }
 
         }
 
 
         if ( is_array($this->_detailColumns) && $this->_isDetail == false ) {
-            if ( ! is_array($this->_extra_fields) ) {
-                $this->_extra_fields = array();
+            if ( ! is_array($this->_extraFields) ) {
+                $this->_extraFields = array();
             }
 
             $removeParams = array('add', 'edit', 'comm');
             $url = $this->getUrl($removeParams);
 
-            array_unshift($this->_extra_fields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
+            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->_gridId . "/1/comm" . $this->_gridId . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
         }
 
 
@@ -1423,12 +1421,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $grid = "<div id='{$gridId}'>" . implode($this->_renderDeploy) . "</div>";
 
-        if ( $this->_gridSession->correct > 0 ) {
-            if ( $this->_gridSession->correct == 1 ) {
-                $this->_gridSession->unsetAll();
-            } else {
-                $this->_gridSession->correct ++;
-            }
+        if ( $this->_gridSession->correct == 1 ) {
+            $this->_gridSession->unsetAll();
         }
 
         $this->_deploymentContent = implode($this->_renderDeploy);

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  *
  * LICENSE
  *
@@ -15,8 +15,8 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.1   
- * @author     Bento Vilas Boas <geral@petala-azul.com > 
+ * @version    0.1
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
@@ -45,15 +45,14 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopLoop($values)
+    function loopLoop()
     {
 
         $class = $this->i % 2 ? "alt" : "";
-        
+
         return "<td  class=\"$class {{class}}\" >{{value}}&nbsp;</td>";
     }
 
 
 }
 
-    
