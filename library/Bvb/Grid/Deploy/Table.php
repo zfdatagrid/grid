@@ -299,6 +299,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->message = $this->__('Record Not Found');
                         $this->_gridSession->_noForm = 1;
                         $this->_gridSession->correct = 1;
+                        $this->_redirect($this->getUrl(array('comm','gridRemove','gridDetail','edit')));
                     }
 
 

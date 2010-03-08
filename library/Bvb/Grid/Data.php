@@ -1859,7 +1859,7 @@ abstract class Bvb_Grid_Data
         // apply additional configuration
         $this->_runConfigCallbacks();
 
-        if ( $this->getParam('gridDetail') == 1 && $this->_deployName == 'table' && is_array($this->_detailColumns) ) {
+        if ( $this->getParam('gridDetail') == 1 && $this->_deployName == 'table' && (is_array($this->_detailColumns) || $this->getParam('gridRemove') )) {
             $this->_isDetail = true;
         }
 
@@ -1890,9 +1890,11 @@ abstract class Bvb_Grid_Data
 
         if ( $this->_isDetail == true ) {
             $result = $this->getSource()->fetchDetail($this->getPkFromUrl());
-
             if ( $result == false ) {
-                $this->_redirect($this->getUrl(array('comm', 'gridDetail')));
+                 $this->_gridSession->message = $this->__('Record Not Found');
+                 $this->_gridSession->_noForm = 1;
+                 $this->_gridSession->correct = 1;
+                $this->_redirect($this->getUrl(array('comm', 'gridDetail','gridRemove')));
             }
         }
 
