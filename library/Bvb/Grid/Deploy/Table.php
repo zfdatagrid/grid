@@ -277,6 +277,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                     if ( isset($this->_gridSession->errors[$element]) ) {
                         $this->_form->getElement($element)->setErrors($this->_gridSession->errors[$element]);
                     }
+                    if ( isset($this->_gridSession->post[$element]) ) {
+                        $this->_form->getElement($element)->setValue($this->_gridSession->post[$element]);
+                    }
                 }
 
                 if ( $this->getParam('add') == 1 ) {
@@ -388,8 +391,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->formSuccess = 0;
                         $this->_gridSession->formPost = 1;
                         $this->_gridSession->_noForm = 0;
-
                         $this->_gridSession->correct = 0;
+
+                        $this->_removeFormParams($post);
+                        $this->_redirect($this->getUrl());
                     }
 
                 }
@@ -434,7 +439,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->formSuccess = 0;
                         $this->_gridSession->formPost = 1;
                         $this->_gridSession->_noForm = 0;
-
                         $this->_gridSession->correct = 0;
 
                         $this->_removeFormParams($post);
