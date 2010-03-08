@@ -19,8 +19,7 @@
  * @author     Mascker (Bento Vilas Boas) <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Ofc extends Bvb_Grid_Data implements
-Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Ofc extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
 {
 
     public $deploy = array();
@@ -109,7 +108,7 @@ Bvb_Grid_Deploy_Interface
      * LOcation for flash and js files
      * @var array
      */
-    protected $_filesLocation = null;
+    protected $_filesLocation = array();
 
     /**
      * View
@@ -117,12 +116,13 @@ Bvb_Grid_Deploy_Interface
      */
     protected $_view = null;
 
+
     /*
     * @param array $data
     */
     function __construct ($options)
     {
-        if (! in_array(self::OUTPUT, $this->_export)) {#  echo $this->__("You dont' have permission to export the results to this format");
+        if ( ! in_array(self::OUTPUT, $this->_export) ) {#  echo $this->__("You dont' have permission to export the results to this format");
 #  die();
         }
         $this->options = $options;
@@ -130,10 +130,11 @@ Bvb_Grid_Deploy_Interface
         parent::__construct($options);
     }
 
+
     function deploy ()
     {
 
-        if ($this->_filesLocation === null) {
+        if ( $this->_filesLocation === null ) {
             die('Please set Javascript and Flash file locations using SetFilesLocation()');
         }
 
@@ -146,27 +147,27 @@ Bvb_Grid_Deploy_Interface
 
         $data = parent::_buildGrid();
 
-        foreach ($data as $value) {
-            foreach ($value as $final) {
+        foreach ( $data as $value ) {
+            foreach ( $value as $final ) {
                 $result[$final['field']][] = strip_tags($final['value']);
             }
         }
 
-        if (is_string($this->_xLabels) && isset($result[$this->_xLabels])) {
+        if ( is_string($this->_xLabels) && isset($result[$this->_xLabels]) ) {
             $this->_xLabels = $result[$this->_xLabels];
         }
 
         $graph = new OFC_Chart();
         $graph->set_title(new OFC_Elements_Title($this->_title));
 
-        foreach ($this->_chartOptions as $key => $value) {
+        foreach ( $this->_chartOptions as $key => $value ) {
             $graph->$key($value);
         }
 
-        if (count($this->_xLabels) > 0) {
+        if ( count($this->_xLabels) > 0 ) {
             $x = new OFC_Elements_Axis_X();
             $x->set_labels_from_array($this->_xLabels);
-            foreach ($this->_xLabelsOptions as $key => $value) {
+            foreach ( $this->_xLabelsOptions as $key => $value ) {
                 $x->$key($value);
             }
             $graph->set_x_axis($x);
@@ -176,42 +177,42 @@ Bvb_Grid_Deploy_Interface
         $min = 0;
         $max = 0;
 
-        if (count($this->_values) == 0) {
+        if ( count($this->_values) == 0 ) {
             $this->setValues(key($result));
         }
 
-        foreach ($this->_values as $key => $value) {
+        foreach ( $this->_values as $key => $value ) {
 
-            if (is_array($value)) {
+            if ( is_array($value) ) {
 
                 $support = $value;
                 sort($support);
-                if (reset($support) < $min) {
+                if ( reset($support) < $min ) {
                     $min = reset($support);
                 }
-                if (end($support) > $max) {
+                if ( end($support) > $max ) {
                     $max = end($support);
                 }
                 unset($support);
 
 
                 $options = $this->_chartOptionsValues[$value];
-                if (isset($options['chartType'])) {
+                if ( isset($options['chartType']) ) {
                     $this->setChartType($options['chartType']);
                 }
 
                 $bar = new $this->_type();
 
 
-                foreach ($options as $key => $prop) {
+                foreach ( $options as $key => $prop ) {
                     $bar->$key($prop);
                 }
                 $this->_type();
 
                 $pie = array();
 
-                if ($this->_type == 'Pie') {
-                    foreach ($value as $key => $title) {
+                if ( $this->_type == 'Pie' ) {
+                    foreach ( $value as $key => $title ) {
                         $pie[] = new OFC_Charts_Pie_Value($title, '09s');
                     }
                     $bar->set_values($pie);
@@ -221,17 +222,17 @@ Bvb_Grid_Deploy_Interface
 
                 $graph->add_element($bar);
 
-            } elseif (is_string($value) && isset($result[$value])) {
+            } elseif ( is_string($value) && isset($result[$value]) ) {
 
 
                 $options = $this->_chartOptionsValues[$value];
-                if (isset($options['chartType'])) {
+                if ( isset($options['chartType']) ) {
                     $this->setChartType($options['chartType']);
                 }
 
                 $bar = new $this->_type();
 
-                foreach ($options as $key => $prop) {
+                foreach ( $options as $key => $prop ) {
                     $bar->$key($prop);
                 }
 
@@ -239,17 +240,17 @@ Bvb_Grid_Deploy_Interface
 
                 $support = $value;
                 sort($support);
-                if (reset($support) < $min) {
+                if ( reset($support) < $min ) {
                     $min = reset($support);
                 }
-                if (end($support) > $max) {
+                if ( end($support) > $max ) {
                     $max = end($support);
                 }
                 unset($support);
 
                 $pie = array();
-                if ($this->_type == 'OFC_Charts_Pie') {
-                    foreach ($value as $key => $title) {
+                if ( $this->_type == 'OFC_Charts_Pie' ) {
+                    foreach ( $value as $key => $title ) {
                         $pie[] = new OFC_Charts_Pie_Value($title, 'iou');
                     }
                     $bar->set_values($pie);
@@ -272,7 +273,7 @@ Bvb_Grid_Deploy_Interface
 
         $final = $graph->toPrettyString();
 
-        if (! is_string($this->_chartId)) {
+        if ( ! is_string($this->_chartId) ) {
             $this->_chartId = 'chart_' . rand(1, 10000);
         }
 
@@ -296,7 +297,7 @@ Bvb_Grid_Deploy_Interface
         }
         var data = ' . $final . '; ';
 
-        $final ='<div id="' . $this->_chartId . '"></div>';
+        $final = '<div id="' . $this->_chartId . '"></div>';
 
         $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
         $this->getView()->headScript()->appendFile($this->_filesLocation['json']);
@@ -306,11 +307,13 @@ Bvb_Grid_Deploy_Interface
         return $this;
     }
 
+
     function setXLabels ($labels, $options = array())
     {
         $this->_xLabels = $labels;
         $this->_xLabelsOptions = $options;
     }
+
 
     function setChartType ($type, $args = array())
     {
@@ -323,7 +326,7 @@ Bvb_Grid_Deploy_Interface
 
     function setValues ($values, $options = array())
     {
-        if (! is_string($values)) {
+        if ( ! is_string($values) ) {
             $name = $values[0];
         } else {
             $name = $values;
@@ -338,7 +341,7 @@ Bvb_Grid_Deploy_Interface
 
     function addValues ($values, $options = array())
     {
-        if (! is_string($values)) {
+        if ( ! is_string($values) ) {
             $name = $values[0];
         } else {
             $name = $values;
@@ -349,16 +352,19 @@ Bvb_Grid_Deploy_Interface
         return $this;
     }
 
+
     function getValues ($name)
     {
         return isset($this->_values[$name]) ? $this->_values[$name] : false;
     }
+
 
     function setChartDimensions ($x, $y)
     {
         $this->_chartDimensions = array('x' => $x, 'y' => $y);
         return $this;
     }
+
 
     function setTile ($title)
     {
@@ -372,13 +378,15 @@ Bvb_Grid_Deploy_Interface
         $this->_chartOptions = $options;
     }
 
+
     function __toString ()
     {
-        if (is_null($this->_deploymentContent)) {
-           die('You must explicity call the deploy() method before printing the object');
+        if ( is_null($this->_deploymentContent) ) {
+            die('You must explicity call the deploy() method before printing the object');
         }
         return $this->_deploymentContent;
     }
+
 
     function setChartId ($id)
     {
@@ -386,10 +394,12 @@ Bvb_Grid_Deploy_Interface
         return $this;
     }
 
+
     function getChartId ()
     {
         return $this->_chartId;
     }
+
 
     function setFilesLocation (array $locations)
     {
@@ -397,39 +407,44 @@ Bvb_Grid_Deploy_Interface
         return $this;
     }
 
+
     function getFilesLocation ()
     {
         return $this->_filesLocation;
     }
 
-    /**
-     * Set view object
-     *
-     * @param Zend_View_Interface $view view object to use
-     *
-     * @return Bvb_Grid_Deploy_JqGrid
-     */
-    public function setView (Zend_View_Interface $view = null)
-    {
-        $this->_view = $view;
-        return $this;
-    }
 
-    /**
-     * Retrieve view object
-     *
-     * If none registered, attempts to pull from ViewRenderer.
-     *
-     * @return Zend_View_Interface|null
-     */
-    public function getView ()
+    function _applyConfigOptions ($options)
     {
-        if (null === $this->_view) {
-            $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
-            $this->setView($viewRenderer->view);
+
+        if ( isset($options['files']['js']) ) {
+            $this->_filesLocation['js'] = $options['files']['js'];
         }
 
-        return $this->_view;
+        if ( isset($options['files']['json']) ) {
+            $this->_filesLocation['json'] = $options['files']['json'];
+        }
+
+        if ( isset($options['files']['flash']) ) {
+            $this->_filesLocation['flash'] = $options['files']['flash'];
+        }
+
+        if ( isset($options['options']) && is_array($options['options']) ) {
+            $this->setChartOptions($options['options']);
+        }
+
+        if ( isset($options['title']) && is_string($options['title']) ) {
+            $this->setTile($options['title']);
+        }
+
+        if ( isset($options['type']) && is_string($options['type']) ) {
+            $this->setChartType($options['type']);
+        }
+
+        if ( isset($options['dimensions']) && is_array($options['dimensions']) ) {
+            $this->setChartDimensions($options['dimensions']['x'],$options['dimensions']['y']);
+        }
+
     }
 
 }

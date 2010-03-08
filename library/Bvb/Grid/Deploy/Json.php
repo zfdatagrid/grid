@@ -36,7 +36,6 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
-        $this->options = $options;
 
         parent::__construct($options);
     }
@@ -101,6 +100,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
 
         die();
     }
+
 }
 
 
