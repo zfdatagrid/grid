@@ -1235,7 +1235,7 @@ abstract class Bvb_Grid_Data
                 $this->order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
             }
 
-            $fieldsToOrder = $this->_reset_keys($this->_data['fields']);
+            $fieldsToOrder = $this->_resetKeys($this->_data['fields']);
 
             if ( isset($fieldsToOrder[$i]['orderField']) && strlen($fieldsToOrder[$i]['orderField']) > 0 ) {
                 $orderFinal = $fieldsToOrder[$i]['orderField'];
