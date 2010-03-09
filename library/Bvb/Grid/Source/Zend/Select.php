@@ -292,7 +292,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL '));
+        $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS total '));
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
@@ -303,7 +303,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
                 if ( count($result) > 1 ) {
                     $result = count($result);
                 } else {
-                    $result = $result[0]['TOTAL'];
+                    $result = $result[0]['total'];
                 }
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
@@ -314,7 +314,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             if ( count($result) > 1 ) {
                 $result = count($result);
             } else {
-                $result = $result[0]['TOTAL'];
+                $result = $result[0]['total'];
             }
 
         }
