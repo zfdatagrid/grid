@@ -270,8 +270,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
         }
 
 
-        if(!isset($result[0]))
-        {
+        if ( ! isset($result[0]) ) {
             return false;
         }
 
@@ -344,8 +343,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
         $table = $this->getDescribeTable($tableName);
 
-        if(!isset($table[$field]))
-        {
+        if ( ! isset($table[$field]) ) {
             return 'text';
         }
         $type = $table[$field]['DATA_TYPE'];
@@ -598,10 +596,9 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
             }
         }
 
-        if ( strpos($field, '.') === false && $simpleField ===false ) {
+        if ( strpos($field, '.') === false && $simpleField === false ) {
             $field = $completeField['field'];
         }
-
 
 
         /**
@@ -612,8 +609,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
          *
          * We can not quoteIdentifier this fields...
          */
-        if(preg_match("/^[a-z_]$/i",$field))
-        {
+        if ( preg_match("/^[a-z_]$/i", $field) ) {
             $field = $this->_getDb()->quoteIdentifier($field);
         }
 
@@ -726,8 +722,15 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
 
     function setCache ($cache)
     {
+
         if ( ! is_array($cache) ) {
             $cache = array('use' => 0);
+        }
+
+        if ( isset($cache['use']['db']) && $cache['use']['db'] == 1 ) {
+            $cache['use'] = 1;
+        } else {
+            $cache['use'] = 0;
         }
 
         $this->_cache = $cache;
