@@ -366,7 +366,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     }
 
 
-    function setTile ($title)
+    function setTitle ($title)
     {
         $this->_title = $title;
         return $this;
@@ -434,7 +434,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         }
 
         if ( isset($options['title']) && is_string($options['title']) ) {
-            $this->setTile($options['title']);
+            $this->setTitle($options['title']);
         }
 
         if ( isset($options['type']) && is_string($options['type']) ) {
