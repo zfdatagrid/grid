@@ -237,7 +237,7 @@ $grid->addExtraRows($rows);
 
 
         $grid->setDetailColumns();
-        $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp( array ('Population' => array ('functions' => array ('SUM' )) ));
@@ -350,10 +350,10 @@ $grid->addExtraRows($rows);
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State'));
 
-        $extra = new Bvb_Grid_ExtraColumns();
+        $extra = new Bvb_Grid_Extra_Column();
         $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
-        $esquerda = new Bvb_Grid_ExtraColumns();
+        $esquerda = new Bvb_Grid_Extra_Column();
         $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
 
         $grid->addExtraColumns($extra, $esquerda);
