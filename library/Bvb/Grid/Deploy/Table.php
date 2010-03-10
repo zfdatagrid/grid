@@ -1412,7 +1412,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         $gridId = $this->_gridId;
 
         if ( $this->getParam('gridmod') == 'ajax' && $this->_info['ajax'] !== false ) {
-
             $response = Zend_Controller_Front::getInstance()->getResponse();
             $response->clearBody();
             $response->setBody(implode($this->_renderDeploy));
@@ -1430,7 +1429,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             $this->_gridSession->unsetAll();
         }
 
-        $this->_deploymentContent = implode($this->_renderDeploy);
+        $this->_deploymentContent = $grid;
         return $this;
     }
 
