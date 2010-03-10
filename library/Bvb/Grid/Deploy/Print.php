@@ -79,11 +79,9 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             }
         }
 
-
         $print .= $this->_temp['print']->titlesEnd();
 
-
-        //[PT] O Loop
+        //Loop
         if ( is_array($wsData) ) {
             /////////////////
             if ( @$this->_info['hRow']['title'] != '' ) {

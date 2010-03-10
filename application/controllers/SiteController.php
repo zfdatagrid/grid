@@ -70,7 +70,7 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config, $id);
         $grid->setEscapeOutput(false);
-        #$grid->setCache(array('use' => 0, 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
+        #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
 
@@ -78,10 +78,6 @@ class SiteController extends Zend_Controller_Action
     /**
      * A simple usage of advanced filters. Every time you change a filter, the system automatically
      *runs a query to the others filters, making sure they don't allow you to filter for a record that is not in the database
-     *
-     *
-     * We also use SQL expressions and they will appear on the last line (before pagination)
-     * The average of LifeExpectancy and to SUM of Population
      */
     function filtersAction ()
     {
@@ -127,13 +123,14 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
 
-        $extra = new Bvb_Grid_ExtraColumns();
+        $extra = new Bvb_Grid_Extra_Columns();
         $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
-        $esquerda = new Bvb_Grid_ExtraColumns();
+        $esquerda = new Bvb_Grid_Extra_Columns();
         $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
 
         $grid->addExtraColumns($extra, $esquerda);
+
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -227,13 +224,11 @@ class SiteController extends Zend_Controller_Action
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
 
-
         $grid->setDetailColumns();
         $grid->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        #$grid->sqlexp = array ('Population' => array ('functions' => array ('SUM' ), 'value' => 'Population' ) );
-
+        $grid->setSqlExp( array ('Population' => array ('functions' => array ('SUM' )) ));
 
 
         $this->view->pages = $grid->deploy();
@@ -279,7 +274,7 @@ class SiteController extends Zend_Controller_Action
      */
     function crudAction ()
     {
-        $grid = $this->grid();
+        $grid = $this->grid('barcelos_');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
@@ -292,7 +287,7 @@ class SiteController extends Zend_Controller_Action
         #$form->setFieldsBasedOnQuery(false);
 
 
-        //$form->setIsPerformCrudAllowed(false);
+        #$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
         //$form->setIsPerformCrudAllowedForEdition(true);
         //$form->setIsPerformCrudAllowedForDeletion(false);
@@ -300,7 +295,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setForm($form);
 
-
+        $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
@@ -393,24 +388,6 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    function doubleAction ()
-    {
-        $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
-
-        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'bug_status', 'date'));
-
-        $form = new Bvb_Grid_Form();
-        $form->setModel(new Bugs());
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setDoubleTables(1);
-        $grid->addForm($form);
-
-        $grid->export = array();
-        $grid->setDetailColumns();
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
 
     function ofcAction ()
     {
@@ -427,10 +404,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setChartType($type);
-        $grid->setChartOptions(array('set_bg_colour' => '#FFFFFF'));
-        $grid->setTile('My First Graph');
-        $grid->setChartDimensions(900, 400);
-        $grid->setFilesLocation(array('json' => $this->getFrontController()->getBaseUrl() . '/public/scripts/json/json2.js', 'js' => $this->getFrontController()->getBaseUrl() . '/public/scripts/swfobject.js', 'flash' => $this->getFrontController()->getBaseUrl() . '/public/flash/open-flash-chart.swf'));
 
         if ( $type == 'pie' ) {
             $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));

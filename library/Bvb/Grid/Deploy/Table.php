@@ -1973,7 +1973,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     }
 
 
-    function addExtraRows (Bvb_Grid_ExtraRows $rows)
+    function addExtraRows (Bvb_Grid_Extra_Rows $rows)
     {
         $rows = $this->_object2array($rows);
         $this->_extraRows = $rows['_rows'];

@@ -414,7 +414,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
     }
 
 
-    function _applyConfigOptions ($options)
+    protected function _applyConfigOptions ($options)
     {
 
         if ( isset($options['files']['js']) ) {

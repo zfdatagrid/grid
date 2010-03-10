@@ -20,7 +20,7 @@
 
 
 
-class Bvb_Grid_ExtraRows
+class Bvb_Grid_Extra_Rows
 {
     public   $_rows;
 
