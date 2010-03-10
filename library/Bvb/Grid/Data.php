@@ -2184,7 +2184,7 @@ abstract class Bvb_Grid_Data
         }
 
         foreach ( $extra_fields as $value ) {
-            if ( $value instanceof Bvb_Grid_Extra_Columns ) {
+            if ( $value instanceof Bvb_Grid_Extra_Column ) {
                 $value = $this->_object2array($value);
                 array_push($final, $value['_field']);
             }

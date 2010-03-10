@@ -123,14 +123,26 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
 
-        $extra = new Bvb_Grid_Extra_Columns();
+        $extra = new Bvb_Grid_Extra_Column();
         $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
-        $esquerda = new Bvb_Grid_Extra_Columns();
+        $esquerda = new Bvb_Grid_Extra_Column();
         $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
 
         $grid->addExtraColumns($extra, $esquerda);
 
+
+        $rows = new Bvb_Grid_Extra_Rows();
+$rows->addRow('beforeHeader',array(
+                '', // empty field
+                array( 'colspan' => 1, 'class' => 'myclass', 'content'=>'my
+content'),
+                array('colspan' => 2, 'class' => 'myotherclass',
+'content'=>'some '),
+                array('colspan' => 1, 'class' => 'myclass', 'content'=>'flowers
+:) '),
+            ));
+$grid->addExtraRows($rows);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
