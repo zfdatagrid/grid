@@ -133,16 +133,11 @@ class SiteController extends Zend_Controller_Action
 
 
         $rows = new Bvb_Grid_Extra_Rows();
-$rows->addRow('beforeHeader',array(
-                '', // empty field
-                array( 'colspan' => 1, 'class' => 'myclass', 'content'=>'my
-content'),
-                array('colspan' => 2, 'class' => 'myotherclass',
-'content'=>'some '),
-                array('colspan' => 1, 'class' => 'myclass', 'content'=>'flowers
-:) '),
-            ));
-$grid->addExtraRows($rows);
+        $rows->addRow('beforeHeader', array('', // empty field
+array('colspan' => 1, 'class' => 'myclass', 'content' => 'my
+content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers
+:) ')));
+        $grid->addExtraRows($rows);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -236,11 +231,12 @@ $grid->addExtraRows($rows);
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
 
+
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
-        $grid->setSqlExp( array ('Population' => array ('functions' => array ('SUM' )) ));
+        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
 
 
         $this->view->pages = $grid->deploy();
@@ -299,11 +295,13 @@ $grid->addExtraRows($rows);
         #$form->setFieldsBasedOnQuery(false);
 
 
+
         #$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
         //$form->setIsPerformCrudAllowedForEdition(true);
         //$form->setIsPerformCrudAllowedForDeletion(false);
         //$grid->setDeleteConfirmationPage(true);
+
 
         $grid->setForm($form);
 
@@ -398,7 +396,6 @@ $grid->addExtraRows($rows);
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
-
 
 
     function ofcAction ()

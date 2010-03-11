@@ -892,7 +892,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
      * This is important because we only allow edit, add or remove records
      * From tables that have on primary key
      *
-     * @return string
+     * @return array
      */
     function getPrimaryKey ($table)
     {

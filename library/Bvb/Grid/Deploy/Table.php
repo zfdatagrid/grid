@@ -299,7 +299,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                         $this->_gridSession->message = $this->__('Record Not Found');
                         $this->_gridSession->_noForm = 1;
                         $this->_gridSession->correct = 1;
-                        $this->_redirect($this->getUrl(array('comm','gridRemove','gridDetail','edit')));
+                        $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
                     }
 
 
@@ -1362,44 +1362,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
                 $this->_renderDeploy['detail'] = $this->_render['detail'];
 
             } else {
-
                 $this->_willShow['grid'] = true;
-
-
-                $bHeader = self::_buildExtraRows('beforeHeader');
-                $bHeader .= self::_buildHeader();
-                $bHeader .= self::_buildExtraRows('afterHeader');
-                $bTitles = self::_buildExtraRows('beforeTitles');
-                $bTitles .= self::_buildTitlesTable(parent::_buildTitles());
-                $bTitles .= self::_buildExtraRows('afterTitles');
-                $bFilters = self::_buildExtraRows('beforeFilters');
-                $bFilters .= self::_buildFiltersTable(parent::_buildFilters());
-                $bFilters .= self::_buildExtraRows('afterFilters');
-                $bGrid = self::_buildGridTable(parent::_buildGrid());
-                $bSqlExp = self::_buildExtraRows('beforeSqlExpTable');
-                $bSqlExp .= self::_buildSqlexpTable(parent::_buildSqlExp());
-                $bSqlExp .= self::_buildExtraRows('afterSqlExpTable');
-                $bPagination = self::_buildExtraRows('beforePagination');
-                $bPagination .= self::_pagination();
-                $bPagination .= self::_buildExtraRows('afterPagination');
-
-                $this->_renderDeploy['header'] = $bHeader;
-                $this->_renderDeploy['titles'] = $bTitles;
-                $this->_renderDeploy['filters'] = $bFilters;
-                $this->_renderDeploy['grid'] = $bGrid;
-                $this->_renderDeploy['sqlExp'] = $bSqlExp;
-                $this->_renderDeploy['pagination'] = $bPagination;
-
-                $this->_render['header'] = $bHeader;
-                $this->_render['titles'] = $bTitles;
-                $this->_render['filters'] = $bFilters;
-                $this->_render['grid'] = $bGrid;
-                $this->_render['sqlExp'] = $bSqlExp;
-                $this->_render['pagination'] = $bPagination;
-
+                $this->_buildGridRender();
             }
 
             $this->_showsGrid = true;
+        } else {
+            $this->_render['start'] = $this->_temp['table']->globalStart();
+            $this->_buildGridRender(false);
+            $this->_render['end'] = $this->_temp['table']->globalEnd();
         }
 
 
@@ -1431,6 +1402,44 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $this->_deploymentContent = $grid;
         return $this;
+    }
+
+
+    private function _buildGridRender ($deploy = true)
+    {
+        $bHeader = self::_buildExtraRows('beforeHeader');
+        $bHeader .= self::_buildHeader();
+        $bHeader .= self::_buildExtraRows('afterHeader');
+        $bTitles = self::_buildExtraRows('beforeTitles');
+        $bTitles .= self::_buildTitlesTable(parent::_buildTitles());
+        $bTitles .= self::_buildExtraRows('afterTitles');
+        $bFilters = self::_buildExtraRows('beforeFilters');
+        $bFilters .= self::_buildFiltersTable(parent::_buildFilters());
+        $bFilters .= self::_buildExtraRows('afterFilters');
+        $bGrid = self::_buildGridTable(parent::_buildGrid());
+        $bSqlExp = self::_buildExtraRows('beforeSqlExpTable');
+        $bSqlExp .= self::_buildSqlexpTable(parent::_buildSqlExp());
+        $bSqlExp .= self::_buildExtraRows('afterSqlExpTable');
+        $bPagination = self::_buildExtraRows('beforePagination');
+        $bPagination .= self::_pagination();
+        $bPagination .= self::_buildExtraRows('afterPagination');
+
+        if ( $deploy == true ) {
+            $this->_renderDeploy['header'] = $bHeader;
+            $this->_renderDeploy['titles'] = $bTitles;
+            $this->_renderDeploy['filters'] = $bFilters;
+            $this->_renderDeploy['grid'] = $bGrid;
+            $this->_renderDeploy['sqlExp'] = $bSqlExp;
+            $this->_renderDeploy['pagination'] = $bPagination;
+        }
+
+
+        $this->_render['header'] = $bHeader;
+        $this->_render['titles'] = $bTitles;
+        $this->_render['filters'] = $bFilters;
+        $this->_render['grid'] = $bGrid;
+        $this->_render['sqlExp'] = $bSqlExp;
+        $this->_render['pagination'] = $bPagination;
     }
 
 
@@ -1706,22 +1715,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         if ( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 1 ) {
             $this->_crudTableOptions['add'] = 1;
-        } elseif( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 0 ) {
+        } elseif ( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 0 ) {
             $this->_crudTableOptions['add'] = 0;
         }
 
         if ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 1 ) {
             $this->_crudTableOptions['edit'] = 1;
-        } elseif( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
+        } elseif ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
             $this->_crudTableOptions['edit'] = 0;
         }
 
         if ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 1 ) {
             $this->_crudTableOptions['delete'] = 1;
-        } elseif( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
+        } elseif ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
             $this->_crudTableOptions['delete'] = 0;
         }
-
 
 
         $this->_info['doubleTables'] = isset($options['doubleTables']) ? $options['doubleTables'] : '';
