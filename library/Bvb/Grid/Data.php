@@ -2540,7 +2540,10 @@ abstract class Bvb_Grid_Data
      */
     function resetColumn ($column)
     {
-        $this->updateColumn($column, array());
+        $support = array();
+        $support[] = $this->_data['fields']['name'];
+        $support[] = $this->_data['fields']['field'];
+        $this->updateColumn($column, $support);
         return $this;
     }
 
@@ -2552,7 +2555,10 @@ abstract class Bvb_Grid_Data
     function resetColumns (array $columns)
     {
         foreach ( $columns as $column ) {
-            $this->updateColumn($column, array());
+            $support = array();
+            $support[] = $this->_data['fields']['name'];
+            $support[] = $this->_data['fields']['field'];
+            $this->updateColumn($column, $support);
         }
 
         return $this;
