@@ -335,7 +335,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
         foreach ($titles as $value) {
 
-            if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+            if ((isset($value['field']) && $value['field'] !=$this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
                 $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['odt']->titlesLoop());
 
@@ -348,14 +348,14 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             /////////////////
             /////////////////
             /////////////////
-            if (@$this->_info['hRow']['title'] != '') {
+            if ($this->getInfo('hRow,title') != '') {
                 $bar = $wsData;
 
-                $hbar = trim($this->_info['hRow']['field']);
+                $hbar = trim($this->getInfo('hRow,field'));
 
                 $p = 0;
                 foreach ($wsData[0] as $value) {
-                    if ($value['field'] == $hbar) {
+                    if (isset($value['field']) && $value['field'] == $hbar) {
                         $hRowIndex = $p;
                     }
 
@@ -377,7 +377,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
                 ////////////
                 ////////////
                 //A linha horizontal
-                if (@$this->_info['hRow']['title'] != '') {
+                if ($this->getInfo('hRow,title') != '') {
                     if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
                         $xml .= str_replace("{{value}}", utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->_temp['odt']->hRow());
                     }
@@ -394,7 +394,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
                     $value['value'] = strip_tags($value['value']);
 
-                    if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+                    if ((isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
                         $xml .= str_replace("{{value}}",  utf8_encode($value['value']), $this->_temp['odt']->loopLoop());
 

@@ -231,7 +231,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
 
-
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 

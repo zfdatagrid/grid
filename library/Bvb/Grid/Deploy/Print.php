@@ -73,7 +73,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         foreach ( $titles as $value ) {
 
-            if ( (@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '' ) {
+            if ( (isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                 $print .= str_replace("{{value}}", $value['value'], $this->_temp['print']->titlesLoop());
 
             }
@@ -84,10 +84,10 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         //Loop
         if ( is_array($wsData) ) {
             /////////////////
-            if ( @$this->_info['hRow']['title'] != '' ) {
+            if ( $this->getInfo('hRow,title') != '' ) {
                 $bar = $wsData;
 
-                $hbar = trim($this->_info['hRow']['field']);
+                $hbar = trim($this->getInfo('hRow,field'));
 
                 $p = 0;
                 foreach ( $wsData[0] as $value ) {
@@ -109,7 +109,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
             foreach ( $wsData as $row ) {
                 ////////////
                 //horizontal row
-                if ( @$this->_info['hRow']['title'] != '' ) {
+                if ( $this->getInfo('hRow,title') != '' ) {
                     if ( @$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value'] ) {
                         $print .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->_temp['print']->hRow());
                     }
@@ -123,7 +123,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
                     $value['value'] = strip_tags($value['value']);
 
-                    if ( (@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '' ) {
+                    if ( (isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                         $print .= str_replace("{{value}}", $value['value'], $this->_temp['print']->loopLoop());
                     }
                 }

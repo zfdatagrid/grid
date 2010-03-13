@@ -64,28 +64,27 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
         $wsData = parent::_buildGrid ();
         $sql = parent::_buildSqlExp ();
 
-        $xml = $this->temp ['word']->globalStart ();
+        $xml = $this->_temp ['word']->globalStart ();
 
-        $xml .= $this->temp ['word']->titlesStart ();
+        $xml .= $this->_temp ['word']->titlesStart ();
 
         foreach ( $titles as $value )
         {
-            if (($value ['field'] != @$this->_info ['hRow'] ['field'] && @$this->_info ['hRow'] ['title'] != '') || @$this->_info ['hRow'] ['title'] == '')
-            {
-                $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->titlesLoop () );
+            if (($value ['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->titlesLoop () );
             }
         }
-        $xml .= $this->temp ['word']->titlesEnd ();
+        $xml .= $this->_temp ['word']->titlesEnd ();
 
 
         if (is_array ( $wsData ))
         {
             /////////////////
-            if (@$this->_info ['hRow'] ['title'] != '')
+            if ($this->getInfo('hRow,title') != '')
             {
                 $bar = $wsData;
 
-                $hbar = trim ( $this->_info ['hRow'] ['field'] );
+                $hbar = trim ($this->getInfo('hRow,title'));
 
                 $p = 0;
                 foreach ( $wsData [0] as $value )
@@ -110,29 +109,28 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
             {
                 ////////////
                 //A linha horizontal
-                if (@$this->_info ['hRow'] ['title'] != '')
+                if ($this->getInfo('hRow,title') != '')
                 {
 
                     if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value'])
                     {
-                        $xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->temp ['word']->hRow () );
+                        $xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow () );
                     }
                 }
                 ////////////
 
-                $xml .= $this->temp ['word']->loopStart ();
+                $xml .= $this->_temp ['word']->loopStart ();
                 $a = 1;
                 foreach ( $row as $value )
                 {
                     $value ['value'] = strip_tags ( $value ['value'] );
 
-                    if ((@$value ['field'] != @$this->_info ['hRow'] ['field'] && @$this->_info ['hRow'] ['title'] != '') || @$this->_info ['hRow'] ['title'] == '')
-                    {
-                        $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->loopLoop ( 2 ) );
+                    if ((@$value ['field'] !=$this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                        $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->loopLoop ( 2 ) );
                     }
                     $a ++;
                 }
-                $xml .= $this->temp ['word']->loopEnd ();
+                $xml .= $this->_temp ['word']->loopEnd ();
                 $aa ++;
                 $i ++;
             }
@@ -141,16 +139,16 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inte
 
         if (is_array ( $sql ))
         {
-            $xml .= $this->temp ['word']->sqlExpStart ();
+            $xml .= $this->_temp ['word']->sqlExpStart ();
             foreach ( $sql as $value )
             {
-                $xml .= str_replace ( "{{value}}", $value ['value'], $this->temp ['word']->sqlExpLoop () );
+                $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->sqlExpLoop () );
             }
-            $xml .= $this->temp ['word']->sqlExpEnd ();
+            $xml .= $this->_temp ['word']->sqlExpEnd ();
         }
 
 
-        $xml .= $this->temp ['word']->globalEnd ();
+        $xml .= $this->_temp ['word']->globalEnd ();
 
 
         if (! isset($this->deploy['save'])) {

@@ -223,7 +223,12 @@ class Bvb_Grid_Template_Odt_Odt
         if (@file_exists ( $this->options ['logo'] ))
         {
 
-            $arrayLogo = explode("/",@$this->options['logo']);
+            if(strpos($this->options['logo'],'/')!==false)
+            {
+                $arrayLogo = explode("/",$this->options['logo']);
+            }else{
+                $arrayLogo = array($this->options['logo']);
+            }
 
             $header = '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-styles

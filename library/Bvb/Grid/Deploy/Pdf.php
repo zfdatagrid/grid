@@ -75,7 +75,7 @@ Bvb_Grid_Deploy_Interface
 
         foreach ($titles as $titulos) {
 
-            if ((@$titulos['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+            if ((@$titulos['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                 $larg[$i] = $this->widthForStringUsingFontSize($titulos['value'], $font, 8);
                 $i ++;
             }
@@ -85,7 +85,7 @@ Bvb_Grid_Deploy_Interface
 
         if (is_array($sqlexp)) {
             foreach ($sqlexp as $sql) {
-                if (($sql['field'] != $this->_info['hRow']['field'] && $this->_info['hRow']['title'] != '') || $this->_info['hRow']['title'] == '') {
+                if (($sql['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                     if ($larg[$i] < strlen($sql['value'])) {
                         $larg[$i] = strlen($sql['value']);
                     }
@@ -98,10 +98,10 @@ Bvb_Grid_Deploy_Interface
         /////////////////
         /////////////////
         /////////////////
-        if (@$this->_info['hRow']['title'] != '') {
+        if ($this->getInfo('hRow,title')!= '') {
             $bar = $grid;
 
-            $hbar = trim($this->_info['hRow']['field']);
+            $hbar = trim($this->getInfo('hRow,field'));
 
             $p = 0;
             foreach ($grid[0] as $value) {
@@ -132,7 +132,7 @@ Bvb_Grid_Deploy_Interface
                 $value['value'] = strip_tags($value['value']);
 
 
-                if ((@$value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+                if ((isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
                     if ($larg[$i] < strlen($value['value'])) {
                         $larg[$i] = strlen($value['value']);
@@ -215,7 +215,7 @@ Bvb_Grid_Deploy_Interface
         $sql = parent::_buildSqlExp();
         $grid = parent::_BuildGrid();
 
-        if (! isset($this->_info['hRow']['field'])) {
+        if (! $this->getInfo('hRow,field')) {
             $this->_info['hRow']['field'] = '';
         }
 
@@ -318,7 +318,7 @@ Bvb_Grid_Deploy_Interface
 
 
         $total_celulas = count($titulos);
-        if (@$this->_info['hRow']['title'] != '') {
+        if ($this->getInfo('hRow,title') != '') {
             $total_celulas --;
         }
         $largura = ($page->getWidth() - 80) / $total_celulas;
@@ -328,7 +328,7 @@ Bvb_Grid_Deploy_Interface
         $i = 0;
         $page->setFont($font, $cellFontSize + 1);
         foreach ($titulos as $value) {
-            if (($value['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+            if (($value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
                 if ((int) $la == 0) {
                     $largura1 = 40;
@@ -356,10 +356,10 @@ Bvb_Grid_Deploy_Interface
 
         if (is_array($grid)) {
             /////////////////
-            if (@$this->_info['hRow']['title'] != '') {
+            if ($this->getInfo('hRow,title') != '') {
                 $bar = $grid;
 
-                $hbar = trim($this->_info['hRow']['field']);
+                $hbar = trim($this->getInfo('hRow,field'));
 
                 $p = 0;
                 foreach ($grid[0] as $value) {
@@ -433,7 +433,7 @@ Bvb_Grid_Deploy_Interface
                     $page->setFont($font, $cellFontSize + 1);
                     foreach ($titulos as $title) {
 
-                        if (($title['field'] != $this->_info['hRow']['field'] && $this->_info['hRow']['title'] != '') || $this->_info['hRow']['title'] == '') {
+                        if (($title['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
                             if ((int) $la == 0) {
                                 $largura1 = 40;
@@ -464,7 +464,7 @@ Bvb_Grid_Deploy_Interface
 
                 ////////////
                 //A linha horizontal
-                if (@$this->_info['hRow']['title'] != '') {
+                if ($this->getInfo('hRow,title')!= '') {
 
                     if ($bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value']) {
 
@@ -509,7 +509,7 @@ Bvb_Grid_Deploy_Interface
 
                     $value1['value'] = strip_tags(trim($value1['value']));
 
-                    if (($value1['field'] != @$this->_info['hRow']['field'] && @$this->_info['hRow']['title'] != '') || @$this->_info['hRow']['title'] == '') {
+                    if (($value1['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
 
 
                         if ((int) $la == 0) {

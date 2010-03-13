@@ -34,7 +34,8 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_Interface
     function globalStart ()
     {
 
-        $return = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" . $this->getCharEncoding() . "\" />
+
+        $return = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" . $this->options['charEncoding']. "\" />
         </head><body onload='window.print()';>";
         $return .= "<table  border=1 cellspacing=0 cellpadding=0 width='100%'
  style='width:100%;margin-left:-.35pt;border-collapse:collapse;border:none;'>";

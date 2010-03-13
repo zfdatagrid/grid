@@ -191,9 +191,8 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
             $this->csvAddData(self::buildGridCsv(parent::_buildGrid()));
             $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp()));
             // get next data
-            $this->_select->limit($this->_pagination, $i);
-            $stmt = $this->_getDb()->query($this->_select);
-            $this->_result = $stmt->fetchAll();
+            $this->getSource()->buildQueryLimit($this->_pagination, $i);
+            $this->_result = $this->getSource()->execute();
         } while (count($this->_result));
 
         if ($this->storeData) {

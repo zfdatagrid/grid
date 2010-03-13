@@ -49,11 +49,17 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
     function buildTitltesXml ($titles)
     {
+
+
+
         $grid = '';
 
         $grid .= "    <fields>\n";
 
         foreach ($titles as $title) {
+
+              if(!isset($title['field']))
+              continue;
 
             $grid .= "        <" . $title['field'] . "><![CDATA[" . strip_tags($title['value']) . "]]></" . $title['field'] . ">\n";
 
@@ -76,6 +82,11 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
 
 
             foreach ($sql as $exp) {
+
+              if(!isset($exp['field']))
+              continue;
+
+
                 $grid .= "        <" . $exp['field'] . "><![CDATA[" . strip_tags($exp['value']) . "]]></" . $exp['field'] . ">\n";
                 ;
             }
@@ -99,6 +110,9 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Inter
         foreach ($grids as $value) {
             $grid .= "        <row>\n";
             foreach ($value as $final) {
+
+              if(!isset($final['field']))
+              continue;
                 $grid .= "            <" . $final['field'] . "><![CDATA[" . strip_tags($final['value']) . "]]></" . $final['field'] . ">\n";
             }
             $grid .= "        </row>\n";
