@@ -94,7 +94,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
      *
      * @var string
      */
-    public $imagesUrl;
+    protected $_imagesUrl;
 
     /**
      * If we are allowed to add records to the database if we
@@ -723,7 +723,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
 
         //Lets get the images for defining the order
-        $images = $this->_temp['table']->images($this->imagesUrl);
+        $images = $this->_temp['table']->images($this->getImagesUrl());
 
         //Iniciate titles template
         $grid = $this->_temp['table']->titlesStart();
@@ -1125,9 +1125,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
             }
 
-            $images = $this->_temp['table']->images($this->imagesUrl);
+            $images = $this->_temp['table']->images($this->getImagesUrl());
 
-            $this->_render['export'] = $this->_temp['table']->export($this->getExports(), $this->imagesUrl, $url, $this->_gridId);
+            $this->_render['export'] = $this->_temp['table']->export($this->getExports(), $this->getImagesUrl(), $url, $this->_gridId);
 
 
             if ( isset($this->_info['limit']) && (int) @$this->_info['limit'] > 0 ) {
@@ -1192,7 +1192,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
 
         $this->_printScript();
 
-        $images = $this->_temp['table']->images($this->imagesUrl);
+        $images = $this->_temp['table']->images($this->getImagesUrl());
 
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false) ) {
 
@@ -1904,7 +1904,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         } else {
 
             if ( isset($this->_deployOptions['imagesUrl']) ) {
-                $this->imagesUrl = $this->_deployOptions['imagesUrl'];
+                $this->setImagesUrl($this->_deployOptions['imagesUrl']);
             }
 
             if ( isset($this->_deployOptions['template']) ) {
@@ -2093,6 +2093,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
     {
         $this->_deleteConfirmationPage = (bool) $status;
         return $this;
+    }
+
+    function setImagesUrl($url)
+    {
+        if(!is_string($url))
+        {
+            throw new Bvb_Grid_Exception('String expected, '.gettype($url).' provided');
+        }
+        $this->_imagesUrl = $url;
+        return $this;
+    }
+
+    function getImagesUrl()
+    {
+        return $this->_imagesUrl;
     }
 }
 
