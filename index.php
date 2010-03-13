@@ -47,4 +47,27 @@ $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');
 $frontController->setDefaultControllerName('site');
 
+
+// Leave 'Database' options empty to rely on Zend_Db_Table default adapter
+
+$options = array(
+    'jquery_path' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
+    'plugins' => array('Variables',
+                       'Html',
+                       'Database' => array('adapter' => array('standard' => $db)),
+                       'File' => array('base_path' => '/Library/WebServer/Documents/'),
+                       'Memory',
+                       'Time',
+                       'Registry',
+                       'Cache' => array('backend' => $cache->getBackend()),
+                       'Exception')
+);
+
+$debug = new ZFDebug_Controller_Plugin_Debug($options);
+
+$frontController = Zend_Controller_Front::getInstance();
+$frontController->registerPlugin($debug);
+
+
+
 $frontController->dispatch ();
