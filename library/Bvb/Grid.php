@@ -17,7 +17,7 @@
  * @version   $Id$
  */
 
-abstract class Bvb_Grid_Data
+abstract class Bvb_Grid
 {
 
     const VERSION = "0.6 beta";
@@ -714,7 +714,7 @@ abstract class Bvb_Grid_Data
         if ( null == $this->getSource() ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
-             * @var $_updateColumnQueue Bvb_Grid_DataGrid
+             * @var $_updateColumnQueue Bvb_Grid
              */
             if ( isset($this->_updateColumnQueue[$field]) ) {
                 $this->_updateColumnQueue[$field] = array_merge($this->_updateColumnQueue[$field], $options);

@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Deploy_Ods extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Ods extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'ods';

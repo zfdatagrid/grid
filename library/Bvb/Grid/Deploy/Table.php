@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'table';
@@ -550,7 +550,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Int
         }
         catch (Zend_Exception $e) {
             $this->_gridSession->messageOk = FALSE;
-            $this->_gridSession->message = $this->__('Error deleting record =>') . $e->getMessage();
+            $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
         }
 
         $this->removeParam('comm' . $this->getGridId());

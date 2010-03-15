@@ -24,7 +24,7 @@ require_once 'Zend/Json.php';
 /** Zend_Controller_Front */
 require_once 'Zend/Controller/Front.php';
 
-class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
     /**
      * URL path to place where JqGrid library resides
@@ -128,7 +128,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_In
 
         parent::__construct($options);
 
-        // TODO fix for property with same name in Bvb_Grid_DataGrid
+        // TODO fix for property with same name in Bvb_Grid
         $this->_view = null;
 
         // prepare request parameters sent by jqGrid
@@ -290,7 +290,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid_Data implements Bvb_Grid_Deploy_In
      */
     public function bvbClearOnInit()
     {
-        // TODO __call function in Bvb_Grid_DataGrid should ignore such call
+        // TODO __call function in Bvb_Grid should ignore such call
         $this->_jqgOnInit = array();
         return $this;
     }
@@ -555,7 +555,7 @@ HTML;
         // override with options explicitly set by user
         ///////////////////////////////////////////////
 
-        // override with options defined on Bvb_Grid_DataGrid level
+        // override with options defined on Bvb_Grid level
         ///////////////////////////////////////////////////////////
         $this->_jqgParams['url'] = $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
@@ -784,18 +784,18 @@ HTML;
         call_user_func_array(array($cmd, 'cmd'), $args);
         return $cmd;
     }
-    ///////////////////////////////////////////////// Following functions could go to Bvb_Grid_DataGrid
+    ///////////////////////////////////////////////// Following functions could go to Bvb_Grid
     /////////////////////////////////////////////////
     // @codingStandardsIgnoreStart
     /**
-     * Not defined in Bvb_Grid_DataGrid, but used there
+     * Not defined in Bvb_Grid, but used there
      *
      * @var string
      */
     protected $output = 'jqgrid';
     // @codingStandardsIgnoreEnd
     /**
-     * @see Bvb_Grid_DataGrid::$export
+     * @see Bvb_Grid::$export
      */
     public $export = array();
     /**

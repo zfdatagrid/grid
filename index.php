@@ -102,6 +102,4 @@ $debug = new ZFDebug_Controller_Plugin_Debug($options);
 $frontController = Zend_Controller_Front::getInstance();
 $frontController->registerPlugin($debug);
 
-
-
 $frontController->dispatch ();

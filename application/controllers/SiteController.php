@@ -68,7 +68,7 @@ class SiteController extends Zend_Controller_Action
     function grid ($id = '')
     {
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
-        $grid = Bvb_Grid_Data::factory('Bvb_Grid_Deploy_Table', $config, $id);
+        $grid = Bvb_Grid::factory('Bvb_Grid_Deploy_Table', $config, $id);
         $grid->setEscapeOutput(false);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
