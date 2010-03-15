@@ -1900,7 +1900,7 @@ abstract class Bvb_Grid_Data
 
                 foreach ( $this->_data['fields'] as $key => $value ) {
                     if ( ! in_array($key, $finalColumns) ) {
-                        $this->updateColumn($key, array('hidden' => 1));
+                        $this->updateColumn($key, array('remove' => 1));
                     }
                 }
             }
@@ -1912,7 +1912,7 @@ abstract class Bvb_Grid_Data
             $finalColumns = array_intersect($this->_gridColumns, array_keys($this->_data['fields']));
             foreach ( $this->_data['fields'] as $key => $value ) {
                 if ( ! in_array($key, $finalColumns) ) {
-                    $this->updateColumn($key, array('hidden' => 1));
+                    $this->updateColumn($key, array('remove' => 1));
                 }
             }
 
