@@ -41,6 +41,15 @@ class Bvb_Grid_Form
 
     protected $_disallowedFields = array();
 
+    protected $_onAddForce = array();
+
+    protected $_onEditForce = array();
+
+    protected $_onEditAddCondition = array();
+
+    protected $_onDeleteAddCondition = array();
+
+
     function getForm ()
     {
         return $this->_form;
@@ -59,7 +68,7 @@ class Bvb_Grid_Form
 
             $decorator = '_' . $name;
 
-            if ( isset($this->$decorator)  && gettype($this->$decorator) == gettype($args[0])) {
+            if ( isset($this->$decorator) && gettype($this->$decorator) == gettype($args[0]) ) {
                 $this->$decorator = $args[0];
                 return $this;
             }

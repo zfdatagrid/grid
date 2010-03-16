@@ -324,19 +324,6 @@ abstract class Bvb_Grid
      */
     private $_source;
 
-
-    /**
-     * The table where crud operations
-     * should be performed.
-     * by default the table is fetched from the quaery
-     * but the user can set other manually
-     * @var unknown_type
-     */
-    protected $_crudTable;
-
-
-    protected $_crudTableOptions = array('add' => 1, 'edit' => 1, 'delete' => 1);
-
     /**
      * Last name from deploy class (table|pdf|csv|etc...)
      * @var unknown_type
@@ -2668,7 +2655,6 @@ abstract class Bvb_Grid
             $f = explode(':', $value);
             $returnArray[$f[0]] = $f[1];
         }
-        $param = substr($param, 4);
         return $returnArray;
     }
 

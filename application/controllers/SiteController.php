@@ -281,13 +281,15 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
      */
     function crudAction ()
     {
-        $grid = $this->grid('barcelos_');
+        $grid = $this->grid();
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        $form->setOnAddForce(array('next'=>'1'));
+        $form->setOnDeleteAddCondition(array('next'=>'11'));
 
         #$form->setAllowedFields(array('times','nexst'));
         #$form->setDisallowedFields(array('time','next'));

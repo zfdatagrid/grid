@@ -169,6 +169,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
      */
     protected $_form;
 
+    /**
+     * The table where crud operations
+     * should be performed.
+     * by default the table is fetched from the quaery
+     * but the user can set other manually
+     * @var unknown_type
+     */
+    protected $_crudTable;
+
+
+    protected $_crudOptions = array();
+
+
+    protected $_crudTableOptions = array('add' => 1, 'edit' => 1, 'delete' => 1);
 
     /**
      *
@@ -364,6 +378,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
 
 
                         if ( $this->_crudTableOptions['add'] == true ) {
+                            $post = array_merge($post,$this->_crudOptions['addForce']);
                             $this->getSource()->insert($this->_crudTable, $post);
                         }
 
@@ -412,6 +427,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
                         }
 
                         if ( $this->_crudTableOptions['edit'] == true ) {
+                            $post = array_merge($post,$this->_crudOptions['editForce']);
+                            $queryUrl = array_merge($queryUrl,$this->_crudOptions['editAddCondition']);
                             $this->getSource()->update($this->_crudTable, $post, $queryUrl);
                         }
 
@@ -532,6 +549,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
             }
 
             if ( $this->_crudTableOptions['delete'] == true ) {
+
+                $condition = array_merge($condition,$this->_crudOptions['deleteAddCondition']);
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
             }
 
@@ -1671,6 +1690,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
         $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' .$this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getGroupDecorator()));
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
+
+        $this->_crudOptions['addForce'] = $crud->getOnAddForce();
+        $this->_crudOptions['editForce'] = $crud->getOnEditForce();
+        $this->_crudOptions['editAddCondition'] = $crud->getOnEditAddCondition();
+        $this->_crudOptions['deleteAddCondition'] = $crud->getOnDeleteAddCondition();
 
         $this->_form = $crud->getForm();
 
