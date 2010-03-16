@@ -3,22 +3,42 @@
 class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 {
     protected $_query;
-
+    
     protected $_queryParts = array();
-
-    public function __construct(Doctrine_Query $q)
+    
+    /**
+     * Intialize the Doctrine_Query. We will parse out
+     * all the provided DQL or start a Doctrine_Query
+     * if an instance of Doctrine_Record is provided
+     * 
+     * @param mixed $q
+     */
+    public function __construct($q)
     {
+        if ($q instanceof Doctrine_Record) {
+            $name = get_class($q);
+            $q = Doctrine_Query::create()->from($name);
+        }
+        
+        if (!$q instanceof Doctrine_Query) {
+            require_once 'Bvb/Grid/Source/Doctrine/Exception.php';
+            throw new Bvb_Grid_Source_Doctrine_Exception(
+                "Please provide only an instance of Doctrine_Query "
+                 . "or a valid Doctrine_Record instance"
+            );
+        }
+        
         $this->_query = $q;
         $this->_setFromParts();
         $this->_setSelectParts();
         //die(Zend_Debug::dump($this->_queryParts, null, false));
     }
-
+    
     public function hasCrud()
     {
         return true;
     }
-
+    
     /**
      * Returns the "main" table
      * the one after select * FROM {MAIN_TABLE}
@@ -29,7 +49,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         $table = Doctrine::getTable($this->_queryParts['from']['table']);
         return $table->getTableName();
     }
-
+    
     /**
      * builds a key=>value array
      *
@@ -57,10 +77,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         $this->_setSelectParts();
         return $this->_queryParts['select'];
     }
-
+    
     /**
      * Use the supplied Doctrine_Query to find its primary ID
-     *
+     * 
      * TODO : Implement usage of $table param
      */
     public function getPrimaryKey($table = null)
@@ -68,27 +88,27 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         $return = array();
         $table = Doctrine::getTable($this->_queryParts['from']['table']);
         $alias = $this->_queryParts['from']['alias'];
-
+        
         //Get the Primary Key(s) for provided table
         $ids = $table->getIdentifierColumnNames();
-
+        
         //Append the alias to each Primary key field
         foreach ($ids as $id) {
             $return[] = (!empty($alias)) ? $alias . '.' . $id : $id;
         }
-
+        
         return $return;
     }
-
+    
     /**
      * Gets a unique record as a associative array
-     *
+     * 
      * @param $table
      * @param $condition
      */
     function getRecord ($table, array $condition)
     {
-
+        
     }
 
     /**
@@ -109,7 +129,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         $newArray = array();
         $newQuery = clone $this->_query;
         $results = $newQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
-
+        
         if (empty($this->_queryParts['from']['alias'])) {
             foreach ($results as $rows) {
                 $temp = array();
@@ -117,42 +137,47 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
                     $name = str_replace($this->_queryParts['from']['table'] . '_', '', $col);
                     $temp[$name] = $val;
                 }
-
+                
                 $newArray[] = $temp;
             }
         } else {
             foreach ($results as $rows) {
                 $temp = array();
+                
                 foreach ($rows as $col => $val) {
-                    $pos = strpos($col,'_');
-                    $name = substr($col, ++$pos);
-                    $temp[$name] = $val;
+                    $parts = explode('_', $col, 2);
+                    
+                    foreach ($this->_queryParts['select'] as $alias => $select) {
+                        if (implode('.', $parts) == $select['field']) {
+                            $temp[$alias] = $val;
+                        }
+                    }
                 }
-
+                
                 $newArray[] = $temp;
             }
         }
-
+        //die(Zend_Debug::dump($newArray, null, false));
         return $newArray;
     }
 
 
     /**
      * Get a record detail based the current query
-     *
+     * 
      * <code>
      * $where = array(
      *     array('columnName' => 'searchValue')
      * )
      * </code>
-     *
-     * @param array $where
+     * 
+     * @param array $where 
      * @return array
      */
     public function fetchDetail(array $where)
     {
         /**
-         * Remove these since we are trying to retrieve
+         * Remove these since we are trying to retrieve 
          * a specific row
          */
         $this->_query->removeDqlQueryPart('limit')
@@ -160,14 +185,14 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         foreach ($where as $column => $value) {
             $this->_query->addWhere($column . ' = ?', $value);
         }
-
+        
         return $this->execute();
     }
 
 
     /**
      * Return the total of records
-     *
+     * 
      * @return int
      */
     public function getTotalRecords()
@@ -180,7 +205,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      * Ex: array('c'=>array('tableName'=>'Country'));
      * where c is the table alias. If the table as no alias,
      * c should be the table name
-     *
+     * 
      * @return array
      */
     function getTableList ()
@@ -205,21 +230,25 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     public function getFilterValuesBasedOnFieldDefinition($field)
     {
         $table = $this->_findTableFromColumn($field);
-
+        
         $tableClass = Doctrine::getTable($table);
-
-        list($alias, $column) = explode('.', $field);
-
+        
+        if (strpos($field, '.') !== false) {
+            list($alias, $column) = explode('.', $field);
+        } else {
+            $column = $field;
+        }
+        
         $definition = $tableClass->getDefinitionOf($column);
-
+        
         if ($definition['type'] == 'enum') {
             foreach ($definition['values'] as $val) {
                 $return[$val] = $val;
             }
-
+            
             return $return;
         }
-
+        
         return 'text';
     }
 
@@ -238,7 +267,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     public function getFieldType($field)
     {
         die('getFieldType');
-
+        
         $this->_queryExecuted->getRoot()->getTypeOfColumn('continent');
     }
 
@@ -261,23 +290,23 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         if ($reset) {
             $this->_query->removeDqlQueryPart('orderby');
         }
-
+        
         $this->_query->addOrderBy($field . ' ' . $order);
-
+        
         return $this;
     }
 
 
     /**
      * Build the query limit clause
-     *
+     * 
      * @param $start
      * @param $offset
      */
     public function buildQueryLimit($start, $offset)
     {
         $this->_query->limit($start)->offset($offset);
-
+        
         return $this;
     }
 
@@ -312,11 +341,11 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     {
         $newOrderBys = array();
         $orderBy = $this->_query->getDqlPart('orderby');
-
+        
         if (!empty($orderBy)) {
             foreach ($orderBy as $anOrderby) {
                 $orderBys = explode(',', $anOrderby);
-
+                
                 foreach ($orderBys as $order) {
                     $parts = explode(' ', trim($order));
                     if (strtolower($parts[1]) != 'desc' && strtolower($parts[1]) != 'asc') {
@@ -326,7 +355,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
                 }
             }
         }
-
+        
         return $newOrderBys;
     }
 
@@ -405,7 +434,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     public function addCondition($filter, $op, $completeField)
     {
         $field = $completeField['field'];
-
+        
         switch (strtolower($op)) {
             case 'equal':
             case '=':
@@ -450,19 +479,22 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
                 $this->_query->addWhere($field . " LIKE ?", "%" . $filter . "%");
                 break;
         }
-
+        
         return $this;
     }
 
 
     /**
-     *Insert an array of key=>values in the specified table
+     * Insert an array of key=>values in the specified table
+     *
      * @param string $table
      * @param array $post
      */
-    function insert ($table, array $post)
+    public function insert($table, array $post)
     {
-        die('insert');
+        die(Zend_Debug::dump($table, null, false));
+        $tableModel = $this->_findTableFromAlias($table);
+        die(Zend_Debug::dump($tableModel, null, false));
     }
 
 
@@ -508,7 +540,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 
     /**
      * Removes any order in query
-     *
+     * 
      * @return Bvb_Grid_Source_Doctrine
      */
     public function resetOrder()
@@ -519,8 +551,8 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 
     /**
      * Cache handler.
-     *
-     * TODO: Research what 'cache' does, might just need to look at the
+     * 
+     * TODO: Research what 'cache' does, might just need to look at the 
      *       bool and see if we need to set Doctrine Cache or not
      */
     function setCache($cache)
@@ -531,138 +563,202 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 
     /**
      * Build the form based on a Model or query
-     * @param $decorators
      */
-    function buildForm()
+    public function buildForm()
     {
-        die('buildForm');
+        $table = $this->_queryParts['from']['table'];
+        $columns = Doctrine::getTable($table)->getColumns();
+        //die(Zend_Debug::dump($columns, null, false));
+        return $this->buildFormElements($columns);
     }
+    
+    public function buildFormElements($cols, $info = array())
+    {
+        $form = array();
+        
+        foreach ($cols as $column => $detail) {
+            
+            if ($detail['primary']) {
+                continue;
+            }
+            
+            $label = ucwords(str_replace('_', ' ', $column));
+            
+            switch ($detail['type']) {
+                case 'enum':
+                    $form['elements'][$column] = array('select', array('multiOptions' => $detail['values'], 'required' => ($detail['notnull'] == 1) ? false : true, 'label' => $label));
+                    break;
+                
+                case 'string':
+                case 'varchar':
+                case 'char':
+                    $length = $detail['length'];
+                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! is_null($detail['default']) ? $detail['default'] : "")));
+                    break;
+                case 'date':
+                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! is_null($detail['default']) ? $detail['default'] : "")));
+                    break;
+                case 'datetime':
+                case 'timestamp':
+                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! is_null($detail['default']) ? $detail['default'] : "")));
+                    break;
+                
+                case 'text':
+                case 'mediumtext':
+                case 'longtext':
+                case 'smalltext':
+                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    break;
+                
+                case 'integer':
+                case 'int':
+                case 'bigint':
+                case 'mediumint':
+                case 'smallint':
+                case 'tinyint':
+                    $isZero = (! is_null($detail['default']) && $detail['default'] == "0") ? true : false;
+                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['notnull'] == 1) ? false : true, 'value' => (! is_null($detail['default']) ? $detail['default'] : "")));
+                    break;
 
+                case 'float':
+                case 'decimal':
+                case 'double':
+                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! is_null($detail['default']) ? $detail['default'] : "")));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        //die(Zend_Debug::dump($form, null, false));
+        return $form;
+    }
+    
     /**
      * Used to parse out the SELECT pieces of the DQL
      * and place it in the $_queryParts array for use
      * in many other places
-     *
+     * 
      * @return Bvb_Grid_Source_Doctrine
      */
     protected function _setSelectParts()
     {
         $return = array();
-
+        
         $selects = $this->_query->getDqlPart('select');
-
+        
         if (empty($selects)) {
             $this->_findAndSetSelect();
             $selects = $this->_query->getDqlPart('select');
         }
-
+        
         //Remove all 'as' instances
         $selects = $this->_removeAs($selects);
-
+        
         foreach ($selects as $select) {
             $fields = explode(',', $select);
             $fields = array_map('trim', $fields);
-
+            
             foreach ($fields as $field) {
                 list($fieldName, $fieldAlias) = explode(' ', trim($field));
-
+                
                 if (empty($fieldAlias)) {
                     $fieldAlias = str_replace('.', '_', $fieldName);
                 }
-
+                
                 $return[$fieldAlias] = array(
                     'title' => ucwords(str_replace('_', ' ', $fieldAlias)),
                     'field' => $fieldName
                 );
             }
         }
-
+        
         $this->_queryParts['select'] = $return;
         return $this;
     }
-
+    
     /**
      * Used to parse out the FROM and JOIN pieces of the DQL
      * and place it in the $_queryParts array for use
      * in many other places
-     *
+     * 
      * @return Bvb_Grid_Source_Doctrine
      */
     protected function _setFromParts()
     {
         $return = array();
-
+        
         //Remove all 'as' instances
         $froms = $this->_removeAs($this->_query->getDqlPart('from'));
-
+        
         foreach ($froms as $from) {
             $fields = explode(',', $from);
             $fields = array_map('trim', $fields);
-
+            
             foreach ($fields as $field) {
                 if (strpos(strtoupper($field), 'JOIN') === false) {
                     $this->_queryParts = array_merge($this->_queryParts, $this->_explodeFrom($field));
                 } else {
                     $join = explode('JOIN', $field);
                     $join = array_map('trim', $join);
-
+                    
                     $joinType = strtolower($join[0]);
-
+                    
                     $this->_queryParts = array_merge($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
                 }
             }
-
+            
         }
-
+        
         return $this;
     }
-
+    
     /**
      * Used to set SELECT values to the DQL when
      * no SELECT is provided.  We will just add
      * ALL columns for all tables given.
-     *
+     * 
      * NOTE: Since no SELECT was provided, to access these
-     * from within the Bvb_Grid class, you will need to
+     * from within the Bvb_Grid_Data class, you will need to
      * use the table alias + "_" + column name
-     *
+     * 
      * <code>
      * $grid->setGridColumns(array('co_code', 'co_name', 'co_continent', 'ci_name'));
      * </code>
-     *
+     * 
      * @return void
      */
     protected function _findAndSetSelect()
     {
         $return = array();
-
+        
         //Make sure we have the FROM set
         $this->_setFromParts();
-
+        
         $fromTableModel = $this->_queryParts['from']['table'];
         $fromClass = Doctrine::getTable($fromTableModel);
         $fromColumns = array_keys($fromClass->getColumns());
         $fromAlias = $this->_queryParts['from']['alias'];
-
+        
         foreach ($fromColumns as $fromColumn) {
             /**
              * Do this check here because a DQL with no JOIN,
              * does not need a table alias
-             *
+             * 
              * @var string
              */
-            $addColumn = (!empty($fromAlias)) ? $fromAlias . '.' . $fromColumn : $fromColumn;
+            $addColumn = (!empty($fromAlias)) ? $fromAlias . '.' . $fromColumn . ' AS ' . $fromColumn : $fromColumn;
             $this->_query->addSelect($addColumn);
         }
-
+        
         $joins = $this->_queryParts['join'];
-
+        
         if (!empty($joins)) {
             foreach ($joins as $joinType) {
                 foreach ($joinType as $join) {
                     $joinClass = Doctrine::getTable($join['table']);
                     $joinColumns = array_keys($joinClass->getColumns());
-
+                    
                     foreach ($joinColumns as $joinColumn) {
                         $this->_query->addSelect($join['alias'] . '.' . $joinColumn);
                     }
@@ -670,11 +766,11 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
             }
         }
     }
-
+    
     /**
-     * Take a DQL SELECT string and parse it into
+     * Take a DQL SELECT string and parse it into 
      * a usable array
-     *
+     * 
      * <code>
      * $return = array(
      *     'from' => array(
@@ -683,7 +779,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      *     )
      * )
      * </code>
-     *
+     * 
      * @param string $from A DQL SELECT statement
      * @return array
      */
@@ -693,11 +789,11 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
             require_once 'Bvb/Grid/Source/Doctrine/Exception.php';
             throw new Bvb_Grid_Source_Doctrine_Exception('Provided param needs to be a string only');
         }
-
+        
         $return = array();
-
+        
         list($table, $alias) = explode(' ', $from);
-
+        
         if (strpos($table, '.') !== false) {
             $return = $this->_explodeJoin($from, 'left');
         } else {
@@ -706,14 +802,14 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
                 'table' => $table
             );
         }
-
+        
         return $return;
     }
-
+    
     /**
      * Take a DQL JOIN string and parse it into
      * a usable array
-     *
+     * 
      * <code>
      * $return = array(
      *     'join' => array(
@@ -728,37 +824,37 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      *     )
      * )
      * </code>
-     *
+     * 
      * @param string $join
      * @param string $joinType The type of join - LEFT, RIGHT, etc
      */
     private function _explodeJoin($join, $joinType)
     {
         $return = array();
-
+        
         list($table, $alias) = explode(' ', $join);
         list($joinOn, $tableAlias) = explode('.', $table);
-
+        
         $tableModel = Doctrine::getTable('Model_Country')->getRelation('City')->getClass();
-
+        
         $return['join'][strtolower($joinType)][] = array(
             'alias'      => $alias,
             'table'      => $tableModel,
             'tableAlias' => $tableAlias,
             'joinOn'     => $joinOn
         );
-
+        
         return $return;
     }
-
+    
     private function _removeAs($subject)
     {
         return str_replace(array(' AS', ' As', ' aS', ' as'), array('', '', '', ''), $subject);
     }
-
+    
     /**
      * Find the table for which a column belongs
-     *
+     * 
      * @param string $column
      * @return string Name of the table used
      */
@@ -769,17 +865,33 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
             require_once 'Bvb/Grid/Source/Doctrine/Exception.php';
             throw new Bvb_Grid_Source_Doctrine_Exception('The $column param needs to be a string, ' . $type . ' provided');
         }
-
+        
         if (empty($this->_queryParts['from']['alias'])) {
             return $this->_queryParts['from']['table'];
         }
-
+        
         list($alias, $field) = explode('.', $column);
-
+        
+        return $this->_findTableFromAlias($alias);
+    }
+    
+    /**
+     * Find the table/model based on the table alias provided
+     * 
+     * @param mixed $alias
+     */
+    private function _findTableFromAlias($alias)
+    {
+        if (!is_string($alias)) {
+            $type = gettype($alias);
+            require_once 'Bvb/Grid/Source/Doctrine/Exception.php';
+            throw new Bvb_Grid_Source_Doctrine_Exception('The $column param needs to be a string, ' . $type . ' provided');
+        }
+        
         if ($this->_queryParts['from']['alias'] == $alias) {
             return $this->_queryParts['from']['table'];
         }
-
+        
         foreach ($this->_queryParts['join'] as $joins) {
             foreach ($joins as $join) {
                 if ($join['alias'] == $alias) {
