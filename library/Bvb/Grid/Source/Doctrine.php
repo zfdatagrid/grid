@@ -172,7 +172,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         $results = $newQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
         
         $newArray = $this->_cleanQueryResults($results);
-        die(Zend_Debug::dump($newArray, null, false));
+        
         return $newArray;
     }
 
