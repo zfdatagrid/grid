@@ -25,7 +25,7 @@ class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_Interface
     protected $_locale = null;
 
 
-    function __construct ($options)
+    function __construct ($options = array())
     {
         if ( Zend_Locale::isLocale($options) ) {
             $this->_locale = $options;

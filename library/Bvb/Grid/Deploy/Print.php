@@ -32,10 +32,6 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
     function __construct ($options)
     {
 
-        if ( ! in_array(self::OUTPUT, $this->_export) ) {
-            echo $this->__("You dont' have permission to export the results into this format");
-            die();
-        }
 
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -47,6 +43,10 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
 
     function deploy ()
     {
+        if ( ! in_array(self::OUTPUT, $this->_export) ) {
+            echo $this->__("You dont' have permission to export the results into this format");
+            die();
+        }
         $this->setPagination(0);
 
         parent::deploy();

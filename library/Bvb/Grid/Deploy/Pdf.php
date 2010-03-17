@@ -18,8 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements
-Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
 
     const OUTPUT = 'pdf';
@@ -30,10 +29,6 @@ Bvb_Grid_Deploy_Interface
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->_export)) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
 
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -52,7 +47,7 @@ Bvb_Grid_Deploy_Interface
     {
         @$drawingString = iconv('', 'UTF-16BE', $string);
         $characters = array();
-        for ($i = 0; $i < strlen($drawingString); $i ++) {
+        for ( $i = 0; $i < strlen($drawingString); $i ++ ) {
             $characters[] = (ord($drawingString[$i ++]) << 8) | ord($drawingString[$i]);
         }
         $glyphs = $font->glyphNumbersForCharacters($characters);
@@ -73,9 +68,9 @@ Bvb_Grid_Deploy_Interface
 
         $i = 0;
 
-        foreach ($titles as $titulos) {
+        foreach ( $titles as $titulos ) {
 
-            if ((@$titulos['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+            if ( (@$titulos['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
                 $larg[$i] = $this->widthForStringUsingFontSize($titulos['value'], $font, 8);
                 $i ++;
             }
@@ -83,10 +78,10 @@ Bvb_Grid_Deploy_Interface
 
         $i = 0;
 
-        if (is_array($sqlexp)) {
-            foreach ($sqlexp as $sql) {
-                if (($sql['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
-                    if ($larg[$i] < strlen($sql['value'])) {
+        if ( is_array($sqlexp) ) {
+            foreach ( $sqlexp as $sql ) {
+                if ( ($sql['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
+                    if ( $larg[$i] < strlen($sql['value']) ) {
                         $larg[$i] = strlen($sql['value']);
                     }
                     $i ++;
@@ -98,14 +93,14 @@ Bvb_Grid_Deploy_Interface
         /////////////////
         /////////////////
         /////////////////
-        if ($this->getInfo('hRow,title')!= '') {
+        if ( $this->getInfo('hRow,title') != '' ) {
             $bar = $grid;
 
             $hbar = trim($this->getInfo('hRow,field'));
 
             $p = 0;
-            foreach ($grid[0] as $value) {
-                if ($value['field'] == $hbar) {
+            foreach ( $grid[0] as $value ) {
+                if ( $value['field'] == $hbar ) {
                     $hRowIndex = $p;
                 }
 
@@ -121,20 +116,20 @@ Bvb_Grid_Deploy_Interface
 
 
 
-        foreach ($grid as $row) {
+        foreach ( $grid as $row ) {
 
             $i = 0;
 
             $a = 1;
-            foreach ($row as $value) {
+            foreach ( $row as $value ) {
 
 
                 $value['value'] = strip_tags($value['value']);
 
 
-                if ((isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                if ( (isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
 
-                    if ($larg[$i] < strlen($value['value'])) {
+                    if ( $larg[$i] < strlen($value['value']) ) {
                         $larg[$i] = strlen($value['value']);
                     }
                     $i ++;
@@ -146,13 +141,18 @@ Bvb_Grid_Deploy_Interface
         }
 
         return $larg;
-
-        return $larg;
     }
 
 
     function deploy ()
     {
+
+        if ( ! in_array(self::OUTPUT, $this->_export) ) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
+
+
         $width = 0;
 
 
@@ -166,38 +166,38 @@ Bvb_Grid_Deploy_Interface
 
         $la = '';
 
-        if (! isset($this->deploy['save'])) {
+        if ( ! isset($this->deploy['save']) ) {
             $this->deploy['save'] = false;
         }
 
-        if (! isset($this->deploy['download'])) {
+        if ( ! isset($this->deploy['download']) ) {
             $this->deploy['download'] = false;
         }
 
-        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+        if ( $this->deploy['save'] != 1 && $this->deploy['download'] != 1 ) {
             throw new Exception('Nothing to do. Please specify download&&|save options');
         }
 
 
-        if (empty($this->deploy['name'])) {
+        if ( empty($this->deploy['name']) ) {
             $this->deploy['name'] = date('H_m_d_H_i_s');
         }
 
-        if (substr($this->deploy['name'], - 4) == '.xls') {
+        if ( substr($this->deploy['name'], - 4) == '.xls' ) {
             $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
         }
 
-        if (! isset($this->deploy['noPagination'])) {
+        if ( ! isset($this->deploy['noPagination']) ) {
             $this->deploy['noPagination'] = 0;
         }
 
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
 
-        if (! isset($this->deploy['dir']) || ! is_dir($this->deploy['dir'])) {
+        if ( ! isset($this->deploy['dir']) || ! is_dir($this->deploy['dir']) ) {
             throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
         }
 
-        if (! is_writable($this->deploy['dir'])) {
+        if ( ! is_writable($this->deploy['dir']) ) {
             throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
         }
 
@@ -215,15 +215,15 @@ Bvb_Grid_Deploy_Interface
         $sql = parent::_buildSqlExp();
         $grid = parent::_BuildGrid();
 
-        if (! $this->getInfo('hRow,field')) {
+        if ( ! $this->getInfo('hRow,field') ) {
             $this->_info['hRow']['field'] = '';
         }
 
 
-        if (strtoupper($this->deploy['orientation']) == 'LANDSCAPE' && strtoupper($this->deploy['size']) == 'A4') {
+        if ( strtoupper($this->deploy['orientation']) == 'LANDSCAPE' && strtoupper($this->deploy['size']) == 'A4' ) {
             $totalPaginas = ceil(count($grid) / 26);
 
-        } elseif (strtoupper($this->deploy['orientation']) == 'LANDSCAPE' && strtoupper($this->deploy['size']) == 'LETTER') {
+        } elseif ( strtoupper($this->deploy['orientation']) == 'LANDSCAPE' && strtoupper($this->deploy['size']) == 'LETTER' ) {
             $totalPaginas = ceil(count($grid) / 27);
 
         } else {
@@ -231,7 +231,7 @@ Bvb_Grid_Deploy_Interface
 
         }
 
-        if ($totalPaginas < 1) {
+        if ( $totalPaginas < 1 ) {
             $totalPaginas = 1;
         }
 
@@ -261,11 +261,11 @@ Bvb_Grid_Deploy_Interface
         $styleText->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['text']));
 
         // Add new page to the document
-        if (strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE') {
+        if ( strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE' ) {
             $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE);
-        } elseif (strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) != 'LANDSCAPE') {
+        } elseif ( strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) != 'LANDSCAPE' ) {
             $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER);
-        } elseif (strtoupper($this->deploy['size'] != 'A4') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE') {
+        } elseif ( strtoupper($this->deploy['size'] != 'A4') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE' ) {
             $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4_LANDSCAPE);
         } else {
             $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4);
@@ -282,7 +282,7 @@ Bvb_Grid_Deploy_Interface
 
 
 
-        if (file_exists($this->deploy['logo'])) {
+        if ( file_exists($this->deploy['logo']) ) {
             $image = Zend_Pdf_Image::imageWithPath($this->deploy['logo']);
 
             list ($width, $height, $type, $attr) = getimagesize($this->deploy['logo']);
@@ -300,7 +300,7 @@ Bvb_Grid_Deploy_Interface
 
 
         $page->drawText($this->deploy['footer'], 40, 40, $this->getCharEncoding());
-        if (@$this->deploy['noPagination'] != 1) {
+        if ( @$this->deploy['noPagination'] != 1 ) {
             $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
         }
 
@@ -311,14 +311,14 @@ Bvb_Grid_Deploy_Interface
 
         $i = 0;
 
-        foreach ($larg as $final) {
+        foreach ( $larg as $final ) {
             $cell[$i] = round($final * $pl / $total_len);
             $i ++;
         }
 
 
         $total_celulas = count($titulos);
-        if ($this->getInfo('hRow,title') != '') {
+        if ( $this->getInfo('hRow,title') != '' ) {
             $total_celulas --;
         }
         $largura = ($page->getWidth() - 80) / $total_celulas;
@@ -327,10 +327,10 @@ Bvb_Grid_Deploy_Interface
 
         $i = 0;
         $page->setFont($font, $cellFontSize + 1);
-        foreach ($titulos as $value) {
-            if (($value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+        foreach ( $titulos as $value ) {
+            if ( ($value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
 
-                if ((int) $la == 0) {
+                if ( (int) $la == 0 ) {
                     $largura1 = 40;
                 } else {
                     $largura1 = $cell[$i - 1] + $largura1;
@@ -354,16 +354,16 @@ Bvb_Grid_Deploy_Interface
 
 
 
-        if (is_array($grid)) {
+        if ( is_array($grid) ) {
             /////////////////
-            if ($this->getInfo('hRow,title') != '') {
+            if ( $this->getInfo('hRow,title') != '' ) {
                 $bar = $grid;
 
                 $hbar = trim($this->getInfo('hRow,field'));
 
                 $p = 0;
-                foreach ($grid[0] as $value) {
-                    if ($value['field'] == $hbar) {
+                foreach ( $grid[0] as $value ) {
+                    if ( $value['field'] == $hbar ) {
                         $hRowIndex = $p;
                     }
 
@@ -380,15 +380,15 @@ Bvb_Grid_Deploy_Interface
 
             $ia = 0;
             $aa = 0;
-            foreach ($grid as $value) {
+            foreach ( $grid as $value ) {
 
-                if ($altura <= 80) {
+                if ( $altura <= 80 ) {
                     // Add new page to the document
-                    if (strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE') {
+                    if ( strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE' ) {
                         $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER_LANDSCAPE);
-                    } elseif (strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) != 'LANDSCAPE') {
+                    } elseif ( strtoupper($this->deploy['size'] = 'LETTER') && strtoupper($this->deploy['orientation']) != 'LANDSCAPE' ) {
                         $page = $pdf->newPage(Zend_Pdf_Page::SIZE_LETTER);
-                    } elseif (strtoupper($this->deploy['size'] != 'A4') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE') {
+                    } elseif ( strtoupper($this->deploy['size'] != 'A4') && strtoupper($this->deploy['orientation']) == 'LANDSCAPE' ) {
                         $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4_LANDSCAPE);
                     } else {
                         $page = $pdf->newPage(Zend_Pdf_Page::SIZE_A4);
@@ -405,7 +405,7 @@ Bvb_Grid_Deploy_Interface
 
 
                     //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
-                    if (file_exists($this->deploy['logo'])) {
+                    if ( file_exists($this->deploy['logo']) ) {
                         $image = Zend_Pdf_Image::imageWithPath($this->deploy['logo']);
                         list ($width, $height, $type, $attr) = getimagesize($this->deploy['logo']);
                         $page->drawImage($image, 40, $page->getHeight() - $height - 40, 40 + $width, $page->getHeight() - 40);
@@ -421,7 +421,7 @@ Bvb_Grid_Deploy_Interface
                     $altura = $page->getHeight() - 120;
 
                     $page->drawText($this->__($this->deploy['footer']), 40, 40, $this->getCharEncoding());
-                    if ($this->deploy['noPagination'] != 1) {
+                    if ( $this->deploy['noPagination'] != 1 ) {
                         $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
                     }
 
@@ -431,11 +431,11 @@ Bvb_Grid_Deploy_Interface
                     $i = 0;
                     $largura1 = 40;
                     $page->setFont($font, $cellFontSize + 1);
-                    foreach ($titulos as $title) {
+                    foreach ( $titulos as $title ) {
 
-                        if (($title['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                        if ( ($title['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
 
-                            if ((int) $la == 0) {
+                            if ( (int) $la == 0 ) {
                                 $largura1 = 40;
                             } else {
                                 $largura1 = $cell[$i - 1] + $largura1;
@@ -464,14 +464,14 @@ Bvb_Grid_Deploy_Interface
 
                 ////////////
                 //A linha horizontal
-                if ($this->getInfo('hRow,title')!= '') {
+                if ( $this->getInfo('hRow,title') != '' ) {
 
-                    if ($bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value']) {
+                    if ( $bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value'] ) {
 
                         $centrar = $page->getWidth() - 80;
                         $centrar = round($centrar / 2) + 30;
 
-                        if ((int) $la == 0) {
+                        if ( (int) $la == 0 ) {
                             $largura1 = 40;
                         } else {
                             $largura1 = $cell[$i - 1] + $largura1;
@@ -494,7 +494,7 @@ Bvb_Grid_Deploy_Interface
                 //Vamos saber qauntas linhas tem este registo
                 $nlines = array();
                 $nl = 0;
-                foreach ($value as $lines) {
+                foreach ( $value as $lines ) {
                     $line = $this->widthForStringUsingFontSize(strip_tags(trim($lines['value'])), $font, 8);
                     $nlines[] = ceil($line / $cell[$nl]);
                     $nl ++;
@@ -505,14 +505,14 @@ Bvb_Grid_Deploy_Interface
 
 
                 $nl = 0;
-                foreach ($value as $value1) {
+                foreach ( $value as $value1 ) {
 
                     $value1['value'] = strip_tags(trim($value1['value']));
 
-                    if (($value1['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                    if ( ($value1['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
 
 
-                        if ((int) $la == 0) {
+                        if ( (int) $la == 0 ) {
                             $largura1 = 40;
                         } else {
                             $largura1 = $cell[$i - 1] + $largura1;
@@ -545,10 +545,10 @@ Bvb_Grid_Deploy_Interface
         $altura = $altura - 16;
         $i = 0;
 
-        if (is_array($sql)) {
-            foreach ($sql as $value) {
+        if ( is_array($sql) ) {
+            foreach ( $sql as $value ) {
 
-                if ((int) $la == 0) {
+                if ( (int) $la == 0 ) {
                     $largura1 = 40;
                 } else {
                     $largura1 = $cell[$i - 1] + $largura1;
@@ -568,14 +568,14 @@ Bvb_Grid_Deploy_Interface
 
         $pdf->save($this->deploy['dir'] . $this->deploy['name'] . '.pdf');
 
-        if ($this->deploy['download'] == 1) {
+        if ( $this->deploy['download'] == 1 ) {
             header('Content-type: application/pdf');
             header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.pdf"');
             readfile($this->deploy['dir'] . $this->deploy['name'] . '.pdf');
         }
 
 
-        if ($this->deploy['save'] != 1) {
+        if ( $this->deploy['save'] != 1 ) {
             unlink($this->deploy['dir'] . $this->deploy['name'] . '.pdf');
         }
 

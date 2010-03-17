@@ -20,7 +20,7 @@
 abstract class Bvb_Grid
 {
 
-    const VERSION = "0.6 beta";
+    const VERSION = "0.6";
 
     /**
      * Char encoding
@@ -87,7 +87,8 @@ abstract class Bvb_Grid
      *
      * @var array
      */
-    public $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json','ofc');
+    protected $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json');
+    #protected $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json','ofc');
 
     /**
      * All info that is not directly related to the database
@@ -768,16 +769,16 @@ abstract class Bvb_Grid
     {
 
         if ( is_array($formatter) ) {
-            $result = $formatter[0];
+            $result = reset($formatter);
             if(!isset($formatter[1]))
             {
-                $formatter[1] = null;
+                $formatter[1] = array();
             }
 
-            $options = $formatter[1];
+            $options = (array) $formatter[1];
         } else {
             $result = $formatter;
-            $options = null;
+            $options = array();
         }
 
         $class = $this->_formatter->load($result);
@@ -2202,8 +2203,7 @@ abstract class Bvb_Grid
      */
     public function getVersion ()
     {
-        return '$Rev$';
-        #return self::VERSION;
+        return self::VERSION;
     }
 
 
