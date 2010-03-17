@@ -83,11 +83,11 @@ abstract class Bvb_Grid
     protected $_pagination = 15;
 
     /**
-     * Type of exportation available
+     * Type of export available
      *
      * @var array
      */
-    public $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json');
+    public $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json','ofc');
 
     /**
      * All info that is not directly related to the database

@@ -122,10 +122,16 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
     */
     function __construct ($options)
     {
-        if ( ! in_array(self::OUTPUT, $this->_export) ) {#  echo $this->__("You dont' have permission to export the results to this format");
-#  die();
+        if ( ! in_array(self::OUTPUT, $this->_export) ) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
         }
         $this->options = $options;
+
+        if(!Zend_Loader_Autoloader::autoload('OFC_Chart'))
+        {
+            die("You must have Open Flash Chart installed in order to use this deploy. Please check this page for more information: http://code.google.com/p/zfdatagrid/wiki/Bvb_Grid_Deploy");
+        }
 
         parent::__construct($options);
     }
@@ -442,7 +448,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
         }
 
         if ( isset($options['dimensions']) && is_array($options['dimensions']) ) {
-            $this->setChartDimensions($options['dimensions']['x'],$options['dimensions']['y']);
+            $this->setChartDimensions($options['dimensions']['x'], $options['dimensions']['y']);
         }
 
     }

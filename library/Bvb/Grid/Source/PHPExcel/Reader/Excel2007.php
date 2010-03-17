@@ -22,13 +22,18 @@
 class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
 {
 
-    function __construct ($file, $sheet = '', $titles=null)
+
+    function __construct ($file, $sheet = '', $titles = null)
     {
+
+        if ( ! Zend_Loader_Autoloader::autoload('PHPExcel_Reader_Excel2007') ){
+            die("You must have PHPExcel installed in order to use this deploy. Please check this page for more information: http://www.phpexcel.net ");
+        }
+
         if ( ! $file instanceof PHPExcel_Reader_Excel2007 ) {
             $objReader = new PHPExcel_Reader_Excel2007();
             $objReader->setReadDataOnly(true);
             $objPHPExcel = $objReader->load($file);
-
 
             $result = $objPHPExcel->getSheetByName($sheet)->toArray();
         } else {
@@ -36,22 +41,17 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
         }
 
         $empty = array();
-        foreach(reset($result) as $key=>$hasContent)
-        {
-            if($hasContent=='')
-            {
+        foreach ( reset($result) as $key => $hasContent ) {
+            if ( $hasContent == '' ) {
                 $empty[$key] = $key;
             }
 
         }
 
-        foreach($result as $c=>$hasContent)
-        {
+        foreach ( $result as $c => $hasContent ) {
 
-            foreach($hasContent as $key=>$cell)
-            {
-                if(array_key_exists($key,$empty))
-                {
+            foreach ( $hasContent as $key => $cell ) {
+                if ( array_key_exists($key, $empty) ) {
                     unset($hasContent[$key]);
                 }
             }
@@ -60,34 +60,30 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
 
         }
 
-        foreach($result as $key=>$value)
-        {
+        foreach ( $result as $key => $value ) {
             $r = 0;
 
-            foreach($value as $c=>$cell)
-            {
-                 if($cell=='')
-                {
-                    $r++;
+            foreach ( $value as $c => $cell ) {
+                if ( $cell == '' ) {
+                    $r ++;
                 }
             }
 
 
-            if($r == count($value))
-            {
+            if ( $r == count($value) ) {
                 unset($result[$key]);
             }
 
         }
 
-         if ( $titles === null || count($titles) != count(reset($result)) ) {
-                $this->_fields = array_keys(reset($result));
-            } else {
-                $this->_fields = $titles;
-                foreach ( $result as $key => $value ) {
-                    $result[$key] = array_combine($titles, $value);
-                }
+        if ( $titles === null || count($titles) != count(reset($result)) ) {
+            $this->_fields = array_keys(reset($result));
+        } else {
+            $this->_fields = $titles;
+            foreach ( $result as $key => $value ) {
+                $result[$key] = array_combine($titles, $value);
             }
+        }
 
         $this->_fields = array_keys(reset($result));
         $this->_rawResult = $result;
