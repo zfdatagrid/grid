@@ -589,6 +589,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
         $url = $this->getUrl(array('comm', 'edit', 'filters', 'order'));
 
         $final = '';
+        $final1 = '';
 
         if ( $this->getSource()->hasCrud() ) {
             $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"$url/add" . $this->getGridId() . "/1\">" . $this->__('Add Record') . "</a></div>";
@@ -643,7 +644,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
                 }
 
             //Only order
-            } elseif ( ! $this->getParam('filters') && ($this->getParam('order') && ! $this->getParam('noOrder')) ) {
+            } elseif ( ! $this->getParam('filters') && ($this->getParam('order') && ! $this->getParam('noOrder') && $this->getInfo('noOrder')!=1) ) {
 
                 if ( $this->getInfo("ajax") !== false ) {
 
@@ -656,7 +657,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
 
 
             //Replace values
-            if ( count($this->_filtersValues) > 0 || ($this->getParam('order') && ! $this->getParam('noOrder')) ) {
+            if ( count($this->_filtersValues) > 0 || ($this->getParam('order') && ! $this->getParam('noOrder') && $this->getInfo('noOrder')!=1) ) {
                 $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
                 $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
             }
