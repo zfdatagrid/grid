@@ -921,8 +921,9 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         
         list($table, $alias) = explode(' ', $join);
         list($joinOn, $tableAlias) = explode('.', $table);
+        $mainTable = $this->_getModelFromAlias($joinOn);
         
-        $tableModel = Doctrine::getTable('Model_Country')->getRelation('City')->getClass();
+        $tableModel = Doctrine::getTable($mainTable)->getRelation($tableAlias)->getClass();
         
         $return['join'][strtolower($joinType)][] = array(
             'alias'      => $alias,
