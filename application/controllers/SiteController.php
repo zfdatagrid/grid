@@ -398,5 +398,39 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+/**
+     * If you don't like to work with array when adding columns, you can work by dereferencing objects
+     *
+     */
+    function columnAction ()
+    {
+
+        $grid = $this->grid();
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name'))));
+        $grid->setPagination(15);
+
+        $cap = new Bvb_Grid_Column('Country');
+        $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
+
+        $name = new Bvb_Grid_Column('Name');
+        $name->title('Capital')->hide(1);
+
+        $continent = new Bvb_Grid_Column('Continent');
+        $continent->title('Continent');
+
+        $population = new Bvb_Grid_Column('Population');
+        $population->title('Population')->class('width_80');
+
+        $governmentForm = new Bvb_Grid_Column('GovernmentForm');
+        $governmentForm->title('Government Form');
+
+        $headState = new Bvb_Grid_Column('HeadOfState');
+        $headState->title('Head Of State');
+
+        $grid->updateColumns($cap, $name, $continent, $population, $governmentForm, $headState);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
 
 }

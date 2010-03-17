@@ -1590,8 +1590,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
         value = document.getElementById(fieldsArray[i]).value;\n";
             $script .= " value = value.replace(/[\"]/,''); ";
             $script .= " value = value.replace(/[\\\]/,''); ";
+            $script .= " value = value.replace(/\//,''); ";
             $script .= " fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); ";
-            $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
+            $script .= "\nfiltro[i] = '\"'+encodeURIComponent(escape(fieldsArray[i]))+'\":\"'+encodeURIComponent(escape(value))+'\"';
     }
 
     filtro = \"{\"+filtro+\"}\";

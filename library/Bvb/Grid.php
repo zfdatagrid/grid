@@ -2066,6 +2066,34 @@ abstract class Bvb_Grid
 
 
     /**
+     * Add multiple columns at once
+     *
+     */
+    public function updateColumns ()
+    {
+
+        $fields = func_get_args();
+
+        foreach ( $fields as $value ) {
+
+            if ( $value instanceof Bvb_Grid_Column ) {
+
+                $value = $this->_object2array($value);
+                foreach ( $value as $field ) {
+
+                    $finalField = $field['field'];
+                    unset($field['field']);
+                    $this->updateColumn($finalField, $field);
+
+                }
+            }
+        }
+
+        return;
+    }
+
+
+    /**
      * Calculate colspan for pagination and top
      *
      * @return int
