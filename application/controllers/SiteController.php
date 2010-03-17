@@ -68,7 +68,7 @@ class SiteController extends Zend_Controller_Action
     function grid ($id = '')
     {
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
-        $grid = Bvb_Grid::factory('Bvb_Grid_Deploy_Table', $config, $id);
+        $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
@@ -123,13 +123,13 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
 
-        $extra = new Bvb_Grid_Extra_Column();
-        $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
+        $right = new Bvb_Grid_Extra_Column();
+        $right->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
-        $esquerda = new Bvb_Grid_Extra_Column();
-        $esquerda->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
+        $left = new Bvb_Grid_Extra_Column();
+        $left->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
 
-        $grid->addExtraColumns($extra, $esquerda);
+        $grid->addExtraColumns($right, $left);
 
 
         $rows = new Bvb_Grid_Extra_Rows();
@@ -161,17 +161,14 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Csv('media/files/grid.csv'));
-        $grid->sqlexp = array('Population' => array('functions' => array('SUM'), 'value' => 'Population'));
+        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'), 'value' => 'Population')));
 
         $form = new Bvb_Grid_Form();
         #$form->setIsPerformCrudAllowed(false);
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
         #$form->addElement('text','my');
 
-
-
         $grid->setForm($form);
-
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
@@ -183,17 +180,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Json('media/files/json.json', 'rows'));
-        /*
-        $grid->sqlexp = array ('Population' => array ('functions' => array ('MIN','AVG'), 'value' => 'Population' ) );
-
-         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('ID', array('distinct' => array('field' => 'ID', 'name' => 'ID')))
-        ->addFilter('CountryCode', array('distinct' => array('field' => 'CountryCode', 'name' => 'CountryCode')))
-        ->addFilter('Population');
-
-        $grid->addFilters($filters);
-
-*/
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -230,7 +216,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
-
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
@@ -258,7 +243,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function joinAction ()
+    function joinsAction ()
     {
 
         $grid = $this->grid();
@@ -288,14 +273,13 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
-        $form->setOnAddForce(array('next'=>'1'));
-        $form->setOnDeleteAddCondition(array('next'=>'11'));
+
+        #$form->setOnAddForce(array('next'=>'1'));
+        #$form->setOnDeleteAddCondition(array('next'=>'11'));
 
         #$form->setAllowedFields(array('times','nexst'));
         #$form->setDisallowedFields(array('time','next'));
         #$form->setFieldsBasedOnQuery(false);
-
-
 
         #$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
@@ -357,42 +341,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $grid->addExtraColumns($extra, $esquerda);
 
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
-
-    /**
-     * If you don't like to work with array when adding columns, you can work by dereferencing objects
-     *
-     */
-    function columnAction ()
-    {
-
-        $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name'))));
-        $grid->setPagination(15);
-
-        $cap = new Bvb_Grid_Column('Country');
-        $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
-
-        $name = new Bvb_Grid_Column('Name');
-        $name->title('Capital')->hide(1);
-
-        $continent = new Bvb_Grid_Column('Continent');
-        $continent->title('Continent');
-
-        $population = new Bvb_Grid_Column('Population');
-        $population->title('Population')->class('width_80');
-
-        $governmentForm = new Bvb_Grid_Column('GovernmentForm');
-        $governmentForm->title('Government Form');
-
-        $headState = new Bvb_Grid_Column('HeadOfState');
-        $headState->title('Head Of State');
-
-        $grid->updateColumns($cap, $name, $continent, $population, $governmentForm, $headState);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');

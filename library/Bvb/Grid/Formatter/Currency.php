@@ -19,17 +19,30 @@
  */
 
 
-class My_Formatter_Currency
+class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_Interface
 {
 
-    function format($value)
+    protected $_locale = null;
+
+
+    function __construct ($options)
     {
-        if(!Zend_Registry::isRegistered('Zend_Locale'))
-        {
+        if ( Zend_Locale::isLocale($options) ) {
+            $this->_locale = $options;
+        } else if ( Zend_Registry::isRegistered('Zend_Locale') ) {
+            $this->_locale = Zend_Registry::get('Zend_Locale');
+        }
+    }
+
+
+    function format ($value)
+    {
+
+        if ( $this->_locale === null ) {
             return $value;
         }
 
-        $currency = new Zend_Currency(Zend_Registry::get('Zend_Locale'));
+        $currency = new Zend_Currency($this->_locale);
         return $currency->toCurrency($value);
     }
 

@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Formatter_Date
+class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_Interface
 {
 
     protected $locale = null;

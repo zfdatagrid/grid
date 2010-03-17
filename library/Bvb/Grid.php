@@ -769,6 +769,11 @@ abstract class Bvb_Grid
 
         if ( is_array($formatter) ) {
             $result = $formatter[0];
+            if(!isset($formatter[1]))
+            {
+                $formatter[1] = null;
+            }
+
             $options = $formatter[1];
         } else {
             $result = $formatter;
@@ -777,7 +782,15 @@ abstract class Bvb_Grid
 
         $class = $this->_formatter->load($result);
 
+
         $t = new $class($options);
+
+
+        if(!$t instanceof  Bvb_Grid_Formatter_Interface)
+        {
+            throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_Interface");
+        }
+
         $return = $t->format($value);
 
         return $return;
@@ -2048,34 +2061,6 @@ abstract class Bvb_Grid
 
         return $this->_temp[$output];
 
-    }
-
-
-    /**
-     * Add multiple columns at once
-     *
-     */
-    public function updateColumns ()
-    {
-
-        $fields = func_get_args();
-
-        foreach ( $fields as $value ) {
-
-            if ( $value instanceof Bvb_Grid_Column ) {
-
-                $value = $this->_object2array($value);
-                foreach ( $value as $field ) {
-
-                    $finalField = $field['field'];
-                    unset($field['field']);
-                    $this->updateColumn($finalField, $field);
-
-                }
-            }
-        }
-
-        return;
     }
 
 

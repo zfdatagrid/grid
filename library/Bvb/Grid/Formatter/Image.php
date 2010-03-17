@@ -19,8 +19,7 @@
  */
 
 
-
-class Bvb_Grid_Formatter_Image
+class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_Interface
 {
 
     function __construct($options)
@@ -28,7 +27,7 @@ class Bvb_Grid_Formatter_Image
 
     }
 
-    function format($value)
+    function format ($value)
     {
         return "<img src=\"$value\" border=\"0\">";
     }
