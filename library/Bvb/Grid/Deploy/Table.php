@@ -1850,7 +1850,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
             }
         }
 
-        $help_javascript = str_replace(".", "bvbdot", $help_javascript);
         $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url');";
 
         $opcoes = array();
