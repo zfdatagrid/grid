@@ -219,12 +219,28 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
+        $grid->updateColumn('Population',array('format'=>array('currency','pt_PT')));
+
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
 
 
         $this->view->pages = $grid->deploy();
 
+        $this->render('index');
+    }
+
+    /**
+     * The 'most' basic example.
+     */
+    function ajaxAction ()
+    {
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country');
+        $grid->query($select);
+        $grid->setAjax('ajax_grid');
+        $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $this->view->pages = $grid->deploy();
         $this->render('index');
     }
 
