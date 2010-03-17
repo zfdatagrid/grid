@@ -22,7 +22,7 @@
 class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_Interface
 {
 
-    function __construct($options)
+    function __construct($options =array())
     {
 
     }

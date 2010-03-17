@@ -769,16 +769,16 @@ abstract class Bvb_Grid
     {
 
         if ( is_array($formatter) ) {
-            $result = $formatter[0];
+            $result = reset($formatter);
             if(!isset($formatter[1]))
             {
-                $formatter[1] = null;
+                $formatter[1] = array();
             }
 
-            $options = $formatter[1];
+            $options = (array) $formatter[1];
         } else {
             $result = $formatter;
-            $options = null;
+            $options = array();
         }
 
         $class = $this->_formatter->load($result);

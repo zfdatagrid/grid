@@ -21,6 +21,10 @@
 
 interface Bvb_Grid_Formatter_Interface
 {
-    function __construct($options);
-    function format($value);
+
+
+    function __construct ($options = array());
+
+
+    function format ($value);
 }
