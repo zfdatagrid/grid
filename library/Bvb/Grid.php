@@ -20,7 +20,7 @@
 abstract class Bvb_Grid
 {
 
-    const VERSION = "0.6 beta";
+    const VERSION = "0.6";
 
     /**
      * Char encoding
@@ -2203,8 +2203,7 @@ abstract class Bvb_Grid
      */
     public function getVersion ()
     {
-        return '$Rev$';
-        #return self::VERSION;
+        return self::VERSION;
     }
 
 
