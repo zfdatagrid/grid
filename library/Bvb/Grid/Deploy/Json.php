@@ -32,11 +32,6 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
     function __construct ($options)
     {
 
-        if (! in_array(self::OUTPUT, $this->_export)) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
-
         parent::__construct($options);
     }
 
@@ -86,6 +81,11 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 
     function deploy ()
     {
+        if (! in_array(self::OUTPUT, $this->_export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
+
         $grid = array();
         $this->setPagination(0);
         parent::deploy();

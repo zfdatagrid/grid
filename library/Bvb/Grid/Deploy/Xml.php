@@ -36,12 +36,6 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
      */
     function __construct ($options = array('download'))
     {
-
-        if (! in_array(self::OUTPUT, $this->_export)) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
-
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
@@ -126,6 +120,12 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 
     function deploy ()
     {
+
+        if (! in_array(self::OUTPUT, $this->_export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
+
 
         $this->setPagination(0);
         parent::deploy();

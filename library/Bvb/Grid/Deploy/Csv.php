@@ -57,12 +57,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
      */
     function __construct ($options)
     {
-
-        if (! in_array(self::OUTPUT, $this->_export)) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
-
         $this->setPagination(500);
 
         parent::__construct($options);
@@ -144,6 +138,10 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
     }
     function deploy ()
     {
+        if (! in_array(self::OUTPUT, $this->_export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
         // apply options
         if (isset($this->deploy['set_time_limit'])) {

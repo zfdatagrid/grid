@@ -361,6 +361,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $this->getRequest()->setParam('_exportTo', 'ofc');
 
         $grid = $this->grid();
+        $grid->setExport(array('ofc'));
+
         $grid->setChartType($type);
 
         if ( $type == 'pie' ) {

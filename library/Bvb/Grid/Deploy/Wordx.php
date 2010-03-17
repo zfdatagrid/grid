@@ -43,11 +43,6 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
             throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');
         }
 
-        if ( ! in_array(self::OUTPUT, $this->_export) ) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
-
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
@@ -222,6 +217,11 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
 
     function deploy ()
     {
+
+        if ( ! in_array(self::OUTPUT, $this->_export) ) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
 
         $this->setPagination(0);
 
