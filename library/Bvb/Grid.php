@@ -2244,6 +2244,11 @@ abstract class Bvb_Grid
             $id = "";
         }
 
+        if(strpos($defaultClass,'_')===false)
+        {
+            $defaultClass = 'Bvb_Grid_Deploy_'.ucfirst(strtolower($defaultClass));
+        }
+
         if ( false === $requestData ) {
             $requestData = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
