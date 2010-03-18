@@ -105,12 +105,12 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     /**
      * Use the supplied Doctrine_Query to find its primary ID
      * 
-     * TODO : Implement usage of $table param
+     * @return array Primary Keys for specified table
      */
     public function getPrimaryKey($table = null)
     {
         $return = array();
-        $table = Doctrine::getTable($this->_queryParts['from']['tableModel']);
+        $table = Doctrine::getTable($this->_getModelFromTable($table));
         $alias = $this->_queryParts['from']['alias'];
         
         //Get the Primary Key(s) for provided table
@@ -221,11 +221,25 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      * where c is the table alias. If the table as no alias,
      * c should be the table name
      * 
+     * TODO : Find where this is used, and test
+     * 
      * @return array
      */
-    function getTableList ()
+    public function getTableList()
     {
-        die('getTableList');
+        $return = array();
+        
+        $fromAlias = (empty($this->_queryParts['from']['alias'])) ? $this->_queryParts['from']['tableName'] : $this->_queryParts['from']['alias'];
+        $fromName = $this->_queryParts['from']['tableName'];
+        $return[$fromAlias] = array('tableName' => $fromName);
+        
+        foreach ($this->_queryParts['join'] as $joinTypes) {
+            foreach ($joinTypes as $join) {
+                $return[$join['alias']] = array('tableName' => $join['tableAlias']);
+            }
+        }
+        
+        return $return;
     }
 
     /**
@@ -338,10 +352,12 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 
     /**
      * Returns the select object
+     * 
+     * @return Doctrine_Query
      */
-    function getSelectObject ()
+    public function getSelectObject()
     {
-        die('getSelectObject');
+        return $this->_query;
     }
 
     /**
@@ -411,9 +427,23 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
                  ->select("$distinct AS field, $value AS value")
                  ->orderBy('value ASC');
         
-        $results = $newQuery->fetchArray();
+        //Only using Scalar here, b/c of an aparent bug with Doctrine::HYDRATE_ARRAY
+        $results = $newQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
+        $cleanResults = array();
         
-        foreach ($results as $value ) {
+        foreach ($results as $result) {
+            $temp = array();
+            
+            foreach ($result as $column => $value) {
+                $pos = strpos($column, '_');
+                $field = substr($column, ++$pos);
+                $temp[$field] = $value;
+            }
+            
+            $cleanResults[] = $temp;
+        }
+        
+        foreach ($cleanResults as $value) {
             $return[$value['field']] = $value['value'];
         }
         
