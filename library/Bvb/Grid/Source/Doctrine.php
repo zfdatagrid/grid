@@ -506,9 +506,9 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      * @param $filter
      * @param $field
      */
-    function addFullTextSearch ($filter, $field)
+    public function addFullTextSearch($filter, $field)
     {
-        die('addFullTextSearch');
+        throw new Bvb_Grid_Source_Doctrine_Exception("Fulltext searching is currently not supported by the Doctrine Source");
     }
 
     /**
