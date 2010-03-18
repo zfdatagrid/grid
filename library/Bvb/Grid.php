@@ -876,13 +876,21 @@ abstract class Bvb_Grid
         $fieldsSemAsFinal = $this->_data['fields'];
 
         if ( is_array($filters) ) {
+
             foreach ( $filters as $key => $filter ) {
-                $key = str_replace("bvbdot", ".", $key);
+
                 if ( strlen($filter) == 0 || ! in_array($key, $this->_fields) ) {
                     unset($filters[$key]);
                 } else {
                     if ( isset($fieldsSemAsFinal[$key]['searchField']) ) {
                         $key = $fieldsSemAsFinal[$key]['searchField'];
+                    }
+
+
+                    $oldFilter = $filter;
+                    if( isset($this->_filters[$key]['transform']) && is_callable($this->_filters[$key]['transform']))
+                    {
+                        $filter = call_user_func($this->_filters[$key]['transform'],$filter);
                     }
 
                     if ( isset($this->_filters[$key]['callback']) && is_array($this->_filters[$key]['callback']) ) {
@@ -908,7 +916,7 @@ abstract class Bvb_Grid
                         $this->getSource()->addCondition($op['filter'], $op['op'], $this->_data['fields'][$key]);
                     }
 
-                    $valor_filters[$key] = $filter;
+                    $valor_filters[$key] = $oldFilter;
                 }
 
             }
@@ -2177,6 +2185,9 @@ abstract class Bvb_Grid
         foreach ( $filtersObj->_filters as $key => $value ) {
             if ( isset($filters[$key]['callback']) ) {
                 $filters[$key]['callback'] = $value['callback'];
+            }
+            if ( isset($filters[$key]['transform']) ) {
+                $filters[$key]['transform'] = $value['transform'];
             }
         }
 

@@ -38,7 +38,7 @@ class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_Interface
     function format ($value)
     {
 
-        if ( $this->_locale === null ) {
+        if ( $this->_locale === null || ! is_numeric($value) ) {
             return $value;
         }
 
