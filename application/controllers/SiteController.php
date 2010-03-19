@@ -220,6 +220,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         $grid->updateColumn('Population',array('format'=>array('currency','pt_PT')));
+        
+        $grid->updateCOlumn('Continent',array('class'=>'width_120'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));

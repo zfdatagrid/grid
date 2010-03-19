@@ -2242,7 +2242,8 @@ abstract class Bvb_Grid
      */
     public function getVersion ()
     {
-        return self::VERSION;
+        return '$Rev$';
+        #return self::VERSION;
     }
 
 

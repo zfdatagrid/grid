@@ -1578,9 +1578,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
         }
 
         if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 0 ) {
-
-            $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Ajax)
-{
+$script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Ajax,event)
+    {
+        if(event !=0)
+        {
+            if(event.keyCode != 13)
+            {
+                return false;
+            }
+        }
     var Ajax = \"1\";
     var fieldsArray = fields.split(\",\");
     var filtro = new Array;
@@ -1850,7 +1856,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_Interfac
             }
         }
 
-        $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url');";
+        $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,0);";
+        $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,event);";
 
         $opcoes = array();
 
