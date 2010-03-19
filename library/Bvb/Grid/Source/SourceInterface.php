@@ -19,12 +19,12 @@
  */
 
 
-interface Bvb_Grid_Source_Interface
+interface Bvb_Grid_Source_SourceInterface
 {
 
 
     /**
-     * Sould return true|false if this source support
+     * Should return true|false if this source support
      * crud operations
      * @return bool
      */
@@ -49,7 +49,7 @@ interface Bvb_Grid_Source_Interface
      * ex: user.id | country.population
      *
      * The key for this array is the output field
-     * If raw sql is somehting like
+     * If raw sql is something like
      *
      * select name as alias, country from users
      *
@@ -104,8 +104,8 @@ interface Bvb_Grid_Source_Interface
 
 
     /**
-     * Return possible filters values based on field definion
-     * This is mostly used for enum fields where the possibile
+     * Return possible filters values based on field definition
+     * This is mostly used for enum fields where the possible
      * values are extracted
      *
      * Ex: enum('Yes','No','Empty');
@@ -120,7 +120,7 @@ interface Bvb_Grid_Source_Interface
 
 
     /**
-     * Return te field type
+     * Return field type
      * char, varchar, int
      *
      * Note: If the field is enum or set,
@@ -193,7 +193,7 @@ interface Bvb_Grid_Source_Interface
 
 
     /**
-     * Should preform a query based on the provided by the user
+     * Should perform a query based on the provided by the user
      * select the two fields and return an array $field=>$value
      * as result
      *
@@ -246,7 +246,7 @@ interface Bvb_Grid_Source_Interface
     /**
      * Adds a new condition to the current query
      * $filter is the value to be filtered
-     * $op is the opreand to be used: =,>=, like, llike,REGEX,
+     * $op is the operand to be used: =,>=, like, llike,REGEX,
      * $completeField. use the index $completField['field'] to
      * specify the field, to avoid ambiguous
      *
@@ -270,7 +270,7 @@ interface Bvb_Grid_Source_Interface
      *
      *The condition clause is a $field=>$value array
      *that should be escaped by YOU (if your class doesn't do that for you)
-     * and usinf the AND operand
+     * and using the AND operand
      *
      *Ex: array('user_id'=>'1','id_site'=>'12');
      *
@@ -288,7 +288,7 @@ interface Bvb_Grid_Source_Interface
      *
      * The condition clause is a $field=>$value array
      * that should be escaped by YOU (if your class doesn't do that for you)
-     * and usinf the AND operand
+     * and using the AND operand
      *
      * Ex: array('user_id'=>'1','id_site'=>'12');
      * Raw SQL: * WHERE user_id='1' AND id_site='12'

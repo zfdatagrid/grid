@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_Interface
+class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_FormatterInterface
 {
 
     protected $_locale = null;

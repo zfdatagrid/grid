@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
+class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
 
     const OUTPUT = 'print';

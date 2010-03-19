@@ -390,7 +390,7 @@ abstract class Bvb_Grid
      *
      * @param $source
      */
-    function setSource (Bvb_Grid_Source_Interface $source)
+    function setSource (Bvb_Grid_Source_SourceInterface $source)
     {
 
         $this->_source = $source;
@@ -490,7 +490,7 @@ abstract class Bvb_Grid
     function __construct ($options)
     {
 
-        if ( ! $this instanceof Bvb_Grid_Deploy_Interface ) {
+        if ( ! $this instanceof Bvb_Grid_Deploy_DeployInterface ) {
             throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment the Bvb_Grid_Deploy_Interface');
         }
 
@@ -787,9 +787,9 @@ abstract class Bvb_Grid
         $t = new $class($options);
 
 
-        if(!$t instanceof  Bvb_Grid_Formatter_Interface)
+        if(!$t instanceof  Bvb_Grid_Formatter_FormatterInterface)
         {
-            throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_Interface");
+            throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_FormatterInterface");
         }
 
         $return = $t->format($value);

@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_Interface
+class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInterface
 {
 
     public $i;

@@ -14,26 +14,17 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
+ * @version    $Id: Image.php 492 2010-01-26 17:08:02Z pao.fresco $
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 
-interface Bvb_Grid_Interface
+interface Bvb_Grid_Formatter_FormatterInterface
 {
 
-    function buildFilters();
+
+    function __construct ($options = array());
 
 
-    function buildGrid();
-
-
-    function buildTitles();
-
-
-    function buildSqlExp();
-
+    function format ($value);
 }
-
-
-?>

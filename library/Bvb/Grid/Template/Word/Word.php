@@ -20,7 +20,7 @@
 
 
 
-class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_Interface
+class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_WordInterface
 {
 
     /**

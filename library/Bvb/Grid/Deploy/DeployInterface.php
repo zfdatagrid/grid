@@ -14,12 +14,16 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id: Array.php 822 2010-03-03 15:43:07Z pao.fresco@gmail.com $
+ * @version    $Id: Csv.php 492 2010-01-26 17:08:02Z pao.fresco $
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-abstract class Bvb_Grid_Source_Db_Abstract
+interface Bvb_Grid_Deploy_DeployInterface
 {
 
+    public function deploy();
 
 }
+
+
+?>

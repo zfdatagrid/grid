@@ -18,76 +18,8 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-
-interface  Bvb_Grid_Template_Print_Interface
-
+abstract class Bvb_Grid_Source_Db_DbAbstract
 {
-
-    function globalStart ();
-
-
-
-    function globalEnd ();
-
-
-
-    function header ();
-
-
-
-    function titlesStart ();
-
-
-
-    function titlesEnd ();
-
-
-
-
-    function titlesLoop ();
-
-
-
-
-    function noResults();
-
-
-
-
-
-    function hRow();
-
-
-
-
-    function loopStart ();
-
-
-
-
-    function loopEnd ();
-
-
-
-
-    function loopLoop ();
-
-
-
-
-    function sqlExpStart ();
-
-
-
-
-    function sqlExpEnd ();
-
-
-
-
-    function sqlExpLoop ();
 
 
 }
-

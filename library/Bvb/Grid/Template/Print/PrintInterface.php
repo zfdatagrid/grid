@@ -19,7 +19,8 @@
  */
 
 
-interface  Bvb_Grid_Template_Word_Interface
+
+interface  Bvb_Grid_Template_Print_PrintInterface
 
 {
 
@@ -28,6 +29,10 @@ interface  Bvb_Grid_Template_Word_Interface
 
 
     function globalEnd ();
+
+
+
+    function header ();
 
 
 

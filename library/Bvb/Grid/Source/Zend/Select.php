@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_Interface
+class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
 {
 
     protected $_select;
