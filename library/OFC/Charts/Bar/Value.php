@@ -22,7 +22,7 @@
 
 class OFC_Charts_Bar_Value
 {
-    function OFC_Charts_Bar_Value ($top, $bottom = null)
+    public function OFC_Charts_Bar_Value ($top, $bottom = null)
     {
         $this->top = $top;
 
@@ -31,12 +31,12 @@ class OFC_Charts_Bar_Value
         }
     }
 
-    function set_colour ($colour)
+    public function set_colour ($colour)
     {
         $this->colour = $colour;
     }
 
-    function set_tooltip ($tip)
+    public function set_tooltip ($tip)
     {
         $this->tip = $tip;
     }

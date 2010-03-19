@@ -21,12 +21,12 @@
 
 class OFC_Charts_Bar_Filled_Value extends OFC_Charts_Bar_Value
 {
-    function OFC_Charts_Bar_Filled_Value( $val, $colour )
+    public function OFC_Charts_Bar_Filled_Value( $val, $colour )
     {
         parent::OFC_Charts_Bar_Value( $val, $colour );
     }
 
-    function set_outline_colour( $outline_colour )
+    public function set_outline_colour( $outline_colour )
     {
         $this->{'outline-colour'} = $outline_colour;
     }

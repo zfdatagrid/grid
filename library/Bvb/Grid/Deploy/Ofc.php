@@ -120,7 +120,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     /*
     * @param array $data
     */
-    function __construct ($options)
+    public function __construct ($options)
     {
 
         $this->options = $options;
@@ -133,7 +133,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function deploy ()
+    public function deploy ()
     {
         if ( ! in_array(self::OUTPUT, $this->_export) ) {
             echo $this->__("You dont' have permission to export the results to this format");
@@ -289,12 +289,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
         "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"} );
 
-        function open_flash_chart_data()
+        public function open_flash_chart_data()
         {
             return JSON.stringify(data);
         }
 
-        function findSWF(movieName) {
+        public function findSWF(movieName) {
           if (navigator.appName.indexOf("Microsoft")!= -1) {
             return window[movieName];
           } else {
@@ -314,14 +314,14 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function setXLabels ($labels, $options = array())
+    public function setXLabels ($labels, $options = array())
     {
         $this->_xLabels = $labels;
         $this->_xLabelsOptions = $options;
     }
 
 
-    function setChartType ($type, $args = array())
+    public function setChartType ($type, $args = array())
     {
         $this->_type = (string) "OFC_Charts_" . implode('_', array_map('ucwords', explode('_', $type)));
         ;
@@ -330,7 +330,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function setValues ($values, $options = array())
+    public function setValues ($values, $options = array())
     {
         if ( ! is_string($values) ) {
             $name = $values[0];
@@ -345,7 +345,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function addValues ($values, $options = array())
+    public function addValues ($values, $options = array())
     {
         if ( ! is_string($values) ) {
             $name = $values[0];
@@ -359,33 +359,33 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function getValues ($name)
+    public function getValues ($name)
     {
         return isset($this->_values[$name]) ? $this->_values[$name] : false;
     }
 
 
-    function setChartDimensions ($x, $y)
+    public function setChartDimensions ($x, $y)
     {
         $this->_chartDimensions = array('x' => $x, 'y' => $y);
         return $this;
     }
 
 
-    function setTitle ($title)
+    public function setTitle ($title)
     {
         $this->_title = $title;
         return $this;
     }
 
 
-    function setChartOptions (array $options = array())
+    public function setChartOptions (array $options = array())
     {
         $this->_chartOptions = $options;
     }
 
 
-    function __toString ()
+    public function __toString ()
     {
         if ( is_null($this->_deploymentContent) ) {
             die('You must explicity call the deploy() method before printing the object');
@@ -394,27 +394,27 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function setChartId ($id)
+    public function setChartId ($id)
     {
         $htis->_id = $id;
         return $this;
     }
 
 
-    function getChartId ()
+    public function getChartId ()
     {
         return $this->_chartId;
     }
 
 
-    function setFilesLocation (array $locations)
+    public function setFilesLocation (array $locations)
     {
         $this->_filesLocation = $locations;
         return $this;
     }
 
 
-    function getFilesLocation ()
+    public function getFilesLocation ()
     {
         return $this->_filesLocation;
     }

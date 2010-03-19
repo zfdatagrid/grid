@@ -21,7 +21,7 @@
 
 class OFC_Charts_Pie extends OFC_Charts_Base
 {
-    function OFC_Charts_Pie ()
+    public function OFC_Charts_Pie ()
     {
         parent::OFC_Charts_Base();
 
@@ -32,24 +32,24 @@ class OFC_Charts_Pie extends OFC_Charts_Base
         $this->values = array(2, 3, new OFC_Charts_Pie_Value(6.5, 'hello (6.5)'));
     }
 
-    function set_values ($values)
+    public function set_values ($values)
     {
         $this->values = $values;
     }
 
-    function set_colours($colours)
+    public function set_colours($colours)
     {
         $this->colours = $colours;
     }
 
     // boolean
-    function set_animate ($v)
+    public function set_animate ($v)
     {
         $this->animate = $v;
     }
 
     // real
-    function set_start_angle ($angle)
+    public function set_start_angle ($angle)
     {
         $this->{'start-angle'} = $angle;
     }

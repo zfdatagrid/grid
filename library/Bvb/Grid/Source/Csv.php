@@ -30,7 +30,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     protected $_separator;
 
 
-    function __construct ($dataSource, $columns = null, $separator = ',')
+    public function __construct ($dataSource, $columns = null, $separator = ',')
     {
         $final = array();
 
@@ -102,7 +102,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     }
 
 
-    function insert ($table, array $post)
+    public function insert ($table, array $post)
     {
         $fp = fopen($this->_dataSource, 'a');
         $result = "\n" . '"' . implode('"' . $this->_separator . '"', $post) . '"';
@@ -111,7 +111,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     }
 
 
-    function update ($table, array $post, array $condition)
+    public function update ($table, array $post, array $condition)
     {
 
         $filename = $this->_dataSource;
@@ -133,7 +133,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     }
 
 
-    function delete ($table, array $condition)
+    public function delete ($table, array $condition)
     {
 
         $filename = $this->_dataSource;
@@ -150,7 +150,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     }
 
 
-    function getRecord ($table, array $condition)
+    public function getRecord ($table, array $condition)
     {
         $position = $condition['_zfgId'];
         if ( $this->_columns === null ) {
@@ -161,7 +161,7 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     }
 
 
-    function hasCrud ()
+    public function hasCrud ()
     {
         return is_writable($this->_dataSource) ? true : false;
     }

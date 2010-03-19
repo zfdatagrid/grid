@@ -20,7 +20,7 @@
 
 class OFC_Elements_Axis extends OFC_Elements_Base
 {
-    function OFC_Elements_Axis()
+    public function OFC_Elements_Axis()
     {
         parent::OFC_Elements_Base();
     }

@@ -55,27 +55,15 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      *
      * @param array $data
      */
-    function __construct ($options)
+    public function __construct ($options)
     {
         $this->setPagination(500);
 
         parent::__construct($options);
     }
 
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
 
-    function __set ($var, $value)
-    {
-
-        parent::__set($var, $value);
-    }
-
-    function buildTitltesCsv ($titles)
+    public function buildTitltesCsv ($titles)
     {
 
         $grid = '';
@@ -88,7 +76,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     }
 
-    function buildSqlexpCsv ($sql)
+    public function buildSqlexpCsv ($sql)
     {
 
         $grid = '';
@@ -103,7 +91,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     }
 
-    function buildGridCsv ($grids)
+    public function buildGridCsv ($grids)
     {
 
         $grid = '';
@@ -136,7 +124,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             fwrite($this->outFile, $data);
         }
     }
-    function deploy ()
+    public function deploy ()
     {
         if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");

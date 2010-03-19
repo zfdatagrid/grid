@@ -21,10 +21,10 @@
 
 class OFC_Charts_Base
 {
-    function OFC_Charts_Base ()
+    public function OFC_Charts_Base ()
     {}
 
-    function __call ($name, $value)
+    public function __call ($name, $value)
     {
         $this->$name = $value;
 

@@ -20,10 +20,10 @@
 
 class OFC_Elements_Base {
 
-    function OFC_Elements_Base() {
+    public function OFC_Elements_Base() {
     }
 
-    function set_style($css) {
+    public function set_style($css) {
         $this->style = $css;
     }
 }

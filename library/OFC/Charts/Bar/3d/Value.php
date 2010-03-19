@@ -21,18 +21,18 @@
 
 class OFC_Charts_Bar_3d_Value
 {
-    function bar_3d_value( $top )
+    public function bar_3d_value( $top )
     {
         $this->top = $top;
 //      $this->bottom = $bottom;
     }
 
-    function set_colour( $colour )
+    public function set_colour( $colour )
     {
         $this->colour = $colour;
     }
 
-    function set_tooltip( $tip )
+    public function set_tooltip( $tip )
     {
         $this->tip = $tip;
     }

@@ -54,7 +54,7 @@ class Bvb_Grid_Template_Word_Word implements Bvb_Grid_Template_Word_WordInterfac
     public $options;
 
 
-    function globalStart ()
+    public function globalStart ()
     {
         $xml  = "<html xmlns:v=\"urn:schemas-microsoft-com:vml\"
 xmlns:o=\"urn:schemas-microsoft-com:office:office\"
@@ -212,30 +212,30 @@ table.MsoNormalTable
         return $xml;
     }
 
-    function globalEnd ()
+    public function globalEnd ()
     {
         return "</table></div></body></html>";
     }
 
-    function titlesStart ()
+    public function titlesStart ()
     {
         return "<tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>";
     }
 
-    function titlesEnd ()
+    public function titlesEnd ()
     {
         return "</tr>";
     }
 
 
-    function titlesLoop ()
+    public function titlesLoop ()
     {
         return " <td style='border:solid black 1.0pt;background-color:black;color:#FFFFFF;padding:5px'>  <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'>{{value}}<o:p></o:p></span></b></p>
   </td>";
     }
 
 
-    function noResults()
+    public function noResults()
     {
         return "<tr><td colspan=\"{$this->options['colspan']}\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}&nbsp;<o:p></o:p></span></p>
   </td></tr>";
@@ -243,14 +243,14 @@ table.MsoNormalTable
 
 
 
-    function hRow()
+    public function hRow()
     {
         return "<tr><td colspan=\"{$this->options['colspan']}\" style='border-top:none; color:#FFFFFF; border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:3px; background:#666;'> <p  style='text-align:center' class=MsoNormal><span style='font-size:10.0pt;  font-family:Helvetica; '>{{value}}<o:p></o:p></span></p>
   </td></tr>";
     }
 
 
-    function loopStart ()
+    public function loopStart ()
     {
         $this->i++;
 
@@ -258,13 +258,13 @@ table.MsoNormalTable
     }
 
 
-    function loopEnd ()
+    public function loopEnd ()
     {
         return "</tr>";
     }
 
 
-    function loopLoop ()
+    public function loopLoop ()
     {
 
         if($this->i%2)
@@ -277,17 +277,17 @@ table.MsoNormalTable
         }
 
     }
-    function sqlExpStart ()
+    public function sqlExpStart ()
     {
         return "<tr>";
     }
 
-    function sqlExpEnd ()
+    public function sqlExpEnd ()
     {
         return "</tr>";
     }
 
-    function sqlExpLoop ()
+    public function sqlExpLoop ()
     {
         return "<td  style='border-top:none;border-left:none;  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt; padding:5px;'> <p><span style='font-size:8.0pt; font-family:Helvetica;'>{{value}}<o:p></o:p></span></p>
   </td>";

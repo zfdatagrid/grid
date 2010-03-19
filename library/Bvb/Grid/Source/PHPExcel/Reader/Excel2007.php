@@ -23,7 +23,7 @@ class Bvb_Grid_Source_PHPExcel_Reader_Excel2007 extends Bvb_Grid_Source_Array
 {
 
 
-    function __construct ($file, $sheet = '', $titles = null)
+    public function __construct ($file, $sheet = '', $titles = null)
     {
 
         if ( ! Zend_Loader_Autoloader::autoload('PHPExcel_Reader_Excel2007') ){

@@ -31,7 +31,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     public $options = array();
 
 
-    function globalStart ()
+    public function globalStart ()
     {
 
 
@@ -44,7 +44,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     }
 
 
-    function header ()
+    public function header ()
     {
 
         if (file_exists(@$this->options['logo'])) {
@@ -58,24 +58,24 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     }
 
 
-    function globalEnd ()
+    public function globalEnd ()
     {
         return "</table></div></body></html>";
     }
 
 
-    function titlesStart ()
+    public function titlesStart ()
     {
         return "<tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>";
     }
 
-    function titlesEnd ()
+    public function titlesEnd ()
     {
         return "</tr>";
     }
 
 
-    function titlesLoop ()
+    public function titlesLoop ()
     {
         return " <td style='border:solid black 1.0pt;background-color:black;color:#FFFFFF;padding:5px'>
           <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'>{{value}}<o:p></o:p></span></b></p>
@@ -83,7 +83,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     }
 
 
-    function loopStart ()
+    public function loopStart ()
     {
         $this->i ++;
 
@@ -92,14 +92,14 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
 
 
 
-    function loopEnd ()
+    public function loopEnd ()
     {
         return "</tr>";
     }
 
 
 
-    function loopLoop ()
+    public function loopLoop ()
     {
 
 
@@ -118,7 +118,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     }
 
 
-    function hRow ()
+    public function hRow ()
     {
         return "<tr><td colspan=\"" . $this->options['colspan']. "\" style='border-top:none; color:#FFFFFF;
         border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
@@ -127,7 +127,7 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
   </td></tr>";
     }
 
-    function noResults ()
+    public function noResults ()
     {
         return "<tr><td colspan=\"" . $this->options['colspan'] . "\" style='border-top:none; color:#FFFFFF;
         border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
@@ -136,21 +136,21 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
   </td></tr>";
     }
 
-    function sqlExpStart ()
+    public function sqlExpStart ()
     {
         return "<tr>";
     }
 
 
 
-    function sqlExpEnd ()
+    public function sqlExpEnd ()
     {
         return "</tr>";
     }
 
 
 
-    function sqlExpLoop ()
+    public function sqlExpLoop ()
     {
         return "<td  style='border-top:none;border-left:none;  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
         padding:5px;'> <p><span style='font-size:8.0pt; font-family:Helvetica;'>{{value}}<o:p></o:p></span></p>

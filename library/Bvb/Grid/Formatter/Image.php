@@ -22,12 +22,12 @@
 class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
 {
 
-    function __construct($options =array())
+    public function __construct($options =array())
     {
 
     }
 
-    function format ($value)
+    public function format ($value)
     {
         return "<img src=\"$value\" border=\"0\">";
     }

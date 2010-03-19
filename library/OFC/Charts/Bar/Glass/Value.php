@@ -22,17 +22,17 @@
 
 class OFC_Bar_Glass_Value
 {
-    function bar_glass_value ($top)
+    public function bar_glass_value ($top)
     {
         $this->top = $top;
     }
 
-    function set_colour ($colour)
+    public function set_colour ($colour)
     {
         $this->colour = $colour;
     }
 
-    function set_tooltip ($tip)
+    public function set_tooltip ($tip)
     {
         $this->tip = $tip;
     }

@@ -22,7 +22,7 @@
 class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
 {
 
-    function __construct ($array, $loop = null, $columns = null)
+    public function __construct ($array, $loop = null, $columns = null)
     {
 
         $array = trim($array);

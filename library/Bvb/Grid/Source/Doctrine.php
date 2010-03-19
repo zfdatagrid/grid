@@ -694,7 +694,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * TODO: Research what 'cache' does, might just need to look at the
      *       bool and see if we need to set Doctrine Cache or not
      */
-    function setCache($cache)
+    public function setCache($cache)
     {
         //die(Zend_Debug::dump($cache));
         //die('setCache');

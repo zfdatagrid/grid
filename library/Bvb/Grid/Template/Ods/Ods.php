@@ -27,7 +27,7 @@ class Bvb_Grid_Template_Ods_Ods
     public  $options;
 
 
-    function globalStart()
+    public function globalStart()
     {
 
         return '<?xml version="1.0" encoding="UTF-8"?>
@@ -86,7 +86,7 @@ class Bvb_Grid_Template_Ods_Ods
     }
 
 
-    function globalEnd()
+    public function globalEnd()
     {
 
         return '</table:table> </office:spreadsheet>
@@ -95,21 +95,21 @@ class Bvb_Grid_Template_Ods_Ods
     }
 
 
-    function titlesStart()
+    public function titlesStart()
     {
 
         return '<table:table-row table:style-name="ro1">';
     }
 
 
-    function titlesEnd()
+    public function titlesEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function titlesLoop()
+    public function titlesLoop()
     {
 
         return '<table:table-cell office:value-type="string">
@@ -118,21 +118,21 @@ class Bvb_Grid_Template_Ods_Ods
     }
 
 
-    function loopStart()
+    public function loopStart()
     {
 
         return '<table:table-row table:style-name="ro1">';
     }
 
 
-    function loopEnd()
+    public function loopEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function loopLoop()
+    public function loopLoop()
     {
 
         return '<table:table-cell office:value-type="string">
@@ -141,21 +141,21 @@ class Bvb_Grid_Template_Ods_Ods
     }
 
 
-    function sqlExpStart()
+    public function sqlExpStart()
     {
 
         return '<table:table-row table:style-name="ro1">';
     }
 
 
-    function sqlExpEnd()
+    public function sqlExpEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function sqlExpLoop()
+    public function sqlExpLoop()
     {
 
         return '<table:table-cell office:value-type="string">

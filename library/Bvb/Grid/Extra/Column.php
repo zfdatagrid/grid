@@ -24,7 +24,7 @@ class Bvb_Grid_Extra_Column
 {
     public   $_field;
 
-    function __call($name,$args)
+    public function __call($name,$args)
     {
         $this->_field[$name] = $args[0];
         return $this;

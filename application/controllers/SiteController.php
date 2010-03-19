@@ -18,7 +18,7 @@ class SiteController extends Zend_Controller_Action
      * @param string $name
      * @param array $var
      */
-    function __call ($name, $var)
+    public function __call ($name, $var)
     {
         $this->_redirect('default/site/basic', array('exit' => 1));
         return false;
@@ -29,7 +29,7 @@ class SiteController extends Zend_Controller_Action
      * I think this is needed for something. can't remember
      *
      */
-    function init ()
+    public function init ()
     {
 
         $this->view->url = Zend_Registry::get('config')->site->url;
@@ -45,7 +45,7 @@ class SiteController extends Zend_Controller_Action
      * Same as __call
      *
      */
-    function indexAction ()
+    public function indexAction ()
     {
         $this->_forward('basic');
     }
@@ -55,7 +55,7 @@ class SiteController extends Zend_Controller_Action
      * Show the source code for this controller
      *
      */
-    function codeAction ()
+    public function codeAction ()
     {
         $this->render('code');
     }
@@ -65,7 +65,7 @@ class SiteController extends Zend_Controller_Action
      * Simplify the datagrid creation process
      * @return Bvb_Grid_Deploy_Table
      */
-    function grid ($id = '')
+    public function grid ($id = '')
     {
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
@@ -79,7 +79,7 @@ class SiteController extends Zend_Controller_Action
      * A simple usage of advanced filters. Every time you change a filter, the system automatically
      *runs a query to the others filters, making sure they don't allow you to filter for a record that is not in the database
      */
-    function filtersAction ()
+    public function filtersAction ()
     {
 
         $grid = $this->grid();
@@ -106,7 +106,7 @@ class SiteController extends Zend_Controller_Action
      * Also notice that you can use fields values to populate the fields by surrounding the field name with {{}}
      *
      */
-    function extraAction ()
+    public function extraAction ()
     {
 
         $grid = $this->grid();
@@ -144,7 +144,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function arrayAction ()
+    public function arrayAction ()
     {
         $array = array(array('Marcel', '12', 'M'), array('Katty', '34', 'F'), array('Richard', '87', 'M'), array('Dany', '33', 'F'));
 
@@ -156,7 +156,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function csvAction ()
+    public function csvAction ()
     {
 
         $grid = $this->grid();
@@ -175,7 +175,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function jsonAction ()
+    public function jsonAction ()
     {
 
         $grid = $this->grid();
@@ -185,7 +185,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function feedAction ()
+    public function feedAction ()
     {
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Xml('http://zfdatagrid.com/feed/', 'channel,item'));
@@ -205,7 +205,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     /**
      * The 'most' basic example.
      */
-    function basicAction ()
+    public function basicAction ()
     {
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
@@ -220,8 +220,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         $grid->updateColumn('Population',array('format'=>array('currency','pt_PT')));
-        
-        $grid->updateCOlumn('Continent',array('class'=>'width_120'));
+
+        $grid->updateColumn('Continent',array('title' =>'Number', 'class' => 'width_100'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
@@ -235,7 +235,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     /**
      * The 'most' basic example.
      */
-    function ajaxAction ()
+    public function ajaxAction ()
     {
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
@@ -250,7 +250,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     /**
      * The 'most' basic example.
      */
-    function excelAction ()
+    public function excelAction ()
     {
         $grid = $this->grid();
 
@@ -261,7 +261,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function joinsAction ()
+    public function joinsAction ()
     {
 
         $grid = $this->grid();
@@ -282,7 +282,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     /**
      * Using a model
      */
-    function crudAction ()
+    public function crudAction ()
     {
         $grid = $this->grid();
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
@@ -319,7 +319,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
      * This demonstrates how easy it is for us to use our own templates (Check the grid function at the page top)
      *
      */
-    function templateAction ()
+    public function templateAction ()
     {
 
         $grid = $this->grid();
@@ -334,7 +334,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
      * This example allow you to create an horizontal row, for every distinct value from a field
      *
      */
-    function hrowAction ()
+    public function hrowAction ()
     {
 
         $grid = $this->grid();
@@ -365,7 +365,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     }
 
 
-    function ofcAction ()
+    public function ofcAction ()
     {
 
         $this->view->graphs = $allowedGraphs = array('line', 'bar', 'bar_glass', 'bar_3d', 'bar_filled', 'pie', 'mixed');
@@ -404,7 +404,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
      * If you don't like to work with array when adding columns, you can work by dereferencing objects
      *
      */
-    function columnAction ()
+    public function columnAction ()
     {
 
         $grid = $this->grid();

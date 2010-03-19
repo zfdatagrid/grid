@@ -28,13 +28,13 @@ class Bvb_Grid_Template_Wordx_Wordx
 
     public $options;
 
-    function __construct($options = array())
+    public function __construct($options = array())
     {
         $this->wordOptions = $options;
 
     }
 
-    function info()
+    public function info()
     {
         $pdf = array(
         'logo'=>'public/images/logo.png',
@@ -49,7 +49,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function globalStart ()
+    public function globalStart ()
     {
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:mv="urn:schemas-microsoft-com:mac:vml"
@@ -77,7 +77,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 			</w:tblGrid>';
     }
 
-    function globalEnd ()
+    public function globalEnd ()
     {
         return '</w:tbl>
 		<w:p w:rsidR="00B65C80" w:rsidRDefault="0034373E" />
@@ -96,7 +96,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function logo()
+    public function logo()
     {
     	$arrayLogo = explode("/",@$this->options['logo']);
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -107,7 +107,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function header()
+    public function header()
     {
 
         if(@file_exists($this->options['logo']))
@@ -295,7 +295,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function titlesStart ()
+    public function titlesStart ()
     {
         return '<w:tr w:rsidR="006C2FDC">
 				<w:trPr>
@@ -303,14 +303,14 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:trPr>';
     }
 
-    function titlesEnd ()
+    public function titlesEnd ()
     {
         return '</w:tr>';
     }
 
 
 
-    function titlesLoop ()
+    public function titlesLoop ()
     {
         return '<w:tc>
 					<w:tcPr>
@@ -340,7 +340,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function noResults()
+    public function noResults()
     {
         return '<w:tr w:rsidR="0034373E">
 				<w:tc>
@@ -363,7 +363,7 @@ class Bvb_Grid_Template_Wordx_Wordx
     }
 
 
-    function hRow ()
+    public function hRow ()
     {
 
         return '<w:tr w:rsidR="0034373E">
@@ -388,7 +388,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function loopStart ()
+    public function loopStart ()
     {
         return '<w:tr w:rsidR="006C2FDC">
 				<w:trPr>
@@ -397,12 +397,12 @@ class Bvb_Grid_Template_Wordx_Wordx
     }
 
 
-    function loopEnd ()
+    public function loopEnd ()
     {
         return '</w:tr>';
     }
 
-    function loopLoop ()
+    public function loopLoop ()
     {
         return '<w:tc>
 					<w:tcPr>
@@ -421,7 +421,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function sqlExpStart ()
+    public function sqlExpStart ()
     {
         return '<w:tr w:rsidR="006C2FDC" w:rsidTr="0034373E">
 				<w:trPr>
@@ -431,14 +431,14 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function sqlExpEnd ()
+    public function sqlExpEnd ()
     {
         return '</w:tr>';
     }
 
 
 
-    function sqlExpLoop ()
+    public function sqlExpLoop ()
     {
         return '
 				<w:tc>
@@ -460,7 +460,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 
 
 
-    function footer()
+    public function footer()
     {
 
 

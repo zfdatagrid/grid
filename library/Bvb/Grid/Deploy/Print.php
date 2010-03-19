@@ -29,7 +29,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public $templateInfo;
 
 
-    function __construct ($options)
+    public function __construct ($options)
     {
 
 
@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
-    function deploy ()
+    public function deploy ()
     {
         if ( ! in_array(self::OUTPUT, $this->_export) ) {
             echo $this->__("You dont' have permission to export the results into this format");

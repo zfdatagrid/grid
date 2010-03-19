@@ -223,7 +223,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      *
      * @param array $data
      */
-    function __construct ($options)
+    public function __construct ($options)
     {
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->getGridId());
         $this->_setRemoveHiddenFields(true);
@@ -1198,7 +1198,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      *
      * @return string
      */
-    function deploy ()
+    public function deploy ()
     {
 
         $this->_view = $this->getView();
@@ -1473,7 +1473,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @param $part
      * @param $appendGlobal
      */
-    function render ($part, $appendGlobal = false)
+    public function render ($part, $appendGlobal = false)
     {
         $result = '';
         if ( $appendGlobal === true ) {
@@ -1492,7 +1492,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
-    function __toString ()
+    public function __toString ()
     {
         if ( is_null($this->_deploymentContent) ) {
             die('You must explicity call the deploy() method before printing the object');
@@ -1625,7 +1625,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      *@var Bvb_Grid_Form
      * @return unknown
      */
-    function setForm ($crud)
+    public function setForm ($crud)
     {
 
         $oldElements = $crud->getElements();
@@ -1958,7 +1958,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     /**
      * Returns form instance
      */
-    function getForm ()
+    public function getForm ()
     {
         return $this->_form;
     }
@@ -1970,7 +1970,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * @param $condition
      * @param $class
      */
-    function addClassRowCondition ($column, $condition, $class)
+    public function addClassRowCondition ($column, $condition, $class)
     {
         $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
         return $this;
@@ -1983,7 +1983,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * @param $condition
      * @param $class
      */
-    function addClassCellCondition ($column, $condition, $class, $else = '')
+    public function addClassCellCondition ($column, $condition, $class, $else = '')
     {
         $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
@@ -1996,7 +1996,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * @param $condition
      * @param $class
      */
-    function setClassRowCondition ($condition, $class, $else = '')
+    public function setClassRowCondition ($condition, $class, $else = '')
     {
         $this->_classRowCondition = array();
         $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class, 'else' => $else);
@@ -2010,7 +2010,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * @param $condition
      * @param $class
      */
-    function setClassCellCondition ($column, $condition, $class, $else)
+    public function setClassCellCondition ($column, $condition, $class, $else)
     {
         $this->_classCellCondition = array();
         $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
@@ -2018,7 +2018,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     }
 
 
-    function addExtraRows (Bvb_Grid_Extra_Rows $rows)
+    public function addExtraRows (Bvb_Grid_Extra_Rows $rows)
     {
         $rows = $this->_object2array($rows);
         $this->_extraRows = $rows['_rows'];
@@ -2076,7 +2076,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     }
 
 
-    function setRowAltClasses ($odd, $even = '')
+    public function setRowAltClasses ($odd, $even = '')
     {
         $this->_cssClasses = array('odd' => $odd, 'even' => $even);
         return $this;
@@ -2086,7 +2086,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     /**
      * So user can know what is going to be done
      */
-    function buildFormDefinitions ()
+    public function buildFormDefinitions ()
     {
 
         if ( $this->getParam('add') == 1 ) {
@@ -2114,7 +2114,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     /**
      * Return action action fro form
      */
-    function getFormSettings ()
+    public function getFormSettings ()
     {
 
         $this->buildFormDefinitions();
@@ -2126,13 +2126,13 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * Show a confirmation page instead a alert window
      * @param $status
      */
-    function setDeleteConfirmationPage ($status)
+    public function setDeleteConfirmationPage ($status)
     {
         $this->_deleteConfirmationPage = (bool) $status;
         return $this;
     }
 
-    function setImagesUrl($url)
+    public function setImagesUrl($url)
     {
         if(!is_string($url))
         {
@@ -2142,7 +2142,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         return $this;
     }
 
-    function getImagesUrl()
+    public function getImagesUrl()
     {
         return $this->_imagesUrl;
     }

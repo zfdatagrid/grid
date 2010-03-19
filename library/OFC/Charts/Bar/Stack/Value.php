@@ -20,7 +20,7 @@
 
 class OFC_Charts_Bar_Stack_Value
 {
-    function OFC_Charts_Bar_Stack_Value( $val, $colour )
+    public function OFC_Charts_Bar_Stack_Value( $val, $colour )
     {
         $this->val = $val;
         $this->colour = $colour;

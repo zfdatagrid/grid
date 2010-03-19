@@ -122,7 +122,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      *
      * @param array $options configuration options
      */
-    function __construct ($options = array())
+    public function __construct ($options = array())
     {
         $this->initLogger();
 
@@ -142,7 +142,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      *
      * @return void
      */
-    function ajax($id='')
+    public function ajax($id='')
     {
         // apply additional configuration
         $this->_runConfigCallbacks();
@@ -370,7 +370,7 @@ JS;
      *
      * @return Bvb_Grid_Deploy_JqGrid
      */
-    function deploy()
+    public function deploy()
     {
         // check if ajax() function was called
         if (!$this->_ajaxFuncCalled) {
@@ -471,7 +471,7 @@ HTML;
      *
      * @return string
      */
-    function renderPartData()
+    public function renderPartData()
     {
         // clarify the values
         $page = $this->getParam('page'); // get the requested page
@@ -828,7 +828,7 @@ HTML;
      *
      * @return Zend_Db_Select
      */
-    function &getSelect()
+    public function &getSelect()
     {
         return $this->_select;
     }

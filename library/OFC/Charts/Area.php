@@ -21,7 +21,7 @@
 class OFC_Charts_Area extends OFC_Charts_Base
 {
 
-    function OFC_Charts_Area()
+    public function OFC_Charts_Area()
     {
         parent::OFC_Charts_Base();
 

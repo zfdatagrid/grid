@@ -27,7 +27,7 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
 
     protected $type = null;
 
-    function __construct ($options = array())
+    public function __construct ($options = array())
     {
         if ($options instanceof Zend_Locale) {
             $this->locale = $options;
@@ -54,7 +54,7 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
         }
     }
 
-    function format ($value)
+    public function format ($value)
     {
         try {
             $date = new Zend_Date($value);

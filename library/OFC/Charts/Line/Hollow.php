@@ -22,7 +22,7 @@
 
 class OFC_Charts_Line_Hollow extends OFC_Charts_Line
 {
-    function OFC_Charts_Line_Hollow ()
+    public function OFC_Charts_Line_Hollow ()
     {
         parent::OFC_Charts_Line();
 

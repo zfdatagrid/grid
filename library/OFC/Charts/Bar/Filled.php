@@ -21,7 +21,7 @@
 
 class OFC_Charts_Bar_Filled extends OFC_Charts_Bar
 {
-    function OFC_Charts_Bar_Filled ($colour = null, $outline_colour = null)
+    public function OFC_Charts_Bar_Filled ($colour = null, $outline_colour = null)
     {
         parent::OFC_Charts_Bar();
 
@@ -36,7 +36,7 @@ class OFC_Charts_Bar_Filled extends OFC_Charts_Bar
         }
     }
 
-    function set_outline_colour ($outline_colour)
+    public function set_outline_colour ($outline_colour)
     {
         $this->{'outline-colour'} = $outline_colour;
     }

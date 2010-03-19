@@ -24,7 +24,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
 	public $deploy = array ();
 
-	function __construct($options) {
+    public function __construct($options) {
 
 		if (! in_array ( self::OUTPUT, $this->_export )) {
 			echo $this->__ ( "You dont' have permission to export the results to this format" );
@@ -36,7 +36,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 	}
 
 
-	function deploy() {
+    public function deploy() {
 
 		$this->setPagination ( 0 );
 

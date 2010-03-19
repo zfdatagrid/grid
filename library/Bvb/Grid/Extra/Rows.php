@@ -24,7 +24,7 @@ class Bvb_Grid_Extra_Rows
 {
     public   $_rows;
 
-    function addRow($position,$rows)
+    public function addRow($position,$rows)
     {
         $this->_rows[] = array('position'=>$position,'values'=>$rows);
 

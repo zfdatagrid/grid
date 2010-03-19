@@ -22,7 +22,7 @@
 class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
 {
 
-    function __construct ($url, $loop, $columns = null)
+    public function __construct ($url, $loop, $columns = null)
     {
 
         if (strstr($url, '<?xml')) {

@@ -26,7 +26,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     public $deploy;
 
 
-    function __construct ($options)
+    public function __construct ($options)
     {
 
 
@@ -43,7 +43,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param $fontSize
      */
 
-    function widthForStringUsingFontSize ($string, $font, $fontSize)
+    public function widthForStringUsingFontSize ($string, $font, $fontSize)
     {
         @$drawingString = iconv('', 'UTF-16BE', $string);
         $characters = array();
@@ -57,7 +57,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function calculateCellSize ()
+    public function calculateCellSize ()
     {
 
         $titles = parent::_buildTitles();
@@ -144,7 +144,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function deploy ()
+    public function deploy ()
     {
 
         if ( ! in_array(self::OUTPUT, $this->_export) ) {

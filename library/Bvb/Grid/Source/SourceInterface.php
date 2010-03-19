@@ -28,7 +28,7 @@ interface Bvb_Grid_Source_SourceInterface
      * crud operations
      * @return bool
      */
-    function hasCrud ();
+    public function hasCrud ();
 
 
     /**
@@ -36,7 +36,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param $table
      * @param $condition
      */
-    function getRecord ($table, array $condition);
+    public function getRecord ($table, array $condition);
 
 
     /**
@@ -62,7 +62,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      *
      */
-    function buildFields ();
+    public function buildFields ();
 
 
     /**
@@ -70,13 +70,13 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * Ex: mysql, pgsql, array, xml
      */
-    function getSourceName ();
+    public function getSourceName ();
 
 
     /**
      *Runs the query and returns the result as a associative array
      */
-    function execute ();
+    public function execute ();
 
 
     /**
@@ -84,13 +84,13 @@ interface Bvb_Grid_Source_SourceInterface
      * @param array $where
      * @return array
      */
-    function fetchDetail (array $where);
+    public function fetchDetail (array $where);
 
 
     /**
      * Return the total of records
      */
-    function getTotalRecords ();
+    public function getTotalRecords ();
 
 
     /**
@@ -100,7 +100,7 @@ interface Bvb_Grid_Source_SourceInterface
      * where c is the table alias. If the table as no alias,
      * c should be the table name
      */
-    function getTableList ();
+    public function getTableList ();
 
 
     /**
@@ -116,7 +116,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * @param $field
      */
-    function getFilterValuesBasedOnFieldDefinition ($field);
+    public function getFilterValuesBasedOnFieldDefinition ($field);
 
 
     /**
@@ -130,7 +130,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $field
      */
 
-    function getFieldType ($field);
+    public function getFieldType ($field);
 
 
     /**
@@ -138,7 +138,7 @@ interface Bvb_Grid_Source_SourceInterface
      * the one after select * FROM {MAIN_TABLE}
      *
      */
-    function getMainTable ();
+    public function getMainTable ();
 
 
     /**
@@ -154,7 +154,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $order
      * @param bool $reset
      */
-    function buildQueryOrder ($field, $order, $reset = false);
+    public function buildQueryOrder ($field, $order, $reset = false);
 
 
     /**
@@ -162,13 +162,13 @@ interface Bvb_Grid_Source_SourceInterface
      * @param $start
      * @param $offset
      */
-    function buildQueryLimit ($start, $offset);
+    public function buildQueryLimit ($start, $offset);
 
 
     /**
      * Returns the select object
      */
-    function getSelectObject ();
+    public function getSelectObject ();
 
 
     /**
@@ -189,7 +189,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * @return array
      */
-    function getSelectOrder ();
+    public function getSelectOrder ();
 
 
     /**
@@ -204,7 +204,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $value
      * @return array
      */
-    function getDistinctValuesForFilters ($field, $value);
+    public function getDistinctValuesForFilters ($field, $value);
 
 
     /**
@@ -223,7 +223,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * @param array $value
      */
-    function getSqlExp (array $value);
+    public function getSqlExp (array $value);
 
 
     /**
@@ -240,7 +240,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param $filter
      * @param $field
      */
-    function addFullTextSearch ($filter, $field);
+    public function addFullTextSearch ($filter, $field);
 
 
     /**
@@ -254,7 +254,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param $op
      * @param $completeField
      */
-    function addCondition ($filter, $op, $completeField);
+    public function addCondition ($filter, $op, $completeField);
 
 
     /**
@@ -262,7 +262,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $table
      * @param array $post
      */
-    function insert ($table, array $post);
+    public function insert ($table, array $post);
 
 
     /**
@@ -280,7 +280,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param array $post
      * @param array $condition
      */
-    function update ($table, array $post, array $condition);
+    public function update ($table, array $post, array $condition);
 
 
     /**
@@ -296,22 +296,22 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $table
      * @param array $condition
      */
-    function delete ($table, array $condition);
+    public function delete ($table, array $condition);
 
 
     /**
      * Removes any order in que query
      */
-    function resetOrder();
+    public function resetOrder();
 
     /**
      * Cache handler.
      */
-    function setCache($cache);
+    public function setCache($cache);
 
     /**
      * Build the form based on a Model or query
      */
-    function buildForm();
+    public function buildForm();
 
 }

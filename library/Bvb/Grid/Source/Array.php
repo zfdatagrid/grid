@@ -37,7 +37,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     protected $_cache;
 
 
-    function __construct (array $array, $titles = null)
+    public function __construct (array $array, $titles = null)
     {
         if ( $titles === null || count($titles) != count($array[0]) ) {
             $this->_fields = array_keys($array[0]);
@@ -54,25 +54,25 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function resetOrder ()
+    public function resetOrder ()
     {
         return true;
     }
 
 
-    function getSourceName ()
+    public function getSourceName ()
     {
         return $this->_sourceName;
     }
 
 
-    function hasCrud ()
+    public function hasCrud ()
     {
         return false;
     }
 
 
-    function buildFields ()
+    public function buildFields ()
     {
         $fields = $this->_fields;
 
@@ -93,7 +93,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function buildQueryLimit ($offset, $start)
+    public function buildQueryLimit ($offset, $start)
     {
         $this->_offset = $offset;
         $this->_start = $start;
@@ -101,7 +101,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function addCondition ($filter, $op, $completeField)
+    public function addCondition ($filter, $op, $completeField)
     {
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
@@ -170,31 +170,31 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function getSelectOrder ()
+    public function getSelectOrder ()
     {
         return array();
     }
 
 
-    function getDescribeTable ()
+    public function getDescribeTable ()
     {
         return false;
     }
 
 
-    function getFilterValuesBasedOnFieldDefinition ($field)
+    public function getFilterValuesBasedOnFieldDefinition ($field)
     {
         return 'text';
     }
 
 
-    function getTotalRecords ()
+    public function getTotalRecords ()
     {
         return $this->_totalRecords;
     }
 
 
-    function execute ()
+    public function execute ()
     {
         $this->_totalRecords = count($this->_rawResult);
 
@@ -209,19 +209,19 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function getMainTable ()
+    public function getMainTable ()
     {
         return true;
     }
 
 
-    function getTableList ()
+    public function getTableList ()
     {
         return array();
     }
 
 
-    function buildQueryOrder ($field, $order, $reset = false)
+    public function buildQueryOrder ($field, $order, $reset = false)
     {
 
         if ( strtolower($order) == 'desc' ) {
@@ -253,7 +253,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function getSqlExp (array $value)
+    public function getSqlExp (array $value)
     {
         if ( is_array($value['functions']) ) {
 
@@ -325,7 +325,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function getDistinctValuesForFilters ($field, $fieldValue)
+    public function getDistinctValuesForFilters ($field, $fieldValue)
     {
 
         $filter = array();
@@ -337,55 +337,55 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function fetchDetail (array $where)
+    public function fetchDetail (array $where)
     {
 
     }
 
 
-    function getFieldType ($field)
+    public function getFieldType ($field)
     {
 
     }
 
 
-    function getSelectObject ()
+    public function getSelectObject ()
     {
 
     }
 
 
-    function addFullTextSearch ($filter, $field)
+    public function addFullTextSearch ($filter, $field)
     {
 
     }
 
 
-    function getRecord ($table, array $condition)
+    public function getRecord ($table, array $condition)
     {
 
     }
 
 
-    function insert ($table, array $post)
+    public function insert ($table, array $post)
     {
 
     }
 
 
-    function update ($table, array $post, array $condition)
+    public function update ($table, array $post, array $condition)
     {
 
     }
 
 
-    function delete ($table, array $condition)
+    public function delete ($table, array $condition)
     {
 
     }
 
 
-    function setCache ($cache)
+    public function setCache ($cache)
     {
         if ( ! is_array($cache) ) {
             $cache = array('use' => 0);
@@ -395,7 +395,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function buildForm ()
+    public function buildForm ()
     {
 
         $form = array();
@@ -414,7 +414,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    function getPrimaryKey ($table)
+    public function getPrimaryKey ($table)
     {
         if ( in_array('_zfgId', $this->_fields) ) {
             return array('_zfgId');

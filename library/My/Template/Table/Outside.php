@@ -30,7 +30,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     public $go = 0;
 
 
-    function globalStart()
+    public function globalStart()
     {
 
         return "This template comes from My/Template/Table/Outside.php
@@ -38,14 +38,14 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopStart($values)
+    public function loopStart($values)
     {
         $this->i++;
         return "<tr  >";
     }
 
 
-    function loopLoop()
+    public function loopLoop()
     {
 
         $class = $this->i % 2 ? "alt" : "";

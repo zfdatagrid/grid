@@ -25,13 +25,13 @@ class Bvb_Grid_Column
     public $_field;
 
 
-    function __construct ($field)
+    public function __construct ($field)
     {
         $this->_field['field'] = trim($field);
     }
 
 
-    function __call ($name, $args)
+    public function __call ($name, $args)
     {
 
         if ( substr(strtolower($name), 0, 3) == 'set' || substr(strtolower($name), 0, 3) == 'add' ) {

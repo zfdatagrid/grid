@@ -21,39 +21,39 @@
 
 class OFC_Charts_Line extends OFC_Charts_Base
 {
-    function OFC_Charts_Line ()
+    public function OFC_Charts_Line ()
     {
         parent::OFC_Charts_Base();
 
         $this->type = 'line';
     }
 
-    function set_values ($v)
+    public function set_values ($v)
     {
         $this->values = $v;
     }
 
-    function set_width ($width)
+    public function set_width ($width)
     {
         $this->width = $width;
     }
 
-    function set_colour ($colour)
+    public function set_colour ($colour)
     {
         $this->colour = $colour;
     }
 
-    function set_dot_size ($size)
+    public function set_dot_size ($size)
     {
         $this->{'dot-size'} = $size;
     }
 
-    function set_halo_size ($size)
+    public function set_halo_size ($size)
     {
         $this->{'halo-size'} = $size;
     }
 
-    function set_key ($text, $font_size=9)
+    public function set_key ($text, $font_size=9)
     {
         $this->text = $text;
         $this->{'font-size'} = $font_size;

@@ -25,13 +25,13 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     private $_model;
 
 
-    function getModel ()
+    public function getModel ()
     {
         return $this->_model;
     }
 
 
-    function buildForm ()
+    public function buildForm ()
     {
         $info = $this->getModel()->info();
         $cols = $info['metadata'];
@@ -45,7 +45,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
      * @param Zend_Db_Table_Abstract $model
      * @return $this
      */
-    function __construct (Zend_Db_Table_Abstract $model)
+    public function __construct (Zend_Db_Table_Abstract $model)
     {
         $this->_model = $model;
         $info = $model->info();
@@ -114,7 +114,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    function getRecord ($table, array $condition)
+    public function getRecord ($table, array $condition)
     {
 
         if ( $this->_cache['use'] == 1 ) {
@@ -135,7 +135,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    function delete ($table, array $condition)
+    public function delete ($table, array $condition)
     {
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
@@ -144,7 +144,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    function update ($table, array $post, array $condition)
+    public function update ($table, array $post, array $condition)
     {
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
@@ -153,7 +153,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    function insert ($table, array $post)
+    public function insert ($table, array $post)
     {
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));

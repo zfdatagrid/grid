@@ -23,65 +23,65 @@ interface  Bvb_Grid_Template_Word_WordInterface
 
 {
 
-    function globalStart ();
+    public function globalStart ();
 
 
 
-    function globalEnd ();
+    public function globalEnd ();
 
 
 
-    function titlesStart ();
+    public function titlesStart ();
 
 
 
-    function titlesEnd ();
-
-
-
-
-    function titlesLoop ();
+    public function titlesEnd ();
 
 
 
 
-    function noResults();
+    public function titlesLoop ();
+
+
+
+
+    public function noResults();
 
 
 
 
 
-    function hRow();
+    public function hRow();
 
 
 
 
-    function loopStart ();
+    public function loopStart ();
 
 
 
 
-    function loopEnd ();
+    public function loopEnd ();
 
 
 
 
-    function loopLoop ();
+    public function loopLoop ();
 
 
 
 
-    function sqlExpStart ();
+    public function sqlExpStart ();
 
 
 
 
-    function sqlExpEnd ();
+    public function sqlExpEnd ();
 
 
 
 
-    function sqlExpLoop ();
+    public function sqlExpLoop ();
 
 
 }

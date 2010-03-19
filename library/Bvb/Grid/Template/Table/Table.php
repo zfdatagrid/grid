@@ -35,73 +35,73 @@ class Bvb_Grid_Template_Table_Table
     public $export;
 
 
-    function globalStart ()
+    public function globalStart ()
     {
         return "<table  width=\"100%\" class=\"borders\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">";
     }
 
 
-    function globalEnd ()
+    public function globalEnd ()
     {
         return "</table>";
     }
 
 
-    function extra ()
+    public function extra ()
     {
         return "<tr><td  colspan=\"{$this->options['colspan']}\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
 
 
-    function titlesStart ()
+    public function titlesStart ()
     {
         return "<tr>";
     }
 
 
-    function titlesEnd ()
+    public function titlesEnd ()
     {
         return "</tr>";
     }
 
 
-    function titlesLoop ()
+    public function titlesLoop ()
     {
         return "<th>{{value}}</th>";
     }
 
 
-    function filtersStart ()
+    public function filtersStart ()
     {
         return "<tr>";
     }
 
 
-    function filtersEnd ()
+    public function filtersEnd ()
     {
         return "</tr>";
     }
 
 
-    function noResults ()
+    public function noResults ()
     {
         return "<td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>";
     }
 
 
-    function filtersLoop ()
+    public function filtersLoop ()
     {
         return "<td class=\"subtitulo\" >{{value}}</td>";
     }
 
 
-    function hRow ($values)
+    public function hRow ($values)
     {
         return "<td  colspan=\"{$this->options['colspan']}\" class=\"hbar\"><div>{{value}}</div></td>";
     }
 
 
-    function loopStart ($class)
+    public function loopStart ($class)
     {
         $this->i ++;
         $this->insideLoop = 1;
@@ -114,13 +114,13 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopEnd ()
+    public function loopEnd ()
     {
         return "</tr>";
     }
 
 
-    function formMessage ($ok = false)
+    public function formMessage ($ok = false)
     {
 
         if ( $ok ) {
@@ -132,31 +132,31 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function loopLoop ()
+    public function loopLoop ()
     {
         return "<td class=\"{{class}} \" style=\"{{style}}\" >{{value}}</td>";
     }
 
 
-    function sqlExpStart ()
+    public function sqlExpStart ()
     {
         return "<tr>";
     }
 
 
-    function sqlExpEnd ()
+    public function sqlExpEnd ()
     {
         return "</tr>";
     }
 
 
-    function sqlExpLoop ()
+    public function sqlExpLoop ()
     {
         return "<td class=\"sum {{class}}\">{{value}}</td>";
     }
 
 
-    function pagination ()
+    public function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
         <div style=\"float:left;width:250px;\">" . $this->export . "</div>
@@ -166,31 +166,31 @@ class Bvb_Grid_Template_Table_Table
     }
 
 
-    function images ($url)
+    public function images ($url)
     {
         return array('asc' => "<img src=\"" . $url . "seta_cima.gif\" border=\"0\">", 'desc' => "<img src=\"" . $url . "seta_baixo.gif\" border=\"0\">", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">", 'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\">", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">");
     }
 
 
-    function detail ()
+    public function detail ()
     {
         return "<tr><td class='detailLeft'>{{field}}</td><td class='detailRight'>{{value}}</td></tr>";
     }
 
 
-    function detailEnd ()
+    public function detailEnd ()
     {
         return "<tr><td colspan='2'><a href='{{url}}'>{{return}}</a></td></tr>";
     }
 
 
-    function detailDelete ()
+    public function detailDelete ()
     {
         return "<tr><td colspan='2'>{{button}}</td></tr>";
     }
 
 
-    function export ($exportDeploy, $images, $url, $gridId)
+    public function export ($exportDeploy, $images, $url, $gridId)
     {
 
         $exp = '';

@@ -34,14 +34,14 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      *
      * @param array $options
      */
-    function __construct ($options = array('download'))
+    public function __construct ($options = array('download'))
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
     }
 
-    function buildTitltesXml ($titles)
+    public function buildTitltesXml ($titles)
     {
 
 
@@ -66,7 +66,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function buildSqlexpXml ($sql)
+    public function buildSqlexpXml ($sql)
     {
 
         $grid = '';
@@ -93,7 +93,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function buildGridXml ($grids)
+    public function buildGridXml ($grids)
     {
 
         $grid = '';
@@ -118,7 +118,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function deploy ()
+    public function deploy ()
     {
 
         if (! in_array(self::OUTPUT, $this->_export)) {

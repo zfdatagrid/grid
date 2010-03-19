@@ -33,7 +33,7 @@ class Bvb_Grid_Template_Odt_Odt
     public $i = 0;
 
 
-    function __construct($options = array())
+    public function __construct($options = array())
     {
 
         $this->odtOptions = $options;
@@ -41,7 +41,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function info()
+    public function info()
     {
 
         $pdf = array ('logo' => 'public/images/logo.png', 'title' => 'DataGrid Zend Framework', 'subtitle' => 'Easy and powerfull - (Demo document)', 'footer' => 'Downloaded from: http://www.petala-azul.com ' );
@@ -52,7 +52,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function globalStart()
+    public function globalStart()
     {
 
         return '<?xml version="1.0" encoding="UTF-8"?>
@@ -207,7 +207,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function globalEnd()
+    public function globalEnd()
     {
 
         return '</table:table><text:p text:style-name="Standard" />
@@ -217,7 +217,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function header()
+    public function header()
     {
 
         if (@file_exists ( $this->options ['logo'] ))
@@ -965,21 +965,21 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function titlesStart()
+    public function titlesStart()
     {
 
         return '<table:table-row>';
     }
 
 
-    function titlesEnd()
+    public function titlesEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function titlesLoop()
+    public function titlesLoop()
     {
 
         return '<table:table-cell table:style-name="Table1.D1"
@@ -989,7 +989,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function noResults()
+    public function noResults()
     {
 
         $return = '
@@ -1011,7 +1011,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function hRow()
+    public function hRow()
     {
 
         $return = '<table:table-row>
@@ -1031,7 +1031,7 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function loopStart()
+    public function loopStart()
     {
 
         $this->i ++;
@@ -1040,14 +1040,14 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function loopEnd()
+    public function loopEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function loopLoop()
+    public function loopLoop()
     {
 
 
@@ -1073,21 +1073,21 @@ class Bvb_Grid_Template_Odt_Odt
     }
 
 
-    function sqlExpStart()
+    public function sqlExpStart()
     {
 
         return '<table:table-row>';
     }
 
 
-    function sqlExpEnd()
+    public function sqlExpEnd()
     {
 
         return '</table:table-row>';
     }
 
 
-    function sqlExpLoop()
+    public function sqlExpLoop()
     {
 
         return '<table:table-cell table:style-name="Table1.A2"

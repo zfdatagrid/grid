@@ -33,7 +33,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $templateDir;
 
 
-    function __construct ($options)
+    public function __construct ($options)
     {
 
         if(!class_exists('ZipArchive'))
@@ -54,7 +54,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param unknown_type $filter
      * @return unknown
      */
-    function scan_directory_recursively ($directory, $filter = FALSE)
+    public function scan_directory_recursively ($directory, $filter = FALSE)
     {
 
         // if the path has a slash at the end we remove it here
@@ -134,7 +134,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param string $dir
      */
 
-    function deldir ($dir)
+    public function deldir ($dir)
     {
 
         $current_dir = @opendir($dir);
@@ -156,7 +156,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param unknown_type $dirs
      * @return unknown
      */
-    function zipPaths ($dirs)
+    public function zipPaths ($dirs)
     {
 
         foreach ($dirs as $key => $value) {
@@ -177,7 +177,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param unknown_type $dest
      * @return unknown
      */
-    function copyDir ($source, $dest)
+    public function copyDir ($source, $dest)
     {
 
         // Se for ficheiro
@@ -213,7 +213,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
-    function deploy ()
+    public function deploy ()
     {
 
         if (! in_array(self::OUTPUT, $this->_export)) {

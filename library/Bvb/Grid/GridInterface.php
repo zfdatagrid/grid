@@ -22,16 +22,16 @@
 interface Bvb_Grid_GridInterface
 {
 
-    function buildFilters();
+    public function buildFilters();
 
 
-    function buildGrid();
+    public function buildGrid();
 
 
-    function buildTitles();
+    public function buildTitles();
 
 
-    function buildSqlExp();
+    public function buildSqlExp();
 
 }
 

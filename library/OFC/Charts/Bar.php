@@ -22,45 +22,45 @@
 
 class OFC_Charts_Bar extends OFC_Charts_Base
 {
-    function OFC_Charts_Bar ()
+    public function OFC_Charts_Bar ()
     {
         parent::OFC_Charts_Base();
 
         $this->type = 'bar';
     }
 
-    function set_key ($text, $size=9)
+    public function set_key ($text, $size=9)
     {
         $this->text = $text;
         $this->{'font-size'} = $size;
     }
 
-    function set_font_size($size)
+    public function set_font_size($size)
     {
         $this->{'font-size'} = $size;
     }
 
-    function set_values ($v)
+    public function set_values ($v)
     {
         $this->values = $v;
     }
 
-    function append_value ($v)
+    public function append_value ($v)
     {
         $this->values[] = $v;
     }
 
-    function set_colour ($colour)
+    public function set_colour ($colour)
     {
         $this->colour = $colour;
     }
 
-    function set_alpha ($alpha)
+    public function set_alpha ($alpha)
     {
         $this->alpha = $alpha;
     }
 
-    function set_tooltip ($tip)
+    public function set_tooltip ($tip)
     {
         $this->tip = $tip;
     }

@@ -29,13 +29,13 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
     /*
     * @param array $data
     */
-    function __construct ($options)
+    public function __construct ($options)
     {
 
         parent::__construct($options);
     }
 
-    function buildTitltesJson ($titles)
+    public function buildTitltesJson ($titles)
     {
 
         $grid = array();
@@ -46,7 +46,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         return $grid;
     }
 
-    function buildSqlexpJson ($sql)
+    public function buildSqlexpJson ($sql)
     {
 
         $grid = array();
@@ -59,7 +59,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         return $grid;
     }
 
-    function buildGridJson ($grids)
+    public function buildGridJson ($grids)
     {
 
         $grid = array();
@@ -79,7 +79,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
     }
 
-    function deploy ()
+    public function deploy ()
     {
         if (! in_array(self::OUTPUT, $this->_export)) {
             echo $this->__("You dont' have permission to export the results to this format");

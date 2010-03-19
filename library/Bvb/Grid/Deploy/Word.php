@@ -30,7 +30,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
     public $deploy;
 
 
-    function __construct( $options )
+    public function __construct( $options )
     {
 
         $this->_setRemoveHiddenFields(true);
@@ -40,7 +40,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
     }
 
-    function deploy()
+    public function deploy()
     {
 
         if (! in_array ( self::OUTPUT, $this->_export ))

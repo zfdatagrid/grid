@@ -21,7 +21,7 @@
 
 class OFC_Charts_Bar_Horizontal_Value
 {
-    function OFC_Charts_Bar_Horizontal_Value( $left, $right )
+    public function OFC_Charts_Bar_Horizontal_Value( $left, $right )
     {
         $this->left = $left;
         $this->right = $right;

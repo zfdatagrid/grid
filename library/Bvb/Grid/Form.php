@@ -50,13 +50,13 @@ class Bvb_Grid_Form
     protected $_onDeleteAddCondition = array();
 
 
-    function getForm ()
+    public function getForm ()
     {
         return $this->_form;
     }
 
 
-    function __call ($name, $args)
+    public function __call ($name, $args)
     {
         if ( method_exists($this->getForm(), $name) ) {
             return call_user_func_array(array($this->getForm(), $name), $args);
@@ -93,13 +93,13 @@ class Bvb_Grid_Form
     }
 
 
-    function __construct ($formClass = 'Zend_Form', $formOptions = array())
+    public function __construct ($formClass = 'Zend_Form', $formOptions = array())
     {
         $this->_form = new $formClass($formOptions);
     }
 
 
-    function setCallbackBeforeDelete ($callback)
+    public function setCallbackBeforeDelete ($callback)
     {
 
         if ( ! is_callable($callback) ) {
@@ -111,7 +111,7 @@ class Bvb_Grid_Form
     }
 
 
-    function setCallbackBeforeUpdate ($callback)
+    public function setCallbackBeforeUpdate ($callback)
     {
 
         if ( ! is_callable($callback) ) {
@@ -124,7 +124,7 @@ class Bvb_Grid_Form
     }
 
 
-    function setCallbackBeforeInsert ($callback)
+    public function setCallbackBeforeInsert ($callback)
     {
 
         if ( ! is_callable($callback) ) {
@@ -137,7 +137,7 @@ class Bvb_Grid_Form
     }
 
 
-    function setCallbackAfterDelete ($callback)
+    public function setCallbackAfterDelete ($callback)
     {
 
         if ( ! is_callable($callback) ) {
@@ -150,7 +150,7 @@ class Bvb_Grid_Form
     }
 
 
-    function setCallbackAfterUpdate ($callback)
+    public function setCallbackAfterUpdate ($callback)
     {
 
         if ( ! is_callable($callback) ) {
@@ -163,7 +163,7 @@ class Bvb_Grid_Form
     }
 
 
-    function setCallbackAfterInsert ($callback)
+    public function setCallbackAfterInsert ($callback)
     {
 
         if ( ! is_callable($callback) ) {
