@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Provides you the ability to use Doctrine as a source
+ * with the Grid.
+ * 
+ * @author James Solomon <labs@clickbooth.com>
+ */
 class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 {
     /**
@@ -258,6 +264,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
      */
     public function getFilterValuesBasedOnFieldDefinition($field)
     {
+        if (strpos($field, '(') !== false) {
+            return 'text';
+        }
+        
         $table = $this->_getModelFromColumn($field);
         
         $tableClass = Doctrine::getTable($table);
@@ -527,35 +537,46 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
     {
         $field = $completeField['field'];
         
+        /**
+         * FIX : #218
+         * We need to make sure to use HAVING when there is function
+         * in the select, as you cannot use these selected fields in the 
+         * WHERE clause, and all others will use the WHERE clause
+         */
+        $func = 'addWhere';
+        if (strpos($field, '(') !== false) {
+            $func = 'addHaving';
+        }
+        
         switch (strtolower($op)) {
             case 'equal':
             case '=':
-                $this->_query->addWhere($field . ' = ?', $filter);
+                $this->_query->$func($field . ' = ?', $filter);
                 break;
             case 'regex':
-                $this->_query->addWhere($field . " REGEXP ?", $filter);
+                $this->_query->$func($field . " REGEXP ?", $filter);
                 break;
             case 'rlike':
-                $this->_query->addWhere($field . " LIKE ?", $filter . "%");
+                $this->_query->$func($field . " LIKE ?", $filter . "%");
                 break;
             case 'llike':
-                $this->_query->addWhere($field . " LIKE ?", "%" . $filter);
+                $this->_query->$func($field . " LIKE ?", "%" . $filter);
                 break;
             case '>=':
-                $this->_query->addWhere($field . " >= ?", $filter);
+                $this->_query->$func($field . " >= ?", $filter);
                 break;
             case '>':
-                $this->_query->addWhere($field . " > ?", $filter);
+                $this->_query->$func($field . " > ?", $filter);
                 break;
             case '<>':
             case '!=':
-                $this->_query->addWhere($field . " <> ?", $filter);
+                $this->_query->$func($field . " <> ?", $filter);
                 break;
             case '<=':
-                $this->_query->addWhere($field . " <= ?", $filter);
+                $this->_query->$func($field . " <= ?", $filter);
                 break;
             case '<':
-                $this->_query->addWhere($field . " < ?", $filter);
+                $this->_query->$func($field . " < ?", $filter);
                 break;
             case 'in':
                 $filter = explode(',', $filter);
@@ -564,11 +585,11 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
             case 'range':
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
-                $this->_query->addWhere($field . " between ? and ?", array($start, $end));
+                $this->_query->$func($field . " between ? and ?", array($start, $end));
                 break;
             case 'like':
             default:
-                $this->_query->addWhere($field . " LIKE ?", "%" . $filter . "%");
+                $this->_query->$func($field . " LIKE ?", "%" . $filter . "%");
                 break;
         }
         
