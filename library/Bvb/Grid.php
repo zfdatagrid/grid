@@ -367,7 +367,7 @@ abstract class Bvb_Grid
     /**
      * @param $object
      */
-    function query ($object)
+    public function query ($object)
     {
 
         if ( $object instanceof Zend_Db_Select ) {
@@ -390,7 +390,7 @@ abstract class Bvb_Grid
      *
      * @param $source
      */
-    function setSource (Bvb_Grid_Source_SourceInterface $source)
+    public function setSource (Bvb_Grid_Source_SourceInterface $source)
     {
 
         $this->_source = $source;
@@ -418,7 +418,7 @@ abstract class Bvb_Grid
      * Usally is lib or library
      * @param $dir
      */
-    function setLibraryDir ($dir)
+    public function setLibraryDir ($dir)
     {
         $this->_libraryDir = $dir;
         return $this;
@@ -428,7 +428,7 @@ abstract class Bvb_Grid
     /**
      * Returns the actual library path
      */
-    function getLibraryDir ()
+    public function getLibraryDir ()
     {
         return $this->_libraryDir;
     }
@@ -438,7 +438,7 @@ abstract class Bvb_Grid
      * Sets grid cache
      * @param bool|array $cache
      */
-    function setCache ($cache)
+    public function setCache ($cache)
     {
 
         if ( $cache == false || (is_array($cache) && isset($cache['use']) && $cache['use'] == 0) ) {
@@ -456,7 +456,7 @@ abstract class Bvb_Grid
     }
 
 
-    function getCache ()
+    public function getCache ()
     {
         return $this->_cache;
     }
@@ -465,7 +465,7 @@ abstract class Bvb_Grid
     /**
      * Returns the actual source object
      */
-    function getSource ()
+    public function getSource ()
     {
         return $this->_source;
     }
@@ -487,7 +487,7 @@ abstract class Bvb_Grid
      *
      * @param array $data
      */
-    function __construct ($options)
+    public function __construct ($options)
     {
 
         if ( ! $this instanceof Bvb_Grid_Deploy_DeployInterface ) {
@@ -597,7 +597,7 @@ abstract class Bvb_Grid
     }
 
 
-    function getCharEncoding ()
+    public function getCharEncoding ()
     {
         return $this->_charEncoding;
     }
@@ -735,7 +735,7 @@ abstract class Bvb_Grid
      * Set option hidden=1 on several columns
      * @param $columns
      */
-    function setColumnsHidden (array $columns)
+    public function setColumnsHidden (array $columns)
     {
         foreach ( $columns as $column ) {
             $this->updateColumn($column, array('hidden' => 1));
@@ -928,7 +928,7 @@ abstract class Bvb_Grid
     }
 
 
-    function getFilterOp ($field, $filter)
+    public function getFilterOp ($field, $filter)
     {
 
         if ( ! isset($this->_data['fields'][$field]['searchType']) ) {
@@ -2147,7 +2147,7 @@ abstract class Bvb_Grid
      * Returns a field and is options
      * @param $field
      */
-    function getField ($field)
+    public function getField ($field)
     {
         return $this->_data['fields'][$field];
     }
@@ -2158,7 +2158,7 @@ abstract class Bvb_Grid
      *Optional param returns also fields options
      * @param $returnOptions
      */
-    function getFields ($returnOptions = false)
+    public function getFields ($returnOptions = false)
     {
 
         if ( false !== $returnOptions ) {
@@ -2240,7 +2240,7 @@ abstract class Bvb_Grid
      * Returns the grid version
      * @return string
      */
-    public function getVersion ()
+    public static function getVersion ()
     {
         return '$Rev$';
         #return self::VERSION;
@@ -2537,7 +2537,7 @@ abstract class Bvb_Grid
      * @param array $options
      * @return unknown
      */
-    function setTemplateParams (array $options)
+    public function setTemplateParams (array $options)
     {
         $this->_templateParams = $options;
         return $this;
@@ -2550,7 +2550,7 @@ abstract class Bvb_Grid
      * @param $value
      */
 
-    function addTemplateParam ($name, $value)
+    public function addTemplateParam ($name, $value)
     {
         $this->_templateParams[$name] = $value;
         return $this;
@@ -2562,7 +2562,7 @@ abstract class Bvb_Grid
      * @param array $options
      * @return $this
      */
-    function addTemplateParams (array $options)
+    public function addTemplateParams (array $options)
     {
 
         $this->_templateParams = array_merge($this->_templateParams, $options);
@@ -2574,7 +2574,7 @@ abstract class Bvb_Grid
     /**
      * Returns template info defined by the user
      */
-    function getTemplateParams ()
+    public function getTemplateParams ()
     {
         return $this->_templateParams;
     }
@@ -2585,7 +2585,7 @@ abstract class Bvb_Grid
      * @param string $column
      * @return self
      */
-    function resetColumn ($column)
+    public function resetColumn ($column)
     {
         $support = array();
         $support[] = $this->_data['fields']['title'];
@@ -2599,7 +2599,7 @@ abstract class Bvb_Grid
      * Reset options for several columns
      * @param $columns
      */
-    function resetColumns (array $columns)
+    public function resetColumns (array $columns)
     {
         foreach ( $columns as $column ) {
             $support = array();
@@ -2615,7 +2615,7 @@ abstract class Bvb_Grid
     /**
      * Some debug info
      */
-    function debug ($returnSerialized = false)
+    public function debug ($returnSerialized = false)
     {
         $result = array();
         $result['fields'] = $this->getFields(true);
@@ -2633,28 +2633,28 @@ abstract class Bvb_Grid
     }
 
 
-    function setGridColumns (array $columns)
+    public function setGridColumns (array $columns)
     {
         $this->_gridColumns = $columns;
         return $this;
     }
 
 
-    function addGridColumns (array $columns)
+    public function addGridColumns (array $columns)
     {
         $this->_gridColumns = array_merge($this->_gridColumns, $columns);
         return $this;
     }
 
 
-    function setDetailColumns ($columns = array())
+    public function setDetailColumns ($columns = array())
     {
         $this->_detailColumns = $columns;
         return $this;
     }
 
 
-    function addDetailColumns (array $columns)
+    public function addDetailColumns (array $columns)
     {
         $this->_detailColumns = array_merge($this->_detailColumns, $columns);
         return $this;
@@ -2666,7 +2666,7 @@ abstract class Bvb_Grid
      *
      * @return string
      */
-    function getPkFromUrl ()
+    public function getPkFromUrl ()
     {
         if ( ! $this->getParam('comm') ) {
             return array();
@@ -2705,13 +2705,13 @@ abstract class Bvb_Grid
      * @param $param
      * @param $default
      */
-    function getParam ($param, $default = false)
+    public function getParam ($param, $default = false)
     {
         return isset($this->_ctrlParams[$param . $this->getGridId()]) ? $this->_ctrlParams[$param . $this->getGridId()] : $default;
     }
 
 
-    function getAllParams ()
+    public function getAllParams ()
     {
         return $this->_ctrlParams;
     }
@@ -2732,7 +2732,7 @@ abstract class Bvb_Grid
      * @param $param
      * @param $value
      */
-    function setParam ($param, $value)
+    public function setParam ($param, $value)
     {
         $this->_ctrlParams[$param] = $value;
         return $this;
@@ -2743,41 +2743,41 @@ abstract class Bvb_Grid
      * Remove a param
      * @param $param
      */
-    function removeParam ($param)
+    public function removeParam ($param)
     {
         unset($this->_ctrlParams[$param]);
         return $this;
     }
 
 
-    function removeAllParams ()
+    public function removeAllParams ()
     {
         $this->_ctrlParams = array();
         return $this;
     }
 
 
-    function setParams (array $params)
+    public function setParams (array $params)
     {
         $this->_ctrlParams = $params;
         return $this;
     }
 
 
-    function setExport (array $export)
+    public function setExport (array $export)
     {
         $this->_export = $export;
         return $this;
     }
 
 
-    function getExport ()
+    public function getExport ()
     {
         return $this->_export;
     }
 
 
-    function setSqlExp (array $exp)
+    public function setSqlExp (array $exp)
     {
 
         $this->_info['sqlexp'] = $exp;
