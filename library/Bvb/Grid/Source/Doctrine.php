@@ -178,6 +178,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     public function execute()
     {
         $newQuery = clone $this->_query;
+        
         $results = $newQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
 
         $newArray = $this->_cleanQueryResults($results);
@@ -405,6 +406,16 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                     $newOrderBys[] = $parts;
                 }
             }
+            
+            /**
+             * FIX : #215
+             * 
+             * This function seems to be needed to only return the
+             * first order, even if more than one is present
+             * 
+             * @see Bvb_Grid_Source_Zend_Select::getSelectOrder()
+             */
+            $newOrderBys = $newOrderBys[0];
         }
 
         return $newOrderBys;
