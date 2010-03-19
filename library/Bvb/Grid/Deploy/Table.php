@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public $templateInfo;
 
     /**
-     * If the form has been submited
+     * If the form has been submitted
      *
      * @var bool
      */
@@ -105,7 +105,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected $double_tables = 0;
 
     /**
-     * Set if form vaidation failed
+     * Set if form validation failed
      *
      * @var bool
      */
@@ -179,9 +179,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected $_crudTable;
 
 
+    /**
+     * Options for CRUD operations
+     * @var unknown_type
+     */
     protected $_crudOptions = array();
 
 
+    /**
+     * If data should be saved or not into the source
+     * @var unknown_type
+     */
     protected $_crudTableOptions = array('add' => 1, 'edit' => 1, 'delete' => 1);
 
     /**
@@ -210,15 +218,29 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected $_renderDeploy = array();
 
 
+    /**
+     * CSS classes to be used
+     * @var unknown_type
+     */
     protected $_cssClasses = array('odd' => 'alt', 'even' => '');
 
+    /**
+     * Definitions from form
+     * May contain data being edited, what operation is beiing performed
+     * @var unknown_type
+     */
     protected $_formSettings = array();
 
+    /**
+     * If the user should be redirected to a confirmation page
+     * before a record being deleted or if there should be a popup
+     * @var unknown_type
+     */
     protected $_deleteConfirmationPage = false;
 
 
     /**
-     * To edit, add, or delete records, a user must be authenticated, so we instanciate
+     * To edit, add, or delete records, a user must be authenticated, so we instantiate
      * it here.
      *
      * @param array $data
@@ -262,8 +284,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->allowEdit = 1;
         }
 
-        // IF a user can edit or delete data we must instanciate the crypt classe.
-        // This is an extra-security step.
         if ( $this->allowEdit == 1 || $this->allowDelete ) {
             $dec = $this->getParam('comm');
             $this->_comm = $dec;
@@ -485,6 +505,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
+    /**
+     * Remove unneeded form inputs
+     * @param  $post
+     * @param  $extra
+     */
     protected function _removeFormParams ($post, $extra = array())
     {
 
@@ -506,7 +531,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     /**
      * Remove the record from the table
-     * Don't forget to see if the user as set an "extra" WHERE.
      *
      * @param string $sql
      * @param string $user
@@ -726,7 +750,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
     /**
-     * Buil Table titles.
+     * Build Table titles.
      *
      * @param array $titles
      * @return string
@@ -743,14 +767,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //The field that is being ordered
             $orderField = $order[0];
 
-            //The oposite order
+            //The opposite order
             $order = strtolower($order2[0]);
         }
 
         //Lets get the images for defining the order
         $images = $this->_temp['table']->images($this->getImagesUrl());
 
-        //Iniciate titles template
+        //Initiate titles template
         $grid = $this->_temp['table']->titlesStart();
 
         if ( $orderField === null ) {
@@ -850,7 +874,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
     /**
-     * Buil the table
+     * Build the table
      *
      * @param array $grids | db results
      * @return unknown
@@ -981,7 +1005,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
     /**
-     * Biuild the table that handles the query result from sql expressions
+     * Build the table that handles the query result from sql expressions
      *
      * @param array $sql
      * @return unknown
@@ -1430,6 +1454,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
+    /**
+     * Combines all parts from the output
+     * To deploy or to render()
+     * @param unknown_type $deploy
+     */
     private function _buildGridRender ($deploy = true)
     {
         $bHeader = self::_buildExtraRows('beforeHeader');
@@ -1469,7 +1498,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
     /**
-     * Render parts os the grid
+     * Render parts of the grid
      * @param $part
      * @param $appendGlobal
      */
@@ -1495,7 +1524,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function __toString ()
     {
         if ( is_null($this->_deploymentContent) ) {
-            die('You must explicity call the deploy() method before printing the object');
+            die('You must explicitly call the deploy() method before printing the object');
             # self::deploy();
         }
         return $this->_deploymentContent;
@@ -1622,7 +1651,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
     /**
      *
-     *@var Bvb_Grid_Form
+     * @var Bvb_Grid_Form
      * @return unknown
      */
     public function setForm ($crud)
@@ -1797,7 +1826,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
     /**
      * Field type on the filters area. If the field type is enum, build the options
-     * Also, we first need to check if the user has defined values to presente.
+     * Also, we first need to check if the user has defined values to present.
      * If set, this values override the others
      *
      * @param string $campo
@@ -2018,6 +2047,10 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     }
 
 
+    /**
+     * Adds extra rows to the grid.
+     * @param Bvb_Grid_Extra_Rows $rows
+     */
     public function addExtraRows (Bvb_Grid_Extra_Rows $rows)
     {
         $rows = $this->_object2array($rows);
@@ -2027,6 +2060,10 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     }
 
 
+    /**
+     * Build extra rows
+     * @param $position
+     */
     protected function _buildExtraRows ($position)
     {
 
@@ -2076,6 +2113,11 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     }
 
 
+    /**
+     * Defines the default classes to be used on odd and even td
+     * @param string $odd
+     * @param string $even
+     */
     public function setRowAltClasses ($odd, $even = '')
     {
         $this->_cssClasses = array('odd' => $odd, 'even' => $even);
@@ -2112,7 +2154,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
 
     /**
-     * Return action action fro form
+     * Return actions from the form
      */
     public function getFormSettings ()
     {
@@ -2132,6 +2174,10 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         return $this;
     }
 
+    /**
+     * Defines Images location
+     * @param $url
+     */
     public function setImagesUrl($url)
     {
         if(!is_string($url))
@@ -2142,6 +2188,9 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         return $this;
     }
 
+    /**
+     * Returns the actual URL images location
+     */
     public function getImagesUrl()
     {
         return $this->_imagesUrl;
