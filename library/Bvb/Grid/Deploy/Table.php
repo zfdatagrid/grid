@@ -1950,34 +1950,29 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      * Apply config options
      * @param $options
      */
-    protected function _applyConfigOptions ($options, $final = false)
+    protected function _applyConfigOptions ($options)
     {
 
-        if ( $final == false ) {
-            $this->_deployOptions = $options;
+        $this->_deployOptions = $options;
 
-            if ( isset($this->_deployOptions['templateDir']) ) {
+        if ( isset($this->_deployOptions['templateDir']) ) {
 
-                $this->_deployOptions['templateDir'] = (array) $this->_deployOptions['templateDir'];
+            $this->_deployOptions['templateDir'] = (array) $this->_deployOptions['templateDir'];
 
-                foreach ( $this->_deployOptions['templateDir'] as $templates ) {
-                    $temp = $templates;
-                    $temp = str_replace('_', '/', $temp);
-                    $this->addTemplateDir($temp, $templates, 'table');
-                }
+            foreach ( $this->_deployOptions['templateDir'] as $templates ) {
+                $temp = $templates;
+                $temp = str_replace('_', '/', $temp);
+                $this->addTemplateDir($temp, $templates, 'table');
             }
-
-        } else {
-
-            if ( isset($this->_deployOptions['imagesUrl']) ) {
-                $this->setImagesUrl($this->_deployOptions['imagesUrl']);
-            }
-
-            if ( isset($this->_deployOptions['template']) ) {
-                $this->setTemplate($this->_deployOptions['template'], 'table');
-            }
+        }
 
 
+        if ( isset($this->_deployOptions['imagesUrl']) ) {
+            $this->setImagesUrl($this->_deployOptions['imagesUrl']);
+        }
+
+        if ( isset($this->_deployOptions['template']) ) {
+            $this->setTemplate($this->_deployOptions['template'], 'table');
         }
 
         return true;
