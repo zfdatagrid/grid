@@ -168,6 +168,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
         #$form->addElement('text','my');
 
+
+
         $grid->setForm($form);
 
         $this->view->pages = $grid->deploy();
@@ -187,6 +189,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
     public function feedAction ()
     {
+
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Xml('http://zfdatagrid.com/feed/', 'channel,item'));
 
@@ -216,12 +219,10 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
+
+
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
-
-        $grid->updateColumn('Population',array('format'=>array('currency','pt_PT')));
-
-        $grid->updateColumn('Continent',array('title' =>'Number', 'class' => 'width_100'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
@@ -231,6 +232,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $this->render('index');
     }
+
 
     /**
      * The 'most' basic example.
@@ -295,15 +297,20 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$form->setOnAddForce(array('next'=>'1'));
         #$form->setOnDeleteAddCondition(array('next'=>'11'));
 
+
+
         #$form->setAllowedFields(array('times','nexst'));
         #$form->setDisallowedFields(array('time','next'));
         #$form->setFieldsBasedOnQuery(false);
+
+
 
         #$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
         //$form->setIsPerformCrudAllowedForEdition(true);
         //$form->setIsPerformCrudAllowedForDeletion(false);
         //$grid->setDeleteConfirmationPage(true);
+
 
 
         $grid->setForm($form);
@@ -400,7 +407,9 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
-/**
+
+
+    /**
      * If you don't like to work with array when adding columns, you can work by dereferencing objects
      *
      */

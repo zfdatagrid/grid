@@ -58,6 +58,7 @@ td input:focus,td textarea:focus {
 table.borders {
 	border: 2px solid #FFa500;
 	border-collapse: collapse;
+	width:100%;
 }
 
 body {
