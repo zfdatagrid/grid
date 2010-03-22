@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
+class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_SourceInterface
 {
 
     protected $_select;
@@ -752,6 +752,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
         $final = array();
         $form = array();
 
+        $return = array();
+
         foreach ( $cols as $column => $detail ) {
 
             $label = ucwords(str_replace('_', ' ', $column));
@@ -803,7 +805,8 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
                         $final['values'][$column][$field[$field1]] = $field[$field2];
                     }
 
-                    $form['elements'][$column] = array('select', array('multiOptions' => $final['values'][$column], 'label' => $label));
+                    $return[$column] = array('type' => 'select', 'label' => $label, 'default' => $final['values'][$column]);
+
 
                     $next = true;
 
@@ -823,7 +826,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('select', array('multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
+                $return[$column] = array('type' => 'select', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => $options);
 
                 continue;
             }
@@ -836,8 +839,7 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
                     $options[$match] = ucfirst($match);
                 }
 
-                $form['elements'][$column] = array('multiCheckbox', array('multiOptions' => $options, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'label' => $label));
-
+                $return[$column] = array('type' => 'multiSelect', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => $options);
                 continue;
             }
 
@@ -846,21 +848,21 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
                 case 'varchar':
                 case 'char':
                     $length = $detail['LENGTH'];
-                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $return[$column] = array('type' => 'smallText', 'length' => $length, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
                 case 'date':
-                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $return[$column] = array('type' => 'date', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
                 case 'datetime':
                 case 'timestamp':
-                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $return[$column] = array('type' => 'datetime', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
                 case 'smalltext':
-                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    $return[$column] = array('type' => 'longtext', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'int':
@@ -869,13 +871,13 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
                 case 'smallint':
                 case 'tinyint':
                     $isZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
-                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $return[$column] = array('type' => 'number', 'label' => $label, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'float':
                 case 'decimal':
                 case 'double':
-                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'value' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : "")));
+                    $return[$column] = array('type' => 'decimal', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 default:
@@ -883,7 +885,14 @@ class Bvb_Grid_Source_Zend_Select implements Bvb_Grid_Source_SourceInterface
             }
         }
 
-        return $form;
+
+        echo "<pre>";
+
+        print_r($return);
+
+        die();
+
+        return $this->buildFormElementsFromArray($return);
     }
 
 
