@@ -401,11 +401,15 @@ abstract class Bvb_Grid
         $this->_crudTable = $this->_data['table'];
 
         $fields = $this->getSource()->buildFields();
+
         foreach ( $fields as $key => $field ) {
             $this->updateColumn($key, $field);
         }
 
         $this->_allFieldsAdded = true;
+
+        //Apply options to the fields
+        $this->_applyOptionsToFields();
 
         return $this;
     }
@@ -523,8 +527,6 @@ abstract class Bvb_Grid
         // Add the formatter fir for fields content
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
-        //Apply options to the fields
-        $this->_applyOptionsToFields();
 
         $deploy = explode('_', get_class($this));
         $this->_deployName = strtolower(end($deploy));
