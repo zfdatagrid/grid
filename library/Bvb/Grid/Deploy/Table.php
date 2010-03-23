@@ -1432,6 +1432,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $gridId = $this->getGridId();
 
         if ( $this->getParam('gridmod') == 'ajax' && $this->getInfo("ajax") !== false ) {
+
+            $layout = Zend_Layout::getMvcInstance();
+            if ( $layout instanceof Zend_Layout ) {
+                $layout->disableLayout();
+            }
+
+
             $response = Zend_Controller_Front::getInstance()->getResponse();
             $response->clearBody();
             $response->setBody(implode($this->_renderDeploy));
@@ -1544,23 +1551,22 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( $this->allowDelete == 1 ) {
 
-            $script .= " function _" . $this->getGridId() . "confirmDel(msg, url)
+            $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         {
             if(confirm(msg))
             {
             ";
             if ( $useAjax == 1 ) {
-                $script .= "window.location = '" . $this->_baseUrl . "/'+url.replace('/gridmod" . $this->getGridId() . "/ajax','');";
+                $script .= "    window.location = '" . $this->_baseUrl . "/'+url.replace('/gridmod" . $this->getGridId() . "/ajax','');";
             } else {
-                $script .= "window.location = url;";
+                $script .= "    window.location = url;";
             }
 
             $script .= "
-
             }else{
                 return false;
             }
-        }";
+        }\n\n";
 
         }
         if ( $useAjax == 1 ) {
@@ -1616,27 +1622,29 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
                 return false;
             }
         }
-    var Ajax = \"1\";
-    var fieldsArray = fields.split(\",\");
-    var filtro = new Array;
 
-    for (var i = 0; i < fieldsArray.length -1; i++)
-    {
-        value = document.getElementById(fieldsArray[i]).value;\n";
-            $script .= " value = value.replace(/[\"]/,''); ";
-            $script .= " value = value.replace(/[\\\]/,''); ";
-            $script .= " fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); ";
-            $script .= "\nfiltro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
-    }
 
-    filtro = \"{\"+filtro+\"}\";
-    filtro = escape(filtro);
+        var Ajax = \"1\";
+        var fieldsArray = fields.split(\",\");
+        var filtro = new Array;
+
+        for (var i = 0; i < fieldsArray.length -1; i++)
+        {
+            value = document.getElementById(fieldsArray[i]).value;\n";
+                $script .= "         value = value.replace(/[\"]/,''); \n";
+                $script .= "         value = value.replace(/[\\\]/,''); \n";
+                $script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
+                $script .= "         filtro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
+        }
+
+        filtro = \"{\"+filtro+\"}\";
+        filtro = escape(filtro);
     ";
 
             if ( $useAjax == 1 ) {
-                $script .= "gridAjax('{$this->getInfo("ajax")}',url+'/filters{$this->getGridId()}/'+filtro);";
+                $script .= "    gridAjax('{$this->getInfo("ajax")}',url+'/filters{$this->getGridId()}/'+filtro);";
             } else {
-                $script .= "window.location=url+'/filters{$this->getGridId()}/'+filtro;";
+                $script .= "    window.location=url+'/filters{$this->getGridId()}/'+filtro;";
             }
         }
         $script .= "
