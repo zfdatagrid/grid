@@ -11,10 +11,12 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package   Bvb_Grid
+ * @category  Grid
  * @author    Bento Vilas Boas <geral@petala-azul.com>
- * @copyright ZFDatagrid 2010
+ * @copyright 2010 ZFDatagrid
  * @license   http://www.petala-azul.com/bsd.txt   New BSD License
  * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 abstract class Bvb_Grid
@@ -364,6 +366,7 @@ abstract class Bvb_Grid
     /**
      * Backwards compatibility
      * @param $object
+     * @return Bvb_Grid
      */
     public function query ($object)
     {
@@ -386,7 +389,8 @@ abstract class Bvb_Grid
      *
      * Bvb_Grid_Source_*
      *
-     * @param $source
+     * @param Bvb_Grid_Source_SourceInterface $source
+     * @return Bvb_Grid
      */
     public function setSource (Bvb_Grid_Source_SourceInterface $source)
     {
@@ -419,6 +423,7 @@ abstract class Bvb_Grid
      * The path where we can find the library
      * Usually is lib or library
      * @param $dir
+     * @return Bvb_Grid
      */
     public function setLibraryDir ($dir)
     {
@@ -539,7 +544,7 @@ abstract class Bvb_Grid
      *
      * @param Zend_View_Interface $view view object to use
      *
-     * @return Bvb_Grid_Deploy_JqGrid
+     * @return Bvb_Grid
      */
     public function setView (Zend_View_Interface $view = null)
     {
@@ -808,6 +813,16 @@ abstract class Bvb_Grid
      * @param $number
      */
     public function setPagination ($number = 15)
+    {
+        $this->setNumberRecordsPerPage($number);
+        return $this;
+    }
+
+    /**
+     * Number of records to show per page
+     * @param $number
+     */
+    public function setNumberRecordsPerPage($number = 15)
     {
         $this->_pagination = (int) $number;
         return $this;
@@ -1113,7 +1128,6 @@ abstract class Bvb_Grid
      */
     protected function _buildFilters ()
     {
-
         $return = array();
         if ( $this->getInfo('noFilters') == 1 ) {
             return false;
@@ -1139,7 +1153,6 @@ abstract class Bvb_Grid
 
             if ( $this->_displayField($nf) ) {
 
-
                 if ( @array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
                     $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
@@ -1147,7 +1160,6 @@ abstract class Bvb_Grid
                 }
             }
         }
-
         for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
             if ( $this->_extraFields[$i]['position'] == 'right' ) {
                 $return[] = array('type' => 'extraField', 'class' => @$this->_template['classes']['filter'], 'position' => 'right');
@@ -1155,6 +1167,7 @@ abstract class Bvb_Grid
         }
 
         return $return;
+
     }
 
 
@@ -1928,7 +1941,6 @@ abstract class Bvb_Grid
             }
         }
 
-
         $this->_buildDefaultFilters();
 
         // Validate table fields, make sure they exist...
@@ -2474,7 +2486,7 @@ abstract class Bvb_Grid
         }
 
         if ( isset($this->_options['template'][$name]) && is_array($this->_options['template'][$name]) ) {
-            $this->setTemplateParams($this->_options['template'][$name]);
+            $this->addTemplateParams($this->_options['template'][$name]);
         }
 
         if ( isset($this->_options['grid']['formatter']) ) {
@@ -2779,6 +2791,7 @@ abstract class Bvb_Grid
      * Defines which export options are available
      * Ex: array('word','pdf');
      * @param array $export
+     * @return Bvb_Grid
      */
     public function setExport (array $export)
     {
@@ -2789,6 +2802,7 @@ abstract class Bvb_Grid
 
     /**
      * Returns the currently setted export methods
+     * @return array
      */
     public function getExport ()
     {
@@ -2799,6 +2813,7 @@ abstract class Bvb_Grid
     /**
      * Defines SQL expressions
      * @param array $exp
+     * @return Bvb_Grid
      */
     public function setSqlExp (array $exp)
     {
