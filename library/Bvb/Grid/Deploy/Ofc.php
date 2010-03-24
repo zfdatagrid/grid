@@ -15,7 +15,7 @@
  * @copyright  Copyright (c) Bento Vilas Boas (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    $Id$
-  * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
 class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
@@ -288,12 +288,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
         "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"} );
 
-        public function open_flash_chart_data()
+         function open_flash_chart_data()
         {
             return JSON.stringify(data);
         }
 
-        public function findSWF(movieName) {
+         function findSWF(movieName) {
           if (navigator.appName.indexOf("Microsoft")!= -1) {
             return window[movieName];
           } else {
