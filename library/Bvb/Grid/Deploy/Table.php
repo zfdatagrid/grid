@@ -1910,6 +1910,10 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         } else {
             $attr['style'] = " width:95% ";
         }
+        if ( isset($opcoes['class']) ) {
+            $attr['class'] = $opcoes['class'];
+        }
+
 
         $attr['id'] = "filter_" . $this->getGridId() . $campo;
 
