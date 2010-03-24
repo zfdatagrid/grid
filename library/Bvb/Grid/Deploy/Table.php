@@ -1225,6 +1225,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function deploy ()
     {
 
+        if ( $this->allowDelete == 1 || $this->allowEdit == 1 || $this->allowAdd == 1 ) {
+            $this->setAjax(false);
+        }
+
         $this->_view = $this->getView();
 
         $this->_processForm();
@@ -1242,6 +1246,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_printScript();
 
         $images = $this->_temp['table']->images($this->getImagesUrl());
+
 
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false) ) {
 
@@ -1317,7 +1322,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $removeParams = array('add', 'edit', 'comm');
-            $url = $this->getUrl($removeParams);
+            $url = $this->getUrl($removeParams,false);
 
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
         }
@@ -1403,7 +1408,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     $this->_render['detail'] .= str_replace('{{button}}', $buttonRemove . ' ' . $buttonCancel, $this->_temp['table']->detailDelete());
                 } else {
-                    $this->_render['detail'] .= str_replace(array('{{url}}', '{{return}}'), array($this->getUrl(array('gridDetail', 'comm')), $this->__('Return')), $this->_temp['table']->detailEnd());
+                    $this->_render['detail'] .= str_replace(array('{{url}}', '{{return}}'), array($this->getUrl(array('gridDetail', 'comm'),false), $this->__('Return')), $this->_temp['table']->detailEnd());
                 }
 
                 $this->_render['detail'] .= $this->_temp['table']->globalEnd();
@@ -1664,6 +1669,9 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
      */
     public function setForm ($crud)
     {
+        //Disable ajax for CRUD operations
+        $this->setAjax(false);
+
 
         $oldElements = $crud->getElements();
 
@@ -1910,6 +1918,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         } else {
             $attr['style'] = " width:95% ";
         }
+
         if ( isset($opcoes['class']) ) {
             $attr['class'] = $opcoes['class'];
         }

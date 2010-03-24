@@ -1014,7 +1014,7 @@ abstract class Bvb_Grid
      * @param array|string $situation
      * @return string
      */
-    public function getUrl ($situation = '')
+    public function getUrl ($situation = '',$allowAjax=true)
     {
 
         //this array the a list of params that name changes
@@ -1077,7 +1077,7 @@ abstract class Bvb_Grid
         }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
-        if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false ) {
+        if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax ==true ) {
             return $urlPrefix . $params['controller'] . $action . $url . "/gridmod/ajax";
         } else {
             return $this->_baseUrl . "/" . $urlPrefix . $params['controller'] . $action . $url;
