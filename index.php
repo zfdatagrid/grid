@@ -49,7 +49,6 @@ $frontController->setDefaultControllerName('site');
 
 
 // Leave 'Database' options empty to rely on Zend_Db_Table default adapter
-
 $options = array(
     'jquery_path' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
     'plugins' => array('Variables',
