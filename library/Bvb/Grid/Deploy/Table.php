@@ -1859,6 +1859,9 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
             if ( isset($this->_data['fields'][$distinctField]['field']) ) {
                 $distinctField = $this->_data['fields'][$distinctField]['field'];
             }
+            if ( isset($this->_data['fields'][$distinctValue]['field']) ) {
+                $distinctValue = $this->_data['fields'][$distinctValue]['field'];
+            }
 
             $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue);
 
