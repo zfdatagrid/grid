@@ -1111,7 +1111,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ( $actual != 1 ) {
 
             if ( $this->getInfo("ajax") !== false ) {
-                $pag = " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:agridAjax('{$this->getInfo("ajax")}','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
+                $pag = " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
 
             } else {
 
@@ -1224,6 +1224,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     public function deploy ()
     {
+
+
+        if($this->getSource() === null)
+        {
+            throw new Bvb_Grid_Exception('Please Specify your source');
+        }
+
 
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || $this->allowAdd == 1 ) {
             $this->setAjax(false);
