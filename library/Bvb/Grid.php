@@ -322,7 +322,7 @@ abstract class Bvb_Grid
      *
      * @var Bvb_Grid_Source_Interface
      */
-    private $_source;
+    private $_source = null;
 
     /**
      * Last name from deploy class (table|pdf|csv|etc...)
@@ -1137,9 +1137,9 @@ abstract class Bvb_Grid
 
         $tcampos = count($data);
 
-        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
-            if ( $this->_extraFields[$i]['position'] == 'left' ) {
-                $return[] = array('type' => 'extraField', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'position' => 'left');
+        foreach ( $this->_extraFields as $key => $value ) {
+            if ( $value['position'] == 'left' ) {
+                $return[$key] = array('type' => 'extraField',  'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'position' => 'left');
             }
         }
 
@@ -1156,13 +1156,15 @@ abstract class Bvb_Grid
                 if ( @array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
                     $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
-                    $return[] = array('type' => 'field', 'class' => @$this->_template['classes']['filter'], 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter'])?$this->_template['classes']['filter']:'', 'field' => $data[$i]);
                 }
             }
         }
-        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
-            if ( $this->_extraFields[$i]['position'] == 'right' ) {
-                $return[] = array('type' => 'extraField', 'class' => @$this->_template['classes']['filter'], 'position' => 'right');
+
+
+        foreach ( $this->_extraFields as $key => $value ) {
+            if ( $value['position'] == 'right' ) {
+                $return[$key] = array('type' => 'extraField',  'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'position' => 'right');
             }
         }
 
@@ -1220,9 +1222,11 @@ abstract class Bvb_Grid
 
         $tcampos = count($this->_fields);
 
-        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
-            if ( $this->_extraFields[$i]['position'] == 'left' ) {
-                $return[$this->_extraFields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extraFields[$i]['name']), 'position' => 'left');
+        foreach ($this->_extraFields as $key=>$value)
+        {
+            if ( $value['position'] == 'left' ) {
+                $title =
+                $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title'])?$value['title']:$value['name']), 'position' => 'left');
             }
         }
 
@@ -1280,9 +1284,10 @@ abstract class Bvb_Grid
             }
         }
 
-        for ( $i = 0; $i < count($this->_extraFields); $i ++ ) {
-            if ( $this->_extraFields[$i]['position'] == 'right' ) {
-                $return[$this->_extraFields[$i]['name']] = array('type' => 'extraField', 'value' => $this->__($this->_extraFields[$i]['name']), 'position' => 'right');
+      foreach ($this->_extraFields as $key=>$value)
+        {
+            if ( $value['position'] == 'right' ) {
+                $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title'])?$value['title']:$value['name']), 'position' => 'right');
             }
         }
 
@@ -1890,6 +1895,11 @@ abstract class Bvb_Grid
     public function deploy ()
     {
 
+         if($this->getSource() === null)
+        {
+            throw new Bvb_Grid_Exception('Please Specify your source');
+        }
+
         // apply additional configuration
         $this->_runConfigCallbacks();
 
@@ -2220,11 +2230,26 @@ abstract class Bvb_Grid
         }
 
         foreach ( $extra_fields as $value ) {
-            if ( $value instanceof Bvb_Grid_Extra_Column ) {
-                $value = $this->_object2array($value);
-                array_push($final, $value['_field']);
+            if ( !$value instanceof Bvb_Grid_Extra_Column ) {
+                throw new Bvb_Grid_Exception($value.' must be na instance of Bvb_Grid_Extra_Column');
             }
+                $value = $this->_object2array($value);
+
+                if(!isset($value['_field']['name']) || !is_string($value['_field']['name']))
+                {
+                    throw new Bvb_Grid_Exception('You need to define the column name');
+                }
+
+                if(isset($value['_field']['title']) && !is_string($value['_field']['title']))
+                {
+                    throw new Bvb_Grid_Exception('title option must be a string');
+                }
+
+                $final[$value['_field']['name']] = $value['_field'];
+
         }
+
+
         $this->_extraFields = $final;
         return $this;
     }
