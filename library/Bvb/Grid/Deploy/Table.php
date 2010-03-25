@@ -1916,9 +1916,6 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
         $opcoes = array();
 
-        if ( isset($this->_filters[$campo]) ) {
-            $opcoes = $this->_filters[$campo];
-        }
 
         if ( isset($opcoes['style']) ) {
             $attr['style'] = $opcoes['style'];
@@ -1930,6 +1927,9 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
             $attr['class'] = $opcoes['class'];
         }
 
+        if ( isset($this->_filters[$campo]) ) {
+            $opcoes = $this->_filters[$campo];
+        }
 
         $attr['id'] = "filter_" . $this->getGridId() . $campo;
 
