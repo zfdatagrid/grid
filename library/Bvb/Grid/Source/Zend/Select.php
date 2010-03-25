@@ -139,6 +139,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         foreach ( $fields as $field => $value ) {
 
+
             /**
              * Select all fields from the table
              */

@@ -4,7 +4,7 @@ Description
 =========== 
 ZFDatagrid is a Zend Framework component that allows you to create
 data grids from various sources.
-Please see http://www.zfdatagrid.com/features/ for more information
+Please see http://code.google.com/p/zfdatagrid for more information
 
 License
 =======
@@ -12,16 +12,7 @@ ZFDatagrid is released under the New BSD license, see license.txt
 
 Requirements
 ============
-- Zend Framework 1.9 or greater 
-
-Upgrade
-=========
-See upgrade.txt
-
-Changelog
-=========
-See changes.txt
-
+- Zend Framework 1.10 or greater 
 
 Contact
 =======

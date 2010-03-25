@@ -92,7 +92,7 @@ class SiteController extends Zend_Controller_Action
         $filters->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
         $filters->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')));
         $filters->addFilter('HeadOfState');
-        $filters->addFilter('Population');
+        $filters->addFilter('Population',array('style'=>'width:20px;'));
 
         $grid->addFilters($filters);
 
@@ -208,6 +208,19 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
     /**
      * The 'most' basic example.
      */
+    public function openAction ()
+    {
+        $grid = $this->grid();
+
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
+    /**
+     * The 'most' basic example.
+     */
     public function basicAction ()
     {
         $grid = $this->grid();
@@ -218,7 +231,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->setClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
-
 
 
         $grid->setDetailColumns();
@@ -297,6 +309,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$form->setOnAddForce(array('next'=>'1'));
         #$form->setOnDeleteAddCondition(array('next'=>'11'));
 
+         $grid->setDetailColumns();
 
 
         #$form->setAllowedFields(array('times','nexst'));
@@ -304,14 +317,11 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$form->setFieldsBasedOnQuery(false);
 
 
-
         #$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
         //$form->setIsPerformCrudAllowedForEdition(true);
         //$form->setIsPerformCrudAllowedForDeletion(false);
         //$grid->setDeleteConfirmationPage(true);
-
-
 
         $grid->setForm($form);
 
