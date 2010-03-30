@@ -138,12 +138,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $returnFields = array();
 
         foreach ( $fields as $field => $value ) {
-
-
             /**
              * Select all fields from the table
              */
-            if ( $value[1] == '*' ) {
+            if ( (string) $value[1] == '*' ) {
 
                 if ( array_key_exists($value[0], $tables) ) {
                     $tableFields = $this->getDescribeTable($tables[$value[0]]['tableName']);
@@ -156,10 +154,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 }
 
             } else {
-
-                $explode = explode('.', $value[1]);
-                $title = ucwords(str_replace("_", ' ', end($explode)));
-
                 if ( is_object($value[1]) ) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
                     $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[2]);
@@ -170,9 +164,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     $title = ucwords(str_replace('_', ' ', $value[1]));
                     $returnFields[$value[1]] = array('title' => $title, 'field' => $value[0] . '.' . $value[1]);
                 }
-
             }
         }
+
 
         $this->_fields = $returnFields;
 
