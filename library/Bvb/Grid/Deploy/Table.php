@@ -1176,7 +1176,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $images = $this->_temp['table']->images($this->getImagesUrl());
 
-            $this->_render['export'] = $this->_temp['table']->export($this->getExports(), $this->getImagesUrl(), $url, $this->getGridId());
+            $url1 = $url = $this->getUrl(array('start'),false);
+
+            $this->_render['export'] = $this->_temp['table']->export($this->getExports(), $this->getImagesUrl(), $url1, $this->getGridId());
 
 
             if ( (int)$this->getInfo("limit") > 0 ) {
