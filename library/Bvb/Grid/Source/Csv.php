@@ -44,6 +44,8 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
             $num = count($data);
             if ( null !== $columns ) {
 
+                $field = $columns;
+
                 for ( $c = 0; $c < $num; $c ++ ) {
 
                     if ( $c == 0 ) {
