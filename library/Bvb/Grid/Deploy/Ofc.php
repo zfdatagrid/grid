@@ -154,7 +154,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         foreach ( $data as $value ) {
             foreach ( $value as $final ) {
-                $result[$final['field']][] = strip_tags($final['value']);
+                $result[$final['field']][] = is_numeric($final['value']) ? $final['value'] : strip_tags($final['value']);
             }
         }
 
@@ -241,7 +241,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                     $bar->$key($prop);
                 }
 
-                $value = array_map(create_function('$item', ' return (int)$item; '), $result[$value]);
+                $value = array_map(create_function('$item', ' return (float)$item; '), $result[$value]);
 
                 $support = $value;
                 sort($support);
