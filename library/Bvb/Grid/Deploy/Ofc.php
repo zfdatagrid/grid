@@ -115,6 +115,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $_view = null;
 
+    /**
+     * flag to indicate if you will be having more than one chart on a page
+     * @var bool
+     */
+    protected $multiple = true;
+
 
     /*
     * @param array $data
@@ -131,6 +137,15 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::__construct($options);
     }
 
+
+    /**
+     * To use multiples instances per page
+     * @param $flag
+     */
+    public function setMultiple($flag)
+    {
+        $this->multiple = $flag;
+    }
 
     public function deploy ()
     {
@@ -256,7 +271,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $pie = array();
                 if ( $this->_type == 'OFC_Charts_Pie' ) {
                     foreach ( $value as $key => $title ) {
-                        $pie[] = new OFC_Charts_Pie_Value($title, 'iou');
+                        $pie[] = new OFC_Charts_Pie_Value($title, $this->_xLabels[$key]);
                     }
                     $bar->set_values($pie);
                 } else {
@@ -283,26 +298,34 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
 
 
-        $script = '
+         $script = '
         swfobject.embedSWF(
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
-        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"} );
+        "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"},{"z-index":"1","wmode":"transparent"} );
 
-         function open_flash_chart_data()
+        function open_flash_chart_data(id)
         {
-            return JSON.stringify(data);
+            return JSON.stringify(window[id]);
         }
 
-         function findSWF(movieName) {
+        function findSWF(movieName) {
           if (navigator.appName.indexOf("Microsoft")!= -1) {
             return window[movieName];
           } else {
             return document[movieName];
           }
         }
-        var data = ' . $final . '; ';
+        var '. $this->_chartId.' = ' . $final . ';';
 
-        $final = '<div id="' . $this->_chartId . '"></div>';
+        $final = '<div id="' . $this->_chartId . '" >
+        loading...
+        <br/>
+        <p>
+        Please note that this content requires flash player 9.0.0</br>
+        To test for your version of flash, <a href="http://www.bobbyvandersluis.com/swfobject/testsuite_2_1/test_api_getflashplayerversion.html" target="_blank">click here</a>
+        </p>
+        </div>';
+        if(!$this->multiple)$final = '<div style="width: 100%;text-align: center">'.$final.'</div>';
 
         $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
         $this->getView()->headScript()->appendFile($this->_filesLocation['json']);
@@ -323,7 +346,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     public function setChartType ($type, $args = array())
     {
         $this->_type = (string) "OFC_Charts_" . implode('_', array_map('ucwords', explode('_', $type)));
-        ;
+
         $this->_typeArgs = $args;
         return $this;
     }

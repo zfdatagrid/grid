@@ -389,6 +389,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $type = $this->_getParam('type');
 
+
         if ( ! in_array($type, $allowedGraphs) ) {
             $type = 'bar_glass';
         }
@@ -398,7 +399,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid = $this->grid();
         $grid->setExport(array('ofc'));
 
-        $grid->setChartType($type);
+
 
         if ( $type == 'pie' ) {
             $grid->addValues('Population', array('set_colours' => array('#000000', '#999999', '#BBBBBB', '#FFFFFF')));
@@ -413,6 +414,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->setXLabels('Name');
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Population', 'Name', 'GNP', 'SurfaceArea'))->where('Continent=?', 'Europe')->where('Population>?', 5000000)->where(new Zend_Db_Expr('length(Name)<10'))->order(new Zend_Db_Expr('RAND()'))->limit(10)));
+
+        $grid->setChartType($type);
 
         $this->view->pages = $grid->deploy();
         $this->render('index');
