@@ -84,6 +84,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $_title = '';
 
     /**
+     * Chart Title Style
+     * @var string
+     */
+    protected $_style = '';
+
+    /**
      * General Options for Graphs
      * @var array
      */
@@ -178,7 +184,9 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
 
         $graph = new OFC_Chart();
-        $graph->set_title(new OFC_Elements_Title($this->_title));
+        $title = new OFC_Elements_Title($this->_title);
+        $title->set_style($this->_style);
+        $graph->set_title($title);
 
         foreach ( $this->_chartOptions as $key => $value ) {
             $graph->$key($value);
@@ -401,6 +409,13 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
+    public function setTitleStyle ($style)
+    {
+        $this->_style = $style;
+        return $this;
+    }
+
+
     public function setChartOptions (array $options = array())
     {
         $this->_chartOptions = $options;
@@ -469,6 +484,10 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         if ( isset($options['title']) && is_string($options['title']) ) {
             $this->setTitle($options['title']);
+        }
+
+        if ( isset($options['style']) && is_string($options['style']) ) {
+            $this->setTitleStyle($options['style']);
         }
 
         if ( isset($options['type']) && is_string($options['type']) ) {
