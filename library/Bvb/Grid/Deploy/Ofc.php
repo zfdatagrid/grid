@@ -442,6 +442,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
 
+    public function setFlashParams ($flashParams)
+    {
+        $this->_flashParams = $flashParams;
+        return $this;
+    }
+
     protected function _applyConfigOptions ($options)
     {
 
@@ -471,6 +477,10 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         if ( isset($options['dimensions']) && is_array($options['dimensions']) ) {
             $this->setChartDimensions($options['dimensions']['x'], $options['dimensions']['y']);
+        }
+
+        if ( isset($options['flashParams']) && is_string($options['flashParams']) ) {
+            $this->setFlashParams($options['flashParams']);
         }
 
     }
