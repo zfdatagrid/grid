@@ -364,6 +364,13 @@ abstract class Bvb_Grid
 
 
     /**
+     * custom translate instance
+     * @var Zend_Translate
+     */
+    protected $_translator;
+
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
@@ -488,6 +495,16 @@ abstract class Bvb_Grid
     protected function _getDb ()
     {
         return $this->_db;
+    }
+
+    /**
+     * Defines a custom Translator
+     * @param Zend_Translate $translator
+     */
+    public function setTranslator(Zend_Translate $translator)
+    {
+        $this->_translator = $translator;
+        return $this;
     }
 
 
@@ -626,9 +643,12 @@ abstract class Bvb_Grid
             return $message;
         }
 
-        if ( Zend_Registry::isRegistered('Zend_Translate') ) {
+        if ( $this->_translator instanceof Zend_Translate ) {
+            $message = $this->_translator->translate($message);
+        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
             $message = Zend_Registry::get('Zend_Translate')->translate($message);
         }
+
         return $message;
     }
 
@@ -2393,26 +2413,14 @@ abstract class Bvb_Grid
                 $name = $defs;
                 $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
 
-
-
-                if ( Zend_Version::compareVersion('1.8.0') == 1 ) {
-                    if ( Zend_Loader::autoload($className) && method_exists($className, 'getExportDefaults') ) {
-                        // learn the defualt values
-                        $defs = call_user_func(array($className, "getExportDefaults"));
-                    } else {
-                        // there are no defaults, we need at least some caption
-                        $defs = array('caption' => $name);
-                    }
+                if ( Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults') ) {
+                    // learn the defualt values
+                    $defs = call_user_func(array($className, "getExportDefaults"));
                 } else {
-                    if ( Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults') ) {
-                        // learn the defualt values
-                        $defs = call_user_func(array($className, "getExportDefaults"));
-                    } else {
-                        // there are no defaults, we need at least some caption
-                        $defs = array('caption' => $name);
-                    }
-
+                    // there are no defaults, we need at least some caption
+                    $defs = array('caption' => $name);
                 }
+
                 $defs['_class'] = $className;
 
             }
