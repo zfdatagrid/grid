@@ -1818,7 +1818,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
         if ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 1 ) {
             $this->_crudTableOptions['delete'] = 1;
-        } elseif ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
+        } elseif ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 0 ) {
             $this->_crudTableOptions['delete'] = 0;
         }
 
