@@ -220,23 +220,31 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     /**
      * CSS classes to be used
-     * @var unknown_type
+     * @var array
      */
     protected $_cssClasses = array('odd' => 'alt', 'even' => '');
 
     /**
      * Definitions from form
      * May contain data being edited, what operation is beiing performed
-     * @var unknown_type
+     * @var array
      */
     protected $_formSettings = array();
 
     /**
      * If the user should be redirected to a confirmation page
      * before a record being deleted or if there should be a popup
-     * @var unknown_type
+     * @var bool
      */
     protected $_deleteConfirmationPage = false;
+
+    /**
+     * Shows allways all arrows in all fields
+     * or only when a fiel is sorted
+     *
+     * @var bool
+     */
+    protected $_alwaysShowOrderArrows = true;
 
 
     /**
@@ -793,6 +801,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         foreach ( $titles as $title ) {
 
+
             //deal with extra field and template
             if ( $title['type'] == 'extraField' && $title['position'] == 'left' ) {
                 $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
@@ -818,30 +827,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $this->_data['fields'][$title['field']]['order'] = true;
                         }
 
+                        if ( $this->getAlwaysShowOrderArrows() === false ) {
+                            $imgF = explode('_', $this->getParam('order'));
+                            $checkOrder = str_replace('_' . end($imgF), '', $this->getParam('order'));
+
+                            if ( in_array(strtolower(end($imgF)), array('asc', 'desc')) && $checkOrder == $title['field'] ) {
+                                $imgFinal = $images[strtolower(end($imgF))];
+                            } else {
+                                $imgFinal = '';
+                            }
+                        }
+
                         if ($this->getInfo("ajax") !== false ) {
 
 
-                            $link1 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_DESC')\">{$images['desc']}</a>";
-                            $link2 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_ASC')\">{$images['asc']}</a>";
-
-                            if ( ($orderField == $title['field'] && $order == 'asc') || $this->_data['fields'][$title['field']]['order'] == 0 ) {
-                                $link1 = '';
-                            }
-
-                            if ( ($orderField == $title['field'] && $order == 'desc') || $this->_data['fields'][$title['field']]['order'] == 0 ) {
-                                $link2 = '';
-                            }
-
-                            $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
-
-                        } else {
-                            //Replace values in the template
-                            if ( ! array_key_exists('url', $title) ) {
-                                $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
-                            } else {
-
-                                $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_DESC'>{$images['desc']}</a>";
-                                $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_ASC'>{$images['asc']}</a>";
+                            if ( $this->getAlwaysShowOrderArrows() === true ) {
+                                $link1 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_DESC')\">{$images['desc']}</a>";
+                                $link2 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_ASC')\">{$images['asc']}</a>";
 
                                 if ( ($orderField == $title['field'] && $order == 'asc') || $this->_data['fields'][$title['field']]['order'] == 0 ) {
                                     $link1 = '';
@@ -852,6 +854,39 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 }
 
                                 $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
+                            } else {
+                                $grid .= str_replace('{{value}}', "<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . @$title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+
+                            }
+
+                        } else {
+                            //Replace values in the template
+                            if ( ! array_key_exists('url', $title) ) {
+                                $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
+                            } else {
+
+                                if ( $this->getAlwaysShowOrderArrows() === true ) {
+
+                                    $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_DESC'>{$images['desc']}</a>";
+                                    $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_ASC'>{$images['asc']}</a>";
+
+                                    if ( ($orderField == $title['field'] && $order == 'asc') || $this->_data['fields'][$title['field']]['order'] == 0 ) {
+                                        $link1 = '';
+                                    }
+
+                                    if ( ($orderField == $title['field'] && $order == 'desc') || $this->_data['fields'][$title['field']]['order'] == 0 ) {
+                                        $link2 = '';
+                                    }
+
+                                    $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
+
+                                } else {
+
+                                    $grid .= str_replace('{{value}}', "<a href='" . $title['url'] . "'>" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+
+                                }
+
+
                             }
                         }
                     }
@@ -2222,6 +2257,26 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     public function getImagesUrl()
     {
         return $this->_imagesUrl;
+    }
+
+    /**
+     *
+     * Always show arrows on all fields or show only when a field
+     * is sorted
+     *
+     * @param bool $status
+     * @return Bvb_Grid_Deploy_Table
+     */
+    function setAlwaysShowOrderArrows($status)
+    {
+        $this->_alwaysShowOrderArrows = (bool) $status;
+        return $this;
+    }
+
+
+    function getAlwaysShowOrderArrows()
+    {
+        return $this->_alwaysShowOrderArrows;
     }
 }
 
