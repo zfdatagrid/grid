@@ -937,7 +937,10 @@ HTML;
         // add Zend parameters
         $this->setParam('module',$params['module']);
         $this->setParam('controller', $params['controller']);
-        $this->setParam('action', $params['action']);
+
+        if (isset($params['action'])) {
+          $this->setParam('action', $params['action']);
+        }
 
         // number of rows to be shown on page, could be changed in jqGrid
         if (isset($params['rows'])) {

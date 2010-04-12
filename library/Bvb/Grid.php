@@ -1086,7 +1086,8 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( strlen($params['action']) > 0 ) {
+        $action = '';
+        if ( isset($params['action']) ) {
             $action = "/" . $params['action'];
         }
 
