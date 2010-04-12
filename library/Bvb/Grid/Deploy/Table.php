@@ -1517,22 +1517,22 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     private function _buildGridRender ($deploy = true)
     {
-        $bHeader = self::_buildExtraRows('beforeHeader');
-        $bHeader .= self::_buildHeader();
-        $bHeader .= self::_buildExtraRows('afterHeader');
-        $bTitles = self::_buildExtraRows('beforeTitles');
-        $bTitles .= self::_buildTitlesTable(parent::_buildTitles());
-        $bTitles .= self::_buildExtraRows('afterTitles');
-        $bFilters = self::_buildExtraRows('beforeFilters');
-        $bFilters .= self::_buildFiltersTable(parent::_buildFilters());
-        $bFilters .= self::_buildExtraRows('afterFilters');
-        $bGrid = self::_buildGridTable(parent::_buildGrid());
-        $bSqlExp = self::_buildExtraRows('beforeSqlExpTable');
-        $bSqlExp .= self::_buildSqlexpTable(parent::_buildSqlExp());
-        $bSqlExp .= self::_buildExtraRows('afterSqlExpTable');
-        $bPagination = self::_buildExtraRows('beforePagination');
-        $bPagination .= self::_pagination();
-        $bPagination .= self::_buildExtraRows('afterPagination');
+        $bHeader = $this->_buildExtraRows('beforeHeader');
+        $bHeader .= $this->_buildHeader();
+        $bHeader .= $this->_buildExtraRows('afterHeader');
+        $bTitles = $this->_buildExtraRows('beforeTitles');
+        $bTitles .= $this->_buildTitlesTable(parent::_buildTitles());
+        $bTitles .= $this->_buildExtraRows('afterTitles');
+        $bFilters = $this->_buildExtraRows('beforeFilters');
+        $bFilters .= $this->_buildFiltersTable(parent::_buildFilters());
+        $bFilters .= $this->_buildExtraRows('afterFilters');
+        $bGrid = $this->_buildGridTable(parent::_buildGrid());
+        $bSqlExp = $this->_buildExtraRows('beforeSqlExpTable');
+        $bSqlExp .= $this->_buildSqlexpTable(parent::_buildSqlExp());
+        $bSqlExp .= $this->_buildExtraRows('afterSqlExpTable');
+        $bPagination = $this->_buildExtraRows('beforePagination');
+        $bPagination .= $this->_pagination();
+        $bPagination .= $this->_buildExtraRows('afterPagination');
 
         if ( $deploy == true ) {
             $this->_renderDeploy['header'] = $bHeader;
