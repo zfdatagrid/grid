@@ -127,7 +127,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $multiple = true;
 
-
+    protected $_xAxisOptions = array();
     /*
     * @param array $data
     */
@@ -194,7 +194,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         if ( count($this->_xLabels) > 0 ) {
             $x = new OFC_Elements_Axis_X();
-            $x->set_labels_from_array($this->_xLabels);
+            $x_axis_labels = new OFC_Elements_Axis_X_Label_Set();
+            foreach ( $this->_xAxisOptions as $key => $value ) {
+                $x_axis_labels->$key($value);
+            }
+            $x_axis_labels->set_labels($this->_xLabels);
+            $x->set_labels($x_axis_labels);
             foreach ( $this->_xLabelsOptions as $key => $value ) {
                 $x->$key($value);
             }
@@ -473,6 +478,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     {
         $this->_xLegendText = $text;
         $this->_xLegendStyle = $style;
+        return $this;
+    }
+
+    public function setXAxisOptions($xAxisOptions)
+    {
+        $this->_xAxisOptions = $xAxisOptions;
         return $this;
     }
 
