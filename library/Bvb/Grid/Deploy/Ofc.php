@@ -201,6 +201,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $graph->set_x_axis($x);
         }
 
+        if (!empty($this->_xLegendText) && !empty($this->_xLegendStyle)) {
+            $x_legend = new OFC_Elements_Legend_X($this->_xLegendText);
+            $x_legend->set_style($this->_xLegendStyle);
+            $graph->set_x_legend( $x_legend );
+        }
+
 
         $min = 0;
         $max = 0;
@@ -463,6 +469,13 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+    public function setXLegend ($text, $style)
+    {
+        $this->_xLegendText = $text;
+        $this->_xLegendStyle = $style;
+        return $this;
+    }
+
     protected function _applyConfigOptions ($options)
     {
 
@@ -502,6 +515,9 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $this->setFlashParams($options['flashParams']);
         }
 
+        if ( isset($options['xLegend']) && is_array($options['xLegend']) ) {
+            $this->setXLegend($options['xLegend']['text'], $options['xLegend']['style']);
+        }
     }
 
 }
