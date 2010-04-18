@@ -599,7 +599,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_redirect($this->getUrl('comm'));
 
         }
-        catch (Zend_Exception $e) {
+        catch (Exception  $e) {
+            $this->_gridSession->correct = 1;
             $this->_gridSession->messageOk = FALSE;
             $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
         }
@@ -1543,7 +1544,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['pagination'] = $bPagination;
         }
 
-
         $this->_render['header'] = $bHeader;
         $this->_render['titles'] = $bTitles;
         $this->_render['filters'] = $bFilters;
@@ -2278,5 +2278,6 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
     {
         return $this->_alwaysShowOrderArrows;
     }
+
 }
 
