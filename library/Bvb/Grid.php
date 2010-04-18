@@ -1253,17 +1253,6 @@ abstract class Bvb_Grid
 
         $titles = $this->_fields;
 
-        $novaData = array();
-
-        if ( is_array($this->_data['fields']) ) {
-            foreach ( $this->_data['fields'] as $key => $value ) {
-                $nkey = stripos($key, ' AS ') ? substr($key, 0, stripos($key, ' AS ')) : $key;
-                $novaData[$nkey] = $value;
-            }
-        }
-
-        $links = $this->_fields;
-
         if ( ! $this->getParam('noOrder') ) {
             $selectOrder = $this->getSource()->getSelectOrder();
 
@@ -1298,9 +1287,9 @@ abstract class Bvb_Grid
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
                 if ( $noOrder == 1 ) {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $links[$i], 'field' => $links[$i], 'value' => $this->__($this->_titles[$links[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $titles[$i], 'value' => $this->__($titles[$i]));
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => $this->__($this->_titles[$links[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => $this->__($titles[$i]));
                 }
             }
         }
@@ -1572,6 +1561,7 @@ abstract class Bvb_Grid
                     $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
                 }
 
+
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
 
             }
@@ -1612,12 +1602,16 @@ abstract class Bvb_Grid
 
                 if ( $this->_displayField($fields[$is]) ) {
 
+                    if ( isset($this->_data['fields'][$fields[$is]]['translate']) && $this->_data['fields'][$fields[$is]]['translate'] == true ) {
+                        $new_value = $this->__($new_value);
+                    }
+
                     $style = ! isset($this->_data['fields'][$fields[$is]]['style']) ? '' : $this->_data['fields'][$fields[$is]]['style'];
                     $fieldClass = isset($this->_data['fields'][$fields[$is]]['class']) ? $this->_data['fields'][$fields[$is]]['class'] : '';
                     $finalClassConditional = isset($classConditional[$fields[$is]]) ? $classConditional[$fields[$is]] : '';
 
 
-                    $return[$i][] = @array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
+                    $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
                 }
 
                 $is ++;
