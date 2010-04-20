@@ -1080,9 +1080,9 @@ abstract class Bvb_Grid
         foreach ( $params_clean as $key => $param ) {
             // Apply the urldecode function to the filtros param, because its JSON
             if ( $key == 'filters' . $this->getGridId() ) {
-                $url .= "/" . trim($key) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
+                $url .= "/" . trim(htmlspecialchars($key, ENT_QUOTES)) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
             } else {
-                @$url .= "/" . trim($key) . "/" . trim(htmlspecialchars($param, ENT_QUOTES));
+                @$url .= "/" .trim(htmlspecialchars($key, ENT_QUOTES)). "/" . trim(htmlspecialchars($param, ENT_QUOTES));
             }
         }
 
