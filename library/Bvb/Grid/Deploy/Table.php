@@ -1096,8 +1096,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
             ksort($this->_paginationOptions);
 
+            foreach ($this->_paginationOptions as $key=>$value)
+            {
+                $this->_paginationOptions[$key] = $this->__($value);
+            }
+
             $url = $this->getUrl('perPage');
-            $menuPerPage = ' | '.$this->__('Show ') .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage".$this->getGridId()."/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
+            $menuPerPage = ' | '.$this->__('Show').' ' .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage".$this->getGridId()."/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
         }else{
             $menuPerPage = '';
         }
