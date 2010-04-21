@@ -1907,6 +1907,11 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
             $distinctField = $this->_filters[$valor]['distinct']['field'];
             $distinctValue = $this->_filters[$valor]['distinct']['name'];
+            $distinctOrder = isset($this->_filters[$valor]['distinct']['order'])?$this->_filters[$valor]['distinct']['order']:'name ASC';
+
+
+            $dir = stripos($distinctOrder,' asc')!==false?'ASC':'DESC';
+            $sort = stripos($distinctOrder,'name')!==false?'name':'field';
 
             if ( isset($this->_data['fields'][$distinctField]['field']) ) {
                 $distinctField = $this->_data['fields'][$distinctField]['field'];
@@ -1915,7 +1920,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
                 $distinctValue = $this->_data['fields'][$distinctValue]['field'];
             }
 
-            $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue);
+            $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue,$sort.' '.$dir);
 
             $this->_filters[$valor]['values'] = $final;
         }

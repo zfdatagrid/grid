@@ -204,7 +204,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $value
      * @return array
      */
-    public function getDistinctValuesForFilters ($field, $value);
+    public function getDistinctValuesForFilters ($field, $value,$order = 'name ASC');
 
 
     /**
