@@ -1081,7 +1081,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if(count($this->_paginationOptions)>0 && $this->getTotalRecords()>$this->getParam('perPage',$this->_pagination))
         {
             $url = $this->getUrl('perPage');
-            $menuPerPage = ' | '.$this->__('Show ') .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
+            $menuPerPage = ' | '.$this->__('Show ') .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage".$this->getGridId()."/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
         }else{
             $menuPerPage = '';
         }
@@ -1176,28 +1176,25 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( $npaginas > 1 && $this->getInfo("limit") == 0 ) {
 
-            if ( $npaginas < 50 ) {
+            if ( $npaginas <= 100 ) {
+
+                $pageSelectOptions = array();
+                for ( $i = 1; $i <= $npaginas; $i ++ ) {
+                    $pageSelectOptions[(($i - 1) * $ppagina)] = $i;
+                }
+
                 // Buil the select form element
                 if ( $this->getInfo("ajax") !== false ) {
-                    $pageSelect = "<select id=\"idf\" onchange=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$url}/start{$this->getGridId()}/'+this.value)\">";
+                     $pageSelect = $this->getView()->formSelect('idf'.$this->getGridId(),($pa-1)*$this->getResultsPerPage(),array('onChange'=>"javascript:gridAjax('{$this->getInfo("ajax")}','{$url}/start{$this->getGridId()}/'+this.value)"),$pageSelectOptions);
                 } else {
-                    $pageSelect = "<select id=\"idf\" onchange=\"window.location='{$url}/start{$this->getGridId()}/'+this.value\">";
+                     $pageSelect = $this->getView()->formSelect('idf'.$this->getGridId(),($pa-1)*$this->getResultsPerPage(),array('onChange'=>"window.location='{$url}/start{$this->getGridId()}/'+this.value"),$pageSelectOptions);
                 }
 
-                for ( $i = 1; $i <= $npaginas; $i ++ ) {
-                    $pageSelect .= "<option ";
-                    if ( $pa == $i ) {
-                        $pageSelect .= " selected ";
-                    }
-                    $pageSelect .= " value=\"" . (($i - 1) * $ppagina) . "\">$i</option>\n";
-                }
-                $pageSelect .= "</select>";
+            }else{
+                $pageSelect = $this->getView()->formText('idf',$pa,array('size'=>4,'style'=>'width:30px !important; ','onChange'=>"window.location='{$url}/start{$this->getGridId()}/'+(this.value - 1)*".$this->getResultsPerPage()));
+            }
 
                 $pageSelect = ' | '.$this->__('Page').':'.$pageSelect;
-            } else {
-                #$f ='<input type="text" size="3" style="width:40px !important;">';
-                $pageSelect = '';
-            }
 
         }
 
