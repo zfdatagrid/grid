@@ -159,8 +159,8 @@ class Bvb_Grid_Template_Table_Table
     public function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
-        <div style=\"float:left;width:250px;\">" . $this->export . "</div>
-        <div style=\"float:left;text-align:center;width:630px;\"> <em>({{numberRecords}})</em>  | {{pagination}}</div>
+        <div style=\"float:left;width:".$this->exportWith."px;\">" . $this->export . "</div>
+        <div style=\"float:left;text-align:center;width:".$this->paginationWith."px\"> <em>({{numberRecords}})</em> {{pagination}}  {{perPage}}  {{pageSelect}}</div>
         </div>
         </td></tr>";
     }
@@ -210,6 +210,9 @@ class Bvb_Grid_Template_Table_Table
                 $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>" . $export['caption'] . "</a>";
             }
         }
+
+        $this->exportWith = 25 * count($exportDeploy);
+        $this->paginationWith = 630+ ( 10 - count($exportDeploy) ) * 20;
 
        $this->export = $exp;
 

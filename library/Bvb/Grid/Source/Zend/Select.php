@@ -465,7 +465,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $distinct->columns(array('value' => $value));
         $distinct->order($order);
 
-
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($distinct->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {

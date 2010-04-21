@@ -85,6 +85,13 @@ abstract class Bvb_Grid
     protected $_pagination = 15;
 
     /**
+     * Number of results per page
+     *
+     * @var int
+     */
+    protected $_paginationOptions = array();
+
+    /**
      * Type of export available
      *
      * @var array
@@ -155,13 +162,6 @@ abstract class Bvb_Grid
      * @var array
      */
     protected $_data = array();
-
-    /**
-     * Params list
-     *
-     * @var array
-     */
-    protected $_paramsAux = array();
 
     /**
      * URL params
@@ -832,9 +832,9 @@ abstract class Bvb_Grid
      * Number of records to show per page
      * @param $number
      */
-    public function setPagination ($number = 15)
+    public function setPaginationInterval (array $pagination)
     {
-        $this->setNumberRecordsPerPage($number);
+        $this->_paginationOptions = $pagination;
         return $this;
     }
 
@@ -1021,10 +1021,26 @@ abstract class Bvb_Grid
         }
 
         if ( false === $this->_forceLimit ) {
-            $this->getSource()->buildQueryLimit($this->_pagination, $start);
+            $this->getSource()->buildQueryLimit($this->getResultsPerPage(), $start);
         }
 
         return true;
+    }
+
+    /**
+     * Returns the number of records to show per page
+     */
+    public function getResultsPerPage()
+    {
+
+        $perPage = (int)$this->getParam('perPage',0);
+
+        if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationOptions) ) {
+            return $perPage;
+        } else {
+            return $this->_pagination;
+        }
+
     }
 
 
@@ -1039,7 +1055,7 @@ abstract class Bvb_Grid
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
+        $paramsGet = array('perPage','order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
 
         $url = '';
         $params = $this->getAllParams();
@@ -1057,18 +1073,6 @@ abstract class Bvb_Grid
                 $situation = $situation . $this->getGridId();
             }
             unset($params[$situation]);
-        }
-
-        if ( count($this->_paramsAux) > 0 ) {
-            //User as defined its own params (probably using routes)
-            $myParams = array('comm', 'order', 'filters', 'add', 'edit', '_exportTo');
-            $newParams = $this->_paramsAux;
-            foreach ( $myParams as $value ) {
-                if ( strlen($params[$value]) > 0 ) {
-                    $newParams[$value] = $params[$value];
-                }
-            }
-            $params = $newParams;
         }
 
         $params_clean = $params;

@@ -1077,13 +1077,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _pagination ()
     {
 
-        $f = '';
+        $pageSelect = '';
+        if(count($this->_paginationOptions)>0 && $this->getTotalRecords()>$this->getParam('perPage',$this->_pagination))
+        {
+            $url = $this->getUrl('perPage');
+            $menuPerPage = ' | '.$this->__('Show ') .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
+        }else{
+            $menuPerPage = '';
+        }
 
         $url = $this->getUrl(array('start'));
 
         $actual = (int) $this->getParam('start');
 
-        $ppagina = $this->_pagination;
+        $ppagina = $this->getParam('perPage',$this->_pagination);
         $result2 = '';
 
         $pa = $actual == 0 ? 1 : ceil($actual / $ppagina) + 1;
@@ -1172,23 +1179,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ( $npaginas < 50 ) {
                 // Buil the select form element
                 if ( $this->getInfo("ajax") !== false ) {
-                    $f = "<select id=\"idf\" onchange=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$url}/start{$this->getGridId()}/'+this.value)\">";
+                    $pageSelect = "<select id=\"idf\" onchange=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$url}/start{$this->getGridId()}/'+this.value)\">";
                 } else {
-                    $f = "<select id=\"idf\" onchange=\"window.location='{$url}/start{$this->getGridId()}/'+this.value\">";
+                    $pageSelect = "<select id=\"idf\" onchange=\"window.location='{$url}/start{$this->getGridId()}/'+this.value\">";
                 }
 
                 for ( $i = 1; $i <= $npaginas; $i ++ ) {
-                    $f .= "<option ";
+                    $pageSelect .= "<option ";
                     if ( $pa == $i ) {
-                        $f .= " selected ";
+                        $pageSelect .= " selected ";
                     }
-                    $f .= " value=\"" . (($i - 1) * $ppagina) . "\">$i</option>\n";
+                    $pageSelect .= " value=\"" . (($i - 1) * $ppagina) . "\">$i</option>\n";
                 }
-                $f .= "</select>";
+                $pageSelect .= "</select>";
 
+                $pageSelect = ' | '.$this->__('Page').':'.$pageSelect;
             } else {
                 #$f ='<input type="text" size="3" style="width:40px !important;">';
-                $f = '';
+                $pageSelect = '';
             }
 
         }
@@ -1218,32 +1226,32 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
             if ( (int)$this->getInfo("limit") > 0 ) {
-                $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}'), array('', (int) $this->getInfo("limit")), $this->_temp['table']->pagination());
+                $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}','{{pageSelect}}'), array('', (int) $this->getInfo("limit"),$menuPerPage,$pageSelect), $this->_temp['table']->pagination());
 
             } elseif ( $npaginas > 1 && count($this->_export) > 0 ) {
 
                 if ( $this->_pagination == 0 ) {
                     $pag = '';
-                    $f = '';
+                    $pageSelect = '';
                 }
 
-                $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}'), array($pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords), $this->_temp['table']->pagination());
+                $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}','{{pageSelect}}'), array(' | '.$pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords,$menuPerPage,$pageSelect), $this->_temp['table']->pagination());
 
             } elseif ( $npaginas < 2 && count($this->_export) > 0 ) {
 
                 if ( $this->_pagination == 0 ) {
                     $pag = '';
-                    $f = '';
+                    $pageSelect = '';
                 }
-                $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}'), array('', $this->_totalRecords), $this->_temp['table']->pagination());
+                $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}','{{pageSelect}}'), array('', $this->_totalRecords,$menuPerPage,$pageSelect), $this->_temp['table']->pagination());
 
             } elseif ( count($this->_export) == 0 ) {
 
                 if ( $this->_pagination == 0 ) {
                     $pag = '';
-                    $f = '';
+                    $pageSelect = '';
                 }
-                $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}'), array($pag, $this->_totalRecords), $this->_temp['table']->pagination());
+                $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}','{{pageSelect}}'), array(' | '.$pag, $this->_totalRecords,$menuPerPage,$pageSelect), $this->_temp['table']->pagination());
 
             }
 
