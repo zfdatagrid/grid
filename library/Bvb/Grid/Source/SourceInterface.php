@@ -312,6 +312,6 @@ interface Bvb_Grid_Source_SourceInterface
     /**
      * Build the form based on a Model or query
      */
-     public function buildForm($data = array());
+     public function buildForm($fields = array());
 
 }

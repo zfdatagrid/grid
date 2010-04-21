@@ -737,7 +737,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function  buildForm($data = array())
+    public function  buildForm($fields = array())
     {
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table']);
