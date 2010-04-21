@@ -1911,7 +1911,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
 
             $dir = stripos($distinctOrder,' asc')!==false?'ASC':'DESC';
-            $sort = stripos($distinctOrder,'name')!==false?'name':'field';
+            $sort = stripos($distinctOrder,'name')!==false?'value':'field';
 
             if ( isset($this->_data['fields'][$distinctField]['field']) ) {
                 $distinctField = $this->_data['fields'][$distinctField]['field'];
