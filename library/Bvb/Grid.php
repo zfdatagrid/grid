@@ -839,6 +839,14 @@ abstract class Bvb_Grid
     }
 
     /**
+     * DEPRECATED. WILL BE REMOVED
+     */
+    public function setPagination ()
+    {
+        trigger_error('Please use setNumberRecordsPerPage()',E_USER_ERROR);
+    }
+
+    /**
      * Number of records to show per page
      * @param $number
      */

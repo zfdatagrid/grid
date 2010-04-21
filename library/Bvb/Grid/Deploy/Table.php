@@ -1727,7 +1727,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
         $oldElements = $crud->getElements();
 
-        $form = $this->getSource()->buildForm();
+        $form = $this->getSource()->buildForm($this->_data['fields']);
 
         $crud->getForm()->setOptions($form);
 
