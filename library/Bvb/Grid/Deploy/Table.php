@@ -1078,8 +1078,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     {
 
         $pageSelect = '';
-        if(count($this->_paginationOptions)>0 && $this->getTotalRecords()>$this->getParam('perPage',$this->_pagination))
+        if(count($this->_paginationOptions)>0 && $this->getTotalRecords()>0)
         {
+            if(!array_key_exists($this->_pagination,$this->_paginationOptions) && !$this->getParam('perPage'))
+            {
+              $this->_paginationOptions[0] = $this->__('Select');
+            }
+            ksort($this->_paginationOptions);
+
             $url = $this->getUrl('perPage');
             $menuPerPage = ' | '.$this->__('Show ') .$this->getView()->formSelect('perPage',$this->getParam('perPage',$this->_pagination),array('onChange'=>"window.location='$url/perPage".$this->getGridId()."/'+this.value;"),$this->_paginationOptions).' '. $this->__('itens');
         }else{
@@ -1191,7 +1197,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
 
             }else{
-                $pageSelect = $this->getView()->formText('idf',$pa,array('size'=>4,'style'=>'width:30px !important; ','onChange'=>"window.location='{$url}/start{$this->getGridId()}/'+(this.value - 1)*".$this->getResultsPerPage()));
+                $pageSelect = $this->getView()->formText('idf',$pa,array('style'=>'width:30px !important; ','onChange'=>"window.location='{$url}/start{$this->getGridId()}/'+(this.value - 1)*".$this->getResultsPerPage()));
             }
 
                 $pageSelect = ' | '.$this->__('Page').':'.$pageSelect;
