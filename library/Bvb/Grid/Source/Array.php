@@ -253,7 +253,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    public function getSqlExp (array $value)
+    public function getSqlExp (array $value, $where = array())
     {
         if ( is_array($value['functions']) ) {
 

@@ -487,7 +487,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function getSqlExp (array $value)
+    public function getSqlExp (array $value, $where = array())
     {
 
         if ( is_array($value) ) {
@@ -508,6 +508,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::GROUP);
         $select->columns(new Zend_Db_Expr($valor . ' AS TOTAL'));
 
+        foreach ($where as $key=>$value)
+        {
+            if(strlen(trim($value))<1)
+            {
+                continue;
+            }
+            $select->where($key.'=?',$value);
+        }
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($select->__toString());

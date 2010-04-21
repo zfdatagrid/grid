@@ -929,18 +929,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->getInfo("hRow,title") && $this->_totalRecords > 0 ) {
 
             $bar = $grids;
-
             $hbar = trim($this->getInfo("hRow,field"));
-
             $p = 0;
 
             foreach ( $grids[0] as $value ) {
-
-
                 if ( isset($value['field']) && $value['field'] == $hbar ) {
                     $hRowIndex = $p;
                 }
-
                 $p ++;
             }
             $aa = 0;
@@ -997,11 +992,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //horizontal row
             if ($this->getInfo("hRow,title") ) {
 
+
+               $col = $this->getInfo("hRow");
+
                 if ( $bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value'] ) {
                     $i ++;
 
+                    if(isset($bar[$aa - 1]))
+                    {
+                        $grid .= $this->_buildSqlexpTable( $this->_buildSqlExp(array($col['field'] => $bar[$aa - 1][$hRowIndex]['value'])));
+                    }
+
                     $grid .= str_replace(array("{{value}}", "{{class}}"), array($bar[$aa][$hRowIndex]['value'], @$value['class']), $this->_temp['table']->hRow($finalFields));
                 }
+
+
             }
 
             $i ++;
@@ -1022,6 +1027,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'], $final['style']), $this->_temp['table']->loopLoop($finalFields));
 
                 }
+            }
+
+
+            if ( ($aa + 1) == $this->getTotalRecords() ) {
+                $grid .= $this->_buildSqlexpTable($this->_buildSqlExp(array($col['field'] => $bar[$aa][$hRowIndex]['value'])));
             }
 
             $set = null;
@@ -1539,9 +1549,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $bFilters .= $this->_buildFiltersTable(parent::_buildFilters());
         $bFilters .= $this->_buildExtraRows('afterFilters');
         $bGrid = $this->_buildGridTable(parent::_buildGrid());
-        $bSqlExp = $this->_buildExtraRows('beforeSqlExpTable');
-        $bSqlExp .= $this->_buildSqlexpTable(parent::_buildSqlExp());
-        $bSqlExp .= $this->_buildExtraRows('afterSqlExpTable');
+
+        if ( ! $this->getInfo("hRow,title") ) {
+            $bSqlExp = $this->_buildExtraRows('beforeSqlExpTable');
+            $bSqlExp .= $this->_buildSqlexpTable(parent::_buildSqlExp());
+            $bSqlExp .= $this->_buildExtraRows('afterSqlExpTable');
+        } else {
+            $bSqlExp = '';
+        }
+
+
         $bPagination = $this->_buildExtraRows('beforePagination');
         $bPagination .= $this->_pagination();
         $bPagination .= $this->_buildExtraRows('afterPagination');

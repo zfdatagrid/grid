@@ -486,7 +486,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      *
      * @param array $value
      */
-    public function getSqlExp(array $value)
+   public function getSqlExp (array $value, $where = array())
     {
         $return = array();
 

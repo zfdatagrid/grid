@@ -1715,8 +1715,9 @@ abstract class Bvb_Grid
      * Apply SQL Functions
      *
      */
-    protected function _buildSqlExp ()
+    protected function _buildSqlExp ($where = array())
     {
+
 
         $return = false;
 
@@ -1725,7 +1726,6 @@ abstract class Bvb_Grid
         if ( ! is_array($final) ) {
             return false;
         }
-
 
         foreach ( $final as $key => $value ) {
 
@@ -1736,7 +1736,7 @@ abstract class Bvb_Grid
                 $value['value'] = $key;
             }
 
-            $resultExp = $this->getSource()->getSqlExp($value);
+            $resultExp = $this->getSource()->getSqlExp($value,$where );
 
             if ( ! isset($value['format']) && isset($this->_data['fields'][$key]['format']) ) {
                 $resultExp = $this->_applyFormat($resultExp, $this->_data['fields'][$key]['format']);
