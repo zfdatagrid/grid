@@ -292,7 +292,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->allowEdit = 1;
         }
 
-        if ( $this->allowEdit == 1 || $this->allowDelete ) {
+        if ( $this->allowEdit == 1 || $this->allowDelete==1  ) {
             $dec = $this->getParam('comm');
             $this->_comm = $dec;
         }
@@ -300,7 +300,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         /**
          * Remove if there is something to remove
          */
-        if ( $this->allowDelete ) {
+        if ( $this->allowDelete == 1) {
             self::_deleteRecord($dec);
         }
 
@@ -1029,9 +1029,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
             }
 
-
+            if ($this->getInfo("hRow,title") && $this->_totalRecords > 0 ) {
             if ( ($aa + 1) == $this->getTotalRecords() ) {
                 $grid .= $this->_buildSqlexpTable($this->_buildSqlExp(array($col['field'] => $bar[$aa][$hRowIndex]['value'])));
+            }
             }
 
             $set = null;
@@ -1955,6 +1956,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
 
             $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue,$sort.' '.$dir);
 
+
             $this->_filters[$valor]['values'] = $final;
         }
 
@@ -2025,11 +2027,17 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         }
 
         if ( isset($opcoes['values']) && is_array($opcoes['values']) ) {
+
             $tipo = 'invalid';
             $values = array();
             $values[''] = '--' . $this->__('All') . '--';
 
             $avalor = $opcoes['values'];
+
+            if ( isset($this->_data['fields'][$valor]['translate']) && $this->_data['fields'][$valor]['translate'] == 1 ) {
+                $avalor = array_map(array($this, '__'), $avalor);
+            }
+
 
             foreach ( $avalor as $key => $value ) {
                 if ( isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $key ) {
