@@ -654,6 +654,26 @@ abstract class Bvb_Grid
 
 
     /**
+     * Check if a string is available
+     * @param unknown_type $message
+     */
+    protected function is__($message)
+    {
+        if ( strlen($message) == 0 ) {
+            return false;
+        }
+
+        if ( $this->_translator instanceof Zend_Translate ) {
+            return $this->_translator->isTranslated($message);
+        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
+            return Zend_Registry::get('Zend_Translate')->isTranslated($message);
+        }
+
+        return false;
+    }
+
+
+    /**
      * Use the overload function so we can return an object
      * @param string $name
      * @param string $value
@@ -1299,9 +1319,9 @@ abstract class Bvb_Grid
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
                 if ( $noOrder == 1 ) {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $titles[$i], 'value' => $this->__($titles[$i]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $titles[$i], 'value' => ($this->is__($titles[$i]))?$this->__($titles[$i]):$this->__($this->_titles[$titles[$i]]));
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => $this->__($titles[$i]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => ($this->is__($titles[$i]))===true?$this->__($titles[$i]):$this->__($this->_titles[$titles[$i]]));
                 }
             }
         }
