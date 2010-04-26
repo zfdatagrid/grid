@@ -433,7 +433,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @param string $value
      * @return array
      */
-    public function getDistinctValuesForFilters ($field, $value,$order = 'name ASC')
+    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC')
     {
         $return = array();
 
@@ -445,7 +445,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                  ->removeDqlQueryPart('orderby')
                  ->removeDqlQueryPart('limit')
                  ->removeDqlQueryPart('offset')
-                 ->select("$distinct AS field, $value AS value")
+                 ->select("$distinct AS field, $fieldValue AS value")
                  ->orderBy('value ASC');
 
         //Only using Scalar here, b/c of an aparent bug with Doctrine::HYDRATE_ARRAY

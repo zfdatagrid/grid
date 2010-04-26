@@ -440,7 +440,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function getDistinctValuesForFilters ($field, $value,$order = 'name ASC')
+    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC')
     {
 
         $distinct = clone $this->_select;
@@ -451,7 +451,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $distinct->reset(Zend_Db_Select::LIMIT_OFFSET);
 
         $distinct->columns(array('field' => new Zend_Db_Expr("DISTINCT({$field})")));
-        $distinct->columns(array('value' => $value));
+        $distinct->columns(array('value' => $fieldValue));
         $distinct->order($order);
 
         if ( $this->_cache['use'] == 1 ) {
