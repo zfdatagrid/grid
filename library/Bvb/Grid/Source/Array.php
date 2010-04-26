@@ -261,17 +261,18 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
             foreach ( $value['functions'] as $final ) {
 
                 if ( $i == 0 ) {
-                    $valor = $this->_applySqlExpToArray($value['value'], $final);
+                    $valor = $this->_applySqlExpToArray($value['value'], $final,null,$where);
                 } else {
-                    $valor = $this->_applySqlExpToArray($value['value'], $final, $valor);
+                    $valor = $this->_applySqlExpToArray($value['value'], $final, $valor,$where);
                 }
 
                 $i ++;
             }
 
         } else {
-            $valor = $this->_applySqlExpToArray($valor['value'], $value['functions']);
+            $valor = $this->_applySqlExpToArray($valor['value'], $value['functions'],null,$where);
         }
+
 
         return $valor;
     }
@@ -283,12 +284,15 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
      * @param $operation
      * @param $option
      */
-    protected function _applySqlExpToArray ($field, $operation, $value = null)
+    protected function _applySqlExpToArray ($field, $operation, $value = null,$where = array())
     {
         $field = trim($field);
+        $array = array();
 
         if ( null === $value ) {
             foreach ( $this->_rawResult as $value ) {
+
+                if( (count($where)>0 && $value[key($where)] == reset($where)) || count($where)==0)
                 $array[] = $value[$field];
             }
         } else {
