@@ -1813,7 +1813,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(fields,url,Aja
         $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
 
-        $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique','decorators' => $crud->getButtonHiddenDecorator()));
 
         $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
