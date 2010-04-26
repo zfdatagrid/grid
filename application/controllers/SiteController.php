@@ -8,7 +8,6 @@ include 'application/models/Model.php';
 
 class SiteController extends Zend_Controller_Action
 {
-
     private $_db;
 
 
@@ -70,6 +69,7 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
+        $grid->setExport(array('pdf','print','wordx','excel'));
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
@@ -87,7 +87,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name')));
+        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name','order'=>'field desc')));
         $filters->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')));
         $filters->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
         $filters->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')));
@@ -143,17 +143,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $this->render('index');
     }
 
-
-    public function arrayAction ()
-    {
-        $array = array(array('Marcel', '12', 'M'), array('Katty', '34', 'F'), array('Richard', '87', 'M'), array('Dany', '33', 'F'));
-
-        $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Array($array, array('nome', 'idade', 'sexo')));
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-
-    }
 
 
     public function csvAction ()
@@ -233,11 +222,42 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
 
+        $grid->setNumberRecordsPerPage(15);
+        $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
+
         $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+
+    /**
+     * The 'most' basic example.
+     */
+    public function arrayAction ()
+    {
+        $grid = $this->grid();
+        $array = array(
+        array('Alex', '12', 'M'),
+        array('David', '1', 'M'),
+        array('David', '2', 'M'),
+        array('David', '3', 'M'),
+        array('Richard', '3', 'M'),
+        array('Lucas', '3', 'M'),
+        );
+
+
+        $grid->setSource(new Bvb_Grid_Source_Array($array, array('name', 'age', 'sex')));
+
+        $grid->setSqlExp(array('age' => array('functions' => array('SUM'))));
+
+        $grid->updateColumn('name', array('title' => 'sometitle', 'hRow' => 1));
 
 
         $this->view->pages = $grid->deploy();
@@ -256,6 +276,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->query($select);
         $grid->setAjax('ajax_grid');
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->setAlwaysShowOrderArrows(false);
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -323,7 +345,9 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         //$form->setIsPerformCrudAllowedForDeletion(false);
         //$grid->setDeleteConfirmationPage(true);
 
+
         $grid->setForm($form);
+
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
@@ -341,7 +365,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('City')));
-        $grid->setNoFilters(1)->setPagination(14)->setTemplate('outside', 'table');
+        $grid->setNoFilters(1)->setNumberRecordsPerPage(14)->setTemplate('outside', 'table');
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -359,7 +383,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
-        $grid->setPagination(1200);
+        $grid->setNumberRecordsPerPage(1200);
 
         $grid->updateColumn('Name', array('title' => 'Country'));
         $grid->updateColumn('Continent', array('title' => 'Continent', 'hRow' => 1));
@@ -367,6 +391,9 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         $grid->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50', 'decorator' => '<b>{{LifeExpectancy}}</b>'));
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State'));
+
+        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
+
 
         $extra = new Bvb_Grid_Extra_Column();
         $extra->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
