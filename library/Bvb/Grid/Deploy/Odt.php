@@ -221,7 +221,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             die();
         }
 
-        $this->setPagination(0);
+        $this->setNumberRecordsPerPage(0);
 
         parent::deploy();
 

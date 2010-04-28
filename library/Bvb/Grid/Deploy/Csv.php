@@ -57,7 +57,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function __construct ($options)
     {
-        $this->setPagination(500);
+        $this->setNumberRecordsPerPage(500);
 
         parent::__construct($options);
     }
