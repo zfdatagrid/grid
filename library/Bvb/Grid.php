@@ -2376,7 +2376,7 @@ abstract class Bvb_Grid
         }
 
         if ( is_string($id) ) {
-            $grid->_setGridId($id);
+            $grid->setGridId($id);
         }
 
         return $grid;
@@ -2559,7 +2559,7 @@ abstract class Bvb_Grid
      * Sets the grid id, to allow multiples instances per page
      * @param $id
      */
-    protected function _setGridId ($id)
+     function setGridId ($id)
     {
         $this->_gridId = $id;
         return $this;

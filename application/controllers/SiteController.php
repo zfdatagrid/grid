@@ -362,7 +362,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
      */
     public function templateAction ()
     {
-
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('City')));
         $grid->setNoFilters(1)->setNumberRecordsPerPage(14)->setTemplate('outside', 'table');

@@ -9,7 +9,6 @@ set_include_path ( '.' . PATH_SEPARATOR . './library/'
 .'.' . PATH_SEPARATOR . './application/'
 . PATH_SEPARATOR . get_include_path () );
 
-
 include "Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
@@ -41,7 +40,21 @@ Zend_Registry::set('cache',$cache);
 //Locale
 $locale = new Zend_Locale ( 'en_US' );
 Zend_Registry::set ( 'locale', $locale );
+/*
+      $english = array(
+          'Name_of' => 'Barcelos',
+          'message2' => 'message2',
+          'message3' => 'message3');
 
+      $german = array(
+          'message1' => 'Nachricht1',
+          'message2' => 'Nachricht2',
+          'message3' => 'Nachricht3');
+
+      $translate = new Zend_Translate('array', $english, 'en');
+
+      Zend_Registry::set('Zend_Translate',$translate);
+*/
 $frontController = Zend_Controller_Front::getInstance();
 $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');
