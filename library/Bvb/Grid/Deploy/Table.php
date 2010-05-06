@@ -2115,7 +2115,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $fields = array();
         foreach ( $this->_filters as $key => $filter ) {
 
-            if ( isset($filter['render']) ) {
+            if (is_array($filter) && isset($filter['render']) ) {
                 $render = $this->_filtersRenders->load(ucfirst($filter['render']));
                 $render = new $render();
                 $fields[$key] = $render->getFields();
