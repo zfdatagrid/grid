@@ -150,6 +150,12 @@ abstract class Bvb_Grid
     protected $_filters;
 
     /**
+     * Filters Render
+     * @var
+     */
+    protected $_filtersRenders;
+
+    /**
      * Filters values inserted by the user
      *
      * @var array
@@ -898,15 +904,45 @@ abstract class Bvb_Grid
             $filters = Zend_Json::decode($filters);
         }
 
+
+
+        $finalFilters = array();
+
+        foreach ( $filters as $key => $value ) {
+            $name = explode('[', $key);
+
+            if ( count($name) > 1 ) {
+                $finalFilters[$name[0]][substr($name[1], 0, - 1)] = $value;
+            } else {
+                $finalFilters[$key] = $value;
+            }
+
+        }
+
+        foreach ($finalFilters as $key=>$value)
+        {
+            if(is_array($value))
+            {
+                $this->setParam($key,$value);
+            }
+        }
+
+        $filters = $finalFilters;
+
+
+
         $fieldsSemAsFinal = $this->_data['fields'];
 
         if ( is_array($filters) ) {
 
             foreach ( $filters as $key => $filter ) {
 
-                if ( strlen($filter) == 0 || ! in_array($key, $this->_fields) ) {
+
+                if ( ! is_array($filter)  && (strlen($filter) == 0 || ! in_array($key, $this->_fields)) ) {
+
                     unset($filters[$key]);
-                } else {
+
+                } elseif ( ! is_array($filter) ) {
                     if ( isset($fieldsSemAsFinal[$key]['searchField']) ) {
                         $key = $fieldsSemAsFinal[$key]['searchField'];
                     }
@@ -932,7 +968,9 @@ abstract class Bvb_Grid
                         $result = call_user_func($this->_filters[$key]['callback']['function'], $this->_filters[$key]['callback']['params']);
 
                     } elseif ( isset($this->_data['fields'][$key]['search']) && is_array($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search']['fulltext'] == true ) {
+
                         $this->getSource()->addFullTextSearch($filter, $key, $this->_data['fields'][$key]);
+
                     } else {
 
                         $op = $this->getFilterOp($key, $filter);
@@ -941,6 +979,23 @@ abstract class Bvb_Grid
                     }
 
                     $valor_filters[$key] = $oldFilter;
+                }
+
+
+                if ( is_array($filter) ) {
+
+                    $render = $this->_filtersRenders->load(ucfirst($this->_filters[$key]['render']));
+                    $render = new $render();
+                    $cond = $render->getConditions();
+
+                    foreach ( $filter as $nkey => $value ) {
+
+                        if(strlen($value)>0)
+                        $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
+
+                        $valor_filters[$key][$nkey] = $value;
+                    }
+
                 }
 
             }
@@ -1100,6 +1155,17 @@ abstract class Bvb_Grid
         unset($params_clean['module']);
         unset($params_clean['action']);
         unset($params_clean['gridmod']);
+
+
+        foreach ($this->_filters as $key => $value)
+        {
+
+            if(isset($key['render']))
+            {
+                unset($params_clean[$key]);
+            }
+
+        }
 
         foreach ( $params_clean as $key => $param ) {
             // Apply the urldecode function to the filtros param, because its JSON

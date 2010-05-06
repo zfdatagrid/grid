@@ -89,10 +89,10 @@ class SiteController extends Zend_Controller_Action
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name','order'=>'field desc')));
         $filters->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')));
-        $filters->addFilter('LifeExpectancy', array('distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
+        $filters->addFilter('LifeExpectancy', array('render'=>'number','distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
         $filters->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')));
         $filters->addFilter('HeadOfState');
-        $filters->addFilter('Population',array('style'=>'width:20px;'));
+        $filters->addFilter('Population',array('render'=>'number','style'=>'width:20px;'));
 
         $grid->addFilters($filters);
 
@@ -345,9 +345,7 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         //$form->setIsPerformCrudAllowedForDeletion(false);
         //$grid->setDeleteConfirmationPage(true);
 
-
         $grid->setForm($form);
-
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();

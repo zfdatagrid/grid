@@ -259,6 +259,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         parent::__construct($options);
 
+        $this->_filtersRenders =  new Zend_Loader_PluginLoader();
+        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render', 'Bvb_Grid_Filters_Render');
 
         if ( isset($this->_options['grid']['id']) ) {
             $this->setGridId($this->_options['grid']['id']);
@@ -268,6 +270,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
     }
 
+
+    public function addFiltersRenderDir ($dir,$prefix)
+    {
+        $this->_filtersRenders->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+        return $this;
+    }
 
     /**
      *
@@ -1715,7 +1723,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $script .= "         value = value.replace(/[\"]/,''); \n";
             $script .= "         value = value.replace(/[\\\]/,''); \n";
             $script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
-            $script .= "         filtro[i] = '\"'+encodeURIComponent(fieldsArray[i])+'\":\"'+encodeURIComponent(value)+'\"';
+            $script .= "         filtro[i] = '\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'\":\"'+encodeURIComponent(value)+'\"';
         }
 
         filtro = \"{\"+filtro+\"}\";
@@ -1928,6 +1936,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _formatField ($campo)
     {
 
+        $renderLoaded = false;
+        $allFieldsIds = $this->getAllFieldsIds();
+
+        if ( is_array($this->_filters[$campo]) && isset($this->_filters[$campo]['render']) ) {
+
+            $render = $this->_filtersRenders->load(ucfirst($this->_filters[$campo]['render']));
+            $render = new $render();
+            $render->setView($this->getView());
+            $renderLoaded = true;
+        }
+
+
         $valor = $campo;
 
         if ( isset($this->_data['fields'][$valor]['search']) && $this->_data['fields'][$valor]['search'] == false ) {
@@ -1982,9 +2002,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $hRow = isset($this->_data['fields'][$value]['hRow']) ? $this->_data['fields'][$value]['hRow'] : '';
 
             if ( $this->_displayField($value) && $hRow != 1 && $this->_data['fields'][$value]['search'] != false ) {
-                $help_javascript .= "filter_" . $this->getGridId() . $value . ",";
+
+                if ( is_array($allFieldsIds[$value]) ) {
+                    foreach ( $allFieldsIds[$value] as $newId ) {
+                        $help_javascript .= "filter_" . $this->getGridId() . $value . "_" . $newId . ',';
+                    }
+                } else {
+                    $help_javascript .= "filter_" . $this->getGridId() . $value . ",";
+                }
             }
         }
+
 
         $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,0);";
         $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,event);";
@@ -2036,7 +2064,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $avalor = array_map(array($this, '__'), $avalor);
             }
 
-
             foreach ( $avalor as $key => $value ) {
                 if ( isset($this->_filtersValues[$campo]) && $this->_filtersValues[$campo] == $key ) {
                     $selected = $key;
@@ -2045,18 +2072,64 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $values[$key] = $value;
             }
 
-            $valor = $this->_view->formSelect($campo, $selected, $attr, $values);
+            if($renderLoaded===false)
+            {
+                $render = $this->_filtersRenders->load('Select');
+                $render = new $render();
+                $render->setView($this->getView());
+                $renderLoaded = true;
+            }
+
+            $render->setValues($values);
 
         }
 
         if ( $tipo != 'invalid' ) {
-            $this->_filtersValues[$campo] = isset($this->_filtersValues[$campo]) ? $this->_filtersValues[$campo] : '';
-            $valor = $this->_view->formText($campo, @$this->_filtersValues[$campo], $attr);
+
+            if ( $renderLoaded === false ) {
+                $render = $this->_filtersRenders->load('Text');
+                $render = new $render();
+                $render->setView($this->getView());
+                $renderLoaded = true;
+            }
+
+            $render->setDefaultValue(isset($this->_filtersValues[$campo]) ? $this->_filtersValues[$campo] : '');
         }
 
-        return $valor;
+        if (isset($this->_filtersValues[$campo]) && is_array($this->_filtersValues[$campo]) ) {
+
+            foreach ( $this->_filtersValues[$campo] as $key => $value ) {
+                $render->setDefaultValue($value, $key);
+            }
+        }
+
+        $render->setFieldName($valor);
+        $render->setAttributes($attr);
+
+        return $render->render();
     }
 
+
+    function getAllFieldsIds ()
+    {
+        $fields = array();
+        foreach ( $this->_filters as $key => $filter ) {
+
+            if ( isset($filter['render']) ) {
+                $render = $this->_filtersRenders->load(ucfirst($filter['render']));
+                $render = new $render();
+                $fields[$key] = $render->getFields();
+
+            } else {
+                $fields[$key] = $key;
+                $render = false;
+            }
+
+        }
+
+        return $fields;
+
+    }
 
     /**
      * Apply config options
