@@ -106,6 +106,12 @@ abstract class Bvb_Grid
      */
     protected $_info = array();
 
+
+    /**
+     * URL to prefix in case of routes
+     * @var unknown_type
+     */
+    protected $_routeUrl = false;
     /**
      * Baseurl
      *
@@ -904,7 +910,7 @@ abstract class Bvb_Grid
             $filters = Zend_Json::decode($filters);
         }
 
-
+         if ( is_array($filters) ) {
 
         $finalFilters = array();
 
@@ -933,7 +939,7 @@ abstract class Bvb_Grid
 
         $fieldsSemAsFinal = $this->_data['fields'];
 
-        if ( is_array($filters) ) {
+
 
             foreach ( $filters as $key => $filter ) {
 
@@ -1159,12 +1165,10 @@ abstract class Bvb_Grid
 
         foreach ($this->_filters as $key => $value)
         {
-
             if(isset($key['render']))
             {
                 unset($params_clean[$key]);
             }
-
         }
 
         foreach ( $params_clean as $key => $param ) {
@@ -1181,17 +1185,27 @@ abstract class Bvb_Grid
             $action = "/" . $params['action'];
         }
 
-        if ( Zend_Controller_Front::getInstance()->getDefaultModule() != $params['module'] ) {
-            $urlPrefix = $params['module'] . "/";
-        } else {
-            $urlPrefix = '';
+
+
+        if($this->getRouteUrl() !==false)
+        {
+            $finalUrl = $this->getRouteUrl();
+        }else{
+
+            if ( Zend_Controller_Front::getInstance()->getDefaultModule() != $params['module'] ) {
+                $urlPrefix = $params['module'] . "/";
+            } else {
+                $urlPrefix = '';
+            }
+
+            $finalUrl = $urlPrefix . $params['controller'] . $action ;
         }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax ==true ) {
-            return $urlPrefix . $params['controller'] . $action . $url . "/gridmod/ajax";
+            return $finalUrl . $url . "/gridmod/ajax";
         } else {
-            return $this->_baseUrl . "/" . $urlPrefix . $params['controller'] . $action . $url;
+            return $this->_baseUrl . "/" . $finalUrl . $url;
         }
     }
 
@@ -2939,5 +2953,14 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    function setRouteUrl($url)
+    {
+        $this->_routeUrl = (string)$url;
+        return $this;
+    }
 
+    function getRouteUrl()
+    {
+        return $this->_routeUrl;
+    }
 }
