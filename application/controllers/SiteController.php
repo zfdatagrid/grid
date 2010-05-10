@@ -221,6 +221,8 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
+        #$grid->setRouteUrl('grid');
+
 
         $grid->setNumberRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));

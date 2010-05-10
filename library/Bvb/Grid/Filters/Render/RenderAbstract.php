@@ -33,6 +33,11 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     protected $_fieldName;
 
 
+    function __construct()
+    {
+
+    }
+
     /**
      * @return the $_view
      */
@@ -121,7 +126,7 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     {
         if($name!='')
         {
-            return $this->_defaultValue[$name];
+            return isset($this->_defaultValue[$name])?$this->_defaultValue[$name]:null;
         }
         return $this->_defaultValue;
     }

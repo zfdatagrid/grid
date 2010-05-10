@@ -1941,8 +1941,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( is_array($this->_filters[$campo]) && isset($this->_filters[$campo]['render']) ) {
 
-            $render = $this->_filtersRenders->load(ucfirst($this->_filters[$campo]['render']));
-            $render = new $render();
+            $render = $this->loadFilterRender($this->_filters[$campo]['render']);
             $render->setView($this->getView());
             $renderLoaded = true;
         }
@@ -2074,8 +2073,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if($renderLoaded===false)
             {
-                $render = $this->_filtersRenders->load('Select');
-                $render = new $render();
+                $render = $this->loadFilterRender('Select');
                 $render->setView($this->getView());
                 $renderLoaded = true;
             }
@@ -2087,8 +2085,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ( $tipo != 'invalid' ) {
 
             if ( $renderLoaded === false ) {
-                $render = $this->_filtersRenders->load('Text');
-                $render = new $render();
+                $render = $this->loadFilterRender('Text');
                 $render->setView($this->getView());
                 $renderLoaded = true;
             }
@@ -2110,14 +2107,35 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
+    function loadFilterRender($render)
+    {
+
+        if(is_array($render))
+        {
+            $toRender = key($render);
+        }else{
+            $toRender = $render;
+        }
+
+        $class = $this->_filtersRenders->load(ucfirst($toRender));
+        $class = new $class();
+
+        if(is_array($render)){
+            $re = new ReflectionMethod($class,'__construct');
+            $new_value = $re->invokeArgs($class, $render[$toRender]);
+        }
+
+        return $class;
+    }
+
     function getAllFieldsIds ()
     {
         $fields = array();
         foreach ( $this->_filters as $key => $filter ) {
 
             if (is_array($filter) && isset($filter['render']) ) {
-                $render = $this->_filtersRenders->load(ucfirst($filter['render']));
-                $render = new $render();
+
+                $render = $this->loadFilterRender($filter['render']);
                 $fields[$key] = $render->getFields();
 
             } else {

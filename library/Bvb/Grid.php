@@ -990,8 +990,7 @@ abstract class Bvb_Grid
 
                 if ( is_array($filter) ) {
 
-                    $render = $this->_filtersRenders->load(ucfirst($this->_filters[$key]['render']));
-                    $render = new $render();
+                    $render = $this->loadFilterRender($this->_filters[$key]['render']);
                     $cond = $render->getConditions();
 
                     foreach ( $filter as $nkey => $value ) {
