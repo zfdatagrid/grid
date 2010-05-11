@@ -100,6 +100,22 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+    public function dateAction ()
+    {
+
+        $grid = $this->grid();
+
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs',array('bug_status','status','date','time'))));
+
+        $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('date', array('render'=>'date'));
+
+        $grid->addFilters($filters);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
 
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
@@ -116,12 +132,12 @@ class SiteController extends Zend_Controller_Action
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
 
         $grid->updateColumn('country', array('title' => 'Country (Capital)', 'class' => 'hideInput', 'decorator' => '{{country}} <em>({{city}})</em>'));
-        $grid->updateColumn('city', array('title' => 'Capital', 'hide' => 1));
+        $grid->updateColumn('city', array('title' => 'Capital', 'hidden' => 1));
         $grid->updateColumn('Continent', array('title' => 'Continent'));
         $grid->updateColumn('Population', array('title' => 'Population', 'class' => 'width_80'));
         $grid->updateColumn('LifeExpectancy', array('title' => 'Life E.', 'class' => 'width_50'));
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
-        $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hide' => 1));
+        $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hidden' => 1));
 
         $right = new Bvb_Grid_Extra_Column();
         $right->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
@@ -135,7 +151,7 @@ class SiteController extends Zend_Controller_Action
         $rows = new Bvb_Grid_Extra_Rows();
         $rows->addRow('beforeHeader', array('', // empty field
 array('colspan' => 1, 'class' => 'myclass', 'content' => 'my
-content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers
+content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers
 :) ')));
         $grid->addExtraRows($rows);
 
@@ -222,7 +238,6 @@ content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '
         #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
 
         #$grid->setRouteUrl('grid');
-
 
         $grid->setNumberRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));

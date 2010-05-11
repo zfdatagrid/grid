@@ -1521,7 +1521,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $layout->disableLayout();
             }
 
-
             $response = Zend_Controller_Front::getInstance()->getResponse();
             $response->clearBody();
             $response->setBody(implode($this->_renderDeploy));
@@ -1720,6 +1719,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
             value = document.getElementById(fieldsArray[i]).value;\n";
+            $script .= "         value = value.replace(/^\s+|\s+$/g,''); \n";
             $script .= "         value = value.replace(/[\"]/,''); \n";
             $script .= "         value = value.replace(/[\\\]/,''); \n";
             $script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
@@ -1939,7 +1939,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $renderLoaded = false;
         $allFieldsIds = $this->getAllFieldsIds();
 
-        if ( is_array($this->_filters[$campo]) && isset($this->_filters[$campo]['render']) ) {
+        if (isset($this->_filters[$campo]) && is_array($this->_filters[$campo]) && isset($this->_filters[$campo]['render']) ) {
 
             $render = $this->loadFilterRender($this->_filters[$campo]['render']);
             $render->setView($this->getView());

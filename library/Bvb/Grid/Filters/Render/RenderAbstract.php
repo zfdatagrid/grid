@@ -32,6 +32,8 @@ class Bvb_Grid_Filters_Render_RenderAbstract
 
     protected $_fieldName;
 
+    protected $_select;
+
 
     function __construct()
     {
@@ -144,4 +146,20 @@ class Bvb_Grid_Filters_Render_RenderAbstract
         return $this->_fieldName;
     }
 
+    function normalize($value,$part ='')
+    {
+        return $value;
+    }
+
+
+    function setSelect($select)
+    {
+        $this->_select = $select;
+        return $this;
+    }
+
+    function getSelect()
+    {
+        return $this->_select;
+    }
 }

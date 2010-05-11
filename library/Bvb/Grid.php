@@ -992,13 +992,18 @@ abstract class Bvb_Grid
 
                     $render = $this->loadFilterRender($this->_filters[$key]['render']);
                     $cond = $render->getConditions();
+                    $render->setSelect($this->getSource()->getSelectObject());
 
                     foreach ( $filter as $nkey => $value ) {
 
-                        if(strlen($value)>0)
-                        $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
+                        if ( strlen($value) > 0 ) {
+                            $oldValue = $value;
+                            $value = $render->normalize($value, $nkey);
+                            $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
 
-                        $valor_filters[$key][$nkey] = $value;
+                            $valor_filters[$key][$nkey] = $oldValue;
+                        }
+
                     }
 
                 }
@@ -2365,7 +2370,6 @@ abstract class Bvb_Grid
                 $final[$value->_field['name']] = $value->_field;
 
         }
-
 
         $this->_extraFields = $final;
         return $this;

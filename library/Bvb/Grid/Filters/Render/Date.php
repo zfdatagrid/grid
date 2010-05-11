@@ -23,24 +23,30 @@ class Bvb_Grid_Filters_Render_Date extends Bvb_Grid_Filters_Render_RenderAbstrac
 {
 
 
-    function getFields ()
+  function getFields ()
     {
         return array('from', 'to');
     }
 
-
-    function applyFilterToSelect ()
+    function normalize($value,$part)
     {
+        return date('Y-m-d',strtotime($value));
+    }
 
+
+    public function getConditions ()
+    {
+        return array('from' => '>=', 'to' => '<=');
     }
 
 
     function render ()
     {
         $this->removeAttribute('id');
+        $this->setAttribute('style','width:80px !important;');
 
-        return $this->getView()->formText($this->getFieldName().'[from]', $this->getDefaultValue(), array_merge($this->getAttributes(),array('id'=>'filter_'.$this->getFieldName().'_from')))
-        .$this->getView()->formText($this->getFieldName().'[to]', $this->getDefaultValue(), array_merge($this->getAttributes(),array('id'=>'filter_'.$this->getFieldName().'_to')));
+        return "From: ".$this->getView()->formText($this->getFieldName().'[from]', $this->getDefaultValue('from'), array_merge($this->getAttributes(),array('id'=>'filter_'.$this->getFieldName().'_from')))
+        ."<br>To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$this->getView()->formText($this->getFieldName().'[to]', $this->getDefaultValue('to'), array_merge($this->getAttributes(),array('id'=>'filter_'.$this->getFieldName().'_to')));
     }
 
 }
