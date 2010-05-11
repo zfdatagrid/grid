@@ -2351,19 +2351,18 @@ abstract class Bvb_Grid
             if ( !$value instanceof Bvb_Grid_Extra_Column ) {
                 throw new Bvb_Grid_Exception($value.' must be na instance of Bvb_Grid_Extra_Column');
             }
-                $value = $this->_object2array($value);
 
-                if(!isset($value['_field']['name']) || !is_string($value['_field']['name']))
+                if(!isset($value->_field['name']) || !is_string($value->_field['name']))
                 {
                     throw new Bvb_Grid_Exception('You need to define the column name');
                 }
 
-                if(isset($value['_field']['title']) && !is_string($value['_field']['title']))
+                if(isset($value->_field['title']) && !is_string($value->_field['title']))
                 {
                     throw new Bvb_Grid_Exception('title option must be a string');
                 }
 
-                $final[$value['_field']['name']] = $value['_field'];
+                $final[$value->_field['name']] = $value->_field;
 
         }
 
