@@ -51,6 +51,11 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 		$wsData = parent::_buildGrid ();
 		$sql = parent::_buildSqlExp ();
 
+
+		if (is_array ( $wsData ) && count($wsData)>65569) {
+		    throw new Bvb_Grid_Exception('Maximum number of recordsa allowed is 65569');
+		}
+
 		$xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns:x="urn:schemas-microsoft-com:office:excel"
   xmlns="urn:schemas-microsoft-com:office:spreadsheet"
