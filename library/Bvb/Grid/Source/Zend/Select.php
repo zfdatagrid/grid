@@ -269,13 +269,28 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      */
     public function getTotalRecords ()
     {
+
+        $hasExp = false;
+
         $selectCount = clone $this->_select;
-        $selectCount->reset(Zend_Db_Select::COLUMNS);
+
+        foreach ( $selectCount->getPart('columns') as $value ) {
+            if ( $value[1] instanceof Zend_Db_Expr ) {
+               $hasExp = true;
+               break;
+            }
+        }
+
+        if($hasExp == false)
+        {
+            $selectCount->reset(Zend_Db_Select::COLUMNS);
+            $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS total '));
+        }
+
         $selectCount->reset(Zend_Db_Select::LIMIT_OFFSET);
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS total '));
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
