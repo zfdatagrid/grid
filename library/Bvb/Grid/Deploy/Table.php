@@ -413,7 +413,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $sendCall = array(&$post, $this->getSource());
 
                         if ( null !== $this->_callbackBeforeInsert ) {
-                            call_user_func($this->_callbackBeforeInsert, $sendCall);
+                            call_user_func_array($this->_callbackBeforeInsert, $sendCall);
                         }
 
 
@@ -424,7 +424,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
                         if ( null !== $this->_callbackAfterInsert ) {
-                            call_user_func($this->_callbackAfterInsert, $sendCall);
+                            call_user_func_array($this->_callbackAfterInsert, $sendCall);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -463,7 +463,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $sendCall = array(&$post, $this->getSource());
 
                         if ( null !== $this->_callbackBeforeUpdate ) {
-                            call_user_func($this->_callbackBeforeUpdate, $sendCall);
+                            call_user_func_array($this->_callbackBeforeUpdate, $sendCall);
                         }
 
                         if ( $this->_crudTableOptions['edit'] == true ) {
@@ -474,7 +474,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
                         if ( null !== $this->_callbackAfterUpdate ) {
-                            call_user_func($this->_callbackAfterUpdate, $sendCall);
+                            call_user_func_array($this->_callbackAfterUpdate, $sendCall);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -588,7 +588,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $sendCall = array(&$condition, $this->getSource());
 
             if ( null !== $this->_callbackBeforeDelete ) {
-                call_user_func($this->_callbackBeforeDelete, $sendCall);
+                call_user_func_array($this->_callbackBeforeDelete, $sendCall);
             }
 
             if ( $this->_crudTableOptions['delete'] == true ) {
@@ -599,7 +599,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if ( $resultDelete == 1 ) {
                 if ( null !== $this->_callbackAfterDelete ) {
-                    call_user_func($this->_callbackAfterDelete, $sendCall);
+                    call_user_func_array($this->_callbackAfterDelete, $sendCall);
                 }
             }
 
