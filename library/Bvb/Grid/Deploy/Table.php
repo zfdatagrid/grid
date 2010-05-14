@@ -419,7 +419,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         if ( $this->_crudTableOptions['add'] == true ) {
                             $post = array_merge($post, $this->_crudOptions['addForce']);
-                            $this->getSource()->insert($this->_crudTable, $post);
+                            $sendCall[] = $this->getSource()->insert($this->_crudTable, $post);
                         }
 
 
