@@ -162,6 +162,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_comm;
 
+    /**
+     * IF user has defined mass actions operations
+     * @var bool
+     */
+    protected $_hasMassActions = false;
+
+
+    protected $_massActions = false;
 
     /**
      *
@@ -1554,6 +1562,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $bHeader .= $this->_buildHeader();
         $bHeader .= $this->_buildExtraRows('afterHeader');
         $bTitles = $this->_buildExtraRows('beforeTitles');
+        $bTitles .= $this->_buildMassActions();
         $bTitles .= $this->_buildTitlesTable(parent::_buildTitles());
         $bTitles .= $this->_buildExtraRows('afterTitles');
         $bFilters = $this->_buildExtraRows('beforeFilters');
@@ -1573,6 +1582,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $bPagination = $this->_buildExtraRows('beforePagination');
         $bPagination .= $this->_pagination();
         $bPagination .= $this->_buildExtraRows('afterPagination');
+
+
+        if ( $this->hasMassActions() ) {
+
+            $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
+
+            $bHeader .= '<form method="post" action="http://mascker.local/grid/default/site/basic" id="massActions'.$this->getGridId().'" name="massActions'.$this->getGridId().'">';
+            $bHeader .= $this->getView()->formHidden('massActionsAll',$ids);
+            $bHeader .= $this->getView()->formHidden('postMassIds','');
+            $bPagination .= '</form>';
+        }
+
 
         if ( $deploy == true ) {
             $this->_renderDeploy['header'] = $bHeader;
@@ -1637,9 +1658,97 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $script = "";
 
+
+        if($this->hasMassActions())
+        {
+
+$script .= "
+
+var recordsSelected = 0;
+
+var postMassIds = new Array();
+
+function convertArrayToInput()
+{
+
+    if(postMassIds.length==0)
+    {
+        alert('No record selected');
+        return false;
+    }
+
+    document.forms.massActions.action = document.getElementById('gridAction').value;
+
+    document.getElementById('postMassIds').value = postMassIds.join(',');
+
+}
+
+function updateRecords()
+{
+     document.getElementById('massSelected').innerHTML = recordsSelected;
+}
+
+function observeCheckBox(box)
+{
+    if(box.checked == true)
+    {
+        if(postMassIds.indexOf(box.value)== -1)
+            {
+                postMassIds.push(box.value);
+            }
+        recordsSelected++;
+    }else{
+
+        if(postMassIds.indexOf(box.value)!= -1)
+            {
+                postMassIds.splice(postMassIds.indexOf(box.value),1);
+                recordsSelected--;
+            }
+    }
+    updateRecords();
+}
+
+function checkAll(field,total,all)
+    {
+       var tempArray = new Array();
+
+         for (i = 0; i < field.length; i++)
+         {
+            field[i].checked = true ;
+            tempArray.push(field[i].value);
+         }
+
+        if(all ==1)
+            {
+                postMassIds = document.getElementById('massActionsAll').value.split(',');
+            }else{
+                postMassIds = tempArray;
+            }
+
+         recordsSelected = total;
+         updateRecords();
+    }
+
+function uncheckAll(field)
+{
+     for (i = 0; i < field.length; i++)
+     {
+         field[i].checked = false ;
+     }
+
+recordsSelected = 0;
+
+postMassIds = new Array();
+
+updateRecords();
+}
+";
+
+        }
+
         if ( $this->allowDelete == 1 ) {
 
-            $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
+$script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         {
             if(confirm(msg))
             {
@@ -2404,17 +2513,79 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @param bool $status
      * @return Bvb_Grid_Deploy_Table
      */
-    function setAlwaysShowOrderArrows ($status)
+    public function setAlwaysShowOrderArrows ($status)
     {
         $this->_alwaysShowOrderArrows = (bool) $status;
         return $this;
     }
 
 
-    function getAlwaysShowOrderArrows ()
+    public function getAlwaysShowOrderArrows ()
     {
         return $this->_alwaysShowOrderArrows;
     }
 
-}
 
+    public function hasMassActions ()
+    {
+        return $this->_hasMassActions;
+    }
+
+
+    public function getMassActionsOptions ()
+    {
+        if ( ! $this->_hasMassActions ) {
+            return array();
+        }
+
+        return (array) $this->_massActions;
+    }
+
+
+    protected function _buildMassActions ()
+    {
+        if ( ! $this->hasMassActions() ) return false;
+
+
+        $select = array();
+        foreach ( $this->getMassActionsOptions() as $value ) {
+            $select[$value['url']] = $value['caption'];
+        }
+
+        $formSelect = $this->getView()->formSelect('gridAction', null, array(), $select);
+        $formSubmit = $this->getView()->formSubmit('send',$this->__('Submit'),array('onClick'=>'return convertArrayToInput()'));
+
+        if($this->getResultsPerPage()<$this->getTotalRecords())
+        {
+            $currentRecords = $this->getResultsPerPage();
+        }else{
+            $currentRecords = $this->getTotalRecords();
+        }
+
+        return "<tr><td class='massActions' colspan=" . $this->_colspan . "><span class='massSelect'><a href='#' onclick='checkAll(document.massActions.gridMassActions,{$this->getTotalRecords()},1)'>" . $this->__('Select All') ."</a> | <a href='#' onclick='checkAll(document.massActions.gridMassActions,{$currentRecords},0)'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll(document.massActions.gridMassActions,0)'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected'>0</span></strong> ".$this->__('items selected')."</span> " . $this->__('Actions') . ": $formSelect $formSubmit</td></tr>";
+    }
+
+
+    function setMassAction(array $options)
+    {
+
+        $this->_hasMassActions = true;
+        $this->_massActions = $options;
+
+        $pk = '';
+        foreach ($this->getSource()->getPrimaryKey($this->_data['table']) as $value)
+        {
+            $aux = explode('.',$value);
+            $pk .= end($aux).'-';
+        }
+
+        $pk = rtrim($pk,'-');
+
+        $left = new Bvb_Grid_Extra_Column();
+        $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox(this)' name='gridMassActions' value='{{{$pk}}}'>");
+
+        $this->addExtraColumns( $left);
+
+    }
+
+}

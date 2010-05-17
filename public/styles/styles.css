@@ -4,6 +4,26 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
+.massActions{
+	background-color:beige;
+	text-align:right;
+}
+
+.massActions .massSelect{
+	display:block;
+	float:left;
+	padding-top:2px;
+}
+
+.massActions * {
+	color: #333;
+	text-decoration:none;
+}
+
+.massActions input{
+	margin-left:10px;
+}
+
 .buttons {
 	text-align: center;
 	background-color: #DEDEDE;

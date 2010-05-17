@@ -1167,11 +1167,11 @@ abstract class Bvb_Grid
         unset($params_clean['gridmod']);
 
 
-        foreach ($this->_filters as $key => $value)
-        {
-            if(isset($key['render']))
-            {
-                unset($params_clean[$key]);
+        if ( is_array($this->_filters) ) {
+            foreach ( $this->_filters as $key => $value ) {
+                if ( isset($key['render']) ) {
+                    unset($params_clean[$key]);
+                }
             }
         }
 

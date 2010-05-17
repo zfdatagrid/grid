@@ -1149,4 +1149,12 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
             }
         }
     }
+
+
+    public function getMassActionsIds ($table)
+    {
+
+        throw new Exception('Not yet Implemented');
+
+    }
 }

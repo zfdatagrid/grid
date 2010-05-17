@@ -228,6 +228,14 @@ content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '
      */
     public function basicAction ()
     {
+
+        if($this->getRequest()->isPost())
+        {
+            echo "<pre>";
+           print_r(explode(',',$this->_getParam('postMassIds')));
+           die();
+        }
+
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
@@ -239,10 +247,23 @@ content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '
 
         #$grid->setRouteUrl('grid');
 
+        $grid->setMassAction(array(
+                                 array(
+                                      'url'=>$grid->getUrl(),
+                                      'caption'=>'Remove (Nothing will happen)',
+                                      'confirm'=>'Are you sure?'
+                                       ),
+                                 array(
+                                      'url'=>$grid->getUrl().'/nothing/happens',
+                                      'caption'=>'Some other action',
+                                      'confirm'=>'Are you sure?'
+                                       ),
+                                  )
+                             );
+
         $grid->setNumberRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
 
-        $grid->setDetailColumns();
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));

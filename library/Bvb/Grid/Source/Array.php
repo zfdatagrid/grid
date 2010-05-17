@@ -432,4 +432,10 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         return false;
     }
 
+    public function getMassActionsIds ($table)
+    {
+
+        throw new Exception('Not yet Implemented');
+
+    }
 }

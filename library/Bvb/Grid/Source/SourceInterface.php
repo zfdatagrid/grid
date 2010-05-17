@@ -314,4 +314,10 @@ interface Bvb_Grid_Source_SourceInterface
      */
      public function buildForm($fields = array());
 
+     /**
+      * Returns tables primary keys separeted by commas ","
+      * This is necessary for mass actions
+      * @param $table
+      */
+     public function getMassActionsIds ($table);
 }
