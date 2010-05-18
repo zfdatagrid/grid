@@ -1848,7 +1848,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             $script .= "         value = value.replace(/^\s+|\s+$/g,''); \n";
             $script .= "         value = value.replace(/[\"]/,''); \n";
             $script .= "         value = value.replace(/[\\\]/,''); \n";
-            $script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
+            #$script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
             $script .= "         filtro[i] = '\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'\":\"'+encodeURIComponent(value)+'\"';
         }
 
