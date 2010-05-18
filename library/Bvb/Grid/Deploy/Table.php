@@ -1662,6 +1662,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if($this->hasMassActions())
         {
 
+ $script .=" var confirmMessages = new Array();\n";
+
+          foreach ($this->getMassActionsOptions() as $value)
+          {
+              if(isset($value['confirm']))
+              {
+                  $script .=" confirmMessages['{$value['url']}'] = '{$value['confirm']}'; \n";
+              }
+          }
 $script .= "
 
 var recordsSelected = 0;
@@ -1677,7 +1686,18 @@ function convertArrayToInput()
         return false;
     }
 
-    document.forms.massActions.action = document.getElementById('gridAction').value;
+    var input = document.getElementById('gridAction').value;
+
+    for(var i in confirmMessages)
+    {
+       if(i == input && !confirm(confirmMessages[input]))
+       {
+        return false;
+       }
+    }
+
+
+    document.forms.massActions.action = input;
 
     document.getElementById('postMassIds').value = postMassIds.join(',');
 
@@ -1798,10 +1818,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
     xmlhttp.onreadystatechange=function () {
 
         if (xmlhttp.readyState==4) {
-            texto=xmlhttp.responseText;
-            document.getElementById(ponto).innerHTML=texto;
-        }else{
-
+            document.getElementById(ponto).innerHTML=xmlhttp.responseText;
         }
     }
     xmlhttp.send(null);
