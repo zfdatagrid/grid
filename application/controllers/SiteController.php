@@ -148,13 +148,6 @@ class SiteController extends Zend_Controller_Action
         $grid->addExtraColumns($right, $left);
 
 
-        $rows = new Bvb_Grid_Extra_Rows();
-        $rows->addRow('beforeHeader', array('', // empty field
-array('colspan' => 1, 'class' => 'myclass', 'content' => 'my
-content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers
-:) ')));
-        $grid->addExtraRows($rows);
-
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -229,23 +222,106 @@ content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '
     public function basicAction ()
     {
 
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+        $grid->query($select);
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+    public function multiAction ()
+    {
+        $grid = $this->grid('a');
+        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->query($select);
+        $this->view->pages = $grid->deploy();
+
+        $grid2 = $this->grid('b');
+        $select2 = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid2->query($select2);
+        $this->view->pages2 = $grid2->deploy();
+
+        $this->render('index');
+    }
+
+    public function detailAction ()
+    {
+
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country');
+        $grid->query($select);
+
+        $grid->setDetailColumns();
+        $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+    public function columnsAction ()
+    {
+
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+        $grid->query($select);
+
+
+        $rows = new Bvb_Grid_Extra_Rows();
+        $rows->addRow('beforeHeader', array('',array('colspan' => 1, 'class' => 'myclass', 'content' => 'my content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers:) ')));
+        $rows->addRow('beforePagination', array(array('colspan' => 5,  'content' => "This is an extra row added before pagination")));
+        $grid->addExtraRows($rows);
+
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+
+    public function conditionalAction ()
+    {
+
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country');
+        $grid->query($select);
+
+        $grid->setClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
+        $grid->setClassRowCondition("'{{Population}}' > 20000","green",'red');
+
+
+        $grid->setNumberRecordsPerPage(15);
+        $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
+
+        $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+
+        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+
+
+    public function massAction ()
+    {
+
         if($this->getRequest()->isPost())
         {
             echo "<pre>";
-           print_r(explode(',',$this->_getParam('postMassIds')));
+           print_r(explode(',',$this->_getAllParams()));
            die();
         }
 
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country');
-        #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
-        #$grid->setClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
-        #$grid->addClassCellCondition('Population',"'{{Population}}' < 200000","green");
-        #$grid->setClassRowCondition("'{{Population}}' > 20000","green",'orange');
-
-        #$grid->setRouteUrl('grid');
 
         $grid->setMassAction(array(
                                  array(
@@ -263,10 +339,7 @@ content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '
 
         $grid->setNumberRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
-
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
-
-        #$grid->updateColumn('Name',array('helper'=>array('name'=>'formText','params'=>array('[{{ID}}]','{{Name}}'))));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
 
         $this->view->pages = $grid->deploy();
@@ -292,11 +365,6 @@ content'), array('colspan' => 1, 'class' => 'myotherclass', 'content' => 'some '
 
 
         $grid->setSource(new Bvb_Grid_Source_Array($array, array('name', 'age', 'sex')));
-
-        $grid->setSqlExp(array('age' => array('functions' => array('SUM'))));
-
-        $grid->updateColumn('name', array('title' => 'sometitle', 'hRow' => 1));
-
 
         $this->view->pages = $grid->deploy();
 

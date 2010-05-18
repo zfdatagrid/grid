@@ -5,44 +5,59 @@
 <link type="text/css" rel="stylesheet" href="<?php echo $this->url; ?>public/styles/styles.css">
 <?php echo $this->headScript();?>
 <style type="text/css">
-li {
-padding:0px;margin:0px;
-width:330px;
-line-height:100%;
-left:30px;
+ul {
+	padding:0;
+	margin:0;
+	margin-left:15px;
+	list-style:none;
+	width:430px;
+	float:left;
 }
 
-#menu a,#menu a:hover{
-	color:#333;
-text-decoration:none;
+li{
+    color:#E88A16;
+	font-size:11px;
+	font-weight:bold;
+}
+
+li span{
+    color:#000;
+	display:block;
+	padding-left:20px;
+	font-weight:normal;
+}
+
+li a, li a:VISITED {
+	color:#E88A16;
+	letter-spacing:1px;
+	text-decoration:none;
 }
 </style>
 </head>
 <body>
 <table style="width:900px;" align="center" cellpadding="0" cellspacing="0">
 <tr>
-<td style="background-color:#F2F2F2; border:0px;">
-<div style="position:relative; background-image:url(<?php echo $this->url; ?>public/images/grid.jpg); height:100px;width:900px;">
-<div style="float:left;top:20px;position:relative;left:20px;"><a href="<?php echo $this->url; ?>"><img border="0" width="230" height="50" src="<?php echo $this->url; ?>public/images/blank.gif"></img></a></div>
-<div id="menu" style="border:0;position:relative; top:20px;margin-left:300px;margin-right:200px;font-size:12px;">
-<strong style="color:maroon;">Choose another example:</strong>
-<select onchange="window.location=this.value" style=" padding:2px;font-size:12px;">
-       <option value="<?php echo $this->url ?>default/site/basic" <?php if($this->action=='basic'){echo " selected ";}?>>Basic example - $db->select()->from('table');</option>
-       <option value="<?php echo $this->url ?>default/site/ofc" <?php if($this->action=='ofc'){echo " selected ";}?>>Open FLash Chart - Simple Implementation</option>
-       <option value="<?php echo $this->url ?>default/jqgrid" >Jqgrid - From http://www.trirand.com/blog/ </option>
-       <option value="<?php echo $this->url ?>default/site/ajax" <?php if($this->action=='ajax'){echo " selected ";}?>>Basic example with AJAX;</option>
-        <option value="<?php echo $this->url ?>default/site/extra" <?php if($this->action=='extra'){echo " selected ";}?>>Extra Fields - Extra Fields with custom content</option>
-        <option value="<?php echo $this->url ?>default/site/filters" <?php if($this->action=='filters'){echo " selected ";}?>>Advanced Filters - Auto Filters</option>
-        <option value="<?php echo $this->url ?>default/site/crud" <?php if($this->action=='crud'){echo " selected ";}?>>CRUD operations - Create, Read, Update and delete operations</option>
-        <option value="<?php echo $this->url ?>default/site/hrow" <?php if($this->action=='hrow'){echo " selected ";}?>>Horizontal Row - Split the grid by sections</option>
-        <option value="<?php echo $this->url ?>default/site/template" <?php if($this->action=='template'){echo " selected ";}?>>Custom Template - Outside the Grid Path</option>
-        <option value="<?php echo $this->url ?>default/site/feed" <?php if($this->action=='feed'){echo " selected ";}?>>Feed - Using RSS as datasource</option>
-        <option value="<?php echo $this->url ?>default/site/csv" <?php if($this->action=='csv'){echo " selected ";}?>>CSV - Using CSV file as datasource</option>
-        <option value="<?php echo $this->url ?>default/site/excel" <?php if($this->action=='excel'){echo " selected ";}?>>Excel file - An adapter for the PHPExcel project</option>
-</select>
-<a target="_blank" href="<?php echo $this->url ?>default/site/code">Source code for this controller</a> |
-<a href="http://www.zfdatagrid.com/">Back to blog</a>
-</div>
+<td style="background-color:#F5F5F5; border:0px;">
+<div style="background-image:url(<?php echo $this->url; ?>public/images/grid.jpg); height:250px;width:900px;">
+<div style="height:37px;"><a href="/"><img border="0" width="220" height="30" src="<?php echo $this->url; ?>public/images/blank.gif"></img></a></div>
+<ul>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/basic')?>">Basic Example</a><span>What happens when you just pass the Zend_Db_Select instance</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/mass')?>">Mass Actions</a><span>Use mass actions to perform the same action on multiple records.</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/extra')?>">Extra Columns</a><span>Add extra fields with content from records to your grid</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/columns')?>">Extra Rows</a><span>Insert extra columns in a variety of positions in your grid</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/filters')?>">Advanced Filters</a><span>Create custom filters and take advantage of the auto filters</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/conditional')?>">Conditional Rendering</a><span>Apply rules to format cells content</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/ajax')?>">Ajax</a><span>Use ajax to interact with the grid</span></li>
+</ul>
+<ul>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/crud')?>">CRUD Operations</a><span>Perform CRUD operations with auto-validation </span></li>
+    <li>.:Data Sources<span>Display data from db, <a href="<?php echo $this->baseUrl('default/site/excel')?>">Excel Files</a>, <a href="<?php echo $this->baseUrl('default/site/csv')?>">CSV</a>, <a href="<?php echo $this->baseUrl('default/site/feed')?>">XML</a>, <a href="<?php echo $this->baseUrl('default/site/array')?>">Array</a>, Build your own.</span></li>
+    <li>.:Render in different formats<span>Deploy your data as a table, <a href="<?php echo $this->baseUrl('default/jqgrid')?>">jqGrid</a>, <a href="<?php echo $this->baseUrl('default/site/ofc')?>">Open Flash Chart</a></span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/template')?>">Templating</a><span>Use different templates for each grid</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/hrow')?>">Horizontal Row</a><span>Split a set of records with an horizontal row</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/detail')?>">Detail View</a><span>See records details</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/multi')?>">Multiple Grids per page</a><span>Use several grids per page without interference between them</span></li>
+</ul>
 </div>
 
 </td>
@@ -82,7 +97,11 @@ text-decoration:none;
 <div id="grid">
 <?php echo $this->pages1; ?>
 </div>
-
+<br></br>
+<div id="grid">
+<?php echo $this->pages2; ?>
+</div>
+<br></br>
 </td>
 </tr>
 </table>
@@ -102,5 +121,3 @@ piwikTracker.enableLinkTracking();
 <!-- End Piwik Tag -->
 <?php endif;?>
 </body></html>
-
-
