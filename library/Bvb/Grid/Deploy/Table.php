@@ -1590,7 +1590,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $bHeader .= '<form method="post" action="" id="massActions_'.$this->getGridId().'" name="massActions_'.$this->getGridId().'">';
             $bHeader .= $this->getView()->formHidden('massActionsAll_'.$this->getGridId(),$ids);
-            $bHeader .= $this->getView()->formHidden('postMassIds_'.$this->getGridId(),'');
+            $bHeader .= $this->getView()->formHidden('postMassIds','');
             $bPagination .= '</form>';
         }
 
@@ -1697,9 +1697,9 @@ function convertArrayToInput_".$this->getGridId()."()
     }
 
 
-    document.forms.massActions_".$this->getGridId().".action = input;
+    document.forms.massActions_".$this->getGridId().".action = input_".$this->getGridId().";
 
-    document.getElementById('postMassIds_".$this->getGridId()."').value = postMassIds_".$this->getGridId().".join(',');
+    document.getElementById('postMassIds').value = postMassIds_".$this->getGridId().".join(',');
 
 }
 

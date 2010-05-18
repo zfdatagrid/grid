@@ -240,8 +240,10 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
 
         $grid2 = $this->grid('b');
-        $select2 = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $select2 = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population',  'GovernmentForm'));
         $grid2->query($select2);
+        $grid2->setTemplate('outside', 'table');
+        $grid2->setNumberRecordsPerPage(10);
         $this->view->pages2 = $grid2->deploy();
 
         $this->render('index');
@@ -314,7 +316,7 @@ class SiteController extends Zend_Controller_Action
         if($this->getRequest()->isPost())
         {
             echo "<pre>";
-           print_r(explode(',',$this->_getAllParams()));
+           print_r($this->_getAllParams());
            die();
         }
 
@@ -332,7 +334,7 @@ class SiteController extends Zend_Controller_Action
                                  array(
                                       'url'=>$grid->getUrl().'/nothing/happens',
                                       'caption'=>'Some other action',
-                                      'confirm'=>'Are you sure?'
+                                      'confirm'=>'Another confirmation message?'
                                        ),
                                   )
                              );
