@@ -1588,9 +1588,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
 
-            $bHeader .= '<form method="post" action="http://mascker.local/grid/default/site/basic" id="massActions'.$this->getGridId().'" name="massActions'.$this->getGridId().'">';
-            $bHeader .= $this->getView()->formHidden('massActionsAll',$ids);
-            $bHeader .= $this->getView()->formHidden('postMassIds','');
+            $bHeader .= '<form method="post" action="" id="massActions_'.$this->getGridId().'" name="massActions_'.$this->getGridId().'">';
+            $bHeader .= $this->getView()->formHidden('massActionsAll_'.$this->getGridId(),$ids);
+            $bHeader .= $this->getView()->formHidden('postMassIds_'.$this->getGridId(),'');
             $bPagination .= '</form>';
         }
 
@@ -1662,105 +1662,105 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if($this->hasMassActions())
         {
 
- $script .=" var confirmMessages = new Array();\n";
+ $script .=" var confirmMessages_".$this->getGridId()." = new Array();\n";
 
           foreach ($this->getMassActionsOptions() as $value)
           {
               if(isset($value['confirm']))
               {
-                  $script .=" confirmMessages['{$value['url']}'] = '{$value['confirm']}'; \n";
+                  $script .=" confirmMessages_".$this->getGridId()."['{$value['url']}'] = '{$value['confirm']}'; \n";
               }
           }
 $script .= "
 
-var recordsSelected = 0;
+var recordsSelected_".$this->getGridId()." = 0;
 
-var postMassIds = new Array();
+var postMassIds_".$this->getGridId()." = new Array();
 
-function convertArrayToInput()
+function convertArrayToInput_".$this->getGridId()."()
 {
 
-    if(postMassIds.length==0)
+    if(postMassIds_".$this->getGridId().".length==0)
     {
         alert('No record selected');
         return false;
     }
 
-    var input = document.getElementById('gridAction').value;
+    var input_".$this->getGridId()." = document.getElementById('gridAction_".$this->getGridId()."').value;
 
-    for(var i in confirmMessages)
+    for(var i in confirmMessages_".$this->getGridId().")
     {
-       if(i == input && !confirm(confirmMessages[input]))
+       if(i == input_".$this->getGridId()." && !confirm(confirmMessages_".$this->getGridId()."[input_".$this->getGridId()."]))
        {
         return false;
        }
     }
 
 
-    document.forms.massActions.action = input;
+    document.forms.massActions_".$this->getGridId().".action = input;
 
-    document.getElementById('postMassIds').value = postMassIds.join(',');
+    document.getElementById('postMassIds_".$this->getGridId()."').value = postMassIds_".$this->getGridId().".join(',');
 
 }
 
-function updateRecords()
+function updateRecords_".$this->getGridId()."()
 {
-     document.getElementById('massSelected').innerHTML = recordsSelected;
+     document.getElementById('massSelected_".$this->getGridId()."').innerHTML = recordsSelected_".$this->getGridId().";
 }
 
-function observeCheckBox(box)
+function observeCheckBox_".$this->getGridId()."(box)
 {
     if(box.checked == true)
     {
-        if(postMassIds.indexOf(box.value)== -1)
+        if(postMassIds_".$this->getGridId().".indexOf(box.value)== -1)
             {
-                postMassIds.push(box.value);
+                postMassIds_".$this->getGridId().".push(box.value);
             }
-        recordsSelected++;
+        recordsSelected_".$this->getGridId()."++;
     }else{
 
-        if(postMassIds.indexOf(box.value)!= -1)
+        if(postMassIds_".$this->getGridId().".indexOf(box.value)!= -1)
             {
-                postMassIds.splice(postMassIds.indexOf(box.value),1);
-                recordsSelected--;
+                postMassIds_".$this->getGridId().".splice(postMassIds_".$this->getGridId().".indexOf(box.value),1);
+                recordsSelected_".$this->getGridId()."--;
             }
     }
-    updateRecords();
+    updateRecords_".$this->getGridId()."();
 }
 
-function checkAll(field,total,all)
+function checkAll_".$this->getGridId()."(field,total,all)
     {
-       var tempArray = new Array();
+       var tempArray_".$this->getGridId()." = new Array();
 
          for (i = 0; i < field.length; i++)
          {
             field[i].checked = true ;
-            tempArray.push(field[i].value);
+            tempArray_".$this->getGridId().".push(field[i].value);
          }
 
         if(all ==1)
             {
-                postMassIds = document.getElementById('massActionsAll').value.split(',');
+                postMassIds_".$this->getGridId()." = document.getElementById('massActionsAll_".$this->getGridId()."').value.split(',');
             }else{
-                postMassIds = tempArray;
+                postMassIds_".$this->getGridId()." = tempArray_".$this->getGridId().";
             }
 
-         recordsSelected = total;
-         updateRecords();
+         recordsSelected_".$this->getGridId()." = total;
+         updateRecords_".$this->getGridId()."();
     }
 
-function uncheckAll(field)
+function uncheckAll_".$this->getGridId()."(field)
 {
      for (i = 0; i < field.length; i++)
      {
          field[i].checked = false ;
      }
 
-recordsSelected = 0;
+recordsSelected_".$this->getGridId()." = 0;
 
-postMassIds = new Array();
+postMassIds_".$this->getGridId()." = new Array();
 
-updateRecords();
+updateRecords_".$this->getGridId()."();
 }
 ";
 
@@ -2569,8 +2569,8 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             $select[$value['url']] = $value['caption'];
         }
 
-        $formSelect = $this->getView()->formSelect('gridAction', null, array(), $select);
-        $formSubmit = $this->getView()->formSubmit('send',$this->__('Submit'),array('onClick'=>'return convertArrayToInput()'));
+        $formSelect = $this->getView()->formSelect("gridAction_".$this->getGridId(), null, array(), $select);
+        $formSubmit = $this->getView()->formSubmit("send_".$this->getGridId(),$this->__('Submit'),array('onClick'=>"return convertArrayToInput_".$this->getGridId()."()"));
 
         if($this->getResultsPerPage()<$this->getTotalRecords())
         {
@@ -2579,7 +2579,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             $currentRecords = $this->getTotalRecords();
         }
 
-        return "<tr><td class='massActions' colspan=" . $this->_colspan . "><span class='massSelect'><a href='#' onclick='checkAll(document.massActions.gridMassActions,{$this->getTotalRecords()},1)'>" . $this->__('Select All') ."</a> | <a href='#' onclick='checkAll(document.massActions.gridMassActions,{$currentRecords},0)'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll(document.massActions.gridMassActions,0)'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected'>0</span></strong> ".$this->__('items selected')."</span> " . $this->__('Actions') . ": $formSelect $formSubmit</td></tr>";
+        return "<tr><td class='massActions' colspan=" . $this->_colspan . "><span class='massSelect'><a href='#' onclick='checkAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",{$this->getTotalRecords()},1)'>" . $this->__('Select All') ."</a> | <a href='#' onclick='checkAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",{$currentRecords},0)'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",0)'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_".$this->getGridId()."'>0</span></strong> ".$this->__('items selected')."</span> " . $this->__('Actions') . ": $formSelect $formSubmit</td></tr>";
     }
 
 
@@ -2599,7 +2599,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         $pk = rtrim($pk,'-');
 
         $left = new Bvb_Grid_Extra_Column();
-        $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox(this)' name='gridMassActions' value='{{{$pk}}}'>");
+        $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox_".$this->getGridId()."(this)' name='gridMassActions_".$this->getGridId()."' value='{{{$pk}}}'>");
 
         $this->addExtraColumns( $left);
 
