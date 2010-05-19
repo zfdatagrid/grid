@@ -47,13 +47,16 @@ class Bvb_Grid_Template_Print_Print implements Bvb_Grid_Template_Print_PrintInte
     public function header ()
     {
 
-        if (file_exists(@$this->options['logo'])) {
+        if (isset($this->options ['logo']) && is_file ( $this->options ['logo'] )){
             $img = "<img align=\"left\" src=\"" . $this->options['logo'] . "\" border=\"0\">";
         } else {
             $img = '';
         }
 
-        return " <tr><td colspan=\"{$this->options['colspan']}\" style='border:solid black 1.0pt;background-color:#FFFFFF;color:#000000;padding:5px'> $img <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'><o:p>" . @$this->options['title'] . "</o:p></span></b><span style='font-size:9.0pt;'><o:p><br>" . @$this->options['subtitle'] . "</o:p></span></p>
+        $this->options['title'] = isset($this->options['title'])?$this->options['title']:'';
+        $this->options['subtitle'] = isset($this->options['subtitle'])?$this->options['subtitle']:'';
+
+        return " <tr><td colspan=\"{$this->options['colspan']}\" style='border:solid black 1.0pt;background-color:#FFFFFF;color:#000000;padding:5px'> $img <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'><o:p>" . $this->options['title'] . "</o:p></span></b><span style='font-size:9.0pt;'><o:p><br>" . $this->options['subtitle'] . "</o:p></span></p>
   </td></tr>";
     }
 

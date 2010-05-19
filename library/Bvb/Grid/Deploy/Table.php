@@ -789,7 +789,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Check extra fields from the right
             if ( $filter['type'] == 'extraField' && $filter['position'] == 'right' ) {
-                @ $grid .= str_replace('{{value}}', $filter['value'], $this->_temp['table']->filtersLoop());
+                $filter['value'] = isset($filter['value'])?$filter['value']:'';
+                 $grid .= str_replace('{{value}}', $filter['value'], $this->_temp['table']->filtersLoop());
             }
 
         }
@@ -899,7 +900,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                                 $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
                             } else {
-                                $grid .= str_replace('{{value}}', "<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . @$title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+                                $grid .= str_replace('{{value}}', "<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
 
                             }
 
@@ -1038,14 +1039,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 $col = $this->getInfo("hRow");
 
-                if ( $bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value'] ) {
+                if(! isset($bar[$aa - 1][$hRowIndex]))
+                {
+                     $bar[$aa - 1][$hRowIndex]['value'] = '';
+                }
+
+                if ( $bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value'] ) {
                     $i ++;
 
                     if ( isset($bar[$aa - 1]) ) {
                         $grid .= $this->_buildSqlexpTable($this->_buildSqlExp(array($col['field'] => $bar[$aa - 1][$hRowIndex]['value'])));
                     }
 
-                    $grid .= str_replace(array("{{value}}", "{{class}}"), array($bar[$aa][$hRowIndex]['value'], @$value['class']), $this->_temp['table']->hRow($finalFields));
+                    $grid .= str_replace(array("{{value}}", "{{class}}"), array($bar[$aa][$hRowIndex]['value'], isset($value['class'])?$value['class']:''), $this->_temp['table']->hRow($finalFields));
                 }
 
 

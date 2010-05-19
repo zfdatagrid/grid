@@ -112,9 +112,13 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
                 if ($this->getInfo('hRow,title') != '')
                 {
 
-                    if (@$bar [$aa] [$hRowIndex] ['value'] != @$bar [$aa - 1] [$hRowIndex] ['value'])
+                 if ( ! isset($bar[$aa - 1][$hRowIndex]) ) {
+                        $bar[$aa - 1][$hRowIndex]['value'] = '';
+                    }
+
+                    if ($bar [$aa] [$hRowIndex] ['value'] != $bar [$aa - 1] [$hRowIndex] ['value'])
                     {
-                        $xml .= str_replace ( "{{value}}", @$bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow () );
+                        $xml .= str_replace ( "{{value}}", $bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow () );
                     }
                 }
                 ////////////

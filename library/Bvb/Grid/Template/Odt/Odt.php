@@ -220,7 +220,7 @@ class Bvb_Grid_Template_Odt_Odt
     public function header()
     {
 
-        if (@file_exists ( $this->options ['logo'] ))
+        if (isset($this->options ['logo']) && is_file ( $this->options ['logo'] ))
         {
 
             if(strpos($this->options['logo'],'/')!==false)

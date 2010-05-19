@@ -70,7 +70,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         foreach ( $titles as $titulos ) {
 
-            if ( (@$titulos['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
+            if ( (isset($titulos['field']) && $titulos['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
                 $larg[$i] = $this->widthForStringUsingFontSize($titulos['value'], $font, 8);
                 $i ++;
             }
@@ -300,7 +300,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
 
         $page->drawText($this->deploy['footer'], 40, 40, $this->getCharEncoding());
-        if ( @$this->deploy['noPagination'] != 1 ) {
+        if ( !isset($this->deploy['noPagination'] ) ||  $this->deploy['noPagination'] != 1 ) {
             $page->drawText($this->__($this->deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
         }
 

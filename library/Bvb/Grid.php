@@ -1085,7 +1085,7 @@ abstract class Bvb_Grid
     protected function _buildQueryOrderAndLimit ()
     {
 
-        @$start = (int) $this->getParam('start');
+        $start = (int) $this->getParam('start');
         $order = $this->getParam('order');
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
@@ -1142,7 +1142,6 @@ abstract class Bvb_Grid
         //based on grid id. The id is prepended to the name
         $paramsGet = array('perPage','order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
 
-        $url = '';
         $params = $this->getAllParams();
 
         if ( is_array($situation) ) {
@@ -1175,12 +1174,14 @@ abstract class Bvb_Grid
             }
         }
 
+
+        $url = '';
         foreach ( $params_clean as $key => $param ) {
             // Apply the urldecode function to the filtros param
             if ( $key == 'filters' . $this->getGridId() ) {
                 $url .= "/" . trim(htmlspecialchars($key, ENT_QUOTES)) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
             } else {
-                @$url .= "/" .trim(htmlspecialchars($key, ENT_QUOTES)). "/" . trim(htmlspecialchars($param, ENT_QUOTES));
+                $url .= "/" .trim(htmlspecialchars($key, ENT_QUOTES)). "/" . trim(htmlspecialchars($param, ENT_QUOTES));
             }
         }
 
@@ -1282,7 +1283,7 @@ abstract class Bvb_Grid
 
             if ( $this->_displayField($nf) ) {
 
-                if ( @array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
+                if ( is_array($this->_filters) && array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
                     $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
                     $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter'])?$this->_template['classes']['filter']:'', 'field' => $data[$i]);
@@ -1385,7 +1386,7 @@ abstract class Bvb_Grid
             }
 
             if ( is_array($this->_order) ) {
-                $order = $orderFinal == @key($this->_order) ? $this->_order[$orderFinal] : 'ASC';
+                $order = $orderFinal == key($this->_order) ? $this->_order[$orderFinal] : 'ASC';
             } else {
                 $order = 'ASC';
             }

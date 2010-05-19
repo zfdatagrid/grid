@@ -109,8 +109,12 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 ////////////
                 //horizontal row
                 if ( $this->getInfo('hRow,title') != '' ) {
-                    if ( @$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value'] ) {
-                        $print .= str_replace("{{value}}", @$bar[$aa][$hRowIndex]['value'], $this->_temp['print']->hRow());
+                    if ( ! isset($bar[$aa - 1][$hRowIndex]) ) {
+                        $bar[$aa - 1][$hRowIndex]['value'] = '';
+                    }
+
+                    if ( $bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value'] ) {
+                        $print .= str_replace("{{value}}", $bar[$aa][$hRowIndex]['value'], $this->_temp['print']->hRow());
                     }
                 }
                 ////////////

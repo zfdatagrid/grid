@@ -24,11 +24,13 @@ class Bvb_Grid_Template_Wordx_Wordx
 {
 
     public $colSpan;
-    public  $wordOptions;
+
+    public $wordOptions;
 
     public $options;
 
-    public function __construct($options = array())
+
+    public function __construct ($options = array())
     {
         $this->wordOptions = $options;
 
@@ -110,7 +112,7 @@ class Bvb_Grid_Template_Wordx_Wordx
     public function header()
     {
 
-        if(@file_exists($this->options['logo']))
+        if (isset($this->options ['logo']) && is_file ( $this->options ['logo'] ))
         {
          $arrayLogo = explode("/",@$this->options['logo']);
 
