@@ -2205,7 +2205,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             }
 
             $render->setValues($values);
-
+            $render->setDefaultValue(isset($this->_filtersValues[$campo]) ? $this->_filtersValues[$campo] : '');
         }
 
         if ( $tipo != 'invalid' ) {

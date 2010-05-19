@@ -96,6 +96,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->addFilters($filters);
 
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
