@@ -2666,4 +2666,13 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
 
     }
 
+    /**
+     * Returns any erros from form validation
+     */
+    public function getFormErrorMessages()
+    {
+        return isset($this->_gridSession->errors)?$this->_gridSession->errors:false;
+    }
+
+
 }
