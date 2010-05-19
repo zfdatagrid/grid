@@ -1686,13 +1686,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if($this->hasMassActions())
         {
 
- $script .=" var confirmMessages_".$this->getGridId()." = new Array();\n";
+ $script .=" var confirmMessages_".$this->getGridId()." = new Array();".PHP_EOL;
 
           foreach ($this->getMassActionsOptions() as $value)
           {
               if(isset($value['confirm']))
               {
-                  $script .=" confirmMessages_".$this->getGridId()."['{$value['url']}'] = '{$value['confirm']}'; \n";
+                  $script .=" confirmMessages_".$this->getGridId()."['{$value['url']}'] = '{$value['confirm']}';".PHP_EOL;
               }
           }
 $script .= "
@@ -1795,13 +1795,13 @@ function uncheckAll_".$this->getGridId()."(field)
          field[i].checked = false ;
      }
 
-recordsSelected_".$this->getGridId()." = 0;
+    recordsSelected_".$this->getGridId()." = 0;
 
-postMassIds_".$this->getGridId()." = new Array();
+    postMassIds_".$this->getGridId()." = new Array();
 
-updateRecords_".$this->getGridId()."();
+    updateRecords_".$this->getGridId()."();
 }
-";
+".PHP_EOL;
 
         }
 
@@ -1862,7 +1862,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
     }
     xmlhttp.send(null);
 }
-";
+".PHP_EOL;
         }
 
         if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 0 ) {
@@ -1883,22 +1883,22 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
 
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
-            value = document.getElementById(fieldsArray[i]).value;\n";
-            $script .= "         value = value.replace(/^\s+|\s+$/g,''); \n";
-            $script .= "         value = value.replace(/[\"]/,''); \n";
-            $script .= "         value = value.replace(/[\\\]/,''); \n";
+         value = document.getElementById(fieldsArray[i]).value;".PHP_EOL;
+            $script .= "         value = value.replace(/^\s+|\s+$/g,'');".PHP_EOL;
+            $script .= "         value = value.replace(/[\"]/,'');".PHP_EOL;
+            $script .= "         value = value.replace(/[\\\]/,'');".PHP_EOL;
             #$script .= "         fieldsArray[i] = fieldsArray[i].replace(/filter_" . $this->getGridId() . "/,'filter_'); \n";
             $script .= "         filtro[i] = '\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'\":\"'+encodeURIComponent(value)+'\"';
         }
 
         filtro = \"{\"+filtro+\"}\";
         filtro = escape(filtro);
-    ";
+    ".PHP_EOL;
 
             if ( $useAjax == 1 ) {
-                $script .= "    gridAjax('{$this->getInfo("ajax")}',url+'/filters{$this->getGridId()}/'+filtro);";
+                $script .= "        gridAjax('{$this->getInfo("ajax")}',url+'/filters{$this->getGridId()}/'+filtro);";
             } else {
-                $script .= "    window.location=url+'/filters{$this->getGridId()}/'+filtro;";
+                $script .= "        window.location=url+'/filters{$this->getGridId()}/'+filtro;".PHP_EOL;
             }
         }
         $script .= "
