@@ -2589,6 +2589,19 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         $this->_hasMassActions = true;
         $this->_massActions = $options;
 
+        foreach ($options as $value)
+        {
+            if(!isset($value['url']) || !isset($value['caption']))
+            {
+                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
+            }
+        }
+
+        if(count($this->getSource()->getPrimaryKey($this->_data['table']))==0)
+        {
+            throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
+        }
+
         $pk = '';
         foreach ($this->getSource()->getPrimaryKey($this->_data['table']) as $value)
         {
@@ -2597,6 +2610,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         }
 
         $pk = rtrim($pk,'-');
+
 
         $left = new Bvb_Grid_Extra_Column();
         $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox_".$this->getGridId()."(this)' name='gridMassActions_".$this->getGridId()."' value='{{{$pk}}}'>");
