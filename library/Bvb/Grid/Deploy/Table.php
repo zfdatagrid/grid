@@ -1682,8 +1682,24 @@ function convertArrayToInput_".$this->getGridId()."()
 
     if(postMassIds_".$this->getGridId().".length==0)
     {
-        alert('No record selected');
-        return false;
+          field = document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().";
+          tempArray_".$this->getGridId()." = new Array();
+
+         for (i = 0; i < field.length; i++)
+         {
+            if(field[i].checked == true)
+            tempArray_".$this->getGridId().".push(field[i].value);
+         }
+
+         recordsSelected_".$this->getGridId()." = tempArray_".$this->getGridId().".length;
+         updateRecords_".$this->getGridId()."();
+         postMassIds_".$this->getGridId()." = tempArray_".$this->getGridId().";
+
+         if(tempArray_".$this->getGridId().".length ==0)
+         {
+            alert('".$this->__('No record selected')."');
+            return false;
+        }
     }
 
     var input_".$this->getGridId()." = document.getElementById('gridAction_".$this->getGridId()."').value;
@@ -1695,7 +1711,6 @@ function convertArrayToInput_".$this->getGridId()."()
         return false;
        }
     }
-
 
     document.forms.massActions_".$this->getGridId().".action = input_".$this->getGridId().";
 
