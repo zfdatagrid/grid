@@ -336,8 +336,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ( ! Zend_Controller_Front::getInstance()->getRequest()->isPost() ) {
 
                 foreach ( array_keys($this->_form->getElements()) as $element ) {
-                    if ( isset($this->_gridSession->errors[$element]) ) {
-                        $this->_form->getElement($element)->setErrors($this->_gridSession->errors[$element]);
+
+                    if ( $this->_gridSession->noErrors !== true ) {
+                        if ( isset($this->_gridSession->errors[$element]) ) {
+                            $this->_form->getElement($element)->setErrors($this->_gridSession->errors[$element]);
+                        }
                     }
                     if ( isset($this->_gridSession->post[$element]) ) {
                         $this->_form->getElement($element)->setValue($this->_gridSession->post[$element]);
@@ -394,9 +397,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
 
+
         //Check if the request method is POST
         if ( Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('zfg_form_edit' . $this->getGridId()) == 1 ) {
-
 
             if ( $this->_form->isValid($_POST) ) {
 
@@ -406,10 +409,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $post[$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
                 }
 
+                $addNew = false;
+
+                if ( isset($post['saveAndAdd' . $this->getGridId()]) ) {
+                     $this->_gridSession->noErrors = true;
+                    $addNew = true;
+                }
+
+
                 unset($post['form_submit' . $this->getGridId()]);
                 unset($post['zfg_form_edit' . $this->getGridId()]);
                 unset($post['form_reset' . $this->getGridId()]);
                 unset($post['zfg_csrf' . $this->getGridId()]);
+                unset($post['saveAndAdd' . $this->getGridId()]);
 
                 $param = Zend_Controller_Front::getInstance()->getRequest();
 
@@ -437,7 +449,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         $this->_gridSession->message = $this->__('Record saved');
                         $this->_gridSession->messageOk = true;
-                        $this->_gridSession->_noForm = 1;
+
+                        if ( isset($post['saveAndAdd' . $this->getGridId()]) ) {
+                            $this->_gridSession->_noForm = 0;
+                        } else {
+                            $this->_gridSession->_noForm = 1;
+                        }
 
                         $this->_gridSession->correct = 1;
 
@@ -445,8 +462,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         $this->_removeFormParams($post, array('add' . $this->getGridId()));
 
+                        if($addNew ===true)
+                        {
+                            $finalUrl = '/add'.$this->getGridId().'/1';
+                        }else{
+                            $finalUrl = '';
+                        }
 
-                        $this->_redirect($this->getUrl());
+                        $this->_redirect($this->getUrl().$finalUrl);
 
                     }
                     catch (Zend_Exception $e) {
@@ -548,6 +571,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->removeParam($key);
         }
 
+        $this->removeParam('saveAndAdd' . $this->getGridId());
         $this->removeParam('form_submit' . $this->getGridId());
         $this->removeParam('zfg_form_edit' . $this->getGridId());
         $this->removeParam('zfg_csrf' . $this->getGridId());
@@ -1434,7 +1458,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_render['form'] = $this->_form;
         if ( (($this->getParam('edit') == 1) || ($this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1) ) {
 
-            if ( ($this->allowAdd == 1 || $this->allowEdit == 1) && ($this->_gridSession->_noForm == 0 || $this->getInfo("doubleTables") == 1) ) {
+            if ( ($this->allowAdd == 1 || $this->allowEdit == 1)  || $this->getInfo("doubleTables") == 1 ) {
 
                 // Remove the unnecessary URL params
                 $removeParams = array('filters', 'add');
@@ -1457,7 +1481,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['start'] = $this->_render['start'];
         }
 
-        if ( ((! $this->getParam('edit') || $this->getParam('edit') != 1) && (! $this->getParam('add') || $this->getParam('add') != 1)) || $this->_gridSession->_noForm == 1 || $this->getInfo("doubleTables") == 1 ) {
+        if ( ((! $this->getParam('edit') || $this->getParam('edit') != 1) && (! $this->getParam('add') || $this->getParam('add') != 1))  || $this->getInfo("doubleTables") == 1 ) {
 
             if ( $this->_isDetail == true || ($this->_deleteConfirmationPage == true && $this->getParam('gridRemove') == 1) ) {
 
@@ -1956,8 +1980,16 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             throw new Bvb_Grid_Exception($this->__("Your form don't not have any field"));
         }
 
+
+
         $crud->getForm()->setDecorators($crud->getFormDecorator());
-        $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => 'Submit', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
+
+        if(isset($crud->options['saveAndAddButton']) && $crud->options['saveAndAddButton']==true && $this->getParam('edit')!=1)
+        {
+          $crud->getForm()->addElement('submit', 'saveAndAdd' . $this->getGridId(), array('label' => 'Save And New', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
+        }
+
+        $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => 'Save', 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
 
         $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
@@ -1965,7 +1997,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         $url = $this->getUrl(array_merge(array('add', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
         $crud->getForm()->addElement('button', 'form_reset' . $this->getGridId(), array('onclick' => "window.location='$url'", 'label' => 'Cancel', 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
-        $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getGroupDecorator()));
+        $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(),'saveAndAdd' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getGroupDecorator()));
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
 

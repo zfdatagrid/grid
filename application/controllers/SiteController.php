@@ -435,7 +435,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
         $form = new Bvb_Grid_Form();
-        $form->setAdd(1)->setEdit(1)->setDelete(1)->setAddButton(1);
+        $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
         #$form->setOnAddForce(array('next'=>'1'));
         #$form->setOnDeleteAddCondition(array('next'=>'11'));

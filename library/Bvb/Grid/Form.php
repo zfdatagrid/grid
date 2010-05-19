@@ -67,7 +67,6 @@ class Bvb_Grid_Form
             $name[0] = strtolower($name[0]);
 
             $decorator = '_' . $name;
-
             if ( isset($this->$decorator) && gettype($this->$decorator) == gettype($args[0]) ) {
                 $this->$decorator = $args[0];
                 return $this;
