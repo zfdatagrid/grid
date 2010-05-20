@@ -42,6 +42,18 @@ td div input[type='text'] {
 	border: 1px solid #ddd;
 }
 
+#grid .querySupport button{
+    border: 1px solid #ddd;
+	padding:1px;
+	color: #55391c;
+	margin-left:5px;	
+    background: #FFF url(../images/bg_helper_button.jpg);	
+}
+
+.querySupport{
+    background: #FFF url(../images/bg_helper.jpg);	
+}
+
 #newGrid {
 	border: 2px solid #333;
 }
@@ -70,7 +82,7 @@ td div input[type='text'] {
 	font-size: 10px !important;
 }
 
-td input:focus,td textarea:focus {
+td input[type='checkbox'], td input[type='radio'] ,td textarea:focus {
 	border: 1px solid #666;
 	background-color: #f4F4F4;
 }
@@ -182,16 +194,6 @@ td.alt,tr.alt  td {
 	padding: 1px;
 	border: 1px solid #275DA8;
 	width: 98%;
-}
-
-.querySupport {
-	background-color: #FFF;
-	padding: 2px;
-}
-
-.querySupport a {
-	color: #333;
-	text-decoration: none;
 }
 
 .sum {

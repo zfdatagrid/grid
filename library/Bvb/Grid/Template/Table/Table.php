@@ -49,7 +49,7 @@ class Bvb_Grid_Template_Table_Table
 
     public function extra ()
     {
-        return "<tr><td  colspan=\"{$this->options['colspan']}\" class=\"querySupport\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
+        return "<tr><td class=\"querySupport\" colspan=\"{$this->options['colspan']}\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
 
 

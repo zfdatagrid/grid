@@ -76,6 +76,10 @@ li a, li a:VISITED {
     <?php endforeach;?>
     </div>
 
+<?php }else{?>
+<span style="font-size:10px; border:1px solid #dedede; display:block; margin-bottom:10px; padding:5px; background-color:beige;">You can refine your search by using commom tricks:
+    &lt;value | &gt;value | &lt;=value | &gt;=value | *value | value* | *value* | <>value | value1,value2,value3 | number<>number
+</span>
 <?php }?>
 <div id="grid">
 <?php  echo $this->pages; ?>
@@ -94,9 +98,7 @@ li a, li a:VISITED {
 <?php echo $this->pages->render('end'); ?>
 <?php */?>
 </div>
-<div id="grid">
-<?php echo $this->pages1; ?>
-</div>
+
 <br></br>
 <div id="grid">
 <?php echo $this->pages2; ?>

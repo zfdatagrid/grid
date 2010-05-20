@@ -228,6 +228,7 @@ class SiteController extends Zend_Controller_Action
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
+
         $this->view->pages = $grid->deploy();
 
         $this->render('index');

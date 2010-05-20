@@ -45,7 +45,6 @@ class JqgridController extends Zend_Controller_Action
         $grid1 = new Bvb_Grid_Deploy_JqGrid($this->_config);
         $this->configG1($grid1, $this->_getParam('onlyFromPolynesia', 'false') === 'true');
 
-        $grid1->setGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
         // pass grids to view and deploy() them there
         $this->view->g1 = $grid1->deploy();
