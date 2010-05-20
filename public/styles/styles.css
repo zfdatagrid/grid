@@ -47,7 +47,8 @@ td div input[type='text'] {
 	padding:1px;
 	color: #55391c;
 	margin-left:5px;	
-    background: #FFF url(../images/bg_helper_button.jpg);	
+    background: #FFF url(../images/bg_helper_button.jpg);
+    cursor:pointer;
 }
 
 .querySupport{
