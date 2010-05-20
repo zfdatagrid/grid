@@ -213,6 +213,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_gridSession = null;
 
+
+    /**
+     * Whether to use or not key events for filters
+     * @var unknown_type
+     */
+    protected $_useKeyEventsOnFilters = false;
+
     /**
      * Extra Rows
      * @var unknown_typearray
@@ -738,8 +745,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Replace values
             if (  ( $this->getParam('noFilters') != 1 && $this->getInfo('noOrder') != 1) && ($this->getParam('add')!=1 && $this->getParam('edit')!=1) ) {
+
+                if($this->getUseKeyEventsOnFilters()===false)
+                {
+                    $final1 .="<button onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">".$this->__('Apply Filter')."</button>";
+                }
+
                 $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
-                $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1."<button onclick=\"_" . $this->getGridId() . "gridChangeFilters()\">".$this->__('Apply Filter')."</button>", $this->_temp['table']->extra());
+                $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
             }
 
 
@@ -1620,18 +1633,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $bPagination .= $this->_pagination();
         $bPagination .= $this->_buildExtraRows('afterPagination');
 
-
-        if ( $this->hasMassActions() ) {
-
-            $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
-
-            $bHeader .= '<form method="post" action="" id="massActions_'.$this->getGridId().'" name="massActions_'.$this->getGridId().'">';
-            $bHeader .= $this->getView()->formHidden('massActionsAll_'.$this->getGridId(),$ids);
-            $bHeader .= $this->getView()->formHidden('postMassIds','');
-            $bPagination .= '</form>';
-        }
-
-
         if ( $deploy == true ) {
             $this->_renderDeploy['header'] = $bHeader;
             $this->_renderDeploy['titles'] = $bTitles;
@@ -1719,14 +1720,18 @@ function convertArrayToInput_".$this->getGridId()."()
 
     if(postMassIds_".$this->getGridId().".length==0)
     {
-          field = document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().";
           tempArray_".$this->getGridId()." = new Array();
 
-         for (i = 0; i < field.length; i++)
-         {
-            if(field[i].checked == true)
-            tempArray_".$this->getGridId().".push(field[i].value);
-         }
+
+           var campos = document.getElementsByTagName('input');
+
+            for (i=0; i < campos.length; i++)
+            {
+                if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_".$this->getGridId()."' && campos[i].checked==true)
+                        {
+                            tempArray_".$this->getGridId().".push(campos[i].value);
+                }
+            }
 
          recordsSelected_".$this->getGridId()." = tempArray_".$this->getGridId().".length;
          updateRecords_".$this->getGridId()."();
@@ -1784,11 +1789,16 @@ function checkAll_".$this->getGridId()."(field,total,all)
     {
        var tempArray_".$this->getGridId()." = new Array();
 
-         for (i = 0; i < field.length; i++)
-         {
-            field[i].checked = true ;
-            tempArray_".$this->getGridId().".push(field[i].value);
-         }
+       var campos = document.getElementsByTagName('input');
+
+        for (i=0; i < campos.length; i++)
+        {
+            if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_".$this->getGridId()."')
+                    {
+                        tempArray_".$this->getGridId().".push(campos[i].value);
+                        campos[i].checked = true;
+            }
+        }
 
         if(all ==1)
             {
@@ -1803,10 +1813,15 @@ function checkAll_".$this->getGridId()."(field,total,all)
 
 function uncheckAll_".$this->getGridId()."(field)
 {
-     for (i = 0; i < field.length; i++)
-     {
-         field[i].checked = false ;
-     }
+      var campos = document.getElementsByTagName('input');
+
+        for (i=0; i < campos.length; i++)
+        {
+            if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_".$this->getGridId()."')
+            {
+                campos[i].checked = false;
+            }
+        }
 
     recordsSelected_".$this->getGridId()." = 0;
 
@@ -1878,9 +1893,15 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
 ".PHP_EOL;
         }
 
-        if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 0 ) {
-            $script .= "function _" . $this->getGridId() . "gridChangeFilters()
+if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 0 ) {
+$script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
     {
+
+      if(event!= 1 && event.keyCode != 13)
+      {
+        return false;
+      }
+
         var fields = '{$this->_javaScriptHelper['js']}';
         var url = '{$this->_javaScriptHelper['url']}';
 
@@ -2204,8 +2225,10 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
 
         $this->_javaScriptHelper = array('js'=>$help_javascript,'url'=>$url);
 
-        #$attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,0);";
-        #$attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters('$help_javascript','$url',0,event);";
+        #if ( $this->getUseKeyEventsOnFilters() === true ) {
+        #     $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters();";
+        #}
+            $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters(event);";
 
         $opcoes = array();
 
@@ -2644,7 +2667,17 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
             $currentRecords = $this->getTotalRecords();
         }
 
-        return "<tr><td class='massActions' colspan=" . $this->_colspan . "><span class='massSelect'><a href='#' onclick='checkAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",{$this->getTotalRecords()},1)'>" . $this->__('Select All') ."</a> | <a href='#' onclick='checkAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",{$currentRecords},0)'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_".$this->getGridId()."(document.massActions_".$this->getGridId().".gridMassActions_".$this->getGridId().",0)'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_".$this->getGridId()."'>0</span></strong> ".$this->__('items selected')."</span> " . $this->__('Actions') . ": $formSelect $formSubmit</td></tr>";
+        $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
+
+        $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
+        $return .= '<form style="padding:0;margin:0;" method="post" action="" id="massActions_' . $this->getGridId() . '" name="massActions_' . $this->getGridId() . '">';
+        $return .= $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids);
+        $return .= $this->getView()->formHidden('postMassIds', '');
+
+
+        $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1)'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0)'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0)'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
+
+        return $return;
     }
 
 
@@ -2678,7 +2711,7 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
 
 
         $left = new Bvb_Grid_Extra_Column();
-        $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox_".$this->getGridId()."(this)' name='gridMassActions_".$this->getGridId()."' value='{{{$pk}}}'>");
+        $left->position('left')->name('')->decorator("<input type='checkbox' onclick='observeCheckBox_".$this->getGridId()."(this)' name='gridMassActions_".$this->getGridId()."' id='massCheckBox_".$this->getGridId()."' value='{{{$pk}}}' >");
 
         $this->addExtraColumns( $left);
 
@@ -2692,5 +2725,19 @@ $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         return isset($this->_gridSession->errors)?$this->_gridSession->errors:false;
     }
 
+    /**
+     * If we should use onclick, and onkeyup instead a button over the filters
+     * @param $flag
+     */
+    public function setUseKeyEventsFilters(bool $flag)
+    {
+        $this->_useKeyEventsOnFilters = $flag;
+        return $this;
+    }
+
+    public function getUseKeyEventsOnFilters()
+    {
+        return $this->_useKeyEventsOnFilters;
+    }
 
 }

@@ -46,6 +46,7 @@ td div input[type='text'] {
     border: 1px solid #ddd;
 	padding:1px;
 	color: #55391c;
+	font-size:10px;
 	margin-left:5px;	
     background: #FFF url(../images/bg_helper_button.jpg);
     cursor:pointer;
