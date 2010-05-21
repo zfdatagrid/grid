@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * LICENSE
@@ -17,5 +18,6 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Exception extends Zend_Exception {
+class Bvb_Grid_Exception extends Zend_Exception
+{
 }
