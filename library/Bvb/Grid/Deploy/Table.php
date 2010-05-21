@@ -281,9 +281,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         parent::__construct($options);
 
-        $this->_filtersRenders =  new Zend_Loader_PluginLoader();
-        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render', 'Bvb_Grid_Filters_Render');
-
         if ( isset($this->_options['grid']['id']) ) {
             $this->setGridId($this->_options['grid']['id']);
         }
@@ -293,11 +290,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     }
 
 
-    public function addFiltersRenderDir ($dir,$prefix)
-    {
-        $this->_filtersRenders->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
-        return $this;
-    }
 
     /**
      *
@@ -2322,27 +2314,6 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
         return $render->render();
     }
 
-
-    function loadFilterRender($render)
-    {
-
-        if(is_array($render))
-        {
-            $toRender = key($render);
-        }else{
-            $toRender = $render;
-        }
-
-        $class = $this->_filtersRenders->load(ucfirst($toRender));
-        $class = new $class();
-
-        if(is_array($render)){
-            $re = new ReflectionMethod($class,'__construct');
-            $new_value = $re->invokeArgs($class, $render[$toRender]);
-        }
-
-        return $class;
-    }
 
     function getAllFieldsIds ()
     {

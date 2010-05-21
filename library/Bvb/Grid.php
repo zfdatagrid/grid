@@ -562,6 +562,9 @@ abstract class Bvb_Grid
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
 
+        $this->_filtersRenders =  new Zend_Loader_PluginLoader();
+        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render', 'Bvb_Grid_Filters_Render');
+
         $deploy = explode('_', get_class($this));
         $this->_deployName = strtolower(end($deploy));
 
@@ -2965,5 +2968,34 @@ abstract class Bvb_Grid
     function getRouteUrl()
     {
         return $this->_routeUrl;
+    }
+
+    function loadFilterRender($render)
+    {
+
+        if(is_array($render))
+        {
+            $toRender = key($render);
+        }else{
+            $toRender = $render;
+        }
+
+        echo $toRender;
+        $class = $this->_filtersRenders->load(ucfirst($toRender));
+        $class = new $class();
+
+        if(is_array($render)){
+            $re = new ReflectionMethod($class,'__construct');
+            $new_value = $re->invokeArgs($class, $render[$toRender]);
+        }
+
+        return $class;
+    }
+
+
+    public function addFiltersRenderDir ($dir,$prefix)
+    {
+        $this->_filtersRenders->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+        return $this;
     }
 }
