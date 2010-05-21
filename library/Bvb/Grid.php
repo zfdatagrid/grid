@@ -1013,8 +1013,6 @@ abstract class Bvb_Grid
                             $oldValue = $value;
                             $value = $render->normalize($value, $nkey);
                             $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
-                            $render->setTranslator($this->getTranslator());
-
                             $valor_filters[$key][$nkey] = $oldValue;
                         }
 
@@ -3011,5 +3009,10 @@ abstract class Bvb_Grid
     {
         $this->_filtersRenders->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
         return $this;
+    }
+
+    public function isExport()
+    {
+        return isset($this->getParam('_exportTo'))?true:false;
     }
 }
