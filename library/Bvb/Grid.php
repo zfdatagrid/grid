@@ -3013,6 +3013,6 @@ abstract class Bvb_Grid
 
     public function isExport()
     {
-        return strlen($this->getParam('_exportTo'))>0?true:false;
+        return in_array($this->getParam('_exportTo'),$this->_export)>0?true:false;
     }
 }
