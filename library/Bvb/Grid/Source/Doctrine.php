@@ -747,28 +747,28 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 
             switch ($detail['type']) {
                 case 'enum':
-                    $form['elements'][$column] = array('select', array('multiOptions' => $detail['values'], 'required' => ($detail['notnull'] == 1) ? false : true, 'label' => $label));
+                    $form['elements'][$column] = array('select', array('multiOptions' => $detail['values'], 'required' => (array_key_exists('notnull', $detail)) ? true : false, 'label' => $label));
                     break;
 
                 case 'string':
                 case 'varchar':
                 case 'char':
                     $length = $detail['length'];
-                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
                 case 'date':
-                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
                 case 'datetime':
                 case 'timestamp':
-                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
 
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
                 case 'smalltext':
-                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'filters' => array('StripTags')));
+                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'filters' => array('StripTags')));
                     break;
 
                 case 'integer':
@@ -778,13 +778,13 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 case 'smallint':
                 case 'tinyint':
                     $isZero = (! empty($detail['default']) && $detail['default'] == "0") ? true : false;
-                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && $detail['notnull'] == 1) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => ($isZero == false && (array_key_exists('notnull', $detail))) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
 
                 case 'float':
                 case 'decimal':
                 case 'double':
-                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => ($detail['notnull'] == 1) ? false : true, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
 
                 default:
