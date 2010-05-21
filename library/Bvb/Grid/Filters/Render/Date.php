@@ -28,7 +28,7 @@ class Bvb_Grid_Filters_Render_Date extends Bvb_Grid_Filters_Render_RenderAbstrac
         return array('from', 'to');
     }
 
-    function normalize($value,$part)
+    function normalize($value,$part ='')
     {
         return date('Y-m-d',strtotime($value));
     }

@@ -2980,7 +2980,6 @@ abstract class Bvb_Grid
             $toRender = $render;
         }
 
-        echo $toRender;
         $class = $this->_filtersRenders->load(ucfirst($toRender));
         $class = new $class();
 
