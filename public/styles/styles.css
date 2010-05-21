@@ -4,24 +4,35 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
-.massActions{
-	background-color:beige;
-	text-align:right;
+.paginatinExport {
+	float: left;
+	width: 100px;
 }
 
-.massActions .massSelect{
-	display:block;
-	float:left;
-	padding-top:2px;
+.paginationNumbers {
+	float: left;
+	text-align: center;
+	width: 750px;
+}
+
+.massActions {
+	background-color: beige;
+	text-align: right;
+}
+
+.massActions .massSelect {
+	display: block;
+	float: left;
+	padding-top: 2px;
 }
 
 .massActions * {
 	color: #333;
-	text-decoration:none;
+	text-decoration: none;
 }
 
-.massActions input{
-	margin-left:10px;
+.massActions input {
+	margin-left: 10px;
 }
 
 .buttons {
@@ -42,18 +53,18 @@ td div input[type='text'] {
 	border: 1px solid #ddd;
 }
 
-#grid .querySupport button{
-    border: 1px solid #ddd;
-	padding:1px;
+#grid .querySupport button {
+	border: 1px solid #ddd;
+	padding: 1px;
 	color: #55391c;
-	font-size:10px;
-	margin-left:5px;	
-    background: #FFF url(../images/bg_helper_button.jpg);
-    cursor:pointer;
+	font-size: 10px;
+	margin-left: 5px;
+	background: #FFF url(../images/bg_helper_button.jpg);
+	cursor: pointer;
 }
 
-.querySupport{
-    background: #FFF url(../images/bg_helper.jpg);	
+.querySupport {
+	background: #FFF url(../images/bg_helper.jpg);
 }
 
 #newGrid {
@@ -84,7 +95,7 @@ td div input[type='text'] {
 	font-size: 10px !important;
 }
 
-td input[type='checkbox'], td input[type='radio'] ,td textarea:focus {
+td input[type='checkbox'],td input[type='radio'],td textarea:focus {
 	border: 1px solid #666;
 	background-color: #f4F4F4;
 }
@@ -92,7 +103,7 @@ td input[type='checkbox'], td input[type='radio'] ,td textarea:focus {
 table.borders {
 	border: 2px solid #FFa500;
 	border-collapse: collapse;
-	width:100%;
+	width: 100%;
 }
 
 body {

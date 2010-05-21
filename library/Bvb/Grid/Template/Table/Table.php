@@ -159,8 +159,8 @@ class Bvb_Grid_Template_Table_Table
     public function pagination ()
     {
         return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
-        <div style=\"float:left;width:".$this->exportWith."px;\">" . $this->export . "</div>
-        <div style=\"float:left;text-align:center;width:".$this->paginationWith."px\"> <em>({{numberRecords}})</em> {{pagination}}  {{perPage}}  {{pageSelect}}</div>
+        <div class=\"paginatinExport\">" . $this->export . "</div>
+        <div class=\"paginationNumbers\"> <em>({{numberRecords}})</em> {{pagination}}  {{perPage}}  {{pageSelect}}</div>
         </div>
         </td></tr>";
     }

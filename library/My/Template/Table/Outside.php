@@ -32,7 +32,7 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
 
     public function globalStart()
     {
-        return "<table id=\"newGrid\" width=\"100%\"  align=\"center\" cellspacing=\"1\" ><tr><td class=\"gridHelper\" colspan=\"{$this->options['colspan']}\" ><div style=\"text-align:right;\"><button>Reset Order</button><button>Reset Filter and Order</button><button>Reset Filter</button><button>Apply Filter</button></div></td></tr>";
+        return "<table id=\"newGrid\" width=\"100%\"  align=\"center\" cellspacing=\"1\" >";
     }
 
 
