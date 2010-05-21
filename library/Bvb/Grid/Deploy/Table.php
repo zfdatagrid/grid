@@ -2319,6 +2319,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
 
         $render->setFieldName($valor);
         $render->setAttributes($attr);
+        $render->setTranslator($this->getTranslator());
 
         return $render->render();
     }

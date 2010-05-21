@@ -26,6 +26,8 @@ class Bvb_Grid_Filters_Render_RenderAbstract
 
     protected $_view;
 
+    protected $_translator = false;
+
     protected $_attributes;
 
     protected $_values;
@@ -35,10 +37,11 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     protected $_select;
 
 
-    function __construct()
+    function __construct ()
     {
 
     }
+
 
     /**
      * @return the $_view
@@ -46,6 +49,27 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     public function getView ()
     {
         return $this->_view;
+    }
+
+
+    function setTranslator ( $translate)
+    {
+        $this->_translator = $translate;
+    }
+
+
+    function getTranslator ()
+    {
+        return $this->_translator;
+    }
+
+
+    function __ ($name)
+    {
+        if($this->getTranslator())
+        return $this->getTranslator()->translate($name);
+
+        return $name;
     }
 
 
@@ -126,9 +150,8 @@ class Bvb_Grid_Filters_Render_RenderAbstract
 
     public function getDefaultValue ($name = '')
     {
-        if($name!='')
-        {
-            return isset($this->_defaultValue[$name])?$this->_defaultValue[$name]:null;
+        if ( $name != '' ) {
+            return isset($this->_defaultValue[$name]) ? $this->_defaultValue[$name] : null;
         }
         return $this->_defaultValue;
     }
@@ -146,19 +169,21 @@ class Bvb_Grid_Filters_Render_RenderAbstract
         return $this->_fieldName;
     }
 
-    function normalize($value,$part ='')
+
+    function normalize ($value, $part = '')
     {
         return $value;
     }
 
 
-    function setSelect($select)
+    function setSelect ($select)
     {
         $this->_select = $select;
         return $this;
     }
 
-    function getSelect()
+
+    function getSelect ()
     {
         return $this->_select;
     }

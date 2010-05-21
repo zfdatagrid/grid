@@ -43,11 +43,11 @@ Zend_Registry::set ( 'locale', $locale );
 /*
       $english = array(
           'Name_of' => 'Barcelos',
-          'message2' => 'message2',
+          'message2 => 'message2',
           'message3' => 'message3');
 
       $german = array(
-          'message1' => 'Nachricht1',
+          'Fmessage1 => 'Nachricht1',
           'message2' => 'Nachricht2',
           'message3' => 'Nachricht3');
 

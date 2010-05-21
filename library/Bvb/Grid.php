@@ -658,13 +658,23 @@ abstract class Bvb_Grid
             return $message;
         }
 
-        if ( $this->_translator instanceof Zend_Translate ) {
-            $message = $this->_translator->translate($message);
-        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
-            $message = Zend_Registry::get('Zend_Translate')->translate($message);
+        if($this->getTranslator())
+        {
+           return $this->getTranslator()->translate($message);
         }
 
         return $message;
+    }
+
+
+    function getTranslator ()
+    {
+        if ( $this->_translator instanceof Zend_Translate ) {
+          return $this->_translator;
+        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
+           return Zend_Registry::get('Zend_Translate');
+        }
+        return false;
     }
 
 
@@ -1003,6 +1013,7 @@ abstract class Bvb_Grid
                             $oldValue = $value;
                             $value = $render->normalize($value, $nkey);
                             $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
+                            $render->setTranslator($this->getTranslator());
 
                             $valor_filters[$key][$nkey] = $oldValue;
                         }
@@ -2970,6 +2981,10 @@ abstract class Bvb_Grid
         return $this->_routeUrl;
     }
 
+    /**
+     *
+     * @param $render
+     */
     function loadFilterRender($render)
     {
 

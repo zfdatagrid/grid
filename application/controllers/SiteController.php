@@ -435,9 +435,19 @@ class SiteController extends Zend_Controller_Action
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
+        $grid->updateColumn('date',array('format'=>array('date',array('date_format'=>"d-MM-Y"))));
+
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
+
+
+
+        $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('date', array('render'=>'date'));
+
+        $grid->addFilters($filters);
+
 
         #$form->setOnAddForce(array('next'=>'1'));
         #$form->setOnDeleteAddCondition(array('next'=>'11'));
@@ -460,6 +470,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
+        echo $grid->getSource()->getSelectObject();
 
         $this->render('index');
     }

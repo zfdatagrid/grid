@@ -4,10 +4,16 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
-.gridLoading{
-    background: #F2F2F2 url(../images/ajax-loader.gif) no-repeat center center;
-    border:1px solid #FFA500;
-    
+.subtitulo span {
+	width: 30px;
+	display: block;
+	float: left;
+}
+
+.gridLoading {
+	background: #F2F2F2 url(../images/ajax-loader.gif) no-repeat center
+		center;
+	border: 1px solid #FFA500;
 }
 
 .paginatinExport {
