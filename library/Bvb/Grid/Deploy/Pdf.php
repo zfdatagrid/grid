@@ -438,6 +438,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                             if ( (int) $la == 0 ) {
                                 $largura1 = 40;
                             } else {
+                                if(!isset($cell[$i - 1])){$cell[$i - 1]=0;}
                                 $largura1 = $cell[$i - 1] + $largura1;
                             }
 

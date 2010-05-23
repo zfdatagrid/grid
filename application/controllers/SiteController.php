@@ -228,6 +228,9 @@ class SiteController extends Zend_Controller_Action
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
+        $grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
+
+        $grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
 
         $this->view->pages = $grid->deploy();
 
@@ -317,7 +320,7 @@ class SiteController extends Zend_Controller_Action
 
         if($this->getRequest()->isPost())
         {
-            echo "<pre>";
+           echo "<pre>";
            print_r($this->_getAllParams());
            die();
         }
@@ -468,9 +471,10 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setForm($form);
 
+        $grid->getForm()->getElement('bug_status')->setValue('barcelos');
+
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
-        echo $grid->getSource()->getSelectObject();
 
         $this->render('index');
     }

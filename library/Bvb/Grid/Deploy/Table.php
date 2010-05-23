@@ -705,7 +705,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_temp['table']->hasExtraRow = 1;
 
             //Filters and order
-            if ( $this->getParam('filters') && $this->getParam('order') && ! $this->getParam('noOrder') && count($this->_filtersValues)>0) {
+            if ( $this->getParam('order') && ! $this->getParam('noOrder') && count($this->_filtersValues)>0) {
                 if ( $this->getInfo("ajax") !== false ) {
 
                     $final1 = "<button href=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "')\">" . $this->__('Remove Filters') . "</button><button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "')\">" . $this->__('Remove Order') . "</button><button onclick=\"gridAjax('{$this->_info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
@@ -714,8 +714,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $final1 = "<button onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">" . $this->__('Remove Filters and Order') . "</button>";
                 }
                 //Only filters
-            } elseif ( $this->getParam('filters') && (! $this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues)>0 ) {
-
+            } elseif (  (! $this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues)>0 ) {
 
                 if ( $this->getInfo("ajax") !== false ) {
 
@@ -1346,7 +1345,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function deploy ()
     {
 
-
         if ( $this->getSource() === null ) {
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
@@ -1906,13 +1904,20 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
 
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
-         value = document.getElementById(fieldsArray[i]).value;".PHP_EOL;
-            $script .= "         value = value.replace(/^\s+|\s+$/g,'');".PHP_EOL;
-            $script .= "         value = value.replace(/[\"]/,'');".PHP_EOL;
-            $script .= "         value = value.replace(/[\\\]/,'');".PHP_EOL;
-            $script .= "         filtro[i] = '\"'+encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'\":\"'+encodeURIComponent(value)+'\"';
 
-            if(value.length>0)
+         value = document.getElementById(fieldsArray[i]).value;".PHP_EOL;
+
+            $script .= "if(value.length>0)
+            {";
+
+                $script .= "         value = value.replace(/^\s+|\s+$/g,'');".PHP_EOL;
+                $script .= "         value = value.replace(/\//,'');".PHP_EOL;
+                $script .= "         filtro += encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'".$this->getGridId()."/'+encodeURIComponent(value)+'/';
+
+                values.push(value);
+            }
+
+            if(document.getElementById(fieldsArray[i]).type == 'select-one')
             {
                 values.push(value);
             }
@@ -1924,14 +1929,12 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
             return false;
         }
 
-        filtro = \"{\"+filtro+\"}\";
-        filtro = escape(filtro);
     ".PHP_EOL;
 
             if ( $useAjax == 1 ) {
-                $script .= "        gridAjax('{$this->getInfo("ajax")}',url+'/filters{$this->getGridId()}/'+filtro);";
+                $script .= "        gridAjax('{$this->getInfo("ajax")}',url+'/'+filtro);";
             } else {
-                $script .= "        window.location=url+'/filters{$this->getGridId()}/'+filtro;".PHP_EOL;
+                $script .= "        window.location=url+'/'+filtro;".PHP_EOL;
             }
         }
         $script .= "
