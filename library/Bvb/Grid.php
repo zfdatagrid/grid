@@ -430,7 +430,6 @@ abstract class Bvb_Grid
         }
 
         $this->_allFieldsAdded = true;
-
         //Apply options to the fields
         $this->_applyOptionsToFields();
 
@@ -773,9 +772,9 @@ abstract class Bvb_Grid
      * @return self
      */
 
-    public function updateColumn ($field, $options = array())
+    public function updateColumn ($field, $options = array(),$force = false)
     {
-        if ( null == $this->getSource() ) {
+        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']) && $force==false ) ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
              * @var $_updateColumnQueue Bvb_Grid
@@ -801,6 +800,21 @@ abstract class Bvb_Grid
             }
 
             $this->_data['fields'][$field] = array_merge($this->_data['fields'][$field], $options);
+
+        }elseif($force==true)
+        {
+
+            $this->_data['fields'][$field] = $options;
+
+            if ( isset($options['hRow']) && $options['hRow'] == 1 ) {
+                $this->_fieldHorizontalRow = $field;
+                $this->_info['hRow'] = array('field' => $field, 'title' => $options['title']);
+            }
+
+            if ( isset($this->_updateColumnQueue[$field]) ) {
+                $this->_data['fields'][$field] = array_merge($options, $this->_updateColumnQueue[$field]);
+            }
+
         }
 
         return $this;
@@ -2036,6 +2050,14 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
 
+        //We need to get fields again because user may have added a few more after
+        //Setting the source using $select->columns();
+        $fields = $this->getSource()->buildFields();
+        foreach ( $fields as $key => $field ) {
+            if(!array_key_exists($key,$this->_data['fields']))
+            $this->updateColumn($key, $field,true);
+        }
+
         // apply additional configuration
         $this->_runConfigCallbacks();
 
@@ -3014,5 +3036,13 @@ abstract class Bvb_Grid
     public function isExport()
     {
         return in_array($this->getParam('_exportTo'),$this->_export);
+    }
+
+    /**
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function getSelect()
+    {
+        return  $this->getSource()->getSelectObject();
     }
 }
