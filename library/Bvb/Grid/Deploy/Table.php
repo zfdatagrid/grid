@@ -1356,7 +1356,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_view = $this->getView();
 
-        $this->_processForm();
 
         parent::deploy();
 
@@ -2134,6 +2133,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->edit = array('allow' => 1);
         }
 
+        $this->_processForm();
         return $this;
     }
 
