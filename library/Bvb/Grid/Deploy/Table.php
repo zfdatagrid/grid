@@ -1886,7 +1886,7 @@ if ( $useAjax == 1 ) {
 ".PHP_EOL;
         }
 
-if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 0 ) {
+if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 ) {
 $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
     {
 
