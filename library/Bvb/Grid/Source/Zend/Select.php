@@ -529,15 +529,26 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function getSqlExp (array $value, $where = array())
     {
 
-        if ( is_array($value) ) {
-            $valor = '';
-            foreach ( $value['functions'] as $final ) {
-                $valor .= $final . '(';
+
+        $cols = array();
+        foreach ( $this->_select->getPart('columns') as $col ) {
+            if ( $col[1] instanceof Zend_Db_Expr ) {
+                $cols[$col[2]] = $col[1]->__toString();
             }
-            $valor .= $value['value'] . str_repeat(')', count($value['functions']));
-        } else {
-            $valor = "$value(" . $value['value'] . ")";
         }
+
+
+        if(array_key_exists($value['value'],$cols))
+        {
+            $value['value'] = $cols[$value['value']];
+        }
+
+        $valor = '';
+        foreach ( $value['functions'] as $final ) {
+            $valor .= $final . '(';
+        }
+        $valor .= $value['value'] . str_repeat(')', count($value['functions']));
+
 
         $select = clone $this->_select;
         $select->reset(Zend_Db_Select::COLUMNS);
@@ -555,6 +566,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
             $select->where($key.'=?',$value);
         }
+
 
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
