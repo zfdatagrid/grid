@@ -1047,16 +1047,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
                 $col = $this->getInfo("hRow");
+                $firstRow = false;
 
                 if(! isset($bar[$aa - 1][$hRowIndex]))
                 {
                      $bar[$aa - 1][$hRowIndex]['value'] = '';
+                     $firstRow = true;
                 }
 
                 if ( $bar[$aa][$hRowIndex]['value'] != $bar[$aa - 1][$hRowIndex]['value'] ) {
                     $i ++;
 
-                    if ( isset($bar[$aa - 1]) ) {
+                    if ( isset($bar[$aa - 1]) && $firstRow!==true ) {
                         $grid .= $this->_buildSqlexpTable($this->_buildSqlExp(array($col['field'] => $bar[$aa - 1][$hRowIndex]['value'])));
                     }
 
