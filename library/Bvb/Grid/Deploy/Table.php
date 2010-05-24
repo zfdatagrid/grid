@@ -1469,18 +1469,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
 
-        $this->_render['form'] = $this->_form;
+        #$this->_render['form'] = $this->_form->render();
         if ( (($this->getParam('edit') == 1) || ($this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1) ) {
 
-            if ( ($this->allowAdd == 1 || $this->allowEdit == 1)  || $this->getInfo("doubleTables") == 1 ) {
+            if ( $this->allowAdd == 1 || $this->allowEdit == 1  ) {
 
                 // Remove the unnecessary URL params
                 $removeParams = array('filters', 'add');
 
                 $url = $this->getUrl($removeParams);
 
-                $this->_renderDeploy['form'] = $this->_form;
-                $this->_render['form'] = $this->_form;
+                $this->_renderDeploy['form'] = $this->_form->render();
+                $this->_render['form'] = $this->_form->render();
 
                 $this->_showsForm = true;
             }
@@ -1674,7 +1674,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
         return $this->_deploymentContent;
     }
-
 
     protected function _printScript ()
     {
