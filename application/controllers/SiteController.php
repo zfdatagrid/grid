@@ -30,13 +30,11 @@ class SiteController extends Zend_Controller_Action
      */
     public function init ()
     {
-
         $this->view->url = Zend_Registry::get('config')->site->url;
         $this->view->action = $this->getRequest()->getActionName();
         header('Content-Type: text/html; charset=ISO-8859-1');
         $this->_db = Zend_Registry::get('db');
         Bvb_Grid_Deploy_Ofc::$url = Zend_Registry::get('config')->site->url;
-
     }
 
 
@@ -66,10 +64,13 @@ class SiteController extends Zend_Controller_Action
      */
     public function grid ($id = '')
     {
+        $view = new Zend_View();
+        $view->setEncoding('ISO-8859-1');
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
         $grid->setExport(array('pdf','print','wordx','excel'));
+        $grid->setView($view);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
@@ -223,7 +224,7 @@ class SiteController extends Zend_Controller_Action
     public function basicAction ()
     {
 
-        $grid = $this->grid();
+        $grid = $this->grid('');
         $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
@@ -472,6 +473,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setForm($form);
 
         $grid->getForm()->getElement('bug_status')->setValue('barcelos');
+
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();

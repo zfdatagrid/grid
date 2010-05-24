@@ -33,6 +33,8 @@ class Bvb_Grid_Form
 
     protected $_elementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
+    protected $_fileDecorator = array('File', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+
     protected $_buttonHiddenDecorator = array('ViewHelper');
 
     protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:99%', 'class' => 'borders')), 'Form');

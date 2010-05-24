@@ -2031,6 +2031,16 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         }
 
 
+        foreach ($crud->getElements() as $element)
+        {
+            if($element->helper=='formFile')
+            {
+                $element->setDecorators($crud->getFileDecorator());
+            }
+        }
+
+
+
         $crud->getForm()->setDecorators($crud->getFormDecorator());
 
         if(isset($crud->options['saveAndAddButton']) && $crud->options['saveAndAddButton']==true && $this->getParam('edit')!=1)
