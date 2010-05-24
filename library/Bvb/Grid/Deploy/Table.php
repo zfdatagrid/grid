@@ -1887,7 +1887,12 @@ if ( $useAjax == 1 ) {
         }
 
 if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 ) {
-$script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
+$script .= "
+function urlencode(str) {
+return escape(str).replace(/\+/g,'%2B').replace(/%20/g, '+').replace(/\*/g, '%2A').replace(/\//g, '%2F').replace(/@/g, '%40');
+}
+
+function _" . $this->getGridId() . "gridChangeFilters(event)
     {
 
       if(event!= 1 && event.keyCode != 13)
@@ -1912,7 +1917,7 @@ $script .= "function _" . $this->getGridId() . "gridChangeFilters(event)
 
                 $script .= "         value = value.replace(/^\s+|\s+$/g,'');".PHP_EOL;
                 $script .= "         value = value.replace(/\//,'');".PHP_EOL;
-                $script .= "         filtro += encodeURIComponent(document.getElementById(fieldsArray[i]).name)+'".$this->getGridId()."/'+encodeURIComponent(value)+'/';
+                $script .= "         filtro += urlencode(document.getElementById(fieldsArray[i]).name)+'".$this->getGridId()."/'+urlencode(value)+'/';
 
                 values.push(value);
             }
