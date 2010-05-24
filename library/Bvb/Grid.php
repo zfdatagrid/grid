@@ -2686,7 +2686,7 @@ abstract class Bvb_Grid
      */
     function setGridId ($id)
     {
-        $this->_gridId = $id;
+        $this->_gridId = trim(preg_replace("/[^a-zA-Z0-9_]/",'_',$id),'_');
         return $this;
     }
 
