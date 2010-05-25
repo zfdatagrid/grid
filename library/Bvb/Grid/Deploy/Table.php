@@ -741,7 +741,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if ( strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() ==false ) {
 
                     if ( $this->getUseKeyEventsOnFilters() === false ) {
-                        $final1 .= "<button onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
+                        $final1 .= "<button onclick=\"" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
                     }
 
                     $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
@@ -1894,11 +1894,16 @@ if ( $useAjax == 1 ) {
 if ( ! $this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 ) {
 $script .= "
 function urlencode(str) {
-return escape(str).replace(/\+/g,'%2B').replace(/%20/g, '+').replace(/\*/g, '%2A').replace(/\//g, '%2F').replace(/@/g, '%40');
+    return escape(str).replace(/\+/g,'%2B').replace(/%20/g, '+').replace(/\*/g, '%2A').replace(/\//g, '%2F').replace(/@/g, '%40');
 }
 
-function _" . $this->getGridId() . "gridChangeFilters(event)
+function " . $this->getGridId() . "gridChangeFilters(event)
     {
+
+    if(typeof(event)=='undefined')
+    {
+        event = 1;
+    }
 
       if(event!= 1 && event.keyCode != 13)
       {
@@ -1915,9 +1920,16 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
 
-         value = document.getElementById(fieldsArray[i]).value;".PHP_EOL;
+        if(document.getElementById(fieldsArray[i]).type=='checkbox' && document.getElementById(fieldsArray[i]).checked ==false)
+        {
+            value = '';
+        }else{
+            value = document.getElementById(fieldsArray[i]).value;
+        }
+         ".PHP_EOL;
 
-            $script .= "if(value.length>0)
+$script .= "
+        if(value.length>0)
             {";
 
                 $script .= "         value = value.replace(/^\s+|\s+$/g,'');".PHP_EOL;
@@ -2251,12 +2263,21 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
+        if(count($this->_externalFilters)>0)
+        {
+            foreach (array_keys($this->_externalFilters) as $fil)
+            {
+
+                $help_javascript .= $fil.',';
+            }
+        }
+
         $this->_javaScriptHelper = array('js'=>$help_javascript,'url'=>$url);
 
         if ( $this->getUseKeyEventsOnFilters() === true ) {
-            $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters(1);";
+            $attr['onChange'] =  $this->getGridId() . "gridChangeFilters(1);";
         }
-            $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters(event);";
+            $attr['onKeyUp'] =  $this->getGridId() . "gridChangeFilters(event);";
 
         $opcoes = array();
 

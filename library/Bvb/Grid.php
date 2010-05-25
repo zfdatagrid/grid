@@ -163,6 +163,13 @@ abstract class Bvb_Grid
      */
     protected $_filtersRenders;
 
+
+    /**
+     *
+     * @var array
+     */
+    protected $_externalFilters = array();
+
     /**
      * Filters values inserted by the user
      *
@@ -1035,9 +1042,30 @@ abstract class Bvb_Grid
             }
         }
 
+
         $this->_filtersValues = $filtersValues;
 
+        $this->_applyExternalFilters();
+
+
         return $this;
+    }
+
+    protected function _applyExternalFilters()
+    {
+        if(count($this->_externalFilters)==0)
+        return false;
+
+
+        foreach ($this->_externalFilters as $id=>$callback)
+        {
+            if($this->getParam($id))
+            call_user_func_array($callback,array($id,$this->getParam($id),$this->getSelect()));
+
+            if($this->getParam($id))
+            $this->_filtersValues[$id] = $this->getParam($id);
+        }
+
     }
 
 
@@ -1173,7 +1201,7 @@ abstract class Bvb_Grid
 
         if ( in_array('filters', $situation) ) {
 
-            $fields = $this->getFields();
+            $fields = array_merge($this->getFields(),array_keys($this->_externalFilters));
 
             foreach ( $fields as $field ) {
                 if ( isset($params[$field.$this->getGridId()]) ) {
@@ -3057,4 +3085,34 @@ abstract class Bvb_Grid
     {
         return $this->getSource()->getSelectObject();
     }
+
+
+    function addExternalFilter ($fieldId, $callback)
+    {
+        if ( ! is_callable($callback) ) {
+            throw new Bvb_Grid_Exception($callback . ' not callable');
+        }
+
+        $this->_externalFilters[$fieldId] = $callback;
+
+        return $this;
+    }
+
+
+    function removeAllExternalFilters ()
+    {
+        $this->_externalFilters = array();
+        return $this;
+    }
+
+
+    function removeExternalFilter ($fieldId)
+    {
+        if ( isset($this->_externalFilters[$fieldId]) ) {
+            unset($this->_externalFilters[$fieldId]);
+        }
+
+        return $this;
+    }
+
 }

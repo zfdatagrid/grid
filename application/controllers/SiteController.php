@@ -6,6 +6,17 @@
 
 include 'application/models/Model.php';
 
+
+function people($id,$value,$select)
+{
+    $select->where('Population>?',$value);
+}
+
+function filterContinent($id,$value,$select)
+{
+    $select->where('Continent=?',$value);
+}
+
 class SiteController extends Zend_Controller_Action
 {
     private $_db;
@@ -229,12 +240,29 @@ class SiteController extends Zend_Controller_Action
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
-        $grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
+        #$grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
 
-        $grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
+        #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
+
+        #$grid->setUseKeyEventsOnFilters(true);
 
         $this->view->pages = $grid->deploy();
 
+        $this->render('index');
+    }
+
+
+    public function customAction ()
+    {
+
+        $grid = $this->grid('');
+        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $grid->query($select);
+
+        $grid->addExternalFilter('new_filter','people');
+        $grid->addExternalFilter('filter_country','filterContinent');
+
+        $this->view->pages = $grid->deploy();
         $this->render('index');
     }
 
@@ -435,6 +463,7 @@ class SiteController extends Zend_Controller_Action
     public function crudAction ()
     {
         $grid = $this->grid();
+        $grid->setAjax('ois');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));

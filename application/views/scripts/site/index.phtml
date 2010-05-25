@@ -37,6 +37,7 @@ li a, li a:VISITED {
 </style>
 </head>
 <body>
+
 <table style="width:900px;" align="center" cellpadding="0" cellspacing="0">
 <tr>
 <td style="background-color:#F5F5F5; border:0px;">
@@ -79,8 +80,17 @@ li a, li a:VISITED {
     </div>
 
 <?php }else{?>
-<span style="font-size:10px; border:1px solid #dedede; display:block; margin-bottom:10px; padding:5px; background-color:beige;">You can refine your search by using commom tricks:
-    &lt;value | &gt;value | &lt;=value | &gt;=value | *value | value* | *value* | <>value | value1,value2,... | number<>number
+<span style="font-size:10px; border:1px solid #dedede; display:block; margin-bottom:10px; padding:5px; background-color:beige;">Refine your search using common tricks:
+    &lt;value | =value | &gt;value | &lt;=value | &gt;=value | *value | value* | *value* | <>value | value1,value2,... | number<>number
+</span>
+<?php }?>
+
+<?php if($this->action =='custom'){?>
+<span style="font-size:10px; border:1px solid #dedede; display:block; margin-bottom:10px; padding:5px; background-color:#DEDEDE;">
+Only show countries with at least: <?php
+$continents = array('Europe');
+$array = array(''=>'--choose--',10000000=>'10 Millions',100000000=>'100 Millions',500000000=>'500 Millions',1000000000=>'10 Billion');
+echo $this->formSelect('new_filter',$this->pages->getParam('new_filter'),array('onChange'=>'gridChangeFilters()'),$array);?> people from <?php echo $this->formCheckbox('filter_country',$this->pages->getParam('filter_country'),array('onChange'=>'gridChangeFilters()'),$continents);?> Europe
 </span>
 <?php }?>
 <div id="grid">
@@ -101,11 +111,10 @@ li a, li a:VISITED {
 <?php */?>
 </div>
 
-<br></br>
+<br>
 <div id="grid">
 <?php echo $this->pages2; ?>
 </div>
-<br></br>
 </td>
 </tr>
 </table>
