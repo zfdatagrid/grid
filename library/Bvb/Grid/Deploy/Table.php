@@ -737,13 +737,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //Replace values
             if (  ( $this->getParam('noFilters') != 1 && $this->getInfo('noOrder') != 1) && ($this->getParam('add')!=1 && $this->getParam('edit')!=1) ) {
 
-                if($this->getUseKeyEventsOnFilters()===false)
-                {
-                    $final1 .="<button onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">".$this->__('Apply Filter')."</button>";
+
+                if ( strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() ==false ) {
+
+                    if ( $this->getUseKeyEventsOnFilters() === false ) {
+                        $final1 .= "<button onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
+                    }
+
+                    $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
+                    $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
+
                 }
 
-                $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
-                $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
+
             }
 
 
@@ -2247,9 +2253,9 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
         $this->_javaScriptHelper = array('js'=>$help_javascript,'url'=>$url);
 
-        #if ( $this->getUseKeyEventsOnFilters() === true ) {
-        #     $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters();";
-        #}
+        if ( $this->getUseKeyEventsOnFilters() === true ) {
+            $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters(1);";
+        }
             $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters(event);";
 
         $opcoes = array();
@@ -2731,9 +2737,9 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      * If we should use onclick, and onkeyup instead a button over the filters
      * @param $flag
      */
-    public function setUseKeyEventsFilters(bool $flag)
+    public function setUseKeyEventsOnFilters( $flag)
     {
-        $this->_useKeyEventsOnFilters = $flag;
+        $this->_useKeyEventsOnFilters = (bool) $flag;
         return $this;
     }
 
