@@ -4,6 +4,26 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
+.formTitle {
+	background: #EEA966 url(../images/bg_helper_button.jpg) repeat-x;
+	font-size: 11px !important;
+	font-weight: bold;
+}
+
+form  .element {
+	padding: 4px;
+	margin: 0;
+}
+
+.element ul {
+	width: auto !important;
+}
+
+form label {
+	font-size: 11px;
+	display:block;
+}
+
 .subtitulo span {
 	width: 30px;
 	display: block;
@@ -61,8 +81,9 @@ input[type='checkbox'],input[type='radio'] {
 }
 
 td div input[type='text'] {
-	width: 98% !important;
+	width: 90% !important;
 	border: 1px solid #ddd;
+	min-width: 20px;
 }
 
 #grid .querySupport button {
@@ -158,15 +179,13 @@ div .element label {
 div .element {
 	font-style: italic;
 	margin-right: 10px;
-	width: 650px;
 }
 
 td.esquerda {
 	width: 350px;
 }
 
-.errors li {
-	width: 400px;
+.errors li,.errors {
 	color: #FF0000;
 }
 
@@ -195,10 +214,10 @@ td.esquerda {
 }
 
 td {
-	border-right: 1px solid #ffa500;
-	border-bottom: 1px solid #ffa500;
+	border: 1px solid #ffa500;
 	background: #fff;
-	padding: 4px 4px 4px 8px;
+	text-indent: 5px;
+	padding: 4px 0px 4px 0px;
 	color: #333;
 }
 

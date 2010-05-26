@@ -7,18 +7,20 @@
 include 'application/models/Model.php';
 
 
-function people($id,$value,$select)
+function people ($id, $value, $select)
 {
-    $select->where('Population>?',$value);
+    $select->where('Population>?', $value);
 }
 
-function filterContinent($id,$value,$select)
+
+function filterContinent ($id, $value, $select)
 {
-    $select->where('Continent=?',$value);
+    $select->where('Continent=?', $value);
 }
 
 class SiteController extends Zend_Controller_Action
 {
+
     private $_db;
 
 
@@ -59,6 +61,31 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    public function formAction ()
+    {
+        $grid = $this->grid();
+        $grid->query($this->_db->select()->from('form'));
+        $form = new Bvb_Grid_Form();
+        $form->setBulkAdd(2)->setAdd(true)->setEdit(true)->setBulkDelete(true)->setBulkEdit(true)->setDelete(true)->setAddButton(true);
+        $grid->setForm($form);
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
+    public function form1Action ()
+    {
+        $grid = $this->grid();
+        $grid->query($this->_db->select()->from('form'));
+        $form = new Bvb_Grid_Form();
+        $form->setBulkAdd(5)->setAdd(true)->setEdit(true)->setBulkDelete(true)->setBulkEdit(true)->setDelete(true)->setAddButton(true);
+        $form->setUseVerticalInputs(false);
+        $grid->setForm($form);
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
     /**
      * Show the source code for this controller
      *
@@ -80,7 +107,7 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->setExport(array('pdf','print','wordx','excel'));
+        $grid->setExport(array('pdf', 'print', 'wordx', 'excel'));
         $grid->setView($view);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
@@ -99,29 +126,33 @@ class SiteController extends Zend_Controller_Action
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name','order'=>'field desc')));
+        $filters->addFilter('Name', array('distinct' => array('field' => 'Name', 'name' => 'Name', 'order' => 'field desc')));
         $filters->addFilter('Continent', array('distinct' => array('field' => 'Continent', 'name' => 'Continent')));
-        $filters->addFilter('LifeExpectancy', array('render'=>'number','distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
+        $filters->addFilter('LifeExpectancy', array('render' => 'number', 'distinct' => array('field' => 'LifeExpectancy', 'name' => 'LifeExpectancy')));
         $filters->addFilter('GovernmentForm', array('distinct' => array('field' => 'GovernmentForm', 'name' => 'GovernmentForm')));
         $filters->addFilter('HeadOfState');
-        $filters->addFilter('Population',array('render'=>'number','style'=>'width:20px;'));
+        $filters->addFilter('Population', array('render' => 'number', 'style' => 'width:20px;'));
 
         $grid->addFilters($filters);
 
 
+        $grid->addExternalFilter('new_filter', 'people');
+        $grid->addExternalFilter('filter_country', 'filterContinent');
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+
 
     public function dateAction ()
     {
 
         $grid = $this->grid();
 
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs',array('bug_status','status','date','time'))));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs', array('bug_status', 'status', 'date', 'time'))));
 
         $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('date', array('render'=>'date'));
+        $filters->addFilter('date', array('render' => 'date'));
 
         $grid->addFilters($filters);
 
@@ -164,7 +195,6 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
-
 
 
     public function csvAction ()
@@ -236,45 +266,34 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid('');
-        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
         #$grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
 
+
         #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
+
 
         #$grid->setUseKeyEventsOnFilters(true);
 
+
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
     }
 
-
-    public function customAction ()
-    {
-
-        $grid = $this->grid('');
-        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
-        $grid->query($select);
-
-        $grid->addExternalFilter('new_filter','people');
-        $grid->addExternalFilter('filter_country','filterContinent');
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
 
     public function multiAction ()
     {
         $grid = $this->grid('a');
-        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $grid->query($select);
         $this->view->pages = $grid->deploy();
 
         $grid2 = $this->grid('b');
-        $select2 = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population',  'GovernmentForm'));
+        $select2 = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'GovernmentForm'));
         $grid2->query($select2);
         $grid2->setTemplate('outside', 'table');
         $grid2->setNumberRecordsPerPage(10);
@@ -282,6 +301,7 @@ class SiteController extends Zend_Controller_Action
 
         $this->render('index');
     }
+
 
     public function detailAction ()
     {
@@ -298,18 +318,19 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
     public function columnsAction ()
     {
 
         $grid = $this->grid();
-        $select = $this->_db->select()->from('Country',array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
 
         $rows = new Bvb_Grid_Extra_Rows();
-        $rows->addRow('beforeHeader', array('',array('colspan' => 1, 'class' => 'myclass', 'content' => 'my content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers:) ')));
-        $rows->addRow('beforePagination', array(array('colspan' => 5,  'content' => "This is an extra row added before pagination")));
+        $rows->addRow('beforeHeader', array('', array('colspan' => 1, 'class' => 'myclass', 'content' => 'my content'), array('colspan' => 2, 'class' => 'myotherclass', 'content' => 'some '), array('colspan' => 1, 'class' => 'myclass', 'content' => 'flowers:) ')));
+        $rows->addRow('beforePagination', array(array('colspan' => 5, 'content' => "This is an extra row added before pagination")));
         $grid->addExtraRows($rows);
 
 
@@ -326,12 +347,12 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country');
         $grid->query($select);
 
-        $grid->setClassCellCondition('Population',"'{{Population}}' > 200000","red",'green');
-        $grid->setClassRowCondition("'{{Population}}' > 20000","green",'red');
+        $grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
+        $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
 
         $grid->setNumberRecordsPerPage(15);
-        $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
+        $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
 
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
@@ -343,15 +364,13 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-
     public function massAction ()
     {
 
-        if($this->getRequest()->isPost())
-        {
-           echo "<pre>";
-           print_r($this->_getAllParams());
-           die();
+        if ( $this->getRequest()->isPost() ) {
+            echo "<pre>";
+            print_r($this->_getAllParams());
+            die();
         }
 
         $grid = $this->grid();
@@ -359,22 +378,21 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
 
-        $grid->setMassAction(array(
-                                 array(
-                                      'url'=>$grid->getUrl(),
-                                      'caption'=>'Remove (Nothing will happen)',
-                                      'confirm'=>'Are you sure?'
-                                       ),
-                                 array(
-                                      'url'=>$grid->getUrl().'/nothing/happens',
-                                      'caption'=>'Some other action',
-                                      'confirm'=>'Another confirmation message?'
-                                       ),
-                                  )
-                             );
+        $grid->setMassAction(
+                        array(
+                                array(
+                                        'url' => $grid->getUrl(),
+                                        'caption' => 'Remove (Nothing will happen)',
+                                        'confirm' => 'Are you sure?'),
+                                array(
+                                        'url' => $grid->getUrl() . '/nothing/happens',
+                                        'caption' => 'Some other action',
+                                        'confirm' => 'Another confirmation message?')
+                                )
+                            );
 
         $grid->setNumberRecordsPerPage(15);
-        $grid->setPaginationInterval(array(10 =>10, 20 => 20, 50 => 50, 100 => 100));
+        $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
 
@@ -390,14 +408,7 @@ class SiteController extends Zend_Controller_Action
     public function arrayAction ()
     {
         $grid = $this->grid();
-        $array = array(
-        array('Alex', '12', 'M'),
-        array('David', '1', 'M'),
-        array('David', '2', 'M'),
-        array('David', '3', 'M'),
-        array('Richard', '3', 'M'),
-        array('Lucas', '3', 'M'),
-        );
+        $array = array(array('Alex', '12', 'M'), array('David', '1', 'M'), array('David', '2', 'M'), array('David', '3', 'M'), array('Richard', '3', 'M'), array('Lucas', '3', 'M'));
 
 
         $grid->setSource(new Bvb_Grid_Source_Array($array, array('name', 'age', 'sex')));
@@ -463,34 +474,26 @@ class SiteController extends Zend_Controller_Action
     public function crudAction ()
     {
         $grid = $this->grid();
-        $grid->setAjax('ois');
-        #$grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
 
-        $grid->updateColumn('date',array('format'=>array('date',array('date_format'=>"d-MM-Y"))));
+        $grid->updateColumn('date', array('format' => array('date', array('date_format' => "d-MM-Y"))));
 
 
         $form = new Bvb_Grid_Form();
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
-
-
-        $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('date', array('render'=>'date'));
-
-        $grid->addFilters($filters);
-
-
         #$form->setOnAddForce(array('next'=>'1'));
         #$form->setOnDeleteAddCondition(array('next'=>'11'));
 
-         $grid->setDetailColumns();
+
+        $grid->setDetailColumns();
 
 
         #$form->setAllowedFields(array('times','nexst'));
         #$form->setDisallowedFields(array('time','next'));
         #$form->setFieldsBasedOnQuery(false);
+
 
 
         #$form->setIsPerformCrudAllowed(false);
@@ -501,7 +504,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setForm($form);
 
-        $grid->getForm()->getElement('bug_status')->setValue('barcelos');
+        #$grid->getForm(1)->getElement('bug_status')->setValue('barcelos');
 
 
         $grid->setDeleteConfirmationPage(true);
@@ -579,7 +582,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setExport(array('ofc'));
-
 
 
         if ( $type == 'pie' ) {

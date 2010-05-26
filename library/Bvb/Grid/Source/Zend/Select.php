@@ -946,7 +946,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
         }
 
-
         return $this->buildFormElementsFromArray($return);
     }
 

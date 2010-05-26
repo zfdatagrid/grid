@@ -287,6 +287,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->getGridId());
         $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template_Table', 'table');
+
+        if($this->getRequest()->isPost() && $this->getRequest()->getPost('postMassIds'))
+        {
+            $this->_redirect($this->getUrl());
+            die();
+        }
+
     }
 
 
@@ -330,7 +337,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             self::_deleteRecord($dec);
         }
 
-
         if ( $this->allowAdd == 1 || $this->allowEdit == 1 ) {
             $opComm = $this->getParam('comm');
 
@@ -339,19 +345,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $queryUrl = $this->getPkFromUrl();
 
 
-            if ( ! Zend_Controller_Front::getInstance()->getRequest()->isPost() ) {
+            if ( ! $this->getRequest()->isPost()  || ($this->getParam('zfmassedit') && $this->getRequest()->isPost() ) ) {
 
-                foreach ( array_keys($this->_form->getElements()) as $element ) {
+                foreach ( $this->_form->getSubForms() as $key => $form ) {
 
-                    if ( $this->_gridSession->noErrors !== true ) {
-                        if ( isset($this->_gridSession->errors[$element]) ) {
-                            $this->_form->getElement($element)->setErrors($this->_gridSession->errors[$element]);
+                    foreach ( array_keys($form->getElements()) as $element ) {
+
+                        if ( $this->_gridSession->noErrors !== true ) {
+                            if ( isset($this->_gridSession->errors[$key][$element]) ) {
+                                $form->getElement($element)->setErrors($this->_gridSession->errors[$key][$element]);
+                            }
+                        }
+                        if ( isset($this->_gridSession->post[$key][$element]) ) {
+                            $form->getElement($element)->setValue($this->_gridSession->post[$key][$element]);
                         }
                     }
-                    if ( isset($this->_gridSession->post[$element]) ) {
-                        $this->_form->getElement($element)->setValue($this->_gridSession->post[$element]);
-                    }
                 }
+
 
                 if ( $this->getParam('add') == 1 ) {
                     $this->_willShow['form'] = true;
@@ -364,37 +374,79 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $this->_willShow['formEdit'] = true;
                     $this->_willShow['formEditId'] = $this->getPkFromUrl();
 
-                    $r = $this->getSource()->getRecord($this->_crudTable, $this->getPkFromUrl());
+                    if ( $this->getParam('postMassIds') ) {
 
-                    if ( $r === false ) {
-                        $this->_gridSession->message = $this->__('Record Not Found');
-                        $this->_gridSession->_noForm = 1;
-                        $this->_gridSession->correct = 1;
-                        $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
+                        $ids = explode(',', $this->getParam('postMassIds'));
+                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
+
+                        $a = 1;
+                        foreach ( $ids as $value ) {
+
+                            if ( strpos($value, '-') ) {
+
+                                $allIds = explode('-', $value);
+                                $i = 0;
+                                foreach ( $allIds as $fIds ) {
+                                    $conditions[$a][$pkParentArray[$i]] = $fIds;
+                                    $i ++;
+                                    $a ++;
+                                }
+
+                            } else {
+                                $conditions[$a][$pkParentArray[0]] = $value;
+                                $a++;
+                            }
+                        }
+
+                    } else {
+                        $conditions[1] = $this->getPkFromUrl();
                     }
 
 
-                    if ( is_array($r) ) {
-                        foreach ( $r as $key => $value ) {
-                            $isField = $this->_form->getElement($key);
 
-                            if ( isset($isField) ) {
+                    for ( $i = 1; $i <= count($conditions); $i ++ ) {
 
 
-                                if ( isset($this->_data['fields'][$key]) ) {
-                                    $fieldType = $this->getSource()->getFieldType($this->_data['fields'][$key]['field']);
-                                } else {
-                                    $fieldType = 'text';
+                        $r = $this->getSource()->getRecord($this->_crudTable, $conditions[$i]);
+
+                        if ( $r === false && count($conditions)==1 ) {
+                            $this->_gridSession->message = $this->__('Record Not Found');
+                            $this->_gridSession->_noForm = 1;
+                            $this->_gridSession->correct = 1;
+                            $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
+                        }
+
+
+                        if ( is_array($r) ) {
+
+                            foreach ( $r as $key => $value ) {
+
+                                $pk = explode('.', key($conditions[$i]));
+                                if ( $key == end($pk) ) {
+                                    $this->getForm($i)->getElement('ZFPK')->setValue($value);
                                 }
 
-                                if ( isset($this->_gridSession->post) && is_array($this->_gridSession->post) ) {
-                                    if ( isset($this->_gridSession->post[$key]) ) {
-                                        $this->getForm()->getElement($key)->setValue($this->_gridSession->post[$key]);
+                                $isField = $this->getForm($i)->getElement($key);
+
+                                if ( isset($isField) ) {
+
+
+                                    if ( isset($this->_data['fields'][$key]) ) {
+                                        $fieldType = $this->getSource()->getFieldType($this->_data['fields'][$key]['field']);
+                                    } else {
+                                        $fieldType = 'text';
                                     }
-                                } else {
-                                    $this->getForm()->getElement($key)->setValue($value);
-                                }
 
+                                    if ( isset($this->_gridSession->post) && is_array($this->_gridSession->post) ) {
+                                        if ( isset($this->_gridSession->post[$i][$key]) ) {
+                                            $this->getForm($i)->getElement($key)->setValue($this->_gridSession->post[$i][$key]);
+                                        }
+                                    } else {
+                                        $this->getForm($i)->getElement($key)->setValue($value);
+                                    }
+
+
+                                }
                             }
                         }
                     }
@@ -405,21 +457,41 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
         //Check if the request method is POST
-        if ( Zend_Controller_Front::getInstance()->getRequest()->isPost() && Zend_Controller_Front::getInstance()->getRequest()->getPost('zfg_form_edit' . $this->getGridId()) == 1 ) {
+        if ( $this->getRequest()->isPost()
+            && $this->getRequest()->getPost('zfg_form_edit' . $this->getGridId()) == 1 ) {
+
+            foreach ( $this->_form->getSubForms() as $key => $form ) {
+                if (isset( $_POST[$key]['ZFIGNORE']) && $_POST[$key]['ZFIGNORE'] == 1 ) {
+                    $this->_form->removeSubForm($key);
+                }
+            }
+
+            if(count($this->_form->getSubForms())==0)
+            {
+                $this->_redirect($this->getUrl(array('zfg_csrf','add','zfg_form_edit','form_submit')));
+            }
 
             if ( $this->_form->isValid($_POST) ) {
 
+
                 $post = array();
 
-                foreach ( $this->_form->getElements() as $el ) {
-                    $post[$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
-                }
+                foreach ( $this->_form->getSubForms() as $key => $value ) {
 
-                $addNew = false;
 
-                if ( isset($post['saveAndAdd' . $this->getGridId()]) ) {
-                     $this->_gridSession->noErrors = true;
-                    $addNew = true;
+                    foreach ( $value->getElements() as $el ) {
+                        $post[$key][$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
+                    }
+
+                    $addNew = false;
+
+                    if ( isset($post['saveAndAdd' . $this->getGridId()]) ) {
+                        $this->_gridSession->noErrors = true;
+                        $addNew = true;
+                    }
+
+
+                    unset($post[$key]['ZFIGNORE']);
                 }
 
 
@@ -436,21 +508,33 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     try {
 
-                        $sendCall = array(&$post, $this->getSource());
+                        foreach ( $this->_form->getSubForms() as $key => $value ) {
 
-                        if ( null !== $this->_callbackBeforeInsert ) {
-                            call_user_func_array($this->_callbackBeforeInsert, $sendCall);
-                        }
-
-
-                        if ( $this->_crudTableOptions['add'] == true ) {
-                            $post = array_merge($post, $this->_crudOptions['addForce']);
-                            $sendCall[] = $this->getSource()->insert($this->_crudTable, $post);
-                        }
+                            if($this->_crud->getUseVerticalInputs()===false && $key==0)
+                            {
+                                continue;
+                            }
 
 
-                        if ( null !== $this->_callbackAfterInsert ) {
-                            call_user_func_array($this->_callbackAfterInsert, $sendCall);
+                            $sendCall = array(&$post[$key], $this->getSource());
+
+                            if ( null !== $this->_callbackBeforeInsert ) {
+                                call_user_func_array($this->_callbackBeforeInsert, $sendCall);
+                            }
+
+
+                            if ( $this->_crudTableOptions['add'] == true ) {
+                                $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
+                                $sendCall[] = $this->getSource()->insert($this->_crudTable, $post[$key]);
+                            }
+
+
+                            if ( null !== $this->_callbackAfterInsert ) {
+                                call_user_func_array($this->_callbackAfterInsert, $sendCall);
+                            }
+
+
+                            unset($this->_gridSession->post[$key]);
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -464,18 +548,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         $this->_gridSession->correct = 1;
 
-                        unset($this->_gridSession->post);
 
-                        $this->_removeFormParams($post, array('add' . $this->getGridId()));
+                        $this->_removeFormParams( array('add' . $this->getGridId()=>'1'));
 
-                        if($addNew ===true)
-                        {
-                            $finalUrl = '/add'.$this->getGridId().'/1';
-                        }else{
+                        if ( $addNew === true ) {
+                            $finalUrl = '/add' . $this->getGridId() . '/1';
+                        } else {
                             $finalUrl = '';
                         }
 
-                        $this->_redirect($this->getUrl().$finalUrl);
+                        $this->_redirect($this->getUrl() . $finalUrl);
+
+                        die();
 
                     }
                     catch (Zend_Exception $e) {
@@ -486,7 +570,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_gridSession->_noForm = 0;
                         $this->_gridSession->correct = 0;
 
-                        $this->_removeFormParams($post);
+                        $this->_removeFormParams();
                         $this->_redirect($this->getUrl());
                     }
 
@@ -497,21 +581,53 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     try {
 
-                        $sendCall = array(&$post, $this->getSource());
+                        foreach ( $this->_form->getSubForms() as $key => $value ) {
 
-                        if ( null !== $this->_callbackBeforeUpdate ) {
-                            call_user_func_array($this->_callbackBeforeUpdate, $sendCall);
-                        }
-
-                        if ( $this->_crudTableOptions['edit'] == true ) {
-                            $post = array_merge($post, $this->_crudOptions['editForce']);
-                            $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
-                            $this->getSource()->update($this->_crudTable, $post, $queryUrl);
-                        }
+                            if($this->_crud->getUseVerticalInputs()===false && $key==0)
+                            {
+                                continue;
+                            }
 
 
-                        if ( null !== $this->_callbackAfterUpdate ) {
-                            call_user_func_array($this->_callbackAfterUpdate, $sendCall);
+                            $sendCall = array(&$post[$key], $this->getSource());
+
+                            $pks = $this->getSource()->getPrimaryKey($this->_data['table']);
+
+                            if ( isset($post[$key]['ZFPK']) ) {
+
+                                if ( strpos($post[$key]['ZFPK'], '-') ) {
+
+                                    $allIds = explode('-', $post[$key]['ZFPK']);
+                                    $i = 0;
+                                    foreach ( $allIds as $fIds ) {
+                                        $condition[$pks[$i]] = $fIds;
+                                        $i ++;
+                                    }
+
+                                } else {
+                                    $condition[$pks[0]] = $post[$key]['ZFPK'];
+                                }
+
+                                $queryUrl = $condition;
+
+                                unset($post[$key]['ZFPK']);
+                            }
+
+
+                            if ( null !== $this->_callbackBeforeUpdate ) {
+                                call_user_func_array($this->_callbackBeforeUpdate, $sendCall);
+                            }
+
+                            if ( $this->_crudTableOptions['edit'] == true ) {
+                                $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
+                                $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
+                                $this->getSource()->update($this->_crudTable, $post[$key], $queryUrl);
+                            }
+
+
+                            if ( null !== $this->_callbackAfterUpdate ) {
+                                call_user_func_array($this->_callbackAfterUpdate, $sendCall);
+                            }
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -523,7 +639,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         unset($this->_gridSession->post);
 
-                        $this->_removeFormParams($post, array('comm' . $this->getGridId(), 'edit' . $this->getGridId()));
+                        $this->_removeFormParams(array('comm' . $this->getGridId()=>'', 'edit' . $this->getGridId()=>'','zfmassedit'=>''));
 
                         $this->_redirect($this->getUrl());
 
@@ -536,7 +652,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_gridSession->_noForm = 0;
                         $this->_gridSession->correct = 0;
 
-                        $this->_removeFormParams($post);
+                        $this->_removeFormParams();
                         $this->_redirect($this->getUrl());
                     }
                 }
@@ -544,7 +660,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             } else {
 
                 $this->_gridSession->post = $_POST;
-                $this->_gridSession->errors = $this->_form->getMessages();
+
+                foreach ( $this->_form->getSubForms() as $key => $value ) {
+                    $this->_gridSession->errors[$key] = $value->getMessages();
+                }
 
                 $this->_gridSession->message = $this->__('Validation failed');
                 $this->_gridSession->messageOk = false;
@@ -552,9 +671,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->_gridSession->formPost = 1;
                 $this->_gridSession->_noForm = 0;
                 $this->_gridSession->correct = 0;
-                $this->_removeFormParams($_POST);
+                $this->_removeFormParams();
 
-                $this->_redirect($this->getUrl());
+                #$this->_redirect($this->getUrl());
             }
 
         }
@@ -567,11 +686,25 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @param  $post
      * @param  $extra
      */
-    protected function _removeFormParams ($post, $extra = array())
+    protected function _removeFormParams ( $extra = array())
     {
 
-        if ( count($extra) > 0 ) $post = array_merge($post, array_combine($extra, $extra));
+        $post = (array) array_flip(array_keys($this->_form->getSubForms()));
 
+        $extra = array_merge($extra,array('massActionsAll_'=>'','postMassIds'=>'','send_'=>'','gridAction_'=>''));
+
+        if ( count($extra) > 0 ) {
+             foreach ( $extra as $key=>$value ) {
+                $this->removeParam($key);
+            }
+        }
+
+        if($this->getRequest()->isPost())
+        {
+             foreach ( $_POST as $key => $value ) {
+                $this->removeParam($key);
+            }
+        }
 
         foreach ( $post as $key => $value ) {
             $this->removeParam($key);
@@ -597,31 +730,91 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _deleteRecord ($sql)
     {
 
-        if ( strpos($sql, ';') === false ) {
-            return false;
-        }
+        if ( $this->getParam('postMassIds') && $this->getParam('zfmassremove' . $this->getGridId()) == 1) {
 
-        $param = explode(";", $sql);
+            //ID's to remove
+            $ids = explode(',', $this->getParam('postMassIds'));
 
-        foreach ( $param as $value ) {
-            $dec = explode(":", $value);
-            $final[$dec[0]] = $dec[1];
-        }
+            //Lets get PK'/**
+            $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
+            foreach ( $ids as $value ) {
 
-        if ( $final['mode'] != 'delete' ) {
-            return 0;
-        }
+                $condition = array();
 
-        if ( is_array($this->getInfo("delete,where")) ) {
-            $condition = array_merge($this->getInfo("delete,where"), $this->getPkFromUrl());
+                if ( strpos($value, '-') ) {
+
+                    $allIds = explode('-', $value);
+                    $i = 0;
+                    foreach ( $allIds as $fIds ) {
+                        $condition[$pkParentArray[$i]] = $fIds;
+                        $i ++;
+                    }
+
+                } else {
+                    $condition[$pkParentArray[0]] = $value;
+                }
+
+                try {
+
+                    $sendCall = array(&$condition, $this->getSource());
+
+                    if ( null !== $this->_callbackBeforeDelete ) {
+                        call_user_func_array($this->_callbackBeforeDelete, $sendCall);
+                    }
+
+
+                    if ( $this->_crudTableOptions['delete'] == true ) {
+                        $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
+                        $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
+                    }
+
+                    if ( $resultDelete == 1 ) {
+                        if ( null !== $this->_callbackAfterDelete ) {
+                            call_user_func_array($this->_callbackAfterDelete, $sendCall);
+                        }
+                    }
+
+
+                } catch (Exception $e) {
+                    $this->_gridSession->correct = 1;
+                    $this->_gridSession->messageOk = FALSE;
+                    $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
+                }
+
+            }
+
+            $this->_gridSession->messageOk = true;
+            $this->_gridSession->message = $this->__('Record deleted');
+            $this->_gridSession->correct = 1;
+
+            $this->_removeFormParams($_POST);
+
+            $this->_redirect($this->getUrl(array('comm','zfmassremove','postMassIds')));
+
         } else {
+
+
+            if ( strpos($sql, ';') === false ) {
+                return false;
+            }
+
+            $param = explode(";", $sql);
+
+            foreach ( $param as $value ) {
+                $dec = explode(":", $value);
+                $final[$dec[0]] = $dec[1];
+            }
+
+            if ( $final['mode'] != 'delete' ) {
+                return 0;
+            }
+
+
             $condition = $this->getPkFromUrl();
         }
 
-        try {
 
-            $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
-            $pkParent = $pkParentArray[0];
+        try {
 
             $sendCall = array(&$condition, $this->getSource());
 
@@ -1410,7 +1603,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         }
 
-        if ( $this->allowEdit == 1 ) {
+        if ( $this->allowEdit == 1  && is_object($this->_crud) && $this->_crud->getBulkEdit()!==true ) {
             if ( ! is_array($this->_extraFields) ) {
                 $this->_extraFields = array();
             }
@@ -1427,11 +1620,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
 
-
         }
 
 
-        if ( $this->allowDelete ) {
+        if ( $this->allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete()!==true ) {
             if ( ! is_array($this->_extraFields) ) {
                 $this->_extraFields = array();
             }
@@ -1476,7 +1668,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
         #$this->_render['form'] = $this->_form->render();
-        if ( (($this->getParam('edit') == 1) || ($this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1) ) {
+        if ( (($this->getParam('edit') == 1) || $this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1 ) {
 
             if ( $this->allowAdd == 1 || $this->allowEdit == 1  ) {
 
@@ -1982,6 +2174,282 @@ $script .= "
 
         $oldElements = $crud->getElements();
 
+
+        $formElements = $this->getSource()->buildForm($this->_data['fields']);
+
+        if ( $this->getParam('add') ) {
+            $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;
+        } elseif ( $this->getParam('edit') ) {
+            $formsCount = count(explode(',',$this->getParam('postMassIds')))> 0 ? count(explode(',',$this->getParam('postMassIds'))) : 1;
+        }else{
+            $formsCount = 1;
+        }
+
+        if ( $crud->getBulkDelete() == true ) {
+            $this->addMassActions(array(array('url' => $this->getUrl() . '/zfmassremove' . $this->getGridId() . '/1/', 'caption' => 'Remove Selected Records', 'confirm' => 'Are you sure?')));
+        }
+
+        if ( $crud->getBulkEdit() == true ) {
+            $this->addMassActions(array(array('url' => $this->getUrl() . '/zfmassedit' . $this->getGridId() . '/1/edit'.$this->getGridId().'/1', 'caption' => 'Edit Selected Records')));
+        }
+
+        $this->_crud = $crud;
+
+
+
+        $arr = array();
+
+         //////
+        if ( $crud->getUseVerticalInputs() ===false ) {
+            $arr[0] = new Zend_Form_SubForm($formElements);
+
+            if($formsCount>1)
+            $arr[0]->addElement('checkbox','ZFIGNORE',array('label'=>$this->__('Ignore'),'order'=>0));
+            $arr[0]->setElementDecorators($crud->getSubformElementTitle());
+            $arr[0]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+            $crud->getForm()->addSubForm($arr[0], 0);
+
+            foreach ($crud->getForm()->getSubForm(0)->getElements() as $value)
+            {
+                $value->clearValidators();
+                $value->setRequired(false);
+            }
+        }
+        /////
+
+        for ( $i = 1; $i <= $formsCount; $i ++ ) {
+
+            $arr[$i] = new Zend_Form_SubForm($formElements);
+
+
+            if($formsCount>1)
+            $arr[$i]->addElement('checkbox','ZFIGNORE',array('label'=>$this->__('Ignore record'),'order'=>0));
+
+            #$arr[$i]->setElementDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
+            $arr[$i]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+
+
+            if($this->getParam('edit'))
+            {
+               $arr[$i]->addElement('hidden','ZFPK',array('decorators' => $crud->getButtonHiddenDecorator()));
+            }
+
+            $crud->getForm()->addSubForm($arr[$i], $i);
+
+            ////////////////
+            ////////////////
+            ////////////////
+            ////////////////
+
+            $form = $crud->getForm()->getSubForm($i);
+
+
+            foreach ( $oldElements as $key => $value ) {
+                $form->addElement($value);
+            }
+
+            if ( count($form->getElements()) > 0 ) {
+                foreach ( $form->getElements() as $key => $value ) {
+                    $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
+                }
+            }
+
+            if ( $crud->getFieldsBasedOnQuery() == 1 ) {
+
+                $finalFieldsForm = array();
+                $fieldsToForm = $this->getFields(true);
+
+                foreach ( $fieldsToForm as $key => $value ) {
+                    $field = substr($value['field'], strpos($value['field'], '.') + 1);
+                    $finalFieldsForm[] = $field;
+                }
+                foreach ( $form->getElements() as $key => $value ) {
+
+                    if ( ! in_array($key, $finalFieldsForm) ) {
+                        $form->removeElement($key);
+                    }
+                }
+            }
+
+            if ( count($crud->getAllowedFields()) > 0 ) {
+
+                foreach ( $form->getElements() as $key => $value ) {
+                    if ( ! in_array($key, $crud->getAllowedFields()) ) {
+                        $form->removeElement($key);
+                    }
+                }
+            }
+
+            if ( count($crud->getDisallowedFields()) > 0 ) {
+
+                foreach ( $form->getElements() as $key => $value ) {
+                    if ( in_array($key, $crud->getDisallowedFields()) ) {
+                       $form->removeElement($key);
+                    }
+                }
+            }
+
+            foreach ( $this->_data['fields'] as $key => $title ) {
+
+                if ( $form->getElement($key) ) {
+                    $form->getElement($key)->setLabel($title['title']);
+                }
+            }
+
+
+            if ( count($form->getElements()) == 0 ) {
+                throw new Bvb_Grid_Exception($this->__("Your form does not have any fields"));
+            }
+
+
+            foreach ( $form->getElements() as $element ) {
+                if ( $element->helper == 'formFile' ) {
+                    $element->setDecorators($crud->getFileDecorator());
+                }
+            }
+
+            ////////////////
+            ////////////////
+            ////////////////
+        }
+
+
+        if ( $crud->getUseVerticalInputs() === false ) {
+            foreach ( $crud->getForm()->getSubForm(0)->getElements() as $key => $value ) {
+                if ( ! in_array($key, array_keys($crud->getForm()->getSubForm(1)->getElements())) ) {
+                    $crud->getForm()->getSubForm(0)->removeElement($key);
+                }
+            }
+        }
+
+        $crud->getForm()->setDecorators($crud->getFormDecorator());
+        $crud->getForm()->setMethod('post');
+
+        $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => $this->__('Save'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
+
+        $url = $this->getUrl(array_merge(array('add','postMassIds','zfmassedit', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
+
+        $crud->getForm()->addElement('button', 'form_reset' . $this->getGridId(), array('onclick' => "window.location='$url'", 'label' => $this->__('Cancel'), 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
+        $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(),'saveAndAdd' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getSubformGroupDecorator()));
+
+        $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
+
+
+
+
+
+
+        $this->_crudOptions['addForce'] = $crud->getOnAddForce();
+        $this->_crudOptions['editForce'] = $crud->getOnEditForce();
+        $this->_crudOptions['editAddCondition'] = $crud->getOnEditAddCondition();
+        $this->_crudOptions['deleteAddCondition'] = $crud->getOnDeleteAddCondition();
+
+        $this->_form = $crud->getForm();
+
+        if ( isset($crud->options['callbackBeforeDelete']) ) {
+            $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
+        }
+
+        if ( isset($crud->options['callbackBeforeInsert']) ) {
+            $this->_callbackBeforeInsert = $crud->options['callbackBeforeInsert'];
+        }
+
+        if ( isset($crud->options['callbackBeforeUpdate']) ) {
+            $this->_callbackBeforeUpdate = $crud->options['callbackBeforeUpdate'];
+        }
+
+        if ( isset($crud->options['callbackAfterDelete']) ) {
+            $this->_callbackAfterDelete = $crud->options['callbackAfterDelete'];
+        }
+
+        if ( isset($crud->options['callbackAfterInsert']) ) {
+            $this->_callbackAfterInsert = $crud->options['callbackAfterInsert'];
+        }
+
+        if ( isset($crud->options['callbackAfterUpdate']) ) {
+            $this->_callbackAfterUpdate = $crud->options['callbackAfterUpdate'];
+        }
+
+        $crud = $this->_object2array($crud);
+
+
+        $options = $crud['options'];
+
+
+        if ( isset($options['table']) && is_string($options['table']) ) {
+            $this->_crudTable = $options['table'];
+        }
+
+        if ( isset($options['isPerformCrudAllowed']) && $options['isPerformCrudAllowed'] == 0 ) {
+            $this->_crudTableOptions['add'] = 0;
+            $this->_crudTableOptions['edit'] = 0;
+            $this->_crudTableOptions['delete'] = 0;
+        } else {
+            $this->_crudTableOptions['add'] = 1;
+            $this->_crudTableOptions['edit'] = 1;
+            $this->_crudTableOptions['delete'] = 1;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 1 ) {
+            $this->_crudTableOptions['add'] = 1;
+        } elseif ( isset($options['isPerformCrudAllowedForAddition']) && $options['isPerformCrudAllowedForAddition'] == 0 ) {
+            $this->_crudTableOptions['add'] = 0;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 1 ) {
+            $this->_crudTableOptions['edit'] = 1;
+        } elseif ( isset($options['isPerformCrudAllowedForEdition']) && $options['isPerformCrudAllowedForEdition'] == 0 ) {
+            $this->_crudTableOptions['edit'] = 0;
+        }
+
+        if ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 1 ) {
+            $this->_crudTableOptions['delete'] = 1;
+        } elseif ( isset($options['isPerformCrudAllowedForDeletion']) && $options['isPerformCrudAllowedForDeletion'] == 0 ) {
+            $this->_crudTableOptions['delete'] = 0;
+        }
+
+
+        $this->_info['doubleTables'] = $this->getInfo("doubleTables");
+
+        if ( isset($options['delete']) ) {
+            if ( $options['delete'] == 1 ) {
+                $this->delete = array('allow' => 1);
+                if ( isset($options['onDeleteAddWhere']) ) {
+                    $this->_info['delete']['where'] = $options['onDeleteAddWhere'];
+                }
+            }
+        }
+
+        if ( isset($options['add']) && $options['add'] == 1 ) {
+            if ( ! isset($options['addButton']) ) {
+                $options['addButton'] = 0;
+            }
+            $this->add = array('allow' => 1, 'button' => $options['addButton']);
+        }
+
+        if ( isset($options['edit']) && $options['edit'] == 1 ) {
+            $this->edit = array('allow' => 1);
+        }
+
+        $this->_processForm();
+        return $this;
+    }
+
+    /**
+     *
+     * @var Bvb_Grid_Form
+     * @return unknown
+     */
+    public function setForm_b ($crud)
+    {
+        //Disable ajax for CRUD operations
+        $this->setAjax(false);
+
+
+        $oldElements = $crud->getElements();
+
         $form = $this->getSource()->buildForm($this->_data['fields']);
 
         $crud->getForm()->setOptions($form);
@@ -2428,8 +2896,11 @@ $script .= "
     /**
      * Returns form instance
      */
-    public function getForm ()
+    public function getForm ($subForm = null)
     {
+        if(!is_null($subForm))
+        return $this->_form->getSubForm($subForm);
+
         return $this->_form;
     }
 
@@ -2744,6 +3215,25 @@ $script .= "
 
         $this->addExtraColumns( $left);
 
+    }
+
+
+    function addMassActions (array $options)
+    {
+        if ( $this->_hasMassActions !== true ) {
+            return $this->setMassAction($options);
+        }
+
+
+        foreach ( $options as $value ) {
+            if ( ! isset($value['url']) || ! isset($value['caption']) ) {
+                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
+            }
+        }
+
+        $this->_massActions = array_merge($options, $this->_massActions);
+
+        return $this;
     }
 
     /**

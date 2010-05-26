@@ -857,7 +857,7 @@ HTML;
      */
     protected function isAjaxRequest()
     {
-        return Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()
+        return $this->getRequest()->isXmlHttpRequest()
             || $this->getParam('_search');
     }
     /**
@@ -928,7 +928,7 @@ HTML;
     protected function convertRequestParams($params=null)
     {
         if (is_null($params)) {
-            $params = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+            $params = $this->getRequest()->getParams();
         }
 
         // we try to convert jqGrid request to be Bvb ctrlParms compatible

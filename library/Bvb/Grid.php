@@ -340,6 +340,13 @@ abstract class Bvb_Grid
 
 
     /**
+     * Information from FORM
+     * @var object
+     */
+    protected $_crud;
+
+
+    /**
      *
      * @var Bvb_Grid_Source_Interface
      */
@@ -554,6 +561,17 @@ abstract class Bvb_Grid
         $this->setParams(Zend_Controller_Front::getInstance()->getRequest()->getParams());
         $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
 
+        foreach (array('massActionsAll_','gridAction_','send_') as $value)
+        {
+            $this->removeParam($value);
+        }
+
+        foreach (Zend_Controller_Front::getInstance()->getRequest()->getParams() as $key=> $value)
+        {
+            if(is_array($value)){
+                $this->removeParam($key);
+            }
+        }
 
         /**
          * plugins loaders
@@ -579,6 +597,11 @@ abstract class Bvb_Grid
 
     }
 
+
+    public function getRequest()
+    {
+        return Zend_Controller_Front::getInstance()->getRequest();
+    }
 
     /**
      * Set view object
@@ -3087,7 +3110,7 @@ abstract class Bvb_Grid
     }
 
 
-    function addExternalFilter ($fieldId, $callback)
+    public function addExternalFilter ($fieldId, $callback)
     {
         if ( ! is_callable($callback) ) {
             throw new Bvb_Grid_Exception($callback . ' not callable');
@@ -3099,14 +3122,14 @@ abstract class Bvb_Grid
     }
 
 
-    function removeAllExternalFilters ()
+    public function clearExternalFilters ()
     {
         $this->_externalFilters = array();
         return $this;
     }
 
 
-    function removeExternalFilter ($fieldId)
+    public function removeExternalFilter ($fieldId)
     {
         if ( isset($this->_externalFilters[$fieldId]) ) {
             unset($this->_externalFilters[$fieldId]);
