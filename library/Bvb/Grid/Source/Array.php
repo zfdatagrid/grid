@@ -39,18 +39,17 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function __construct (array $array, $titles = null)
     {
-
+        $min = min(array_keys($array));
         if ( count($array) > 0 ) {
-            if ( $titles === null || count($titles) != count($array[0]) ) {
-                $this->_fields = array_keys($array[0]);
+            if ( $titles === null || count($titles) != count($array[$min]) ) {
+                $this->_fields = array_keys($array[$min]);
             } else {
                 $this->_fields = $titles;
                 foreach ( $array as $key => $value ) {
                     $array[$key] = array_combine($titles, $value);
                 }
             }
-        }elseif ($titles!==null)
-        {
+        } elseif ( $titles !== null ) {
             $this->_fields = $titles;
         }
 
@@ -58,6 +57,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         $this->_rawResult = $array;
         $this->_sourceName = 'array';
     }
+
 
 
     public function resetOrder ()
