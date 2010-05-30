@@ -1219,7 +1219,10 @@ abstract class Bvb_Grid
         //based on grid id. The id is prepended to the name
         $paramsGet = array('perPage', 'order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
 
+
+
         $params = $this->getAllParams();
+
 
 
         if ( in_array('filters', $situation) ) {
@@ -1243,6 +1246,7 @@ abstract class Bvb_Grid
 
         }
 
+
         foreach ( $situation as $value ) {
             if ( in_array($value, $paramsGet) ) {
                 $value = $value . $this->getGridId();
@@ -1261,7 +1265,7 @@ abstract class Bvb_Grid
 
         if ( is_array($this->_filters) ) {
             foreach ( $this->_filters as $key => $value ) {
-                if ( isset($key['render']) ) {
+                if (is_array($key) && isset($key['render']) ) {
                     unset($params_clean[$key]);
                 }
             }
@@ -1271,7 +1275,7 @@ abstract class Bvb_Grid
         foreach ( $params_clean as $key => $param ) {
             // Apply the urldecode function to the filtros param
             if ( $key == 'filters' . $this->getGridId() ) {
-                $url .= "/" . trim(htmlspecialchars($key, ENT_QUOTES)) . "/" . trim(htmlspecialchars(urlencode($param), ENT_QUOTES));
+                $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape(urlencode($param));
             } else {
                 $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape($param);
             }
