@@ -2248,6 +2248,9 @@ $script .= "
 
             if ( count($form->getElements()) > 0 ) {
                 foreach ( $form->getElements() as $key => $value ) {
+                    if($value->helper =='formHidden'){
+                       continue;
+                    }
                     $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
                 }
             }
