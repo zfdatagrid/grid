@@ -1848,6 +1848,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function render ($part, $appendGlobal = false)
     {
         $result = '';
+
+        if($part=='start' && $this->getInfo('ajax')!==false)
+        {
+            $result .= "<div id='".$this->getInfo('ajax')."'>";
+        }
+
+
         if ( $appendGlobal === true ) {
             $result .= $this->_render['start'];
         }
@@ -1858,6 +1865,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( $appendGlobal === true ) {
             $result .= $this->_render['end'];
+        }
+
+        if($part=='end' && $this->getInfo('ajax')!==false)
+        {
+            $result .= "</div>";
         }
 
         return $result;
