@@ -300,9 +300,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
                 if ( count($result) > 1 ) {
                     $result = count($result);
-                } else {
-                    $result = $result[0]['total'];
-                }
+                }     elseif(count($result)==1) {
+                        $result = $result[0]['total'];
+                    }else{
+                        return 0;
+                    }
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
