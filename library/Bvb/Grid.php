@@ -343,7 +343,7 @@ abstract class Bvb_Grid
      * Information from FORM
      * @var object
      */
-    protected $_crud;
+    protected $_crud = null;
 
 
     /**
@@ -2113,6 +2113,13 @@ abstract class Bvb_Grid
 
         if ( $this->getSource() === null ) {
             throw new Bvb_Grid_Exception('Please Specify your source');
+        }
+
+
+        //Disable ajax for CRUD operations
+        if(!is_null($this->_crud))
+        {
+            $this->setAjax(false);
         }
 
         //We need to get fields again because user may have added a few more after

@@ -2168,9 +2168,6 @@ $script .= "
      */
     public function setForm ($crud)
     {
-        //Disable ajax for CRUD operations
-        $this->setAjax(false);
-
 
         $oldElements = $crud->getElements();
 
