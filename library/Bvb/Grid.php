@@ -397,6 +397,12 @@ abstract class Bvb_Grid
      */
     protected $_translator;
 
+    /**
+     *
+     * @var bool
+     */
+    protected $_showFiltersInExport = false;
+
 
     /**
      * Backwards compatibility
@@ -3145,6 +3151,13 @@ abstract class Bvb_Grid
         if ( isset($this->_externalFilters[$fieldId]) ) {
             unset($this->_externalFilters[$fieldId]);
         }
+
+        return $this;
+    }
+
+    function setShowFiltersInExport($show)
+    {
+        $this->_showFiltersInExport = $show;
 
         return $this;
     }
