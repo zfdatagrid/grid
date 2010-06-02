@@ -298,24 +298,25 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
                 $result = $final->fetchAll();
 
-                if ( count($result) > 1 ) {
+                if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
                     $result = count($result);
-                }     elseif(count($result)==1) {
-                        $result = $result[0]['total'];
-                    }else{
-                        return 0;
-                    }
+                } elseif ( count($result) == 1 && isset($result[0]['total']) ) {
+                    $result = $result[0]['total'];
+                } else {
+                    return 0;
+                }
+
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
 
-            if ( count($result) > 1 ) {
+            if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
                 $result = count($result);
-            } elseif(count($result)==1) {
+            } elseif ( count($result) == 1 && isset($result[0]['total']) ) {
                 $result = $result[0]['total'];
-            }else{
+            } else {
                 return 0;
             }
 
