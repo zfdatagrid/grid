@@ -1052,20 +1052,29 @@ abstract class Bvb_Grid
                 if ( is_array($filter) ) {
 
                     $render = $this->loadFilterRender($this->_filters[$key]['render']);
-                    $cond = $render->getConditions();
-                    $render->setSelect($this->getSource()->getSelectObject());
 
-                    foreach ( $filter as $nkey => $value ) {
+                    $render->setFieldName($key);
 
-                        if ( strlen($value) > 0 ) {
-                            $oldValue = $value;
-                            $value = $render->normalize($value, $nkey);
-                            $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
-                            $filtersValues[$key][$nkey] = $oldValue;
+                    if ( $render->hasConditions() ) {
+                        $cond = $render->getConditions();
+                        $render->setSelect($this->getSource()->getSelectObject());
+
+                        foreach ( $filter as $nkey => $value ) {
+
+                            if ( strlen($value) > 0 ) {
+                                $oldValue = $value;
+                                $value = $render->normalize($value, $nkey);
+                                $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
+                                $filtersValues[$key][$nkey] = $oldValue;
+                            }
+
                         }
 
-                    }
+                    } else {
 
+                        $render->buildQuery($filter);
+
+                    }
                 }
 
             }
@@ -1279,6 +1288,10 @@ abstract class Bvb_Grid
 
         $url = '';
         foreach ( $params_clean as $key => $param ) {
+            if ( is_array($param) ) {
+                continue;
+            }
+
             // Apply the urldecode function to the filtros param
             if ( $key == 'filters' . $this->getGridId() ) {
                 $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape(urlencode($param));
@@ -3093,8 +3106,13 @@ abstract class Bvb_Grid
             $toRender = $render;
         }
 
-        $class = $this->_filtersRenders->load(ucfirst($toRender));
-        $class = new $class();
+        $classname = $this->_filtersRenders->load(ucfirst($toRender));
+        $class = new $classname();
+
+        if(!$class instanceof  Bvb_Grid_Filters_Render_RenderInterface)
+        {
+            throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
+        }
 
         if ( is_array($render) ) {
             $re = new ReflectionMethod($class, '__construct');

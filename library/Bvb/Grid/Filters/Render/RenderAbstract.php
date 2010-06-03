@@ -18,8 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-class Bvb_Grid_Filters_Render_RenderAbstract
+abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filters_Render_RenderInterface
 {
 
     protected $_defaultValue;
@@ -37,12 +36,6 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     protected $_select;
 
 
-    function __construct ()
-    {
-
-    }
-
-
     /**
      * @return the $_view
      */
@@ -52,22 +45,21 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     }
 
 
-    function setTranslator ( $translate)
+    public function setTranslator ($translate)
     {
         $this->_translator = $translate;
     }
 
 
-    function getTranslator ()
+    public function getTranslator ()
     {
         return $this->_translator;
     }
 
 
-    function __ ($name)
+    public function __ ($name)
     {
-        if($this->getTranslator())
-        return $this->getTranslator()->translate($name);
+        if ( $this->getTranslator() ) return $this->getTranslator()->translate($name);
 
         return $name;
     }
@@ -170,21 +162,38 @@ class Bvb_Grid_Filters_Render_RenderAbstract
     }
 
 
-    function normalize ($value, $part = '')
+    public function normalize ($value, $part = '')
     {
         return $value;
     }
 
 
-    function setSelect ($select)
+    public function setSelect ($select)
     {
         $this->_select = $select;
         return $this;
     }
 
 
-    function getSelect ()
+    public function getSelect ()
     {
         return $this->_select;
+    }
+
+
+    public function hasConditions ()
+    {
+        return true;
+    }
+
+
+    public function buildQuery (array $filter)
+    {
+
+    }
+
+    public function getChilds ()
+    {
+
     }
 }

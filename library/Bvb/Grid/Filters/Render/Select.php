@@ -22,7 +22,7 @@
 class Bvb_Grid_Filters_Render_Select extends Bvb_Grid_Filters_Render_RenderAbstract
 {
 
-    function render ()
+    public function render ()
     {
         return $this->getView()->formSelect($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes(),$this->getValues());
     }

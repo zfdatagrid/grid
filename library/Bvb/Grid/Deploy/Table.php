@@ -2653,7 +2653,7 @@ $script .= "
             if (is_array($filter) && isset($filter['render']) ) {
 
                 $render = $this->loadFilterRender($filter['render']);
-                $fields[$key] = $render->getFields();
+                $fields[$key] = $render->getChilds();
 
             } else {
                 $fields[$key] = $key;

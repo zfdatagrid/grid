@@ -271,13 +271,10 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
         #$grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
-
-
         #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
-
-
         #$grid->setUseKeyEventsOnFilters(true);
 
+        #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
 
         $this->view->pages = $grid->deploy();
 

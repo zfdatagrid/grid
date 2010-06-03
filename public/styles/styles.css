@@ -25,9 +25,14 @@ form label {
 }
 
 .subtitulo span {
-	width: 30px;
+	width: 40px;
 	display: block;
 	float: left;
+}
+
+.subtitulo  {
+    padding-left:5px;
+	text-indent:0;
 }
 
 .gridLoading {
@@ -38,7 +43,7 @@ form label {
 
 .paginatinExport {
 	float: left;
-	width: 100px;
+	width: 110px;
 }
 
 .paginationNumbers {
@@ -143,7 +148,7 @@ body {
 	width: 920px;
 	margin: 0 auto;
 	font-size: 10px;
-	background: #adbbc7 url(../images/fundo.jpg) repeat-y top center;
+	background: #99ACBD url(../images/fundo.jpg) repeat-y top center;
 }
 
 .semLimites {

@@ -22,11 +22,10 @@
 class Bvb_Grid_Filters_Render_Number extends Bvb_Grid_Filters_Render_RenderAbstract
 {
 
-    function getFields ()
+    function getChilds ()
     {
         return array('from', 'to');
     }
-
 
     public function getConditions ()
     {
