@@ -245,6 +245,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         //logotipo Federação $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
 
 
+
         if ( is_file($this->deploy['logo']) ) {
             $image = Zend_Pdf_Image::imageWithPath($this->deploy['logo']);
 
@@ -392,6 +393,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         //set font
         /////////////
+
 
 
         $this->_newPage();
@@ -569,7 +571,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                     if ( $i == 0 ) {
                         $largura1 = 40 + $tLarg + 5;
                     } else {
-                        $largura1 =strlen($this->__($key) . ': ' . $this->__($value)) * 4 + $largura1;
+                        $largura1 = strlen($this->__($key) . ': ' . $this->__($value)) * 4 + $largura1;
                     }
 
                     $this->_page->drawText($this->__($key) . ': ' . $this->__($value), $largura1 + 3, $this->_y, $this->getCharEncoding());
