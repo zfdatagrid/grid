@@ -880,13 +880,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( count($this->_filters)>0 && ($this->getInfo('noOrder')!=1 && $this->getInfo('noFilters')!=1 ) ) {
 
-            $url = $this->getUrl('filters', 'nofilters');
+            $url = $this->getUrl(array('filters', 'noFilters'));
             $url2 = $this->getUrl(array('order', 'noOrder'));
             $url3 = $this->getUrl(array('filters', 'order', 'noFilters', 'noOrder'));
 
-            if ( is_array($this->_defaultFilters) ) {
-                $url .= '/nofilters'.$this->getGridId().'/1';
-                $url3 .= '/nofilters'.$this->getGridId().'/1';
+            if ( is_array($this->_defaultFilters) && !$this->getParam('noFilters') ) {
+                $url .= '/noFilters'.$this->getGridId().'/1';
+                $url3 .= '/noFilters'.$this->getGridId().'/1';
             }
 
             if ( is_array($this->getSource()->getSelectOrder()) ) {
@@ -2110,15 +2110,15 @@ function urlencode(str) {
 function " . $this->getGridId() . "gridChangeFilters(event)
     {
 
-    if(typeof(event)=='undefined')
-    {
-        event = 1;
-    }
+        if(typeof(event)=='undefined')
+        {
+            event = 1;
+        }
 
-      if(event!= 1 && event.keyCode != 13)
-      {
-        return false;
-      }
+        if(event!= 1 && event.keyCode != 13)
+        {
+          return false;
+        }
 
         var fields = '{$this->_javaScriptHelper['js']}';
         var url = '{$this->_javaScriptHelper['url']}';
@@ -2510,7 +2510,7 @@ $script .= "
 
 
         //Remove unwanted url params
-        $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo'));
+        $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo','noFilters'));
 
         $fieldsSemAsFinal = $this->_data['fields'];
 

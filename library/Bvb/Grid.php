@@ -2091,6 +2091,16 @@ abstract class Bvb_Grid
         return $filters;
     }
 
+    public function hasFilters()
+    {
+
+        if(count(array_intersect_key(array_combine($this->getFields(),$this->getFields()),$this->_ctrlParams))>0)
+        return true;
+
+        return false;
+
+    }
+
 
     /**
      * Build user defined filters
@@ -2098,8 +2108,9 @@ abstract class Bvb_Grid
     protected function _buildDefaultFilters ()
     {
 
-        if ( is_array($this->_defaultFilters) && ! $this->getParam('filters') && ! $this->getParam('noFilters') ) {
-            $df = array();
+
+        if ( is_array($this->_defaultFilters)  && !$this->hasFilters()  &&   ! $this->getParam('noFilters') ) {
+
             foreach ( $this->_data['fields'] as $key => $value ) {
 
                 if ( ! $this->_displayField($key) ) {
@@ -2107,15 +2118,11 @@ abstract class Bvb_Grid
                 }
 
                 if ( array_key_exists($key, array_flip($this->_defaultFilters)) ) {
-                    $df['filter_' . $key] = array_search($key, $this->_defaultFilters);
-                } else {
-                    $df['filter_' . $key] = '';
+                    $this->_ctrlParams[$key] = array_search($key, $this->_defaultFilters);
                 }
             }
 
-            $defaultFilters = $df;
-
-            $this->setParam('filters' . $this->getGridId(), Zend_Json_Encoder::encode($defaultFilters));
+        # $this->setParam('filters' . $this->getGridId(), $df);
         }
 
         return $this;
