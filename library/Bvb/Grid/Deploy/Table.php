@@ -1360,9 +1360,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if($this->getInfo('ajax')!==false)
             {
-                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage', $this->getParam('perPage', $this->_pagination), array('onChange' => "gridAjax('{$this->getInfo("ajax")}','$url/perPage" . $this->getGridId() . "/'+this.value);"), $this->_paginationOptions) . ' ' . $this->__('items');
+                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage'.$this->getGridId(), $this->getParam('perPage', $this->_pagination), array('onChange' => "gridAjax('{$this->getInfo("ajax")}','$url/perPage" . $this->getGridId() . "/'+this.value);"), $this->_paginationOptions) . ' ' . $this->__('items');
             }else{
-                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage', $this->getParam('perPage', $this->_pagination), array('onChange' => "window.location='$url/perPage" . $this->getGridId() . "/'+this.value;"), $this->_paginationOptions) . ' ' . $this->__('items');
+                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage'.$this->getGridId(), $this->getParam('perPage', $this->_pagination), array('onChange' => "window.location='$url/perPage" . $this->getGridId() . "/'+this.value;"), $this->_paginationOptions) . ' ' . $this->__('items');
             }
         } else {
             $menuPerPage = '';
