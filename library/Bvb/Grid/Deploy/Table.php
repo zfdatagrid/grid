@@ -2168,11 +2168,13 @@ $script .= "
             } else {
                 $script .= "        window.location=url+'/'+filtro;".PHP_EOL;
             }
-        }
+
         $script .= "
     }
         ";
 
+
+        }
         $this->getView()->headScript()->appendScript($script);
 
         return;
