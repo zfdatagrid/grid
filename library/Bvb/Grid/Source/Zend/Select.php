@@ -314,7 +314,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
             if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
                 $result = count($result);
-            } elseif ( count($result) == 1 && isset($result[0]['total']) ) {
+            } elseif ( count($result) == 1) {
                 $result = $result[0]['total'];
             } else {
                 return 0;
