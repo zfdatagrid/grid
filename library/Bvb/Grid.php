@@ -412,6 +412,13 @@ abstract class Bvb_Grid
 
 
     /**
+     * Session Params Zend_Session
+     * @var unknown_type
+     */
+    protected $_sessionParams = false;
+
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
@@ -1094,9 +1101,7 @@ abstract class Bvb_Grid
 
         if(count($this->_filtersValues)>0 && $this->_paramsInSession===true)
         {
-            $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS'.$this->getGridId(true));
-
-            $sessionParams->filters = $this->_filtersValues;
+            $this->_sessionParams->filters = $this->_filtersValues;
         }
 
 
@@ -1195,27 +1200,36 @@ abstract class Bvb_Grid
         $orderf = strtoupper(end($order1));
 
 
-        if ( $this->_paramsInSession === true ) {
-                $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+        if( $this->_paramsInSession === true )
+        {
+            if($this->getParam('start') ===false )
+            {
+                $start = (int)$this->_sessionParams->start;
+                $this->setParam('start'.$this->getGridId(),$start);
+            }else{
+                $this->_sessionParams->start = $start;
+            }
         }
 
-        if ( $orderf == 'DESC' || $orderf == 'ASC' || is_array($sessionParams->order)) {
+
+
+
+        if ( $orderf == 'DESC' || $orderf == 'ASC' || is_array($this->_sessionParams->order)) {
             array_pop($order1);
             $order_field = implode("_", $order1);
 
             #$this->getSource()->buildQueryOrder($order_field, $orderf);
 
             if ( $this->_paramsInSession === true ) {
-                $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
 
                 if($this->getParam('noOrder'))
                 {
-                    $sessionParams->order=null;
+                    $this->_sessionParams->order=null;
                 }
 
-                if ( is_array($sessionParams->order) && !$this->getParam('order')) {
-                    $order_field = $sessionParams->order['field'];
-                    $orderf = $sessionParams->order['order'];
+                if ( is_array($this->_sessionParams->order) && !$this->getParam('order')) {
+                    $order_field = $this->_sessionParams->order['field'];
+                    $orderf = $this->_sessionParams->order['order'];
                     $this->setParam('order'.$this->getGridId(), $order_field . '_' . $orderf);
                 }
             }
@@ -1224,7 +1238,7 @@ abstract class Bvb_Grid
                 $this->getSource()->buildQueryOrder($order_field, $orderf, true);
 
                 if ( $this->_paramsInSession === true ) {
-                    $sessionParams->order = array('field' => $order_field, 'order' => $orderf);
+                    $this->_sessionParams->order = array('field' => $order_field, 'order' => $orderf);
                 }
             }
 
@@ -1250,9 +1264,17 @@ abstract class Bvb_Grid
 
         $perPage = (int) $this->getParam('perPage', 0);
 
+        if($this->_paramsInSession === true && $this->getParam('perPage')===false ){
+			$perPage = (int) $this->_sessionParams->perPage;
+			$this->setParam('perPage'.$this->getGridId(),$perPage);
+	 	}
+
+
         if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationOptions) ) {
+			 $this->_sessionParams->perPage = $perPage;
             return $perPage;
         } else {
+			 $this->_sessionParams->perPage = $this->_pagination;
             return $this->_pagination;
         }
 
@@ -2143,11 +2165,9 @@ abstract class Bvb_Grid
         if($this->_paramsInSession === true)
         {
 
-            $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS'.$this->getGridId(true));
-
             if($this->getParam('noFilters'))
             {
-                $sessionParams->filters=null;
+                $this->_sessionParams->filters=null;
             }
         }
 
@@ -2160,8 +2180,8 @@ abstract class Bvb_Grid
                 }
 
                 if ( $this->_paramsInSession === true ) {
-                    if ( $sessionParams->filters[$key] !== null ) {
-                        $this->_ctrlParams[$key.$this->getGridId()] = $sessionParams->filters[$key];
+                    if ( $this->_sessionParams->filters[$key] !== null ) {
+                        $this->_ctrlParams[$key.$this->getGridId()] = $this->_sessionParams->filters[$key];
                         continue;
                     }
                 }
@@ -2189,6 +2209,10 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
 
+        if($this->_paramsInSession ===true)
+        {
+            $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+        }
 
         //Disable ajax for CRUD operations
         if(!is_null($this->_crud))
