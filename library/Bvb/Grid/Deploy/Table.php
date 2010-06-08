@@ -2190,7 +2190,7 @@ $script .= "
     {
 
         $oldElements = $crud->getElements();
-
+        $crud->clearElements();
 
         $formElements = $this->getSource()->buildForm($this->_data['fields']);
 
