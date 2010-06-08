@@ -884,7 +884,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $url2 = $this->getUrl(array('order', 'noOrder'));
             $url3 = $this->getUrl(array('filters', 'order', 'noFilters', 'noOrder'));
 
-            if ( is_array($this->_defaultFilters) && !$this->getParam('noFilters') ) {
+            if ( (is_array($this->_defaultFilters) || $this->_paramsInSession===true ) && !$this->getParam('noFilters') ) {
                 $url .= '/noFilters'.$this->getGridId().'/1';
                 $url3 .= '/noFilters'.$this->getGridId().'/1';
             }

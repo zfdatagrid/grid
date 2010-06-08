@@ -405,6 +405,13 @@ abstract class Bvb_Grid
 
 
     /**
+     * If whe should save filters in session
+     * @var bool
+     */
+    protected $_paramsInSession = false;
+
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
@@ -1085,6 +1092,13 @@ abstract class Bvb_Grid
 
         $this->_applyExternalFilters();
 
+        if(count($this->_filtersValues)>0 && $this->_paramsInSession===true)
+        {
+            $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS'.$this->getGridId(true));
+
+            $sessionParams->filters = $this->_filtersValues;
+        }
+
 
         return $this;
     }
@@ -1180,15 +1194,40 @@ abstract class Bvb_Grid
         $order1 = explode("_", $order);
         $orderf = strtoupper(end($order1));
 
-        if ( $orderf == 'DESC' || $orderf == 'ASC' ) {
+
+        if ( $this->_paramsInSession === true ) {
+                $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+        }
+
+        if ( $orderf == 'DESC' || $orderf == 'ASC' || is_array($sessionParams->order)) {
             array_pop($order1);
             $order_field = implode("_", $order1);
 
-            $this->getSource()->buildQueryOrder($order_field, $orderf);
+            #$this->getSource()->buildQueryOrder($order_field, $orderf);
+
+            if ( $this->_paramsInSession === true ) {
+                $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+
+                if($this->getParam('noOrder'))
+                {
+                    $sessionParams->order=null;
+                }
+
+                if ( is_array($sessionParams->order) && !$this->getParam('order')) {
+                    $order_field = $sessionParams->order['field'];
+                    $orderf = $sessionParams->order['order'];
+                    $this->setParam('order'.$this->getGridId(), $order_field . '_' . $orderf);
+                }
+            }
 
             if ( in_array($order_field, $this->_fieldsOrder) ) {
                 $this->getSource()->buildQueryOrder($order_field, $orderf, true);
+
+                if ( $this->_paramsInSession === true ) {
+                    $sessionParams->order = array('field' => $order_field, 'order' => $orderf);
+                }
             }
+
         }
 
         if ( strlen($this->_fieldHorizontalRow) > 0 ) {
@@ -1249,7 +1288,6 @@ abstract class Bvb_Grid
                     unset($params[$field.$this->getGridId()]);
                 }
             }
-
             foreach ( $params as $key => $value ) {
                 if ( stripos($key, '[') ) {
                     $fl = explode('[', $key);
@@ -1277,7 +1315,6 @@ abstract class Bvb_Grid
         unset($params_clean['action']);
         unset($params_clean['gridmod']);
 
-
         if ( is_array($this->_filters) ) {
             foreach ( $this->_filters as $key => $value ) {
                 if (is_array($key) && isset($key['render']) ) {
@@ -1292,12 +1329,7 @@ abstract class Bvb_Grid
                 continue;
             }
 
-            // Apply the urldecode function to the filtros param
-            if ( $key == 'filters' . $this->getGridId() ) {
-                $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape(urlencode($param));
-            } else {
-                $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape($param);
-            }
+           $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape($param);
         }
 
 
@@ -2105,11 +2137,21 @@ abstract class Bvb_Grid
     /**
      * Build user defined filters
      */
-    protected function _buildDefaultFilters ()
+    protected function _buildDefaultFiltersValues ()
     {
 
+        if($this->_paramsInSession === true)
+        {
 
-        if ( is_array($this->_defaultFilters)  && !$this->hasFilters()  &&   ! $this->getParam('noFilters') ) {
+            $sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS'.$this->getGridId(true));
+
+            if($this->getParam('noFilters'))
+            {
+                $sessionParams->filters=null;
+            }
+        }
+
+        if ( (is_array($this->_defaultFilters) || $this->_paramsInSession === true) && ! $this->hasFilters() && ! $this->getParam('noFilters') ) {
 
             foreach ( $this->_data['fields'] as $key => $value ) {
 
@@ -2117,12 +2159,18 @@ abstract class Bvb_Grid
                     continue;
                 }
 
+                if ( $this->_paramsInSession === true ) {
+                    if ( $sessionParams->filters[$key] !== null ) {
+                        $this->_ctrlParams[$key.$this->getGridId()] = $sessionParams->filters[$key];
+                        continue;
+                    }
+                }
+
                 if ( array_key_exists($key, array_flip($this->_defaultFilters)) ) {
                     $this->_ctrlParams[$key] = array_search($key, $this->_defaultFilters);
                 }
             }
 
-        # $this->setParam('filters' . $this->getGridId(), $df);
         }
 
         return $this;
@@ -2206,7 +2254,7 @@ abstract class Bvb_Grid
             }
         }
 
-        $this->_buildDefaultFilters();
+        $this->_buildDefaultFiltersValues();
 
         // Validate table fields, make sure they exist...
         $this->_validateFields($this->_data['fields']);
@@ -2783,8 +2831,12 @@ abstract class Bvb_Grid
      * Returns the current id.
      * ""=>emty string is a valid value
      */
-    public function getGridId ()
+    public function getGridId ($forceId = false)
     {
+        if($forceId === true && strlen($this->_gridId)==0)
+        {
+            return $this->getRequest()->getActionName().'_'.$this->getRequest()->getControllerName().'_'.$this->getRequest()->getModuleName();
+        }
         return $this->_gridId;
     }
 
@@ -3184,6 +3236,17 @@ abstract class Bvb_Grid
     {
         $this->_showFiltersInExport = $show;
 
+        return $this;
+    }
+
+    /**
+     * Whetever to save or not in session filters and order
+     * This is based on gridId, if not provided, action_controller_module
+     * @param bool $status
+     */
+    public function saveParamsInSession($status)
+    {
+        $this->_paramsInSession = (bool) $status;
         return $this;
     }
 
