@@ -2265,6 +2265,12 @@ $script .= "
 
 
             foreach ( $oldElements as $key => $value ) {
+
+                if($value->helper=='formHidden')
+                {
+                    $value->setDecorators($crud->getButtonHiddenDecorator());
+                }
+
                 $form->addElement($value);
             }
 
