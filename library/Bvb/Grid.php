@@ -1271,10 +1271,15 @@ abstract class Bvb_Grid
 
 
         if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationOptions) ) {
-			 $this->_sessionParams->perPage = $perPage;
+
+            if ( $this->_paramsInSession === true ) {
+                $this->_sessionParams->perPage = $perPage;
+            }
             return $perPage;
         } else {
-			 $this->_sessionParams->perPage = $this->_pagination;
+            if ( $this->_paramsInSession === true ) {
+                $this->_sessionParams->perPage = $this->_pagination;
+            }
             return $this->_pagination;
         }
 
