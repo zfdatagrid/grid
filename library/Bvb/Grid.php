@@ -1213,8 +1213,7 @@ abstract class Bvb_Grid
 
 
 
-
-        if ( $orderf == 'DESC' || $orderf == 'ASC' || is_array($this->_sessionParams->order)) {
+        if ( $orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order))) {
             array_pop($order1);
             $order_field = implode("_", $order1);
 
@@ -2191,7 +2190,7 @@ abstract class Bvb_Grid
                     }
                 }
 
-                if ( array_key_exists($key, array_flip($this->_defaultFilters)) ) {
+                if (is_array($this->_defaultFilters) &&  array_key_exists($key, array_flip($this->_defaultFilters)) ) {
                     $this->_ctrlParams[$key] = array_search($key, $this->_defaultFilters);
                 }
             }
