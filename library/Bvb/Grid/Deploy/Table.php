@@ -2130,6 +2130,11 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
 
+        if (!document.getElementById(fieldsArray[i])){
+            continue;
+        }
+
+
         if(document.getElementById(fieldsArray[i]).type=='checkbox' && document.getElementById(fieldsArray[i]).checked ==false)
         {
             value = '';
