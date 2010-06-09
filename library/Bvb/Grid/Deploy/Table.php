@@ -2294,6 +2294,9 @@ $script .= "
                 }
                 foreach ( $form->getElements() as $key => $value ) {
 
+                    if($key=='ZFIGNORE' || $key=='ZFPK')
+                    continue;
+
                     if ( ! in_array($key, $finalFieldsForm) ) {
                         $form->removeElement($key);
                     }
@@ -2303,15 +2306,25 @@ $script .= "
             if ( count($crud->getAllowedFields()) > 0 ) {
 
                 foreach ( $form->getElements() as $key => $value ) {
+
+                    if($key=='ZFIGNORE' || $key=='ZFPK')
+                    continue;
+
+
                     if ( ! in_array($key, $crud->getAllowedFields()) ) {
                         $form->removeElement($key);
                     }
                 }
             }
 
+
             if ( count($crud->getDisallowedFields()) > 0 ) {
 
                 foreach ( $form->getElements() as $key => $value ) {
+
+                    if($key=='ZFIGNORE' || $key=='ZFPK')
+                    continue;
+
                     if ( in_array($key, $crud->getDisallowedFields()) ) {
                        $form->removeElement($key);
                     }
@@ -2341,6 +2354,8 @@ $script .= "
             ////////////////
             ////////////////
         }
+
+
 
 
         if ( $crud->getUseVerticalInputs() === false ) {
