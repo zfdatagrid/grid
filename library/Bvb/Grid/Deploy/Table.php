@@ -442,7 +442,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                             $this->getForm($i)->getElement($key)->setValue($this->_gridSession->post[$i][$key]);
                                         }
                                     } else {
-                                        $this->getForm($i)->getElement($key)->setValue($value);
+
+                                        if(strlen($this->getForm($i)->getElement($key)->getValue())==0){
+                                            $this->getForm($i)->getElement($key)->setValue($value);
+                                        }
                                     }
 
 
@@ -1567,6 +1570,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_applyConfigOptions(array(), true);
 
+
+        $this->_processForm();
+
         if ( ! $this->_temp['table'] instanceof Bvb_Grid_Template_Table_Table ) {
             $this->setTemplate('table', 'table', $this->_templateParams);
         } else {
@@ -2355,9 +2361,6 @@ $script .= "
             ////////////////
         }
 
-
-
-
         if ( $crud->getUseVerticalInputs() === false ) {
             foreach ( $crud->getForm()->getSubForm(0)->getElements() as $key => $value ) {
                 if ( ! in_array($key, array_keys($crud->getForm()->getSubForm(1)->getElements())) ) {
@@ -2477,7 +2480,6 @@ $script .= "
             $this->edit = array('allow' => 1);
         }
 
-        $this->_processForm();
         return $this;
     }
 
