@@ -3169,7 +3169,7 @@ abstract class Bvb_Grid
 
     function setRouteUrl ($url)
     {
-        $this->_routeUrl = (string) $url;
+        $this->_routeUrl = (string) ltrim($url,'/');
         return $this;
     }
 
