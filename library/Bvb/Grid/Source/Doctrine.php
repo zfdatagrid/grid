@@ -874,14 +874,14 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
             
             foreach ($fields as $field) {
                 if (strpos(strtoupper($field), 'JOIN') === false) {
-                    $this->_queryParts = array_merge($this->_queryParts, $this->_explodeFrom($field));
+                    $this->_queryParts = array_merge_recursive($this->_queryParts, $this->_explodeFrom($field));
                 } else {
                     $join = explode('JOIN', $field);
                     $join = array_map('trim', $join);
                     
                     $joinType = strtolower($join[0]);
                     
-                    $this->_queryParts = array_merge($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
+                    $this->_queryParts = array_merge_recursive($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
                 }
             }
             
