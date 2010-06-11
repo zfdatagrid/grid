@@ -1104,7 +1104,6 @@ abstract class Bvb_Grid
             $this->_sessionParams->filters = $this->_filtersValues;
         }
 
-
         return $this;
     }
 
@@ -2184,8 +2183,23 @@ abstract class Bvb_Grid
                 }
 
                 if ( $this->_paramsInSession === true ) {
-                    if ( $this->_sessionParams->filters[$key] !== null ) {
-                        $this->_ctrlParams[$key.$this->getGridId()] = $this->_sessionParams->filters[$key];
+
+                    if ( isset($this->_sessionParams->filters[$key]) ) {
+
+                        if ( is_array($this->_sessionParams->filters[$key]) ) {
+
+
+                            foreach ( $this->_sessionParams->filters[$key] as $skey => $svalue ) {
+
+                                if ( ! isset($this->_ctrlParams[$key . $this->getGridId() . '[' . $skey . ']']) ) {
+                                    $this->_ctrlParams[$key . $this->getGridId() . '[' . $skey . ']'] = $svalue;
+                                }
+                            }
+
+
+                        } else {
+                            $this->_ctrlParams[$key . $this->getGridId()] = $this->_sessionParams->filters[$key];
+                        }
                         continue;
                     }
                 }
