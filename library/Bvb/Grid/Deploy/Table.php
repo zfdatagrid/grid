@@ -1375,7 +1375,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $actual = (int) $this->getParam('start');
 
-        $ppagina = $this->getParam('perPage', $this->_pagination);
+        $ppagina = (int) $this->getParam('perPage');
+        if ( $ppagina == 0 ) {
+            $ppagina = $this->_pagination;
+        }
         $result2 = '';
 
         $pa = $actual == 0 ? 1 : ceil($actual / $ppagina) + 1;
@@ -2258,7 +2261,11 @@ $script .= "
             if($this->getParam('edit'))
             {
                $arr[$i]->addElement('hidden','ZFPK',array('decorators' => $crud->getButtonHiddenDecorator()));
+               $crud->setDisallowedFields(array_merge($crud->getDisallowedFields(),array_flip($crud->getOnEditForce())));
+            }else{
+               $crud->setDisallowedFields(array_merge($crud->getDisallowedFields(),array_flip($crud->getOnAddForce())));
             }
+
 
             $crud->getForm()->addSubForm($arr[$i], $i);
 
