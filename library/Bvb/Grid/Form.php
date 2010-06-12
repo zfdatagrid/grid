@@ -120,8 +120,6 @@ class Bvb_Grid_Form
     public function __construct ($formClass = 'Zend_Form', $formOptions = array())
     {
         $this->_form = new $formClass($formOptions);
-
-        $this->getForm()->addElementPrefixPath('Bvb_Grid_Form_Decorator', 'Bvb/Grid/Form/Decorator/', 'decorator');
     }
 
 
