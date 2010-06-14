@@ -2102,7 +2102,7 @@ if ( $useAjax == 1 ) {
         if (xmlhttp.readyState==4) {
             document.getElementById(ponto).innerHTML=xmlhttp.responseText;
         }else{
-            document.getElementById(ponto).innerHTML= '<div style=\"width:'+(document.getElementById('".$this->getInfo('ajax')."').offsetWidth - 2)+';height:'+(document.getElementById('".$this->getInfo('ajax')."').offsetHeight - 2)+'\" class=\"gridLoading\"></div>';
+            document.getElementById(ponto).innerHTML= '<div style=\"width:'+(document.getElementById('".$this->getInfo('ajax')."').offsetWidth - 2)+'px;height:'+(document.getElementById('".$this->getInfo('ajax')."').offsetHeight - 2)+'px\" class=\"gridLoading\"></div>';
         }
     }
     xmlhttp.send(null);
