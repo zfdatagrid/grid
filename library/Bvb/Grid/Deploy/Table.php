@@ -2095,17 +2095,20 @@ if ( $useAjax == 1 ) {
             }
         }
     }
-    xmlhttp.open(\"GET\", '" . $this->_baseUrl . "/'+url,true);
+     xmlhttp.open(\"GET\", '" . $this->_baseUrl . "/'+url,true);
+
+    " . $this->_temp['table']->scriptOnAjaxOpen($this->getInfo('ajax')) . "
 
     xmlhttp.onreadystatechange=function () {
 
         if (xmlhttp.readyState==4) {
-            document.getElementById(ponto).innerHTML=xmlhttp.responseText;
+            " . $this->_temp['table']->scriptOnAjaxResponse($this->getInfo('ajax')) . "
         }else{
-            document.getElementById(ponto).innerHTML= '<div style=\"width:'+(document.getElementById('".$this->getInfo('ajax')."').offsetWidth - 2)+'px;height:'+(document.getElementById('".$this->getInfo('ajax')."').offsetHeight - 2)+'px\" class=\"gridLoading\"></div>';
+            " . $this->_temp['table']->scriptOnAjaxStateChange($this->getInfo('ajax')) . "
         }
     }
     xmlhttp.send(null);
+
 }
 ".PHP_EOL;
         }

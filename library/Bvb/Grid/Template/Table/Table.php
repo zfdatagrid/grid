@@ -219,5 +219,23 @@ class Bvb_Grid_Template_Table_Table
         return $exp;
     }
 
+
+    public function scriptOnAjaxOpen ($element)
+    {
+        return "document.getElementById(ponto).innerHTML= '<div style=\"width:'+(document.getElementById('" . $element . "').offsetWidth - 2)+'px;height:'+(document.getElementById('" . $element . "').offsetHeight - 2)+'px;\" class=\"gridLoading\">&nbsp;</div>'";
+    }
+
+
+    public function scriptOnAjaxResponse ($element)
+    {
+        return 'document.getElementById(ponto).innerHTML=xmlhttp.responseText';
+    }
+
+
+    public function scriptOnAjaxStateChange ($element)
+    {
+        return '';
+    }
+
 }
 
