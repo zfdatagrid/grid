@@ -160,7 +160,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * String containg the inputs ids for fitlers
      * @var array
      */
-    protected $_javaScriptHelper = array();
+    protected $_javaScriptHelper = array('js'=>'','url'=>'');
 
     /**
      * Url param with the information about removing records
