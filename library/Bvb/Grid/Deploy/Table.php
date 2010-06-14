@@ -486,15 +486,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $post[$key][$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
                     }
 
-                    $addNew = false;
-
-                    if ( isset($post['saveAndAdd' . $this->getGridId()]) ) {
-                        $this->_gridSession->noErrors = true;
-                        $addNew = true;
-                    }
 
 
                     unset($post[$key]['ZFIGNORE']);
+                }
+
+
+                $addNew = false;
+
+                if ( isset($_POST['saveAndAdd' . $this->getGridId()]) ) {
+                    $this->_gridSession->noErrors = true;
+                    $addNew = true;
                 }
 
 
@@ -559,6 +561,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         } else {
                             $finalUrl = '';
                         }
+
 
                         $this->_redirect($this->getUrl() . $finalUrl);
 
@@ -2382,11 +2385,18 @@ $script .= "
         $crud->getForm()->setDecorators($crud->getFormDecorator());
         $crud->getForm()->setMethod('post');
 
+        if(isset($crud->options['saveAndAddButton']) && $crud->options['saveAndAddButton']==true && $this->getParam('edit')!=1)
+        {
+          $crud->getForm()->addElement('submit', 'saveAndAdd' . $this->getGridId(), array('label' => $this->__('Save And New'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
+        }
+
+
         $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => $this->__('Save'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
 
         $url = $this->getUrl(array_merge(array('add','postMassIds','zfmassedit', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
+
 
         $crud->getForm()->addElement('button', 'form_reset' . $this->getGridId(), array('onclick' => "window.location='$url'", 'label' => $this->__('Cancel'), 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(),'saveAndAdd' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getSubformGroupDecorator()));
