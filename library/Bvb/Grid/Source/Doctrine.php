@@ -828,14 +828,16 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
         
         foreach ($selects as $select) {
             $fields = explode(',', $select);
-            $fields = array_map('trim', $fields);
             
             foreach ($fields as $field) {
                 $fieldName = trim($field);
                 $fieldAlias = null;
                 
-                if (count(explode(' ', trim($field))) > 1) {
-                    list($fieldName, $fieldAlias) = explode(' ', trim($field));
+                if (strpos($field, ' ') !== false) {
+                    // since our field expression may contain spaces, assume the last space marks the alias
+                    $parts      = explode(' ', $field);
+                    $fieldAlias = array_pop($parts);
+                    $fieldName  = implode(' ', $parts);
                 }
                 
                 if (empty($fieldAlias)) {
