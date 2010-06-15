@@ -103,7 +103,7 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
                         } else {
                             // display just fields that have a value and are allowed to display
                             if ( $data != '' and $this->_shouldDisplay($field) ) {
-                                $ret .= __($field) . ': ' . $data . '<br />';
+                                $ret .= $field . ': ' . $data . '<br />';
                             }
                         }
                     }
