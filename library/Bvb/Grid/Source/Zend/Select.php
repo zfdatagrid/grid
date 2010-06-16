@@ -32,6 +32,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
     protected $_fields;
 
+    protected $_totalRecords = null;
+
 
     public function __construct (Zend_Db_Select $select)
     {
@@ -217,7 +219,28 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function execute ()
     {
 
-        $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
+        if ( $this->_server == 'mysql' ) {
+            $fields = $this->buildFields();
+            $ghostColumn = $this->getColumns();
+
+            $this->_select->reset('columns');
+            $firstField = reset($fields);
+
+            $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS {$firstField['field']}")));
+
+            foreach ( $ghostColumn as $value ) {
+                if ( is_object($value[1]) ) {
+                    $this->_select->columns(array($value[2] => $value[1]), $value[0]);
+                } elseif($value[2]!='') {
+                    $this->_select->columns(array($value[2]=>$value[1]), $value[0]);
+                }else{
+                    $this->_select->columns($value[1], $value[0]);
+                }
+            }
+
+        }
+
+
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
@@ -225,8 +248,16 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
+
+             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
+
+            if ( $this->_server == 'mysql' ) {
+                $this->_totalRecords = $this->_select->getAdapter()->fetchOne('select FOUND_ROWS()');
+            }
         }
+
+
 
         return $result;
     }
@@ -274,6 +305,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      */
     public function getTotalRecords ()
     {
+
+        if(!is_null($this->_totalRecords))
+        {
+            return $this->_totalRecords;
+        }
+
 
         $hasExp = false;
 
