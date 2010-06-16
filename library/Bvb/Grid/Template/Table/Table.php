@@ -180,7 +180,7 @@ class Bvb_Grid_Template_Table_Table
 
     public function detailEnd ()
     {
-        return "    <tr>".PHP_EOL."     <td colspan='2'><a href='{{url}}'>{{return}}</a></td>".PHP_EOL."    </tr>".PHP_EOL;
+        return "    <tr>".PHP_EOL. "     <td colspan='2'><a href='{{url}}'>{{return}}</a></td>".PHP_EOL."    </tr>".PHP_EOL;
     }
 
 
