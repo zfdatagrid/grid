@@ -2208,6 +2208,7 @@ $script .= "
      */
     public function setForm ($crud)
     {
+        $this->setAjax(false);
 
         $oldElements = $crud->getElements();
         $crud->clearElements();
