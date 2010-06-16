@@ -1350,7 +1350,7 @@ abstract class Bvb_Grid
 
         $url = '';
         foreach ( $params_clean as $key => $param ) {
-            if ( is_array($param) ) {
+            if ( is_array($param) || ($key=='perPage' && $value==0) || ($key=='start' && $value==0) ) {
                 continue;
             }
 
