@@ -204,7 +204,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $value
      * @return array
      */
-    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC');
+    public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC');
 
 
     /**
@@ -223,7 +223,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * @param array $value
      */
-   public function getSqlExp (array $value, $where = array());
+    public function getSqlExp (array $value, $where = array());
 
 
     /**
@@ -302,22 +302,25 @@ interface Bvb_Grid_Source_SourceInterface
     /**
      * Removes any order in que query
      */
-    public function resetOrder();
+    public function resetOrder ();
+
 
     /**
      * Cache handler.
      */
-    public function setCache($cache);
+    public function setCache ($cache);
+
 
     /**
      * Build the form based on a Model or query
      */
-     public function buildForm($fields = array());
+    public function buildForm ($fields = array(), $inputsType = array());
 
-     /**
-      * Returns tables primary keys separeted by commas ","
-      * This is necessary for mass actions
-      * @param $table
-      */
-     public function getMassActionsIds ($table);
+
+    /**
+     * Returns tables primary keys separeted by commas ","
+     * This is necessary for mass actions
+     * @param $table
+     */
+    public function getMassActionsIds ($table);
 }

@@ -109,6 +109,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setEscapeOutput(false);
         $grid->setExport(array('pdf', 'print', 'wordx', 'excel'));
         $grid->setView($view);
+        #$grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
@@ -234,7 +235,7 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Xml('http://zfdatagrid.com/feed/', 'channel,item'));
 
-        $grid->setPagination(10);
+        $grid->setNumberRecordsPerPage(10);
 
         $grid->updateColumn('title', array('decorator' => '<a href="{{link}}">{{title}}</a>', 'style' => 'width:200px;'));
         $grid->updateColumn('pubDate', array('class' => 'width_200'));
@@ -272,9 +273,15 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
         #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
-        #$grid->setUseKeyEventsOnFilters(true);
+        $grid->setUseKeyEventsOnFilters(true);
 
         #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
+        #$grid->setDefaultFiltersValues(array('Continent'=>'Europe'));
+
+        $grid->setAlwaysShowOrderArrows(false);
+
+
+        $grid->saveParamsInSession(true);
 
         $this->view->pages = $grid->deploy();
 
@@ -344,6 +351,7 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country');
         $grid->query($select);
 
+        $grid->setAjax('barcelos');
         $grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
         $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
@@ -375,18 +383,7 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
 
-        $grid->setMassAction(
-                        array(
-                                array(
-                                        'url' => $grid->getUrl(),
-                                        'caption' => 'Remove (Nothing will happen)',
-                                        'confirm' => 'Are you sure?'),
-                                array(
-                                        'url' => $grid->getUrl() . '/nothing/happens',
-                                        'caption' => 'Some other action',
-                                        'confirm' => 'Another confirmation message?')
-                                )
-                            );
+        $grid->setMassAction(array(array('url' => $grid->getUrl(), 'caption' => 'Remove (Nothing will happen)', 'confirm' => 'Are you sure?'), array('url' => $grid->getUrl() . '/nothing/happens', 'caption' => 'Some other action', 'confirm' => 'Another confirmation message?')));
 
         $grid->setNumberRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
@@ -408,7 +405,7 @@ class SiteController extends Zend_Controller_Action
         $array = array(array('Alex', '12', 'M'), array('David', '1', 'M'), array('David', '2', 'M'), array('David', '3', 'M'), array('Richard', '3', 'M'), array('Lucas', '3', 'M'));
 
 
-        $grid->setSource(new Bvb_Grid_Source_Array($array, array('name', 'age', 'sex')));
+        $grid->setSource(new Bvb_Grid_Source_Array(array(), array('name', 'age', 'sex')));
 
         $this->view->pages = $grid->deploy();
 
@@ -465,6 +462,30 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    public function unionAction ()
+    {
+
+        $grid = $this->grid();
+
+        $sql1 = $this->_db->select()->from('Country', array('Continent', 'Code'))->limit(12);
+        $sql2 = $this->_db->select()->from('City', array('Name', 'District'))->limit(12);
+
+        $select = $this->_db->select()->union(array($sql1, $sql2))->order('Name DESC');
+
+        $t = $select->query()->fetchAll();
+
+        echo "<pre>";
+        print_r($t);
+        die();
+
+
+        $grid->query($select);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
     /**
      * Using a model
      */
@@ -484,25 +505,24 @@ class SiteController extends Zend_Controller_Action
         #$form->setOnDeleteAddCondition(array('next'=>'11'));
 
 
+
         $grid->setDetailColumns();
 
 
-        #$form->setAllowedFields(array('times','nexst'));
-        #$form->setDisallowedFields(array('time','next'));
+        #$form->setAllowedFields(array('time','next'));
+        $form->setDisallowedFields(array('time', 'next'));
         #$form->setFieldsBasedOnQuery(false);
 
+        $form->setInputsType(array('status'=>'radio','bug_description'=>'password'));
 
 
-        #$form->setIsPerformCrudAllowed(false);
+        //$form->setIsPerformCrudAllowed(false);
         //$form->setIsPerformCrudAllowedForAddition(true);
         //$form->setIsPerformCrudAllowedForEdition(true);
         //$form->setIsPerformCrudAllowedForDeletion(false);
-        //$grid->setDeleteConfirmationPage(true);
+
 
         $grid->setForm($form);
-
-        #$grid->getForm(1)->getElement('bug_status')->setValue('barcelos');
-
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
@@ -611,7 +631,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name'))));
-        $grid->setPagination(15);
+        $grid->setNumberRecordsPerPage(15);
 
         $cap = new Bvb_Grid_Column('Country');
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');

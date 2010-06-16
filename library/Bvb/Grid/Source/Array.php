@@ -39,8 +39,9 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function __construct (array $array, $titles = null)
     {
-        $min = min(array_keys($array));
+
         if ( count($array) > 0 ) {
+            $min = min(array_keys($array));
             if ( $titles === null || count($titles) != count($array[$min]) ) {
                 $this->_fields = array_keys($array[$min]);
             } else {
@@ -57,7 +58,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         $this->_rawResult = $array;
         $this->_sourceName = 'array';
     }
-
 
 
     public function resetOrder ()
@@ -267,16 +267,16 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
             foreach ( $value['functions'] as $final ) {
 
                 if ( $i == 0 ) {
-                    $valor = $this->_applySqlExpToArray($value['value'], $final,null,$where);
+                    $valor = $this->_applySqlExpToArray($value['value'], $final, null, $where);
                 } else {
-                    $valor = $this->_applySqlExpToArray($value['value'], $final, $valor,$where);
+                    $valor = $this->_applySqlExpToArray($value['value'], $final, $valor, $where);
                 }
 
                 $i ++;
             }
 
         } else {
-            $valor = $this->_applySqlExpToArray($valor['value'], $value['functions'],null,$where);
+            $valor = $this->_applySqlExpToArray($valor['value'], $value['functions'], null, $where);
         }
 
 
@@ -290,7 +290,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
      * @param $operation
      * @param $option
      */
-    protected function _applySqlExpToArray ($field, $operation, $value = null,$where = array())
+    protected function _applySqlExpToArray ($field, $operation, $value = null, $where = array())
     {
         $field = trim($field);
         $array = array();
@@ -298,8 +298,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         if ( null === $value ) {
             foreach ( $this->_rawResult as $value ) {
 
-                if( (count($where)>0 && $value[key($where)] == reset($where)) || count($where)==0)
-                $array[] = $value[$field];
+                if ( (count($where) > 0 && $value[key($where)] == reset($where)) || count($where) == 0 ) $array[] = $value[$field];
             }
         } else {
             $array = array($value);
@@ -335,7 +334,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC')
+    public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC')
     {
 
         $filter = array();
@@ -405,18 +404,16 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-     public function buildForm($fields = array())
+    public function buildForm ($fields = array(), $inputsType = array())
     {
 
         $form = array();
 
-        foreach ($this->_fields as $elements)
-        {
-            if($elements =='_zfgId')
-            continue;
+        foreach ( $this->_fields as $elements ) {
+            if ( $elements == '_zfgId' ) continue;
 
             $label = ucwords(str_replace('_', ' ', $elements));
-            $form['elements'][$elements] = array('text', array( 'size' => 10, 'label' => $label));
+            $form['elements'][$elements] = array('text', array('size' => 10, 'label' => $label));
         }
 
 
@@ -431,6 +428,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         }
         return false;
     }
+
 
     public function getMassActionsIds ($table)
     {

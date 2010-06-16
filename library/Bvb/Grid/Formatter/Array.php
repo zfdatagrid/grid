@@ -93,7 +93,7 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
     }
 
 
-    public function format ($value, $indent = '')
+    public function format ($value, $indent = '' )
     {
 
         // if callback function specified, return its result

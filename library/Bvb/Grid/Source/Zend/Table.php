@@ -31,11 +31,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    public function  buildForm($fields = array())
+    public function  buildForm($fields = array(), $inputsType = array())
     {
         $info = $this->getModel()->info();
         $cols = $info['metadata'];
-        $form = $this->buildFormElements($cols, $info);
+        $form = $this->buildFormElements($cols, $info,$inputsType);
         return $form;
     }
 

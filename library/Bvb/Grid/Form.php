@@ -23,6 +23,8 @@ class Bvb_Grid_Form
 
     protected $_form;
 
+    protected $_inputsType = array();
+
     public $options;
 
     public $fields;

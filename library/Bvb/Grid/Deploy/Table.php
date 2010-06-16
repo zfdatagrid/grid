@@ -2212,7 +2212,7 @@ $script .= "
         $oldElements = $crud->getElements();
         $crud->clearElements();
 
-        $formElements = $this->getSource()->buildForm($this->_data['fields']);
+        $formElements = $this->getSource()->buildForm($this->_data['fields'],$crud->getInputsType());
 
         if ( $this->getParam('add') ) {
             $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;

@@ -716,12 +716,12 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      *
      * @return array
      */
-     public function buildForm($fields = array())
+     public function buildForm ($fields = array(), $inputsType = array())
     {
         $table = $this->_queryParts['from']['tableModel'];
         $columns = Doctrine::getTable($table)->getColumns();
 
-        return $this->buildFormElements($columns);
+        return $this->buildFormElements($columns,array(),$inputsType);
     }
 
     /**
@@ -790,6 +790,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 default:
                     break;
             }
+        }
+
+        foreach ( $inputsType as $field => $type ) {
+            $form['elements'][$field][0] = strtolower($type);
         }
 
         return $form;

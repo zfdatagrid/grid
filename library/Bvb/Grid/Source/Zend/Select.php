@@ -276,13 +276,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         foreach ( $selectCount->getPart('columns') as $value ) {
             if ( $value[1] instanceof Zend_Db_Expr ) {
-               $hasExp = true;
-               break;
+                $hasExp = true;
+                break;
             }
         }
 
-        if($hasExp == false)
-        {
+        if ( $hasExp == false ) {
             $selectCount->reset(Zend_Db_Select::COLUMNS);
             $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS total '));
         }
@@ -314,7 +313,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
             if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
                 $result = count($result);
-            } elseif ( count($result) == 1) {
+            } elseif ( count($result) == 1 ) {
                 $result = $result[0]['total'];
             } else {
                 return 0;
@@ -341,9 +340,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         if ( count($pks) > 1 ) {
             $concat = '';
             foreach ( $pks as $conc ) {
-                $concat .= $this->_getDb()->quoteIdentifier($conc)." ,'-' ,";
+                $concat .= $this->_getDb()->quoteIdentifier($conc) . " ,'-' ,";
             }
-            $concat = rtrim($concat,"'-' ,");
+            $concat = rtrim($concat, "'-' ,");
         } else {
             $concat = $pks[0];
         }
@@ -358,9 +357,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $return[] = $value['ids'];
         }
 
-        return implode(',',$return);
+        return implode(',', $return);
 
     }
+
 
     public function getTableList ()
     {
@@ -449,8 +449,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
     public function buildQueryOrder ($field, $order, $reset = false)
     {
-        if(!array_key_exists($field,$this->_fields))
-        {
+        if ( ! array_key_exists($field, $this->_fields) ) {
             return $this;
         }
 
@@ -495,7 +494,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC')
+    public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC')
     {
 
         $distinct = clone $this->_select;
@@ -543,8 +542,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         }
 
 
-        if(array_key_exists($value['value'],$cols))
-        {
+        if ( array_key_exists($value['value'], $cols) ) {
             $value['value'] = $cols[$value['value']];
         }
 
@@ -563,13 +561,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::GROUP);
         $select->columns(new Zend_Db_Expr($valor . ' AS TOTAL'));
 
-        foreach ($where as $key=>$value)
-        {
-            if(strlen(trim($value))<1)
-            {
+        foreach ( $where as $key => $value ) {
+            if ( strlen(trim($value)) < 1 ) {
                 continue;
             }
-            $select->where($key.'=?',$value);
+            $select->where($key . '=?', $value);
         }
 
 
@@ -801,17 +797,17 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function  buildForm($fields = array())
+    public function buildForm ($fields = array(), $inputsType = array())
     {
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table']);
 
-        return $this->buildFormElements($cols);
+        return $this->buildFormElements($cols, array(), $inputsType);
 
     }
 
 
-    public function buildFormElements ($cols, $info = array())
+    public function buildFormElements ($cols, $info = array(), $inputsType = array())
     {
         $final = array();
         $form = array();
@@ -949,7 +945,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
         }
 
-        return $this->buildFormElementsFromArray($return);
+
+        $form = $this->buildFormElementsFromArray($return);
+
+        foreach ( $inputsType as $field => $type ) {
+            $form['elements'][$field][0] = strtolower($type);
+        }
+
+        return $form;
     }
 
 
@@ -968,16 +971,18 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $keys = array();
 
-        foreach ( $pk as $pkk => $primary ) {
-            if ( $primary['PRIMARY'] == 1 ) {
+        if ( is_array($pk) ) {
+            foreach ( $pk as $pkk => $primary ) {
+                if ( $primary['PRIMARY'] == 1 ) {
 
-                foreach ( $tb as $key => $value ) {
-                    if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
-                        $prefix = $key . '.';
-                        break;
+                    foreach ( $tb as $key => $value ) {
+                        if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+                            $prefix = $key . '.';
+                            break;
+                        }
                     }
+                    $keys[] = $prefix . $pkk;
                 }
-                $keys[] = $prefix . $pkk;
             }
         }
 
