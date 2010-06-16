@@ -37,67 +37,67 @@ class Bvb_Grid_Template_Table_Table
 
     public function globalStart ()
     {
-        return "<table class=\"borders\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">";
+        return "<table class=\"borders\" align=\"center\" cellspacing=\"0\" cellpadding=\"0\">".PHP_EOL;
     }
 
 
     public function globalEnd ()
     {
-        return "</table>";
+        return "</table>".PHP_EOL;
     }
 
 
     public function extra ()
     {
-        return "<tr><td class=\"querySupport\" colspan=\"{$this->options['colspan']}\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
+        return "    <tr>".PHP_EOL."     <td class=\"querySupport\" colspan=\"{$this->options['colspan']}\"><div style=\"text-align:right;\">{{value}}</div></td></tr>";
     }
 
 
     public function titlesStart ()
     {
-        return "<tr>";
+        return "    <tr>";
     }
 
 
     public function titlesEnd ()
     {
-        return "</tr>";
+        return "    </tr>".PHP_EOL;
     }
 
 
     public function titlesLoop ()
     {
-        return "<th>{{value}}</th>";
+        return "    <th>{{value}}</th>".PHP_EOL;
     }
 
 
     public function filtersStart ()
     {
-        return "<tr>";
+        return "    <tr>".PHP_EOL;
     }
 
 
     public function filtersEnd ()
     {
-        return "</tr>";
+        return "    </tr>".PHP_EOL;
     }
 
 
     public function noResults ()
     {
-        return "<td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>";
+        return "      <td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>".PHP_EOL;
     }
 
 
     public function filtersLoop ()
     {
-        return "<td class=\"subtitulo\" >{{value}}</td>";
+        return "        <td class=\"subtitulo\" >{{value}}</td>".PHP_EOL;
     }
 
 
     public function hRow ($values)
     {
-        return "<td  colspan=\"{$this->options['colspan']}\" class=\"hbar\"><div>{{value}}</div></td>";
+        return "        <td  colspan=\"{$this->options['colspan']}\" class=\"hbar\"><div>{{value}}</div></td>".PHP_EOL;
     }
 
 
@@ -110,13 +110,13 @@ class Bvb_Grid_Template_Table_Table
             $class = " class='$class' ";
         }
 
-        return "<tr $class>";
+        return "    <tr $class>".PHP_EOL;
     }
 
 
     public function loopEnd ()
     {
-        return "</tr>";
+        return "    </tr>".PHP_EOL;
     }
 
 
@@ -134,35 +134,35 @@ class Bvb_Grid_Template_Table_Table
 
     public function loopLoop ()
     {
-        return "<td class=\"{{class}} \" style=\"{{style}}\" >{{value}}</td>";
+        return "        <td class=\"{{class}} \" style=\"{{style}}\" >{{value}}</td>".PHP_EOL;
     }
 
 
     public function sqlExpStart ()
     {
-        return "<tr>";
+        return "    <tr>".PHP_EOL;
     }
 
 
     public function sqlExpEnd ()
     {
-        return "</tr>";
+        return "    </tr>".PHP_EOL;
     }
 
 
     public function sqlExpLoop ()
     {
-        return "<td class=\"sum {{class}}\">{{value}}</td>";
+        return "     <td class=\"sum {{class}}\">{{value}}</td>".PHP_EOL;
     }
 
 
     public function pagination ()
     {
-        return "<tr><td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
+        return "    <tr>".PHP_EOL."     <td class=\"barra_tabela\" colspan=\"{$this->options['colspan']}\"><div>
         <div class=\"paginatinExport\">" . $this->export . "</div>
         <div class=\"paginationNumbers\"> <em>({{numberRecords}})</em> {{pagination}}  {{perPage}}  {{pageSelect}}</div>
         </div>
-        </td></tr>";
+        </td>".PHP_EOL."</tr>".PHP_EOL;
     }
 
 
@@ -174,19 +174,19 @@ class Bvb_Grid_Template_Table_Table
 
     public function detail ()
     {
-        return "<tr><td class='detailLeft'>{{field}}</td><td class='detailRight'>{{value}}</td></tr>";
+        return "    <tr>".PHP_EOL."     <td class='detailLeft'>{{field}}</td><td class='detailRight'>{{value}}</td>".PHP_EOL."</tr>".PHP_EOL;
     }
 
 
     public function detailEnd ()
     {
-        return "<tr><td colspan='2'><a href='{{url}}'>{{return}}</a></td></tr>";
+        return "    <tr>".PHP_EOL."     <td colspan='2'><a href='{{url}}'>{{return}}</a></td>".PHP_EOL."    </tr>".PHP_EOL;
     }
 
 
     public function detailDelete ()
     {
-        return "<tr><td colspan='2'>{{button}}</td></tr>";
+        return "<tr><td colspan='2'>{{button}}</td></tr>".PHP_EOL;
     }
 
 
