@@ -15,7 +15,6 @@
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    $Id: Date.php 492 2010-01-26 17:08:02Z pao.fresco $
- * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
 {
@@ -31,6 +30,22 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
 
     // set of fields that shouln't be displayed
     protected $_hiddenFields = array('id', 'hDateTime', 'userID');
+
+
+    public function __ ($message)
+    {
+        static $translator = null;
+
+        if ( $translator ) {
+            $message = $translator->translate($message);
+        } else {
+            if ( Zend_Registry::isRegistered('Zend_Translate') ) {
+                $translator = Zend_Registry::get('Zend_Translate');
+                $message = $translator->translate($message);
+            }
+        }
+        return $message;
+    }
 
 
     public function __construct ($options = array())
@@ -103,7 +118,7 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
                         } else {
                             // display just fields that have a value and are allowed to display
                             if ( $data != '' and $this->_shouldDisplay($field) ) {
-                                $ret .= $field . ': ' . $data . '<br />';
+                                $ret .= $this->__($field) . ': ' . $data . '<br />';
                             }
                         }
                     }
