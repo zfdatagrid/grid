@@ -2353,7 +2353,7 @@ $script .= "
 
             foreach ( $this->_data['fields'] as $key => $title ) {
 
-                if ( $form->getElement($key) ) {
+                if ( $form->getElement($key) && $form->getElement($key)->getLabel() =='' ) {
                     $form->getElement($key)->setLabel($title['title']);
                 }
             }
