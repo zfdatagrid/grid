@@ -595,7 +595,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             }
 
 
-                            $sendCall = array(&$post[$key], $this->getSource());
 
                             $pks = $this->getSource()->getPrimaryKey($this->_data['table']);
 
@@ -620,13 +619,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             }
 
 
+                            $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
+                            $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
+
+                            $sendCall = array(&$post[$key], $this->getSource(),&$queryUrl);
+
                             if ( null !== $this->_callbackBeforeUpdate ) {
                                 call_user_func_array($this->_callbackBeforeUpdate, $sendCall);
                             }
 
                             if ( $this->_crudTableOptions['edit'] == true ) {
-                                $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
-                                $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
                                 $this->getSource()->update($this->_crudTable, $post[$key], $queryUrl);
                             }
 
@@ -2403,8 +2405,6 @@ $script .= "
         $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(),'saveAndAdd' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getSubformGroupDecorator()));
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
-
-
 
 
 
