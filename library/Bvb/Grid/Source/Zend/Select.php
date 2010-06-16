@@ -36,6 +36,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function __construct (Zend_Db_Select $select)
     {
 
+        if(count($select->getPart('UNION'))>0)
+        {
+            #throw new Bvb_Grid_Exception('UNION queries not supportes yet');
+        }
+
+
         $this->_select = $select;
         $this->init($this->_select);
         return $this;
@@ -212,7 +218,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     {
 
         $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
-
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
@@ -971,9 +976,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $keys = array();
 
+        $hasSerial = false;
+
         if ( is_array($pk) ) {
             foreach ( $pk as $pkk => $primary ) {
-                if ( $primary['PRIMARY'] == 1 ) {
+                if ( $primary['IDENTITY'] == 1 ) {
+                    $hasSerial = true;
 
                     foreach ( $tb as $key => $value ) {
                         if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
@@ -984,6 +992,24 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     $keys[] = $prefix . $pkk;
                 }
             }
+
+            if ( $hasSerial === false ) {
+
+                foreach ( $pk as $pkk => $primary ) {
+                    if ( $primary['PRIMARY'] == 1 ) {
+                        foreach ( $tb as $key => $value ) {
+                            if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+                                $prefix = $key . '.';
+                                break;
+                            }
+                        }
+                        $keys[] = $prefix . $pkk;
+                    }
+                }
+            }
+
+
+
         }
 
         return $keys;
