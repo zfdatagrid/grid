@@ -74,7 +74,7 @@ class Bvb_Grid_Form
     protected $_onDeleteAddCondition = array();
 
 
-    public function getForm ()
+    public function getForm ($subForm = null)
     {
         if ( ! is_null($subForm) ) return $this->_form->getSubForm($subForm);
 
