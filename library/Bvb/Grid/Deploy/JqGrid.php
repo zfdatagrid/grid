@@ -986,8 +986,8 @@ HTML;
                 );
                 foreach ($filteredFields as $filter=>$val) {
                     $flts->$filter = $val;
+                      $this->setParam($filter,$val);
                 }
-                $this->setParam('filters', urlencode(Zend_Json::encode($flts)));
             }
         }
     }
