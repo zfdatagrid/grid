@@ -226,7 +226,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_select->reset('columns');
             $firstField = reset($fields);
 
-            $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS {$firstField['field']}")));
+            $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS 1+1")));
 
             foreach ( $ghostColumn as $value ) {
                 if ( is_object($value[1]) ) {
