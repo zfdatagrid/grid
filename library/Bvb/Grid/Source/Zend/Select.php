@@ -220,11 +220,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     {
 
         if ( $this->_server == 'mysql' ) {
-            $fields = $this->buildFields();
             $ghostColumn = $this->getColumns();
 
             $this->_select->reset('columns');
-            $firstField = reset($fields);
 
             $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS 1+1")));
 
