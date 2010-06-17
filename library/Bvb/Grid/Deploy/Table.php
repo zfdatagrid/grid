@@ -268,6 +268,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_alwaysShowOrderArrows = true;
 
+    /**
+     * If we should show order images when sorting results
+     * @var $_showOrderImages string
+     */
+    protected $_showOrderImages = true;
+
 
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instantiate
@@ -1087,7 +1093,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $this->_data['fields'][$title['field']]['order'] = true;
                         }
 
-                        if ( $this->getAlwaysShowOrderArrows() === false ) {
+                        if ( $this->getAlwaysShowOrderArrows() === false && $this->getShowOrderImages()===true) {
                             $imgF = explode('_', $this->getParam('order'));
                             $checkOrder = str_replace('_' . end($imgF), '', $this->getParam('order'));
 
@@ -1098,10 +1104,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             }
                         }
 
+                        if($this->getShowOrderImages()===false)
+                        {
+                            $imgFinal ='';
+                        }
+
                         if ( $this->getInfo("ajax") !== false ) {
 
 
-                            if ( $this->getAlwaysShowOrderArrows() === true ) {
+                            if ( $this->getAlwaysShowOrderArrows() === true && $this->getShowOrderImages()===true ) {
                                 $link1 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_DESC')\">{$images['desc']}</a>";
                                 $link2 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_ASC')\">{$images['asc']}</a>";
 
@@ -1125,7 +1136,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
                             } else {
 
-                                if ( $this->getAlwaysShowOrderArrows() === true ) {
+                                if ( $this->getAlwaysShowOrderArrows() === true && $this->getShowOrderImages()==true ) {
 
                                     $link1 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_DESC'>{$images['desc']}</a>";
                                     $link2 = "<a  href='" . $title['simpleUrl'] . "/order{$this->getGridId()}/{$title['field']}_ASC'>{$images['asc']}</a>";
@@ -3120,6 +3131,17 @@ $script .= "
     public function getUseKeyEventsOnFilters()
     {
         return $this->_useKeyEventsOnFilters;
+    }
+
+    public function setShowOrderImages($status = true)
+    {
+        $this->_showOrderImages = (bool)$status;
+        return $this;
+    }
+
+    public function getShowOrderImages()
+    {
+        return $this->_showOrderImages;
     }
 
 }
