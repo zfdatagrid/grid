@@ -2245,6 +2245,7 @@ abstract class Bvb_Grid
             if ( ! array_key_exists($key, $this->_data['fields']) ) $this->updateColumn($key, $field, true);
         }
 
+
         // apply additional configuration
         $this->_runConfigCallbacks();
 
@@ -2272,6 +2273,14 @@ abstract class Bvb_Grid
             foreach ( $this->_data['fields'] as $key => $value ) {
                 if ( ! in_array($key, $finalColumns) ) {
                     $this->updateColumn($key, array('remove' => 1));
+                }
+            }
+
+            foreach (array_keys($this->_extraFields) as $value)
+            {
+                if(!in_array($value,$this->_gridColumns))
+                {
+                    unset($this->_extraFields[$value]);
                 }
             }
 
