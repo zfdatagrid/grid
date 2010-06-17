@@ -1126,7 +1126,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                                 $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
                             } else {
-                                $grid .= str_replace('{{value}}', "<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+
+
+                                if ( $this->getShowOrderImages() == false ) {
+                                    $hrefTitle = '';
+                                    if ( substr($title['url'], - 4) == '_ASC' ) {
+                                        $hrefTitle = $this->__('Sort ASC') . ' ' . $title['value'];
+                                    } elseif ( substr($title['url'], - 5) == '_DESC' ) {
+                                        $hrefTitle = $this->__('Sort DESC') . ' ' . $title['value'];
+                                    }
+                                }
+
+                                $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
 
                             }
 
@@ -1153,7 +1164,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                                 } else {
 
-                                    $grid .= str_replace('{{value}}', "<a href='" . $title['url'] . "'>" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+                                    if($this->getShowOrderImages()==false)
+                                    {
+                                        $hrefTitle = '';
+                                        if(substr($title['url'],-4)=='_ASC')
+                                        {
+                                            $hrefTitle = $this->__('Sort ASC').' '.$title['value'];
+                                        }elseif(substr($title['url'],-5)=='_DESC'){
+                                            $hrefTitle = $this->__('Sort DESC').' '.$title['value'];
+                                        }
+                                    }
+
+                                    $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href='" . $title['url'] . "'>" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
 
                                 }
 
