@@ -1000,7 +1000,11 @@ abstract class Bvb_Grid
                     $filters[$key] = $value;
                 }elseif( in_array(rtrim($key,$this->getGridId()), $fields))
                 {
-                    $filters[rtrim($key,$this->getGridId())] = $value;
+                    if ( $this->getGridId() != '' && substr($key, - strlen($this->getGridId())) == $this->getGridId() ) {
+                        $key = substr($key, 0, - strlen($this->getGridId()));
+                    }
+
+                    $filters[$key] = $value;
                 }
             }
         }
