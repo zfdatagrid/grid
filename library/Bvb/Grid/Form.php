@@ -62,6 +62,8 @@ class Bvb_Grid_Form
 
     protected $_useVerticalInputs = true;
 
+    protected $_useCSRF = true;
+
 
     protected $_allowedFields = array();
 

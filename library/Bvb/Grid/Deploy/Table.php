@@ -2407,7 +2407,12 @@ $script .= "
 
         $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => $this->__('Save'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
-        $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
+
+
+        if($crud->getUseCSRF()==1)
+        {
+            $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
+        }
 
         $url = $this->getUrl(array_merge(array('add','postMassIds','zfmassedit', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
