@@ -34,17 +34,7 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
 
     public function __ ($message)
     {
-        static $translator = null;
-
-        if ( $translator ) {
-            $message = $translator->translate($message);
-        } else {
-            if ( Zend_Registry::isRegistered('Zend_Translate') ) {
-                $translator = Zend_Registry::get('Zend_Translate');
-                $message = $translator->translate($message);
-            }
-        }
-        return $message;
+        return Bvb_Grid_Translator::getInstance()->__($message);
     }
 
 
@@ -93,7 +83,7 @@ class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
     }
 
 
-    public function format ($value, $indent = '' )
+    public function format ($value, $indent = '')
     {
 
         // if callback function specified, return its result

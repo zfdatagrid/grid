@@ -551,7 +551,7 @@ abstract class Bvb_Grid
      */
     public function setTranslator (Zend_Translate $translator)
     {
-        $this->_translator = $translator;
+        Bvb_Grid_Translator::getInstance()->setTranslator($translator);
         return $this;
     }
 
@@ -720,12 +720,7 @@ abstract class Bvb_Grid
 
     function getTranslator ()
     {
-        if ( $this->_translator instanceof Zend_Translate ) {
-            return $this->_translator;
-        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
-            return Zend_Registry::get('Zend_Translate');
-        }
-        return false;
+      return Bvb_Grid_Translator::getInstance()->getTranslator();
     }
 
 
@@ -735,17 +730,7 @@ abstract class Bvb_Grid
      */
     protected function is__ ($message)
     {
-        if ( strlen($message) == 0 ) {
-            return false;
-        }
-
-        if ( $this->_translator instanceof Zend_Translate ) {
-            return $this->_translator->isTranslated($message);
-        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
-            return Zend_Registry::get('Zend_Translate')->isTranslated($message);
-        }
-
-        return false;
+        return Bvb_Grid_Translator::getInstance()->isTranslated($message);
     }
 
 
