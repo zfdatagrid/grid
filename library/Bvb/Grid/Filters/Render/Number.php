@@ -35,6 +35,9 @@ class Bvb_Grid_Filters_Render_Number extends Bvb_Grid_Filters_Render_RenderAbstr
     function render ()
     {
         $this->removeAttribute('id');
+
+
+        if(!$this->hasAttribute('style'))
         $this->setAttribute('style','width:50px !important;');
 
         return '<span>'.$this->__('From:')."</span>".$this->getView()->formText($this->getFieldName().'[from]', $this->getDefaultValue('from'), array_merge($this->getAttributes(),array('id'=>'filter_'.$this->getFieldName().'_from')))

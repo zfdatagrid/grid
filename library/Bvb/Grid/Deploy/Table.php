@@ -2649,14 +2649,13 @@ $script .= "
         }
             $attr['onKeyUp'] =  $this->getGridId() . "gridChangeFilters(event);";
 
-        $opcoes = array();
+        $opcoes = $this->_filters[$valor];
 
 
         if ( isset($opcoes['style']) ) {
             $attr['style'] = $opcoes['style'];
-        } else {
-            $attr['style'] = " width:95% ";
         }
+
 
         if ( isset($opcoes['class']) ) {
             $attr['class'] = $opcoes['class'];

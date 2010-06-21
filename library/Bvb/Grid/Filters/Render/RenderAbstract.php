@@ -105,6 +105,11 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
         return $this;
     }
 
+    public function hasAttribute($name)
+    {
+        return isset($this->_attributes[$name])?true:false;
+    }
+
 
     function removeAttribute ($name)
     {
