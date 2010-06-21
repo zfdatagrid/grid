@@ -983,8 +983,7 @@ abstract class Bvb_Grid
 
                 if ( in_array($key, $fields) ) {
                     $filters[$key] = $value;
-                }elseif( in_array(rtrim($key,$this->getGridId()), $fields))
-                {
+                } elseif(in_array(substr($key,0, -strlen($this->getGridId())), $fields)) {
                     if ( $this->getGridId() != '' && substr($key, - strlen($this->getGridId())) == $this->getGridId() ) {
                         $key = substr($key, 0, - strlen($this->getGridId()));
                     }
