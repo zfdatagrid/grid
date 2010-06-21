@@ -1079,6 +1079,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ( $title['type'] == 'field' ) {
 
+                    $hrefTitle = '';
 
                     $noOrder = $this->getInfo("noOrder") ? $this->getInfo("noOrder") : '';
 
