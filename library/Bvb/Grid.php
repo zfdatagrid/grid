@@ -951,7 +951,7 @@ abstract class Bvb_Grid
      */
     public function setDefaultFiltersValues (array $filters)
     {
-        $this->_defaultFilters = array_flip($filters);
+        $this->_defaultFilters = $filters;
         return $this;
     }
 
@@ -2192,8 +2192,8 @@ abstract class Bvb_Grid
                     }
                 }
 
-                if (is_array($this->_defaultFilters) &&  array_key_exists($key, array_flip($this->_defaultFilters)) ) {
-                    $this->_ctrlParams[$key] = array_search($key, $this->_defaultFilters);
+                if (is_array($this->_defaultFilters) &&  array_key_exists($key, $this->_defaultFilters) ) {
+                    $this->_ctrlParams[$key] = $this->_defaultFilters[$key];
                 }
             }
 
