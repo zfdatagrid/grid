@@ -227,6 +227,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS 1+1")));
 
             foreach ( $ghostColumn as $value ) {
+
+                if($value[2]=='ZFG_GHOST')
+                continue;
+
                 if ( is_object($value[1]) ) {
                     $this->_select->columns(array($value[2] => $value[1]), $value[0]);
                 } elseif($value[2]!='') {
