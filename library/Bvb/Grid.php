@@ -3289,4 +3289,48 @@ abstract class Bvb_Grid
         return $this;
     }
 
+
+    /**
+     * Defines options for deployment
+     * @param array $options
+     * @return $this
+     */
+    public function setDeployOptions (array $options)
+    {
+        foreach ( $options as $option => $value ) {
+            $this->setDeployOption($option, $value);
+        }
+        return $this;
+    }
+
+
+    /**
+     * Defines option for deployment
+     * @param string $option
+     * @param string $value
+     * @return $this
+     */
+    public function setDeployOption ($option, $value)
+    {
+        $this->deploy[$option] = $value;
+        return $this;
+    }
+
+    /**
+     *Reset Deploy Options
+     */
+    public function resetDeployOptions()
+    {
+        $this->deploy = array();
+        return $this;
+    }
+
+    /**
+     * retrieve deploy options
+     */
+    public function getDeployOptions()
+    {
+        return $this->deploy;
+    }
+
 }
