@@ -3319,7 +3319,7 @@ abstract class Bvb_Grid
     /**
      *Reset Deploy Options
      */
-    public function resetDeployOptions()
+    public function clearDeployOptions()
     {
         $this->deploy = array();
         return $this;
