@@ -36,6 +36,8 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     protected $_cache;
 
+    protected $_primaryKey = null;
+
 
     public function __construct (array $array, $titles = null)
     {
@@ -426,14 +428,28 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         if ( in_array('_zfgId', $this->_fields) ) {
             return array('_zfgId');
         }
+
+        if(is_array($this->_primaryKey))
+        {
+            return $this->_primaryKey;
+        }
         return false;
     }
 
 
     public function getMassActionsIds ($table)
     {
+        if(!$pk = $this->getPrimaryKey())
+        {
+            throw new Bvb_Grid_Exception('No primary key found');
+        }
 
-        throw new Exception('Not yet Implemented');
+    }
 
+
+    public function setPrimaryKey (array $pk)
+    {
+        $this->_primaryKey = $pk;
+        return $this;
     }
 }
