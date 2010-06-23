@@ -64,6 +64,8 @@ class Bvb_Grid_Form
 
     protected $_useCSRF = true;
 
+    protected $_useDecorators = true;
+
 
     protected $_allowedFields = array();
 

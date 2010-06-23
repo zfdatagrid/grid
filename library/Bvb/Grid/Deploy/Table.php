@@ -2278,7 +2278,10 @@ $script .= "
             if($formsCount>1)
             $arr[0]->addElement('checkbox','ZFIGNORE',array('label'=>$this->__('Ignore'),'order'=>0));
             $arr[0]->setElementDecorators($crud->getSubformElementTitle());
+
+            if($crud->getUseDecorators()===true)
             $arr[0]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+
             $crud->getForm()->addSubForm($arr[0], 0);
 
             foreach ($crud->getForm()->getSubForm(0)->getElements() as $value)
@@ -2298,6 +2301,8 @@ $script .= "
             $arr[$i]->addElement('checkbox','ZFIGNORE',array('label'=>$this->__('Ignore record'),'order'=>0));
 
             #$arr[$i]->setElementDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
+
+            if($crud->getUseDecorators()===true)
             $arr[$i]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
 
 
@@ -2335,6 +2340,8 @@ $script .= "
                     if($value->helper =='formHidden'){
                        continue;
                     }
+
+                    if($crud->getUseDecorators()===true)
                     $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
                 }
             }
@@ -2402,6 +2409,8 @@ $script .= "
 
             foreach ( $form->getElements() as $element ) {
                 if ( $element->helper == 'formFile' ) {
+
+                    if($crud->getUseDecorators()===true)
                     $element->setDecorators($crud->getFileDecorator());
                 }
             }
