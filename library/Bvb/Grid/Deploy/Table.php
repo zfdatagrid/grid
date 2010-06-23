@@ -2249,7 +2249,19 @@ $script .= "
         $oldElements = $crud->getElements();
         $crud->clearElements();
 
+
+
+        $displayGroupElements = array();
+        if(count($crud->getForm()->getDisplayGroups())>0)
+        {
+            foreach ($crud->getForm()->getDisplayGroups() as $group)
+            {
+                $displayGroupElements = array_merge($displayGroupElements,$group->getElements());
+            }
+        }
+
         $formElements = $this->getSource()->buildForm($this->_data['fields'],$crud->getInputsType());
+
 
         if ( $this->getParam('add') ) {
             $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;
@@ -2324,7 +2336,6 @@ $script .= "
 
             $form = $crud->getForm()->getSubForm($i);
 
-
             foreach ( $oldElements as $key => $value ) {
 
                 if($value->helper=='formHidden')
@@ -2394,6 +2405,8 @@ $script .= "
                 }
             }
 
+
+
             foreach ( $this->_data['fields'] as $key => $title ) {
 
                 if ( $form->getElement($key) && $form->getElement($key)->getLabel() =='' ) {
@@ -2406,6 +2419,11 @@ $script .= "
                 throw new Bvb_Grid_Exception($this->__("Your form does not have any fields"));
             }
 
+            if ( count($displayGroupElements) > 0 ) {
+                foreach ( $displayGroupElements as $key => $value ) {
+                    $form->removeElement($key);
+                }
+            }
 
             foreach ( $form->getElements() as $element ) {
                 if ( $element->helper == 'formFile' ) {
