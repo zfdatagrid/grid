@@ -2266,6 +2266,10 @@ abstract class Bvb_Grid
 
             foreach (array_keys($this->_extraFields) as $value)
             {
+               if($value=='ZFG_MASS_ACTIONS')
+               continue;
+
+
                 if(!in_array($value,$this->_gridColumns))
                 {
                     unset($this->_extraFields[$value]);
