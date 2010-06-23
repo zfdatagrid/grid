@@ -3082,7 +3082,7 @@ $script .= "
     }
 
 
-    function setMassAction(array $options)
+    function setMassActions(array $options)
     {
 
         $this->_hasMassActions = true;
