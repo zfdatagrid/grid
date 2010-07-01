@@ -42,7 +42,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     public function deploy ()
     {
-        if ( ! in_array(self::OUTPUT, $this->_export) ) {
+        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
             echo $this->__("You dont' have permission to export the results into this format");
             die();
         }

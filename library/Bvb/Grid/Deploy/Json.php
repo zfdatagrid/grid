@@ -79,7 +79,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
     public function deploy ()
     {
-        if (! in_array(self::OUTPUT, $this->_export)) {
+        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }

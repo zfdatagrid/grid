@@ -600,8 +600,14 @@ abstract class Bvb_Grid
 
         //Templates loading
         if ( is_array($this->_export) ) {
-            foreach ( $this->_export as $temp ) {
-                $this->_templates[$temp] = new Zend_Loader_PluginLoader(array());
+            foreach ( $this->_export as $key => $temp ) {
+
+                if ( is_array($temp) ) {
+                    $export = $key;
+                } else {
+                    $export = $temp;
+                }
+                $this->_templates[$export] = new Zend_Loader_PluginLoader(array());
             }
         }
 
