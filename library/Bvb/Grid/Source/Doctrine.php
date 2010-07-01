@@ -593,6 +593,13 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 $filter = explode(',', $filter);
                 $this->_query->whereIn($field, $filter);
                 break;
+            case '&':
+            case 'and':
+            case 'AND':
+            case 'flag':
+            case 'FLAG':
+                $this->_query->$func($field . " & ? <> 0", $filter);
+                break;
             case 'range':
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);

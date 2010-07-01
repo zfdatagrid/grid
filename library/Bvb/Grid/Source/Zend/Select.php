@@ -38,9 +38,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function __construct (Zend_Db_Select $select)
     {
 
-        if(count($select->getPart('UNION'))>0)
-        {
-            #throw new Bvb_Grid_Exception('UNION queries not supportes yet');
+        if ( count($select->getPart('UNION')) > 0 ) {    #throw new Bvb_Grid_Exception('UNION queries not supportes yet');
         }
 
 
@@ -228,14 +226,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
             foreach ( $ghostColumn as $value ) {
 
-                if($value[2]=='ZFG_GHOST')
-                continue;
+                if ( $value[2] == 'ZFG_GHOST' ) continue;
 
                 if ( is_object($value[1]) ) {
                     $this->_select->columns(array($value[2] => $value[1]), $value[0]);
-                } elseif($value[2]!='') {
-                    $this->_select->columns(array($value[2]=>$value[1]), $value[0]);
-                }else{
+                } elseif ( $value[2] != '' ) {
+                    $this->_select->columns(array($value[2] => $value[1]), $value[0]);
+                } else {
                     $this->_select->columns($value[1], $value[0]);
                 }
             }
@@ -251,14 +248,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
         } else {
 
-             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
+            $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
 
             if ( $this->_server == 'mysql' ) {
                 $this->_totalRecords = $this->_select->getAdapter()->fetchOne('select FOUND_ROWS()');
             }
         }
-
 
 
         return $result;
@@ -308,8 +304,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function getTotalRecords ()
     {
 
-        if(!is_null($this->_totalRecords))
-        {
+        if ( ! is_null($this->_totalRecords) ) {
             return $this->_totalRecords;
         }
 
@@ -751,6 +746,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_select->where($field . " IN  (?)", $filter);
                 break;
             case 'range':
+            case '&':
+            case 'and':
+            case 'AND':
+            case 'flag':
+            case 'FLAG':
+                $this->_select->where($field . " & ? <> 0", $filter);
+                break;
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
                 $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
@@ -1046,7 +1048,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     }
                 }
             }
-
 
 
         }
