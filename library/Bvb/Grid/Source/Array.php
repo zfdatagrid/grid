@@ -351,6 +351,20 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     public function fetchDetail (array $where)
     {
 
+        if(count($where)>1)
+        {
+            throw new Bvb_Grid_Exception('At this moment ony arrays with one primary key are supported');
+        }
+
+        $field = key($where);
+        $valueToSearch = array_shift($where);
+
+        foreach ( $this->_rawResult as $key => $value ) {
+
+            if($value[$field]==$valueToSearch)
+            return $value;
+
+        }
     }
 
 
