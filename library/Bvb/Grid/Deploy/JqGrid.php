@@ -823,15 +823,6 @@ HTML;
             return $this->_deploymentContent;
         }
     }
-    /**
-     * Return the query to be executed
-     *
-     * @return Zend_Db_Select
-     */
-    public function &getSelect()
-    {
-        return $this->_select;
-    }
 
     /**
      * Ajax ID
