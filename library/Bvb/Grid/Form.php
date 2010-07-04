@@ -50,6 +50,10 @@ class Bvb_Grid_Form
 
     protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:99%')), 'Form');
 
+    protected $_formDecoratorSimple = array('FormElements', 'Form');
+
+    protected $_displayGroupsDecorator = array();
+
     protected $_subFormDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'margin-bottom:5px; width:100%', 'class' => 'borders')));
 
     protected $_subFormDecoratorVertical = array('FormElements', array('HtmlTag', array('tag' => 'tr')));

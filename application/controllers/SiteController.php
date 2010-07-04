@@ -109,14 +109,6 @@ class SiteController extends Zend_Controller_Action
         $grid->setEscapeOutput(false);
         $grid->setExport(array('pdf', 'print',  'excel','csv'));
         $grid->setView($view);
-
-        $grid->setExport(
-    array(
-    'csv' => array('caption' => 'Csv'),
-    'pdf' => array('caption' => 'Pdf'),
-    )
-);
-
         #$grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
@@ -284,7 +276,7 @@ class SiteController extends Zend_Controller_Action
         #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
         #$grid->setUseKeyEventsOnFilters(true);
 
-        $grid->setShowOrderImages(false);
+        #$grid->setShowOrderImages(false);
 
         #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
         #$grid->setDefaultFiltersValues(array('Continent'=>'Europe'));
@@ -517,6 +509,7 @@ class SiteController extends Zend_Controller_Action
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
         $grid->setDetailColumns();
+
         $grid->setForm($form);
 
         $grid->setDeleteConfirmationPage(true);

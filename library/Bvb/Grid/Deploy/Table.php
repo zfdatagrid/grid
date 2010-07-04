@@ -2238,7 +2238,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $oldElements = $crud->getElements();
         $crud->clearElements();
 
-
         $displayGroupElements = array();
         if ( count($crud->getForm()->getDisplayGroups()) > 0 ) {
             foreach ( $crud->getForm()->getDisplayGroups() as $group ) {
@@ -2276,7 +2275,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             if ( $formsCount > 1 ) $arr[0]->addElement('checkbox', 'ZFIGNORE', array('label' => $this->__('Ignore'), 'order' => 0));
             $arr[0]->setElementDecorators($crud->getSubformElementTitle());
 
-            if ( $crud->getUseDecorators() === true ) $arr[0]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+            if ( $crud->getUseDecorators() === true ) {
+                $arr[0]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+            }
 
             $crud->getForm()->addSubForm($arr[0], 0);
 
@@ -2286,6 +2287,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
         /////
+
 
 
 
@@ -2300,7 +2302,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
 
 
-            if ( $crud->getUseDecorators() === true ) $arr[$i]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+            if ( $crud->getUseDecorators() === true ) {
+               $arr[$i]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
+            }
 
 
             if ( $this->getParam('edit') ) {
@@ -2337,7 +2341,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                         continue;
                     }
 
-                    if ( $crud->getUseDecorators() === true ) $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
+                    if ( $crud->getUseDecorators() === true )
+                    {
+                        $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
+                    }
                 }
             }
 
@@ -2425,7 +2432,21 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
-        $crud->getForm()->setDecorators($crud->getFormDecorator());
+        if ( count($crud->getForm()->getDisplayGroups()) > 0 ) {
+            foreach ( $crud->getForm()->getDisplayGroups() as $group ) {
+                 $group->setDecorators($crud->getDisplayGroupsDecorator());
+            }
+        }
+
+
+
+        if ( $crud->getUseDecorators() === true )
+        {
+            $crud->getForm()->setDecorators($crud->getFormDecorator());
+        }else{
+            $crud->getForm()->setDecorators($crud->getFormDecoratorSimple());
+        }
+
         $crud->getForm()->setMethod('post');
 
         if ( isset($crud->options['saveAndAddButton']) && $crud->options['saveAndAddButton'] == true && $this->getParam('edit') != 1 ) {
