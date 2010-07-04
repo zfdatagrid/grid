@@ -4,6 +4,10 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
+th a .selected{
+	font-weight:bold;
+}
+
 .formTitle {
 	background: #EEA966 url(../images/bg_helper_button.jpg) repeat-x;
 	font-size: 11px !important;

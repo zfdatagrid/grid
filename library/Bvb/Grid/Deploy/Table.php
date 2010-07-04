@@ -1099,6 +1099,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $imgFinal = '';
                         }
 
+
+                        $spanClass = '';
+
+                        if ( $orderField == $title['field'] ) {
+                            $spanClass = ' class="selected" ';
+                        }
+
                         if ( $this->getInfo("ajax") !== false ) {
 
 
@@ -1127,7 +1134,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     }
                                 }
 
-                                $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+                                $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \"><span >" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
 
                             }
 
@@ -1163,7 +1170,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     }
 
-                                    $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href='" . $title['url'] . "'>" . $title['value'] . $imgFinal . "</a>", $this->_temp['table']->titlesLoop());
+
+                                    $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href='" . $title['url'] . "'><span $spanClass>" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
 
                                 }
 
