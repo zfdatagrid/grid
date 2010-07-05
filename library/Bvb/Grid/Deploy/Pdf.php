@@ -159,7 +159,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->setNumberRecordsPerPage(0);
         parent::deploy();
 
-        $colors = array('title' => '#000000', 'subtitle' => '#111111', 'footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF', 'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000', 'filters' => '#F9EDD2');
+        $colors = array('title' => '#000000', 'subtitle' => '#111111', 'footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF', 'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000', 'filters' => '#F9EDD2', 'filtersBox' => '#DEDEDE');
 
         $this->deploy['colors'] = array_merge($colors, $this->deploy['colors']);
 
@@ -250,6 +250,9 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $styleFilters = new Zend_Pdf_Style();
         $styleFilters->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['filters']));
+
+        $styleFiltersBox = new Zend_Pdf_Style();
+        $styleFiltersBox->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['filtersBox']));
 
 
         $td2 = new Zend_Pdf_Style();
@@ -593,22 +596,24 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
                 $tLarg = $this->widthForStringUsingFontSize($this->__('Filtered by:'), $font);
 
-                $page->drawText($this->__('Filtered by:'), $tLarg + 2, $altura, $this->getCharEncoding());
-
 
                 $i = 0;
+                $page->setStyle($styleFiltersBox);
+                $page->drawRectangle(40, $altura - 4, $tLarg + 50, $altura + 12);
+
+                $page->setStyle($styleText);
+                $text = $this->__('Filtered by:     ');
+
                 foreach ( $this->_showFiltersInExport as $key => $value ) {
 
-                    if ( $i == 0 ) {
-                        $largura1 = 40 + $tLarg + 5;
-                    } else {
-                        $largura1 = strlen($this->__($key) . ': ' . $this->__($value)) * 4 + $largura1;
+                    if ( $keyHelper = $this->getField($key) ) {
+                        $key = $keyHelper['title'];
                     }
 
-                    echo $largura1.'-';
-                    $page->drawText($this->__($key) . ': ' . $this->__($value), $largura1 + 3, $altura, $this->getCharEncoding());
+                    $text .= $this->__($key) . ': ' . $this->__($value).'    |    ';
                     $i ++;
                 }
+                    $page->drawText($text, $tLarg + 3, $altura, $this->getCharEncoding());
             }
         }
 

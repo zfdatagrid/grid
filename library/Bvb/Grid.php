@@ -2507,7 +2507,7 @@ abstract class Bvb_Grid
      */
     public function getField ($field)
     {
-        return $this->_data['fields'][$field];
+        return isset($this->_data['fields'][$field])?$this->_data['fields'][$field]:false;
     }
 
 
