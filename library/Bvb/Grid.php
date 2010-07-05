@@ -575,6 +575,8 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
         }
 
+
+
         $this->_options = $options;
 
         //Get the controller params and baseurl to use with filters
@@ -2841,7 +2843,7 @@ abstract class Bvb_Grid
 
         if ( isset($this->_options['deploy'][$name]) && is_array($this->_options['deploy'][$name]) ) {
             if ( method_exists($this, '_applyConfigOptions') ) {
-                $this->_applyConfigOptions($this->_options['deploy'][$name]);
+                $this->_applyConfigOptions($this->_options['deploy'][$name], true);
             } else {
                 $this->deploy = $this->_options['deploy'][$name];
             }

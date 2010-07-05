@@ -1603,7 +1603,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         parent::deploy();
 
 
-        $this->_applyConfigOptions(array(), true);
+        $this->_applyConfigOptions(array());
 
 
         $this->_processForm();
@@ -2785,7 +2785,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      * Apply config options
      * @param $options
      */
-    protected function _applyConfigOptions ($options)
+    protected function _applyConfigOptions ($options,$firstCall = false)
     {
 
         $this->_deployOptions = $options;
@@ -2801,6 +2801,16 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
+        if ( $firstCall === true ) {
+            if ( isset($this->_options['extra']) && is_array($this->_options['extra']['row']) ) {
+                $rows = new Bvb_Grid_Extra_Rows();
+                foreach ( $this->_options['extra']['row'] as $key => $value ) {
+                    $value['name'] = $key;
+                    $rows->addRow($value['position'], array($value));
+                }
+                $this->addExtraRows($rows);
+            }
+        }
 
         if ( isset($this->_deployOptions['imagesUrl']) ) {
             $this->setImagesUrl($this->_deployOptions['imagesUrl']);
@@ -2886,7 +2896,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     public function addExtraRows (Bvb_Grid_Extra_Rows $rows)
     {
         $rows = $this->_object2array($rows);
-        $this->_extraRows = $rows['_rows'];
+        $this->_extraRows = array_merge($this->_extraRows,$rows['_rows']);
 
         return $this;
     }
@@ -2904,22 +2914,25 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             return false;
         }
 
-        $start = '<tr>';
-        $middle = '';
-        $end = '';
         $hasReturn = false;
 
-        if ( count($this->_getExtraFields('left')) > 0 ) {
-            $start .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
-        }
-
-        if ( count($this->_getExtraFields('right')) > 0 ) {
-            $end .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
-        }
+        $result = '';
 
         foreach ( $this->_extraRows as $key => $value ) {
 
+
+            if ( count($this->_getExtraFields('left')) > 0 ) {
+                $result .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
+            }
+
+            if ( count($this->_getExtraFields('right')) > 0 ) {
+                $result .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
+            }
+
+
             if ( $value['position'] != $position ) continue;
+
+
 
             foreach ( $value['values'] as $final ) {
                 $colspan = isset($final['colspan']) ? "colspan='" . $final['colspan'] . "'" : '';
@@ -2928,19 +2941,18 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                     $final['content'] = '';
                 }
 
-                $middle .= "<td $colspan $class >{$final['content']}</td>";
+                $result .= "<td $colspan $class >{$final['content']}</td>";
 
                 $hasReturn = true;
             }
+
+            $result .= '</tr>';
         }
 
         if ( $hasReturn === false ) {
             return false;
         }
-
-        $end .= '</tr>';
-
-        return $start . $middle . $end;
+        return $result;
 
     }
 
