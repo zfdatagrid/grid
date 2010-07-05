@@ -43,7 +43,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param $fontSize
      */
 
-    public function widthForStringUsingFontSize ($string, $font, $fontSize)
+    public function widthForStringUsingFontSize ($string, $font, $fontSize=8)
     {
         @$drawingString = iconv('', 'UTF-16BE', $string);
         $characters = array();
@@ -156,10 +156,10 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $width = 0;
 
 
-        $this->setPagination(0);
+        $this->setNumberRecordsPerPage(0);
         parent::deploy();
 
-        $colors = array('title' => '#000000', 'subtitle' => '#111111', 'footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF', 'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000');
+        $colors = array('title' => '#000000', 'subtitle' => '#111111', 'footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF', 'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000', 'filters' => '#F9EDD2');
 
         $this->deploy['colors'] = array_merge($colors, $this->deploy['colors']);
 
@@ -247,6 +247,10 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $td = new Zend_Pdf_Style();
         $td->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['row2']));
+
+        $styleFilters = new Zend_Pdf_Style();
+        $styleFilters->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['filters']));
+
 
         $td2 = new Zend_Pdf_Style();
         $td2->setFillColor(new Zend_Pdf_Color_Html($this->deploy['colors']['row1']));
@@ -537,8 +541,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $ia ++;
             }
         }
-        /////////////
-
+            /////////////
 
 
         $la = 0;
@@ -564,6 +567,53 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $i ++;
             }
         }
+
+
+        $la = 0;
+        $altura = $altura - 16;
+        $i = 0;
+
+        if ( is_array($this->_showFiltersInExport) || $this->_showFiltersInExport == true ) {
+
+
+            if ( is_array($this->_showFiltersInExport) && is_array($this->_filtersValues) ) {
+                $this->_showFiltersInExport = array_merge($this->_showFiltersInExport, $this->_filtersValues);
+            } elseif ( is_array($this->_showFiltersInExport) ) {
+                $this->_showFiltersInExport = $this->_showFiltersInExport;
+            } elseif ( is_array($this->_filtersValues) ) {
+                $this->_showFiltersInExport = $this->_filtersValues;
+            }
+
+            if ( count($this->_showFiltersInExport) > 0 ) {
+
+                $page->setStyle($styleFilters);
+                $page->drawRectangle(40, $altura - 4, array_sum($cell) + 41, $altura + 12);
+
+                $page->setStyle($styleText);
+
+                $tLarg = $this->widthForStringUsingFontSize($this->__('Filtered by:'), $font);
+
+                $page->drawText($this->__('Filtered by:'), $tLarg + 2, $altura, $this->getCharEncoding());
+
+
+                $i = 0;
+                foreach ( $this->_showFiltersInExport as $key => $value ) {
+
+                    if ( $i == 0 ) {
+                        $largura1 = 40 + $tLarg + 5;
+                    } else {
+                        $largura1 = strlen($this->__($key) . ': ' . $this->__($value)) * 4 + $largura1;
+                    }
+
+                    echo $largura1.'-';
+                    $page->drawText($this->__($key) . ': ' . $this->__($value), $largura1 + 3, $altura, $this->getCharEncoding());
+                    $i ++;
+                }
+            }
+        }
+
+
+
 
 
         $pdf->save($this->deploy['dir'] . $this->deploy['name'] . '.pdf');
