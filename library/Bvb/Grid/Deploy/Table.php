@@ -446,7 +446,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     } else {
 
-                                        if ( strlen($this->getForm($i)->getElement($key)->getValue()) == 0 ) {
+                                        if ( strlen($this->getForm($i)->getElement($key)->getValue()) == 0
+                                            || $this->getForm($i)->getElement($key)->getValue() ==0 ) {
                                             $this->getForm($i)->getElement($key)->setValue($value);
                                         }
                                     }
