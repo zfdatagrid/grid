@@ -17,194 +17,172 @@
  * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
-
-
-
 class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-
     const OUTPUT = 'word';
 
-    protected $options = array ();
-
+    protected $options = array();
     public $deploy;
 
-
-    public function __construct( $options )
+    public function __construct($options)
     {
 
         $this->_setRemoveHiddenFields(true);
-        parent::__construct ($options  );
+        parent::__construct($options);
 
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word' );
-
+        $this->addTemplateDir('Bvb/Grid/Template/Word', 'Bvb_Grid_Template_Word', 'word');
     }
 
     public function deploy()
     {
 
-        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
-        {
-            echo $this->__ ( "You dont' have permission to export the results to this format" );
+        if (!in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT, $this->_export)) { {
+                echo $this->__("You dont' have permission to export the results to this format");
+                die ();
+            }
+
+            $this->setNumberRecordsPerPage(0);
+
+            parent::deploy ();
+
+
+            if (!$this->_temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
+                $this->setTemplate('word', 'word');
+            }
+
+            $titles = parent::_buildTitles ();
+
+            #$nome = reset($titles);
+            $wsData = parent::_buildGrid ();
+            $sql = parent::_buildSqlExp ();
+
+            $xml = $this->_temp ['word']->globalStart();
+
+            $xml .= $this->_temp ['word']->titlesStart();
+
+            foreach ($titles as $value) {
+                if (($value ['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                    $xml .= str_replace("{{value}}", $value ['value'], $this->_temp ['word']->titlesLoop());
+                }
+            }
+            $xml .= $this->_temp ['word']->titlesEnd();
+
+
+            if (is_array($wsData)) {
+                /////////////////
+                if ($this->getInfo('hRow,title') != '') {
+                    $bar = $wsData;
+
+                    $hbar = trim($this->getInfo('hRow,title'));
+
+                    $p = 0;
+                    foreach ($wsData [0] as $value) {
+                        if ($value ['field'] == $hbar) {
+                            $hRowIndex = $p;
+                        }
+
+                        $p++;
+                    }
+                    $aa = 0;
+                }
+
+                //////////////
+                //////////////
+                //////////////
+
+                $i = 1;
+                $aa = 0;
+                foreach ($wsData as $row) {
+                    ////////////
+                    //A linha horizontal
+                    if ($this->getInfo('hRow,title') != '') {
+
+                        if (!isset($bar[$aa - 1][$hRowIndex])) {
+                            $bar[$aa - 1][$hRowIndex]['value'] = '';
+                        }
+
+                        if ($bar [$aa] [$hRowIndex] ['value'] != $bar [$aa - 1] [$hRowIndex] ['value']) {
+                            $xml .= str_replace("{{value}}", $bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow());
+                        }
+                    }
+                    ////////////
+
+                    $xml .= $this->_temp ['word']->loopStart();
+                    $a = 1;
+                    foreach ($row as $value) {
+                        $value ['value'] = strip_tags($value ['value']);
+
+                        if ((@$value ['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
+                            $xml .= str_replace("{{value}}", $value ['value'], $this->_temp ['word']->loopLoop(2));
+                        }
+                        $a++;
+                    }
+                    $xml .= $this->_temp ['word']->loopEnd();
+                    $aa++;
+                    $i++;
+                }
+            }
+
+
+            if (is_array($sql)) {
+                $xml .= $this->_temp ['word']->sqlExpStart();
+                foreach ($sql as $value) {
+                    $xml .= str_replace("{{value}}", $value ['value'], $this->_temp ['word']->sqlExpLoop());
+                }
+                $xml .= $this->_temp ['word']->sqlExpEnd();
+            }
+
+
+            $xml .= $this->_temp ['word']->globalEnd();
+
+
+            if (!isset($this->deploy['save'])) {
+                $this->deploy['save'] = false;
+            }
+
+            if (!isset($this->deploy['download'])) {
+                $this->deploy['download'] = false;
+            }
+
+
+            if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+                throw new Exception('Nothing to do. Please specify download&&|save options');
+            }
+
+            if (empty($this->deploy['name'])) {
+                $this->deploy['name'] = date('H_m_d_H_i_s');
+            }
+
+            if (substr($this->deploy['name'], - 4) == '.doc') {
+                $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
+            }
+
+            $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+
+            if (!is_dir($this->deploy['dir'])) {
+                throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+            }
+
+            if (!is_writable($this->deploy['dir'])) {
+                throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
+            }
+
+            file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".doc", $xml);
+
+
+            if ($this->deploy['download'] == 1) {
+                header('Content-type: application/word');
+                header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.doc"');
+                readfile($this->deploy['dir'] . $this->deploy['name'] . '.doc');
+            }
+
+
+            if ($this->deploy['save'] != 1) {
+                unlink($this->deploy['dir'] . $this->deploy['name'] . '.doc');
+            }
+
             die ();
         }
-
-        $this->setNumberRecordsPerPage ( 0 );
-
-        parent::deploy ();
-
-
-        if (! $this->_temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
-            $this->setTemplate('word', 'word');
-        }
-
-        $titles = parent::_buildTitles ();
-
-        #$nome = reset($titles);
-        $wsData = parent::_buildGrid ();
-        $sql = parent::_buildSqlExp ();
-
-        $xml = $this->_temp ['word']->globalStart ();
-
-        $xml .= $this->_temp ['word']->titlesStart ();
-
-        foreach ( $titles as $value )
-        {
-            if (($value ['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
-                $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->titlesLoop () );
-            }
-        }
-        $xml .= $this->_temp ['word']->titlesEnd ();
-
-
-        if (is_array ( $wsData ))
-        {
-            /////////////////
-            if ($this->getInfo('hRow,title') != '')
-            {
-                $bar = $wsData;
-
-                $hbar = trim ($this->getInfo('hRow,title'));
-
-                $p = 0;
-                foreach ( $wsData [0] as $value )
-                {
-                    if ($value ['field'] == $hbar)
-                    {
-                        $hRowIndex = $p;
-                    }
-
-                    $p ++;
-                }
-                $aa = 0;
-            }
-
-            //////////////
-            //////////////
-            //////////////
-
-            $i = 1;
-            $aa = 0;
-            foreach ( $wsData as $row )
-            {
-                ////////////
-                //A linha horizontal
-                if ($this->getInfo('hRow,title') != '')
-                {
-
-                 if ( ! isset($bar[$aa - 1][$hRowIndex]) ) {
-                        $bar[$aa - 1][$hRowIndex]['value'] = '';
-                    }
-
-                    if ($bar [$aa] [$hRowIndex] ['value'] != $bar [$aa - 1] [$hRowIndex] ['value'])
-                    {
-                        $xml .= str_replace ( "{{value}}", $bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow () );
-                    }
-                }
-                ////////////
-
-                $xml .= $this->_temp ['word']->loopStart ();
-                $a = 1;
-                foreach ( $row as $value )
-                {
-                    $value ['value'] = strip_tags ( $value ['value'] );
-
-                    if ((@$value ['field'] !=$this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
-                        $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->loopLoop ( 2 ) );
-                    }
-                    $a ++;
-                }
-                $xml .= $this->_temp ['word']->loopEnd ();
-                $aa ++;
-                $i ++;
-            }
-        }
-
-
-        if (is_array ( $sql ))
-        {
-            $xml .= $this->_temp ['word']->sqlExpStart ();
-            foreach ( $sql as $value )
-            {
-                $xml .= str_replace ( "{{value}}", $value ['value'], $this->_temp ['word']->sqlExpLoop () );
-            }
-            $xml .= $this->_temp ['word']->sqlExpEnd ();
-        }
-
-
-        $xml .= $this->_temp ['word']->globalEnd ();
-
-
-        if (! isset($this->deploy['save'])) {
-            $this->deploy['save'] = false;
-        }
-
-        if (! isset($this->deploy['download'])) {
-            $this->deploy['download'] = false;
-        }
-
-
-        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
-            throw new Exception('Nothing to do. Please specify download&&|save options');
-        }
-
-        if (empty($this->deploy['name'])) {
-            $this->deploy['name'] = date('H_m_d_H_i_s');
-        }
-
-        if (substr($this->deploy['name'], - 4) == '.doc') {
-            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
-        }
-
-        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
-
-        if (! is_dir($this->deploy['dir'])) {
-            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
-        }
-
-        if (! is_writable($this->deploy['dir'])) {
-            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
-        }
-
-        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".doc", $xml);
-
-
-        if ($this->deploy['download'] == 1) {
-            header ( 'Content-type: application/word' );
-            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.doc"');
-            readfile($this->deploy['dir'] . $this->deploy['name'] . '.doc');
-        }
-
-
-        if ($this->deploy['save'] != 1) {
-            unlink($this->deploy['dir'] . $this->deploy['name'] . '.doc');
-        }
-
-        die ();
     }
 
 }
-
-
-
-

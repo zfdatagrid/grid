@@ -54,7 +54,8 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
     public static $defaultActionClasses = array(
         '{edit}'   => 'ui-icon ui-icon-pencil',
         '{delete}' => 'ui-icon ui-icon-trash',
-        '{view}'   => 'ui-icon ui-icon-search'
+        '{view}'   => 'ui-icon ui-icon-search',
+        '{add}'    => 'ui-icon ui-icon-plus',
     );
     /**
      * Track if ajax() function was called
@@ -62,6 +63,13 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      * @var boolean
      */
     private $_ajaxFuncCalled = false;
+
+    /**
+     * Trac if deploy() function was called
+     *
+     * @var boolean
+     */
+    private $_deployFuncCalled = false;
 
     /**
      * Default options for JqGrid
@@ -80,6 +88,16 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         'caption' => '',
         'loadError' => 'function(xhr,st,err) { if (xhr.status!=200) {alert(xhr.statusText);} }',
     );
+
+    /**
+     * Default options for columns
+     *
+     * @var array
+     */
+    protected $_jqgColDefaultParams = array(
+        'title' => false
+    );
+
     /**
      * Options defined for jqGrid object
      *
@@ -144,10 +162,11 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      */
     public function ajax($id='')
     {
+        $this->setId($id);
+
         // apply additional configuration
         $this->_runConfigCallbacks();
 
-        $this->setId($id);
         // track that this function was called
         $this->_ajaxFuncCalled = true;
         // if request is Ajax we should only return data
@@ -376,6 +395,12 @@ JS;
         if (!$this->_ajaxFuncCalled) {
             $this->log("ajax() function was not called before deploy()", Zend_Log::WARN);
         }
+
+        // it would not work correctly if deploy() is called more times
+        if ($this->_deployFuncCalled) {
+            return $this;
+        }
+
         // prepare internal Bvb data
         parent::deploy();
         // prepare access to view
@@ -392,6 +417,8 @@ JS;
         // build final JavaScript code and return HTML code to display
         $this->jqAddOnLoad($this->renderPartJavascript());
         $this->_deploymentContent = $this->renderPartHtml();
+        $this->_deployFuncCalled = true;
+
         return $this;
     }
     /**
@@ -705,7 +732,10 @@ HTML;
         $fields = $this->_data['fields'];
         foreach ($titles as $key=>$title) {
             // basic options
-            $options = array("name" => $title['name'], "label" => $title['value']);
+            $options = array_merge(
+                $this->_jqgColDefaultParams,
+                array("name" => $title['name'], "label" => $title['value'])
+            );
             // add defined options
             if (isset($fields[$key])) {
                 if (isset($fields[$key]['class'])) {
@@ -745,6 +775,14 @@ HTML;
                     $options['searchoptions'] = array('defaultValue'=>$defaultFilters[$key]);
                 }
             }
+
+            // fix hidden field
+            if ($options['hidden']) {
+                $options['hidden'] = (bool) $options['hidden'];
+            } else {
+                unset($options['hidden']);
+            }
+
             // add field to model
             $model[] = $options;
         }
@@ -786,18 +824,6 @@ HTML;
     }
     ///////////////////////////////////////////////// Following functions could go to Bvb_Grid
     /////////////////////////////////////////////////
-    // @codingStandardsIgnoreStart
-    /**
-     * Not defined in Bvb_Grid, but used there
-     *
-     * @var string
-     */
-    protected $output = 'jqgrid';
-    // @codingStandardsIgnoreEnd
-    /**
-     * @see Bvb_Grid::$export
-     */
-    public $export = array();
     /**
      * Contains result of deploy() function.
      *
@@ -872,6 +898,28 @@ HTML;
         $this->_id = $id;
         return $this;
     }
+
+    /**
+     * Set column containing id value of the row
+     *
+     * @param string $id name of the column
+     *
+     * @return Bvb_Grid_Deploy_JqGrid
+     */
+    public function bvbSetId($id)
+    {
+        return $this->setId($id);
+    }
+    /**
+     * Get column containing id value of the row
+     *
+     * @return string
+     */
+    public function bvbGetId()
+    {
+        return $this->getId();
+    }
+
     /**
      * Create Zend_Log object used to debug Bvb classes
      *
@@ -926,11 +974,11 @@ HTML;
         //////////////////////////////////////////////////////////////////
 
         // add Zend parameters
-        $this->setParam('module',$params['module']);
+        $this->setParam('module', $params['module']);
         $this->setParam('controller', $params['controller']);
 
         if (isset($params['action'])) {
-          $this->setParam('action', $params['action']);
+            $this->setParam('action', $params['action']);
         }
 
         // number of rows to be shown on page, could be changed in jqGrid
@@ -977,7 +1025,7 @@ HTML;
                 );
                 foreach ($filteredFields as $filter=>$val) {
                     $flts->$filter = $val;
-                      $this->setParam($filter,$val);
+                    $this->setParam($filter, $val);
                 }
             }
         }
@@ -1179,20 +1227,20 @@ class JqGridCommand
         $params = implode(",", $tmp);
         // add parameter to stack
         switch ($command) {
-        case "trigger":
-            // does not seam to work in new API, maybe it will change in future
-            $this->_cmds[$this->_cmsStack][] = "trigger($params)";
-            break;
-        case 'setPostData':
-        case 'appendPostData':
-        case 'setPostDataItem':
-        case 'removePostDataItem':
-            // fix non chainable jqGrid methods
-            $this->_cmds[$this->_cmsStack] = array('jqGrid("' . $command . '",' . $params . ')');
-            $this->_cmsStack++;
-            break;
-        default:
-            $this->_cmds[$this->_cmsStack][] = 'jqGrid("' . $command . '",' . $params . ')';
+            case "trigger":
+                // does not seam to work in new API, maybe it will change in future
+                $this->_cmds[$this->_cmsStack][] = "trigger($params)";
+                break;
+            case 'setPostData':
+            case 'appendPostData':
+            case 'setPostDataItem':
+            case 'removePostDataItem':
+                // fix non chainable jqGrid methods
+                $this->_cmds[$this->_cmsStack] = array('jqGrid("' . $command . '",' . $params . ')');
+                $this->_cmsStack++;
+                break;
+            default:
+                $this->_cmds[$this->_cmsStack][] = 'jqGrid("' . $command . '",' . $params . ')';
         }
         // let us be chainable
         return $this;
