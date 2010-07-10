@@ -81,7 +81,6 @@ $options = array(
                        'File' => array('base_path' => '/Library/WebServer/Documents/'),
                        'Memory',
                        'Time',
-                       'Registry',
                        #'Cache' => array('backend' => $cache->getBackend()),
                        'Exception')
 );
@@ -89,6 +88,6 @@ $options = array(
 $debug = new ZFDebug_Controller_Plugin_Debug($options);
 
 $frontController = Zend_Controller_Front::getInstance();
-$frontController->registerPlugin($debug);
+#$frontController->registerPlugin($debug);
 
 $frontController->dispatch ();

@@ -22,7 +22,7 @@
 class Bvb_Grid_Filters_Render_Number extends Bvb_Grid_Filters_Render_RenderAbstract
 {
 
-    function getChilds ()
+    public function getChilds ()
     {
         return array('from', 'to');
     }
@@ -32,7 +32,7 @@ class Bvb_Grid_Filters_Render_Number extends Bvb_Grid_Filters_Render_RenderAbstr
         return array('from' => '>=', 'to' => '<=');
     }
 
-    function render ()
+    public function render ()
     {
         $this->removeAttribute('id');
 

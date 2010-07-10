@@ -726,7 +726,7 @@ abstract class Bvb_Grid
     }
 
 
-    function getTranslator ()
+    public function getTranslator ()
     {
       return Bvb_Grid_Translator::getInstance()->getTranslator();
     }
@@ -2871,7 +2871,7 @@ abstract class Bvb_Grid
      * Sets the grid id, to allow multiples instances per page
      * @param $id
      */
-    function setGridId ($id)
+    public function setGridId ($id)
     {
         $this->_gridId = trim(preg_replace("/[^a-zA-Z0-9_]/",'_',$id),'_');
         return $this;
@@ -3190,14 +3190,14 @@ abstract class Bvb_Grid
     }
 
 
-    function setRouteUrl ($url)
+    public function setRouteUrl ($url)
     {
         $this->_routeUrl = (string) ltrim($url,'/');
         return $this;
     }
 
 
-    function getRouteUrl ()
+    public function getRouteUrl ()
     {
         return $this->_routeUrl;
     }
@@ -3207,7 +3207,7 @@ abstract class Bvb_Grid
      *
      * @param $render
      */
-    function loadFilterRender ($render)
+    public function loadFilterRender ($render)
     {
 
         if ( is_array($render) ) {
@@ -3283,7 +3283,7 @@ abstract class Bvb_Grid
         return $this;
     }
 
-    function setShowFiltersInExport($show)
+    public function setShowFiltersInExport($show)
     {
         $this->_showFiltersInExport = $show;
 

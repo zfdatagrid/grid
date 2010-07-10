@@ -111,7 +111,7 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
     }
 
 
-    function removeAttribute ($name)
+    public function removeAttribute ($name)
     {
         if ( isset($this->_attributes[$name]) ) {
             unset($this->_attributes[$name]);

@@ -2760,7 +2760,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     }
 
 
-    function getAllFieldsIds ()
+    public function getAllFieldsIds ()
     {
         $fields = array();
         foreach ( $this->_filters as $key => $filter ) {
@@ -3113,7 +3113,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     }
 
 
-    function setMassActions (array $options)
+    public function setMassActions (array $options)
     {
 
         $this->_hasMassActions = true;
@@ -3146,7 +3146,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     }
 
 
-    function addMassActions (array $options)
+    public function addMassActions (array $options)
     {
         if ( $this->_hasMassActions !== true ) {
             return $this->setMassAction($options);

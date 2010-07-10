@@ -23,13 +23,13 @@ class Bvb_Grid_Filters_Render_Date extends Bvb_Grid_Filters_Render_RenderAbstrac
 {
 
 
-    function getChilds ()
+    public function getChilds ()
     {
         return array('from', 'to');
     }
 
 
-    function normalize ($value, $part = '')
+    public function normalize ($value, $part = '')
     {
         return date('Y-m-d', strtotime($value));
     }
@@ -41,7 +41,7 @@ class Bvb_Grid_Filters_Render_Date extends Bvb_Grid_Filters_Render_RenderAbstrac
     }
 
 
-    function render ()
+    public function render ()
     {
         $this->removeAttribute('id');
 

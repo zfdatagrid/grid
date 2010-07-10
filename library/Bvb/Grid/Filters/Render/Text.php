@@ -22,7 +22,7 @@
 class Bvb_Grid_Filters_Render_Text extends Bvb_Grid_Filters_Render_RenderAbstract
 {
 
-    function render ()
+    public function render ()
     {
         return $this->getView()->formText($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes());
     }

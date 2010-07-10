@@ -89,10 +89,11 @@ input[type='checkbox'],input[type='radio'] {
 	margin: 2px;
 }
 
-td div input[type='text'], td div input[type='password'],td div  select, .subtitulo input[type='text'],.subtitulo input[type='password'],.subtitulo  select{
+td div input[type='text'], td div input[type='password'], .subtitulo input[type='text'],.subtitulo input[type='password'],.subtitulo  select{
     width: 90% !important;
-    border: 1px solid #ddd;
+    border: 1px solid #aaa;
     min-width: 20px;
+	margin:2px;
 }
 
 #grid .querySupport button {

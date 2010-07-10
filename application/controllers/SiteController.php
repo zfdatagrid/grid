@@ -278,6 +278,8 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->setShowOrderImages(false);
 
+        #$grid->updateColumn('LocalName',array('style'=>'width:500px;'));
+
         #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
         #$grid->setDefaultFiltersValues(array('Continent'=>'Europe'));
         #$grid->setAlwaysShowOrderArrows(false);
@@ -499,16 +501,16 @@ class SiteController extends Zend_Controller_Action
     {
         $grid = $this->grid();
         $grid->query(new Bugs());
-        $grid->setColumnsHidden(array('bug_id', 'next', 'time', 'verified_by'));
+        $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by'));
 
         $grid->updateColumn('date', array('format' => array('date', array('date_format' => "d-MM-Y"))));
 
 
-        $form = new Bvb_Grid_Form();
+        $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
-        $grid->setDetailColumns();
+        #$grid->setDetailColumns();
 
         $grid->setForm($form);
 
