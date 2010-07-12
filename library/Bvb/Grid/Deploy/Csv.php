@@ -87,12 +87,12 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     function __construct($options, $exportOptions = array('download'))
     {
 
-        if (!in_array('csv', $this->_export)) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
+    if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
+            echo $this->__ ( "You dont' have permission to export the results to this format" );
+            die ();
         }
 
-        $this->setPagination(5000);
+        $this->setNumberRecordsPerPage (5000);
 
         // TODO this needs rework
         $dir = isset($exportOptions['dir']) ? $exportOptions['dir'] : '';
@@ -100,20 +100,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $this->deploy = $exportOptions;
 
-        $this->addTemplateDir('Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx');
         parent::__construct($options);
     }
 
-    /**
-     * [Para podemros utiliza]
-     *
-     * @param string $var
-     * @param string $value
-     */
-    function __set($var, $value)
-    {
-        parent::__set($var, $value);
-    }
 
     function buildTitltesCsv($titles)
     {
