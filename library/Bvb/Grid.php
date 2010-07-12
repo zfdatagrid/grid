@@ -1046,7 +1046,7 @@ abstract class Bvb_Grid
 
                     } elseif ( isset($this->_data['fields'][$key]['search']) && is_array($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search']['fulltext'] == true ) {
 
-                        $this->getSource()->addFullTextSearch($filter, $key, $this->_data['fields'][$key]);
+                        $this->getSource()->addFullTextSearch($filter, $this->_data['fields'][$key]);
 
                     } else {
 
