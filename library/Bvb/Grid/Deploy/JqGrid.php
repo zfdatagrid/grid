@@ -58,7 +58,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         '{add}'    => 'ui-icon ui-icon-plus',
     );
     /**
-     * Track if ajax() function was called
+     * Track if setAjax() function was called
      *
      * @var boolean
      */
@@ -160,7 +160,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      *
      * @return void
      */
-    public function ajax($id='')
+    public function setAjax($id='')
     {
         $this->setId($id);
 
@@ -185,6 +185,11 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
             $response->sendResponse();
             exit;
         }
+    }
+    public function ajax($id='')
+    {
+        trigger_error("Bvb_Grid_Deploy_JqGrid::ajax() is deprecated, use setAjax() instead. Function will be removed in later versions.", E_USER_DEPRECATED);
+        $this->setAjax($id);
     }
     /**
      * Set jQuery Grid options (merging with old options)
@@ -391,9 +396,9 @@ JS;
      */
     public function deploy()
     {
-        // check if ajax() function was called
+        // check if setAjax() function was called
         if (!$this->_ajaxFuncCalled) {
-            $this->log("ajax() function was not called before deploy()", Zend_Log::WARN);
+            $this->log("setAjax() function was not called before deploy()", Zend_Log::WARN);
         }
 
         // it would not work correctly if deploy() is called more times

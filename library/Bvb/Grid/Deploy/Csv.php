@@ -14,7 +14,7 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
+ * @version    0.4   $
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
@@ -23,9 +23,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     protected $dir;
 
-    const OUTPUT = 'csv';
+    protected $title;
 
-    public $deploy;
+    public $deploy = array();
+
+    protected $output = 'csv';
 
     /**
      * Set true if data should be downloaded
@@ -42,6 +44,25 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $outFile = null;
 
+    /**
+     * We don't want to display hidden fields
+     *
+     * @var $_removeHiddenFields boolean
+     */
+    protected $_removeHiddenFields = true;
+
+    public function getFileName() {
+        if (isset($this->info['Title'])) {
+            $title = $this->info['Title'][0];
+        } elseif (isset($this->info['title'])) {
+            $title = $this->info['title'][0];
+        } else {
+            $title = Zend_Controller_Front::getInstance()->getRequest()->getParam('controller') . '-' . date("Ymd");
+        }
+
+        return $title . '.csv';
+    }
+
     /*
      *
      *
@@ -54,54 +75,73 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * ?dir:
      *
      * @param array $data
-     */
-    public function __construct ($options)
-    {
-        $this->setNumberRecordsPerPage(500);
+    */
+    function __construct($options, $exportOptions = array('download')) {
 
+        if (! in_array ( 'csv', $this->_export )) {
+            echo $this->__ ( "You dont' have permission to export the results to this format" );
+            die ();
+        }
+
+        $this->setPagination ( 5000 );
+
+        // TODO this needs rework
+        $dir = isset ( $deploy ['dir'] ) ? $deploy ['dir'] : '';
+        $this->dir = rtrim ( $dir, "/" ) . "/";       
+
+        $this->deploy = $exportOptions;
+
+        $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
         parent::__construct($options);
     }
 
+    /**
+     * [Para podemros utiliza]
+     *
+     * @param string $var
+     * @param string $value
+     */
 
-    public function buildTitltesCsv ($titles)
-    {
+    function __set($var, $value) {
+        parent::__set ( $var, $value );
+    }
+
+    function buildTitltesCsv($titles) {
 
         $grid = '';
-        foreach ($titles as $title) {
+        foreach ( $titles as $title ) {
 
-            $grid .= '"' . strip_tags($title['value']) . '",';
+            $grid .= '"' . $title ['value'] . '",';
         }
 
-        return substr($grid, 0, - 1) . "\n";
+        return substr ( $grid, 0, - 1 ) . "\n";
 
     }
 
-    public function buildSqlexpCsv ($sql)
-    {
+    function buildSqlexpCsv($sql) {
 
         $grid = '';
-        if (is_array($sql)) {
+        if (is_array ( $sql )) {
 
-            foreach ($sql as $exp) {
-                $grid .= '"' . strip_tags($exp['value']) . '",';
+            foreach ( $sql as $exp ) {
+                $grid .= '"' . $exp ['value'] . '",';
             }
         }
 
-        return substr($grid, 0, - 1) . " \n";
+        return substr ( $grid, 0, - 1 ) . " \n";
 
     }
 
-    public function buildGridCsv ($grids)
-    {
+    function buildGridCsv($grids) {
 
         $grid = '';
-        foreach ($grids as $value) {
+        foreach ( $grids as $value ) {
 
-            foreach ($value as $final) {
-                $grid .= '"' . strip_tags($final['value']) . '",';
+            foreach ( $value as $final ) {
+                $grid .= '"' . $final ['value'] . '",';
             }
 
-            $grid = substr($grid, 0, - 1) . " \n";
+            $grid = substr ( $grid, 0, - 1 ) . " \n";
         }
 
         return $grid;
@@ -111,85 +151,97 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     /**
      * Depending on settings store to file and/or directly upload
      */
-    protected function csvAddData ($data)
-    {
+    protected function csvAddData($data) {
         if ($this->downloadData) {
             // send first headers
             echo $data;
-            flush();
-            ob_flush();
+            flush ();
+            ob_flush ();
         }
         if ($this->storeData) {
             // open file handler
-            fwrite($this->outFile, $data);
+            fwrite ( $this->outFile, $data );
         }
     }
-    public function deploy ()
-    {
-        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
-        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+    function deploy() {
         // apply options
-        if (isset($this->deploy['set_time_limit'])) {
+        if (isset ( $this->deploy ['set_time_limit'] )) {
             // script needs time to proces huge amount of data (important)
-            set_time_limit($this->deploy['set_time_limit']);
+            set_time_limit ( $this->deploy ['set_time_limit'] );
         }
-        if (isset($this->deploy['memory_limit'])) {
+        if (isset ( $this->deploy ['memory_limit'] )) {
             // adjust memory_limit if needed (not very important)
-            ini_set('memory_limit', $this->deploy['memory_limit']);
+            ini_set ( 'memory_limit', $this->deploy ['memory_limit'] );
         }
-
-        if (empty($this->deploy['name'])) {
-            $this->deploy['name'] = date('H_m_d_H_i_s');
-        }
-
-        if (substr($this->deploy['name'], - 4) == '.csv') {
-            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
-        }
-
-
-
         // decide if we should store data to file or send directly to user
-        $this->downloadData = $this->deploy['download'] == 1 ? 1 : false;
-        $this->storeData = $this->deploy['save'] == 1 ? 1 : false;
+        $this->downloadData = in_array ( 'download', $this->deploy );
+        $this->storeData = in_array ( 'save', $this->deploy );        
 
         // prepare data
-        parent::deploy();
+        parent::deploy ();
+        if ($this->downloadData) {            
 
-
-        if ($this->downloadData) {
             // send first headers
-            header('Content-type: text/plain; charset=' . $this->getCharEncoding());
-            header('Content-Disposition: attachment; filename="' .$this->deploy['name'] . '.csv"');
+            ob_end_clean();
+
+            /*if(ini_get('zlib.output_compression')) {
+                        die;
+                        ini_set('zlib.output_compression', 'Off');
+                    }*/
+            header('Content-Description: File Transfer');
+            header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
+            header('Pragma: public');
+            header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+            header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+            // force download dialog
+            header('Content-Type: application/force-download');
+            header('Content-Type: application/octet-stream', false);
+            header('Content-Type: application/download', false);
+            //header("Content-Type: application/csv");
+            //header ( 'Content-type: text/plain; charset=utf-8' . $this->charEncoding );
+
+            header ( 'Content-Disposition: attachment; filename="' . $this->getFileName().'"' );
+
+            header('Content-Transfer-Encoding: binary');
         }
         if ($this->storeData) {
             // open file handler
-            $this->outFile = fopen($this->deploy['dir']. $this->deploy['name']. ".csv", "w");
-        }
+            $this->outFile = fopen ( $this->dir . $this->getFileName(), "w" );
+        }        
 
         // export header
-        $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles()));
+        if (! (isset($this->deploy['skipHeaders']) && $this->deploy['skipHeaders']) ) {
+            $this->csvAddData ( self::buildTitltesCsv ( parent::_buildTitles () ) );
+        }
         $i = 0;
         do {
             $i += $this->_pagination;
-            $this->csvAddData(self::buildGridCsv(parent::_buildGrid()));
-            $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp()));
-            // get next data
+            $this->csvAddData ( self::buildGridCsv ( parent::_buildGrid () ) );
+            $this->csvAddData ( self::buildSqlexpCsv ( parent::_buildSqlExp () ) );
+            // get next data            
+
             $this->getSource()->buildQueryLimit($this->_pagination, $i);
             $this->_result = $this->getSource()->execute();
-        } while (count($this->_result));
+        } while ( count ( $this->_result ) );
 
         if ($this->storeData) {
             // close file handler
-            fclose($this->outFile);
-        } else {
+            fclose ( $this->outFile );
+        }
+        if ($this->downloadData) {
+            // we set special headers and uploaded data, there is nothing more we could do
             die();
         }
 
-        die();
         return true;
+    }
+
+    public function setAjax()
+    {
+        if ($this->downloadData) {
+            // if we want to upload data then we should do it now, deploy will die if needed
+            $this->deploy();
+        }
     }
 
 }
