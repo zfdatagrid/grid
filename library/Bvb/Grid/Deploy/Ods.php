@@ -220,7 +220,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
         }
 
-        $this->setNumberRecordsPerPage(0);
+        $this->setRecordsPerPage(0);
 
         parent::deploy();
 

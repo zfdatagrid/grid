@@ -72,7 +72,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::__construct($options);
 
         // default pagination, should be adjusted based on data processed to improve speed
-        $this->setNumberRecordsPerPage(5000);
+        $this->setRecordsPerPage(5000);
 
         $options = $this->_options;
 
@@ -242,12 +242,12 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
         $i = 0;
         do {
-            $i += $this->_pagination;
+            $i += $this->_recordsPerPage;
             $this->csvAddData(self::buildGridCsv(parent::_buildGrid()));
             $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp()));
             // get next data
 
-            $this->getSource()->buildQueryLimit($this->_pagination, $i);
+            $this->getSource()->buildQueryLimit($this->_recordsPerPage, $i);
             $this->_result = $this->getSource()->execute();
         } while (count($this->_result));
 

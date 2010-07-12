@@ -1376,7 +1376,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $pageSelect = '';
         if ( count($this->_paginationOptions) > 0 && $this->getTotalRecords() > 0 ) {
-            if ( ! array_key_exists($this->_pagination, $this->_paginationOptions) && ! $this->getParam('perPage') ) {
+            if ( ! array_key_exists($this->_recordsPerPage, $this->_paginationOptions) && ! $this->getParam('perPage') ) {
                 $this->_paginationOptions[0] = $this->__('Select');
             }
             ksort($this->_paginationOptions);
@@ -1388,9 +1388,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $url = $this->getUrl('perPage');
 
             if ( $this->getInfo('ajax') !== false ) {
-                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage' . $this->getGridId(), $this->getParam('perPage', $this->_pagination), array('onChange' => "gridAjax('{$this->getInfo("ajax")}','$url/perPage" . $this->getGridId() . "/'+this.value);"), $this->_paginationOptions) . ' ' . $this->__('items');
+                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage' . $this->getGridId(), $this->getParam('perPage', $this->_recordsPerPage), array('onChange' => "gridAjax('{$this->getInfo("ajax")}','$url/perPage" . $this->getGridId() . "/'+this.value);"), $this->_paginationOptions) . ' ' . $this->__('items');
             } else {
-                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage' . $this->getGridId(), $this->getParam('perPage', $this->_pagination), array('onChange' => "window.location='$url/perPage" . $this->getGridId() . "/'+this.value;"), $this->_paginationOptions) . ' ' . $this->__('items');
+                $menuPerPage = ' | ' . $this->__('Show') . ' ' . $this->getView()->formSelect('perPage' . $this->getGridId(), $this->getParam('perPage', $this->_recordsPerPage), array('onChange' => "window.location='$url/perPage" . $this->getGridId() . "/'+this.value;"), $this->_paginationOptions) . ' ' . $this->__('items');
             }
         } else {
             $menuPerPage = '';
@@ -1402,14 +1402,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $ppagina = (int) $this->getParam('perPage');
         if ( $ppagina == 0 ) {
-            $ppagina = $this->_pagination;
+            $ppagina = $this->_recordsPerPage;
         }
         $result2 = '';
 
         $pa = $actual == 0 ? 1 : ceil($actual / $ppagina) + 1;
 
         // Calculate the number of pages
-        if ( $this->_pagination > 0 ) {
+        if ( $this->_recordsPerPage > 0 ) {
             $npaginas = ceil($this->_totalRecords / $ppagina);
             $actual = floor($actual / $ppagina) + 1;
         } else {
@@ -1540,7 +1540,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             } elseif ( $npaginas > 1 && count($this->_export) > 0 ) {
 
-                if ( $this->_pagination == 0 ) {
+                if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }
@@ -1549,7 +1549,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             } elseif ( $npaginas < 2 && count($this->_export) > 0 ) {
 
-                if ( $this->_pagination == 0 ) {
+                if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }
@@ -1557,7 +1557,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             } elseif ( count($this->_export) == 0 ) {
 
-                if ( $this->_pagination == 0 ) {
+                if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }

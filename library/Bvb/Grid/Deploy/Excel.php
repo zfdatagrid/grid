@@ -36,7 +36,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
     public function deploy() {
 
-		$this->setNumberRecordsPerPage ( 0 );
+		$this->setRecordsPerPage ( 0 );
 
 		parent::deploy ();
 

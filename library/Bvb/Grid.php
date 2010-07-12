@@ -82,7 +82,7 @@ abstract class Bvb_Grid
      *
      * @var int
      */
-    protected $_pagination = 15;
+    protected $_recordsPerPage = 15;
 
     /**
      * Number of results per page
@@ -954,7 +954,18 @@ abstract class Bvb_Grid
      */
     public function setNumberRecordsPerPage ($number = 15)
     {
-        $this->_pagination = (int) $number;
+        trigger_error("setNumberRecordsPerPage() is deprecated, use setRecordsPerPage() instead. Function will be removed in later versions.", E_USER_DEPRECATED);
+        $this->setRecordsPerPage($number);
+        return $this;
+    }
+
+    /**
+     * Number of records to show per page
+     * @param $number
+     */
+    public function setRecordsPerPage ($number = 15)
+    {
+        $this->_recordsPerPage = (int) $number;
         return $this;
     }
 
@@ -1279,9 +1290,9 @@ abstract class Bvb_Grid
             return $perPage;
         } else {
             if ( $this->_paramsInSession === true ) {
-                $this->_sessionParams->perPage = $this->_pagination;
+                $this->_sessionParams->perPage = $this->_recordsPerPage;
             }
-            return $this->_pagination;
+            return $this->_recordsPerPage;
         }
 
     }

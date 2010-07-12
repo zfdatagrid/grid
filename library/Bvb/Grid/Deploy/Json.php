@@ -81,7 +81,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
     {
 
         $grid = array();
-        $this->setNumberRecordsPerPage(0);
+        $this->setRecordsPerPage(0);
         parent::deploy();
 
         header('Content-Type', 'application/json');

@@ -121,7 +121,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
 
 
-        $this->setNumberRecordsPerPage(0);
+        $this->setRecordsPerPage(0);
         parent::deploy();
 
         $grid = '';

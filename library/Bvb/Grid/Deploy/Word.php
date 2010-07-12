@@ -38,7 +38,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
             throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
             }
 
-            $this->setNumberRecordsPerPage(0);
+            $this->setRecordsPerPage(0);
 
             parent::deploy ();
 

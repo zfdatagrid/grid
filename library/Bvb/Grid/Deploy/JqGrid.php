@@ -507,7 +507,7 @@ HTML;
     {
         // clarify the values
         $page = $this->getParam('page'); // get the requested page
-        $limit = $this->_pagination; // get how many rows we want to have into the grid
+        $limit = $this->_recordsPerPage; // get how many rows we want to have into the grid
         $count =  $this->_totalRecords;
         // decide if we should pass PK as ID to each row
         $passPk = false;
@@ -591,7 +591,7 @@ HTML;
         ///////////////////////////////////////////////////////////
         $this->_jqgParams['url'] = $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
-        $this->_jqgParams['rowNum'] = $this->_pagination;
+        $this->_jqgParams['rowNum'] = $this->_recordsPerPage;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
@@ -988,7 +988,7 @@ HTML;
 
         // number of rows to be shown on page, could be changed in jqGrid
         if (isset($params['rows'])) {
-            $this->setNumberRecordsPerPage($params['rows']);
+            $this->setRecordsPerPage($params['rows']);
         }
 
         // first row to display
@@ -998,7 +998,7 @@ HTML;
             $page = 1;
         }
         $this->setParam('page', $page);
-         $this->setParam('start', $this->_pagination * ($page-1));
+         $this->setParam('start', $this->_recordsPerPage * ($page-1));
 
         // sort order
         $sidx = isset($params['sidx']) ? $params['sidx'] : "";

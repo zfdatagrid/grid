@@ -220,7 +220,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         }
 
-        $this->setNumberRecordsPerPage(0);
+        $this->setRecordsPerPage(0);
 
         parent::deploy();
 
