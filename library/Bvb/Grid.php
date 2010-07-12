@@ -2882,6 +2882,10 @@ abstract class Bvb_Grid
 
         }
 
+        if ( isset($this->_options['grid']['recordsPerPage']) ) {
+            $this->setRecordsPerPage($this->_options['grid']['recordsPerPage']);
+        }
+
     }
 
 
