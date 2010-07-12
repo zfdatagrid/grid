@@ -20,27 +20,16 @@
 class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
     /**
-     * Directory to store output file
-     *
-     * @var string
+     * Code for this deploy class
      */
-    protected $_dir;
+    const OUTPUT = 'csv';
 
     /**
      * Configuration options
      *
-     * @var <type>
+     * @var array
      */
     public $deploy = array();
-
-    /**
-     * Set true if data should be downloaded
-     */
-    protected $_downloadData = null;
-    /**
-     * Set true if data should be stored
-     */
-    protected $_storeData = null;
     /**
      * Storing file
      */
@@ -52,9 +41,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $_removeHiddenFields = true;
 
-
-    const OUTPUT = 'csv';
-
     /**
      * Return name of file
      *
@@ -62,51 +48,80 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function getFileName()
     {
-        if (isset($this->_info['Title'])) {
-            $title = $this->_info['Title'][0];
-        } elseif (isset($this->_info['title'])) {
-            $title = $this->_info['title'][0];
-        } else {
-            $title = Zend_Controller_Front::getInstance()->getRequest()->getParam('controller') . '-' . date("Ymd");
+        $fileName = $this->getInfo('fileName');
+        if (!$fileName) {
+            $fileName = $this->getInfo('title');
         }
-
-        return $title . '.csv';
+        if (!$fileName) {
+            $fileName = Zend_Controller_Front::getInstance()->getRequest()->getParam('controller') . '-' . date("Ymd");
+        }
+        return $fileName . '.csv';
     }
 
-    /*
-     *
+    /**
+     * Constructor
      *
      * Optimize performance by setting best value for $this->setPagination(?);
-     * and setting options:
-     * set_time_limit
-     * memory_limit
-     * download: send data to directly to user
-     * save: save the file
-     * ?dir:
      *
-     * @param array $data
+     * Options (deploy.csv.<option>):
+     * set_time_limit - time out for php script
+     * memory_limit - PHP memory limit
+     * download - send data directly to user
+     * save - save data to file
+     * fileName - filename used as suggestion when downloading and to save data
+     * dir - directory where to store data
+     *
+     * @param array $options options
+     *
+     * @see _prepareOptions
+     *
+     * @return void
      */
-
-    function __construct($options, $exportOptions = array('download'))
+    function __construct($options)
     {
-
-    if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
-            echo $this->__ ( "You dont' have permission to export the results to this format" );
-            die ();
+        if (!in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT, $this->_export)) {
+            // check if this kind of export is alowed
+            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
         }
 
-        $this->setNumberRecordsPerPage (5000);
+        // default pagination, should be adjusted based on data processed to improve speed
+        $this->setNumberRecordsPerPage(5000);
 
-        // TODO this needs rework
-        $dir = isset($exportOptions['dir']) ? $exportOptions['dir'] : '';
-        $this->_dir = rtrim($dir, "/") . "/";
+        // fix configuration options
+        $deploy = isset($options['deploy'][self::OUTPUT]) ? $options['deploy'][self::OUTPUT] : array();
+        if (!isset($deploy['dir'])) {
+            $deploy['dir'] = "";
+        } else {
+            $deploy['dir'] = rtrim($deploy['dir'], "/") . "/";
+        }
 
-        $this->deploy = $exportOptions;
+        if (!isset($deploy['download']) && !isset($deploy['store'])) {
+            $deploy['download'] = true;
+            $deploy['store'] = false;
+        } else {
+            if (!isset($deploy['download'])) {
+                $deploy['download'] = false;
+            }
+            if (!isset($deploy['store'])) {
+                $deploy['store'] = false;
+            }
+        }
+        // set the changed options
+        $options['deploy'][self::OUTPUT] = $deploy;
 
+        // TODO I don't understand why parent::__constructor will not set this automaticaly,
+        // what if it would be loaded from config ?
+        $this->deploy = $options['deploy'][self::OUTPUT];
         parent::__construct($options);
     }
 
-
+    /**
+     * Build list of column names for header row
+     *
+     * @param array $titles column titles
+     *
+     * @return string
+     */
     function buildTitltesCsv($titles)
     {
 
@@ -119,6 +134,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return substr($grid, 0, - 1) . "\n";
     }
 
+    /**
+     * Create line with values build based on sql expressions
+     *
+     * @param array $sql SQL expression values
+     *
+     * @return <type> string
+     */
     function buildSqlexpCsv($sql)
     {
 
@@ -133,6 +155,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return substr($grid, 0, - 1) . " \n";
     }
 
+    /**
+     * Build data rows
+     *
+     * @param array $grids all rows
+     *
+     * @return string
+     */
     function buildGridCsv($grids)
     {
 
@@ -150,28 +179,40 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
     /**
+     * Add row to results
+     *
      * Depending on settings store to file and/or directly upload
+     *
+     * @param array $data data
+     *
+     * @return void
      */
     protected function csvAddData($data)
     {
-        if ($this->_downloadData) {
+        if ($this->actionEnabled('download')) {
             // send first headers
             echo $data;
             flush();
             ob_flush();
         }
-        if ($this->_storeData) {
+        if ($this->actionEnabled('store')) {
             // open file handler
             fwrite($this->_outFile, $data);
         }
     }
 
+    /**
+     * Deploy method
+     *
+     * @return boolean FALSE if error
+     */
     function deploy()
     {
         // prepare data
         $this->_prepareOptions();
         parent::deploy();
-        if ($this->_downloadData) {
+
+        if ($this->actionEnabled('download')) {
 
             // send first headers
             ob_end_clean();
@@ -196,9 +237,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
             header('Content-Transfer-Encoding: binary');
         }
-        if ($this->_storeData) {
+        if ($this->actionEnabled('store')) {
             // open file handler
-            $this->_outFile = fopen($this->_dir . $this->getFileName(), "w");
+            $this->_outFile = fopen($this->deploy['dir'] . $this->getFileName(), "w");
         }
 
         // export header
@@ -216,11 +257,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $this->_result = $this->getSource()->execute();
         } while (count($this->_result));
 
-        if ($this->_storeData) {
+        if ($this->actionEnabled('store')) {
             // close file handler
             fclose($this->_outFile);
         }
-        if ($this->_downloadData) {
+        if ($this->actionEnabled('download')) {
             // we set special headers and uploaded data, there is nothing more we could do
             die();
         }
@@ -228,28 +269,48 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return true;
     }
 
+    /**
+     * Set some deploy settings
+     *
+     * @return void
+     */
     protected function _prepareOptions()
     {
         // apply options
-        if (isset($this->deploy ['set_time_limit'])) {
+        if (isset($this->deploy['set_time_limit'])) {
             // script needs time to proces huge amount of data (important)
-            set_time_limit($this->deploy ['set_time_limit']);
+            set_time_limit($this->deploy['set_time_limit']);
         }
         if (isset($this->deploy['memory_limit'])) {
             // adjust memory_limit if needed (not very important)
             ini_set('memory_limit', $this->deploy['memory_limit']);
         }
-        // decide if we should store data to file or send directly to user
-        $this->_downloadData = in_array('download', $this->deploy);
-        $this->_storeData = in_array('save', $this->deploy);
     }
 
+    /**
+     * Return file if download requested without the need to continue up to deploy() method
+     *
+     * @return Bvb_Grid_Deploy_Csv
+     */
     public function setAjax()
     {
-        if (in_array('download', $this->deploy)) {
+        if ($this->actionEnabled('download')) {
             // if we want to upload data then we should do it now, deploy will die if needed
             $this->deploy();
         }
+        return $this;
+    }
+
+    /**
+     * Is action (download or store) enabled
+     *
+     * @param string $action name of action to test
+     *
+     * @return boolean
+     */
+    public function actionEnabled($action)
+    {
+        return $this->deploy[$action];
     }
 
 }
