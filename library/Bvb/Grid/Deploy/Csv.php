@@ -304,7 +304,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function actionEnabled($action)
     {
-        return $this->deploy[$action];
+        return isset($this->deploy[$action])?$this->deploy[$action]:false;
     }
 
 }
