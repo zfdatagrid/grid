@@ -356,7 +356,7 @@ abstract class Bvb_Grid
      * Last name from deploy class (table|pdf|csv|etc...)
      * @var unknown_type
      */
-    private $_deployName = null;
+    protected  $_deployName = null;
 
 
     /**
@@ -416,6 +416,13 @@ abstract class Bvb_Grid
      * @var unknown_type
      */
     protected $_sessionParams = false;
+
+
+    /**
+     * Hold definitions from configurations
+     * @var array
+     */
+    public $deploy = array();
 
 
     /**

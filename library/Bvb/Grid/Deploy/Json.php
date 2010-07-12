@@ -20,17 +20,18 @@
 class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
 
-    public $deploy = array();
 
-    const OUTPUT = 'json';
-
-    /*
-    * @param array $data
-    */
     public function __construct ($options)
     {
 
+        $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
+
+
+        if ( ! in_array($this->_deployName, $this->_export) && ! array_key_exists($this->_deployName, $this->_export) ) {
+            echo $this->__("You dont' have permission to export the results to this format");
+            die();
+        }
     }
 
     public function buildTitltesJson ($titles)
@@ -79,10 +80,6 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
     public function deploy ()
     {
-        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
-        }
 
         $grid = array();
         $this->setNumberRecordsPerPage(0);

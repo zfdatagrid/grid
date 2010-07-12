@@ -21,14 +21,6 @@
 class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
 
-    const OUTPUT = 'table';
-
-    /**
-     * Hold definitions from configurations
-     * @var array
-     */
-    public $deploy = array();
-
 
     protected $_deployOptions = null;
 

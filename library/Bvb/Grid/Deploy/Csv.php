@@ -20,17 +20,6 @@
 class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
     /**
-     * Code for this deploy class
-     */
-    const OUTPUT = 'csv';
-
-    /**
-     * Configuration options
-     *
-     * @var array
-     */
-    public $deploy = array();
-    /**
      * Storing file
      */
     protected $_outFile = null;
@@ -79,16 +68,16 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     function __construct($options)
     {
-        if (!in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT, $this->_export)) {
-            // check if this kind of export is alowed
-            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
-        }
+
+        parent::__construct($options);
 
         // default pagination, should be adjusted based on data processed to improve speed
         $this->setNumberRecordsPerPage(5000);
 
+        $options = $this->_options;
+
         // fix configuration options
-        $deploy = isset($options['deploy'][self::OUTPUT]) ? $options['deploy'][self::OUTPUT] : array();
+        $deploy = isset($options['deploy'][$this->_deployName]) ? $options['deploy'][$this->_deployName] : array();
         if (!isset($deploy['dir'])) {
             $deploy['dir'] = "";
         } else {
@@ -107,12 +96,17 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             }
         }
         // set the changed options
-        $options['deploy'][self::OUTPUT] = $deploy;
+        $options['deploy'][$this->_deployName] = $deploy;
 
         // TODO I don't understand why parent::__constructor will not set this automaticaly,
         // what if it would be loaded from config ?
-        $this->deploy = $options['deploy'][self::OUTPUT];
-        parent::__construct($options);
+        $this->deploy = $options['deploy'][$this->_deployName];
+
+         if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
+            // check if this kind of export is alowed
+            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
+        }
+
     }
 
     /**

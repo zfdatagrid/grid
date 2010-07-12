@@ -23,12 +23,7 @@
 class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
 
-    const OUTPUT = 'xml';
-
     public $templateInfo;
-
-    public $deploy = array();
-
 
     /**
      *
@@ -121,7 +116,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     public function deploy ()
     {
 
-        if ( ! in_array(self::OUTPUT, $this->_export) && !array_key_exists(self::OUTPUT,$this->_export) ) {
+        if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
             echo $this->__("You dont' have permission to export the results to this format");
             die();
         }
