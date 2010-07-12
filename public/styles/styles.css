@@ -4,8 +4,15 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
-th a .selected{
-	font-weight:bold;
+.noRecords {
+	padding: 10px;
+	text-align: center;
+	color: brown;
+	font-size: 14px;
+}
+
+th a .selected {
+	font-weight: bold;
 }
 
 .formTitle {
@@ -25,7 +32,7 @@ form  .element {
 
 form label {
 	font-size: 11px;
-	display:block;
+	display: block;
 }
 
 .subtitulo span {
@@ -34,9 +41,9 @@ form label {
 	float: left;
 }
 
-.subtitulo  {
-    padding-left:5px;
-	text-indent:0;
+.subtitulo {
+	padding-left: 5px;
+	text-indent: 0;
 }
 
 .gridLoading {
@@ -89,11 +96,12 @@ input[type='checkbox'],input[type='radio'] {
 	margin: 2px;
 }
 
-td div input[type='text'], td div input[type='password'], .subtitulo input[type='text'],.subtitulo input[type='password'],.subtitulo  select{
-    width: 90% !important;
-    border: 1px solid #aaa;
-    min-width: 20px;
-	margin:2px;
+td div input[type='text'],td div input[type='password'],.subtitulo input[type='text'],.subtitulo input[type='password'],.subtitulo  select
+	{
+	width: 90% !important;
+	border: 1px solid #aaa;
+	min-width: 20px;
+	margin: 2px;
 }
 
 #grid .querySupport button {

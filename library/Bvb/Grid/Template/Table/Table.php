@@ -85,7 +85,7 @@ class Bvb_Grid_Template_Table_Table
 
     public function noResults ()
     {
-        return "      <td  colspan=\"{$this->options['colspan']}\" style=\"padding:10px;text-align:center;color:brown;font-size:14px;\">{{value}}</div>".PHP_EOL;
+        return "      <td  colspan=\"{$this->options['colspan']}\" class=\"noRecords\">{{value}}</div>".PHP_EOL;
     }
 
 
