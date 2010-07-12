@@ -52,6 +52,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $_removeHiddenFields = true;
 
+
+    const OUTPUT = 'csv';
+
     /**
      * Return name of file
      *
