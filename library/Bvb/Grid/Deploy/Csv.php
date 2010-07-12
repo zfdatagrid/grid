@@ -17,33 +17,25 @@
  * @version    0.4   $
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
-
 class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
 
-    protected $dir;
-
-    protected $title;
-
+    protected $_dir;
     public $deploy = array();
 
-    protected $output = 'csv';
 
     /**
      * Set true if data should be downloaded
      */
     protected $downloadData = null;
-
     /**
      * Set true if data should be stored
      */
     protected $storeData = null;
-
     /**
      * Storing file
      */
     protected $outFile = null;
-
     /**
      * We don't want to display hidden fields
      *
@@ -51,7 +43,8 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected $_removeHiddenFields = true;
 
-    public function getFileName() {
+    public function getFileName()
+    {
         if (isset($this->info['Title'])) {
             $title = $this->info['Title'][0];
         } elseif (isset($this->info['title'])) {
@@ -75,23 +68,25 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * ?dir:
      *
      * @param array $data
-    */
-    function __construct($options, $exportOptions = array('download')) {
+     */
 
-        if (! in_array ( 'csv', $this->_export )) {
-            echo $this->__ ( "You dont' have permission to export the results to this format" );
+    function __construct($options, $exportOptions = array('download'))
+    {
+
+        if (!in_array('csv', $this->_export)) {
+            echo $this->__("You dont' have permission to export the results to this format");
             die ();
         }
 
-        $this->setPagination ( 5000 );
+        $this->setPagination(5000);
 
         // TODO this needs rework
-        $dir = isset ( $deploy ['dir'] ) ? $deploy ['dir'] : '';
-        $this->dir = rtrim ( $dir, "/" ) . "/";       
+        $dir = isset($deploy['dir']) ? $deploy['dir'] : '';
+        $this->_dir = rtrim($dir, "/") . "/";
 
         $this->deploy = $exportOptions;
 
-        $this->addTemplateDir ( 'Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx' );
+        $this->addTemplateDir('Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx');
         parent::__construct($options);
     }
 
@@ -101,57 +96,58 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @param string $var
      * @param string $value
      */
-
-    function __set($var, $value) {
-        parent::__set ( $var, $value );
+    function __set($var, $value)
+    {
+        parent::__set($var, $value);
     }
 
-    function buildTitltesCsv($titles) {
+    function buildTitltesCsv($titles)
+    {
 
         $grid = '';
-        foreach ( $titles as $title ) {
+        foreach ($titles as $title) {
 
             $grid .= '"' . $title ['value'] . '",';
         }
 
-        return substr ( $grid, 0, - 1 ) . "\n";
-
+        return substr($grid, 0, - 1) . "\n";
     }
 
-    function buildSqlexpCsv($sql) {
+    function buildSqlexpCsv($sql)
+    {
 
         $grid = '';
-        if (is_array ( $sql )) {
+        if (is_array($sql)) {
 
-            foreach ( $sql as $exp ) {
+            foreach ($sql as $exp) {
                 $grid .= '"' . $exp ['value'] . '",';
             }
         }
 
-        return substr ( $grid, 0, - 1 ) . " \n";
-
+        return substr($grid, 0, - 1) . " \n";
     }
 
-    function buildGridCsv($grids) {
+    function buildGridCsv($grids)
+    {
 
         $grid = '';
-        foreach ( $grids as $value ) {
+        foreach ($grids as $value) {
 
-            foreach ( $value as $final ) {
+            foreach ($value as $final) {
                 $grid .= '"' . $final ['value'] . '",';
             }
 
-            $grid = substr ( $grid, 0, - 1 ) . " \n";
+            $grid = substr($grid, 0, - 1) . " \n";
         }
 
         return $grid;
-
     }
 
     /**
      * Depending on settings store to file and/or directly upload
      */
-    protected function csvAddData($data) {
+    protected function csvAddData($data)
+    {
         if ($this->downloadData) {
             // send first headers
             echo $data;
@@ -160,39 +156,29 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
         if ($this->storeData) {
             // open file handler
-            fwrite ( $this->outFile, $data );
+            fwrite($this->outFile, $data);
         }
     }
-    function deploy() {
-        // apply options
-        if (isset ( $this->deploy ['set_time_limit'] )) {
-            // script needs time to proces huge amount of data (important)
-            set_time_limit ( $this->deploy ['set_time_limit'] );
-        }
-        if (isset ( $this->deploy ['memory_limit'] )) {
-            // adjust memory_limit if needed (not very important)
-            ini_set ( 'memory_limit', $this->deploy ['memory_limit'] );
-        }
-        // decide if we should store data to file or send directly to user
-        $this->downloadData = in_array ( 'download', $this->deploy );
-        $this->storeData = in_array ( 'save', $this->deploy );        
 
+    function deploy()
+    {
         // prepare data
+        $this->_prepareOptions();
         parent::deploy ();
-        if ($this->downloadData) {            
+        if ($this->downloadData) {
 
             // send first headers
             ob_end_clean();
 
-            /*if(ini_get('zlib.output_compression')) {
-                        die;
-                        ini_set('zlib.output_compression', 'Off');
-                    }*/
+            /* if(ini_get('zlib.output_compression')) {
+              die;
+              ini_set('zlib.output_compression', 'Off');
+              } */
             header('Content-Description: File Transfer');
             header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
             header('Pragma: public');
             header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-            header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
             // force download dialog
             header('Content-Type: application/force-download');
             header('Content-Type: application/octet-stream', false);
@@ -200,33 +186,33 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             //header("Content-Type: application/csv");
             //header ( 'Content-type: text/plain; charset=utf-8' . $this->charEncoding );
 
-            header ( 'Content-Disposition: attachment; filename="' . $this->getFileName().'"' );
+            header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
 
             header('Content-Transfer-Encoding: binary');
         }
         if ($this->storeData) {
             // open file handler
-            $this->outFile = fopen ( $this->dir . $this->getFileName(), "w" );
-        }        
+            $this->outFile = fopen($this->_dir . $this->getFileName(), "w");
+        }
 
         // export header
-        if (! (isset($this->deploy['skipHeaders']) && $this->deploy['skipHeaders']) ) {
-            $this->csvAddData ( self::buildTitltesCsv ( parent::_buildTitles () ) );
+        if (!(isset($this->deploy['skipHeaders']) && $this->deploy['skipHeaders'])) {
+            $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles ()));
         }
         $i = 0;
         do {
             $i += $this->_pagination;
-            $this->csvAddData ( self::buildGridCsv ( parent::_buildGrid () ) );
-            $this->csvAddData ( self::buildSqlexpCsv ( parent::_buildSqlExp () ) );
-            // get next data            
+            $this->csvAddData(self::buildGridCsv(parent::_buildGrid ()));
+            $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp ()));
+            // get next data
 
             $this->getSource()->buildQueryLimit($this->_pagination, $i);
             $this->_result = $this->getSource()->execute();
-        } while ( count ( $this->_result ) );
+        } while (count($this->_result));
 
         if ($this->storeData) {
             // close file handler
-            fclose ( $this->outFile );
+            fclose($this->outFile);
         }
         if ($this->downloadData) {
             // we set special headers and uploaded data, there is nothing more we could do
@@ -236,9 +222,25 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return true;
     }
 
+    protected function _prepareOptions()
+    {
+        // apply options
+        if (isset($this->deploy ['set_time_limit'])) {
+            // script needs time to proces huge amount of data (important)
+            set_time_limit($this->deploy ['set_time_limit']);
+        }
+        if (isset($this->deploy['memory_limit'])) {
+            // adjust memory_limit if needed (not very important)
+            ini_set('memory_limit', $this->deploy['memory_limit']);
+        }
+        // decide if we should store data to file or send directly to user
+        $this->downloadData = in_array('download', $this->deploy);
+        $this->storeData = in_array('save', $this->deploy);
+    }
+
     public function setAjax()
     {
-        if ($this->downloadData) {
+        if (in_array('download', $this->deploy)) {
             // if we want to upload data then we should do it now, deploy will die if needed
             $this->deploy();
         }
