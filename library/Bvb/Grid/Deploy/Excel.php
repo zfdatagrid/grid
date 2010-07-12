@@ -29,8 +29,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
 
         if ( ! in_array($this->_deployName, $this->_export) && ! array_key_exists($this->_deployName, $this->_export) ) {
-            echo $this->__("You dont' have permission to export the results to this format");
-            die();
+            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
         }
     }
 
