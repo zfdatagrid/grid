@@ -32,11 +32,7 @@ class Bvb_Grid_Form
     protected $_fieldsBasedOnQuery = false;
 
 
-    protected $_groupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '2', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
     protected $_subformGroupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '90', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
-    protected $_elementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
     protected $_subformElementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td', 'class' => 'elementTitle')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
@@ -48,13 +44,13 @@ class Bvb_Grid_Form
 
     protected $_buttonHiddenDecorator = array('ViewHelper');
 
-    protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'width:99%')), 'Form');
+    protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'class' => 'formTable')), 'Form');
 
     protected $_formDecoratorSimple = array('FormElements', 'Form');
 
     protected $_displayGroupsDecorator = array();
 
-    protected $_subFormDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'style' => 'margin-bottom:5px; width:100%', 'class' => 'borders')));
+    protected $_subFormDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table',  'class' => 'borders subForm')));
 
     protected $_subFormDecoratorVertical = array('FormElements', array('HtmlTag', array('tag' => 'tr')));
 

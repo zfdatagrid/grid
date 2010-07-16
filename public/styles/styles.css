@@ -4,6 +4,15 @@ html,body {
 	font-family: Verdana, sans-serif;
 }
 
+.formTable {
+	width: 99%
+}
+
+.subForm {
+	margin-bottom: 5px;
+	width: 100% '
+}
+
 .noRecords {
 	padding: 10px;
 	text-align: center;
