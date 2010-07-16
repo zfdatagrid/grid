@@ -824,9 +824,9 @@ abstract class Bvb_Grid
      * @return self
      */
 
-    public function updateColumn ($field, $options = array(), $force = false)
+    public function updateColumn ($field, $options = array())
     {
-        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']) && $force == false) ) {
+        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']) ) ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
              * @var $_updateColumnQueue Bvb_Grid
@@ -852,19 +852,6 @@ abstract class Bvb_Grid
             }
 
             $this->_data['fields'][$field] = array_merge($this->_data['fields'][$field], $options);
-
-        } elseif ( $force == true ) {
-
-            $this->_data['fields'][$field] = $options;
-
-            if ( isset($options['hRow']) && $options['hRow'] == 1 ) {
-                $this->_fieldHorizontalRow = $field;
-                $this->_info['hRow'] = array('field' => $field, 'title' => $options['title']);
-            }
-
-            if ( isset($this->_updateColumnQueue[$field]) ) {
-                $this->_data['fields'][$field] = array_merge($options, $this->_updateColumnQueue[$field]);
-            }
 
         }
 
@@ -2238,7 +2225,7 @@ abstract class Bvb_Grid
     {
 
         if ( $this->getSource() === null ) {
-            throw new Bvb_Grid_Exception('Please Specify your source');
+            throw new Bvb_Grid_Exception('Please specify your source');
         }
 
         if($this->_paramsInSession ===true)
@@ -2252,11 +2239,9 @@ abstract class Bvb_Grid
             $this->setAjax(false);
         }
 
-        //We need to get fields again because user may have added a few more after
-        //Setting the source using $select->columns();
-        $fields = $this->getSource()->buildFields();
-        foreach ( $fields as $key => $field ) {
-            if ( ! array_key_exists($key, $this->_data['fields']) ) $this->updateColumn($key, $field, true);
+        //Add columns in queue
+        foreach ( $this->_updateColumnQueue as $field=>$options ) {
+            $this->updateColumn($field, $options);
         }
 
 
@@ -2455,21 +2440,19 @@ abstract class Bvb_Grid
      */
     public function updateColumns ()
     {
-
         $fields = func_get_args();
 
         foreach ( $fields as $value ) {
 
-            if ( $value instanceof Bvb_Grid_Column ) {
+            if ( ! $value instanceof Bvb_Grid_Column ) {
+                throw new Bvb_Grid_Exception('Instance of Bvb_Grid_Column must be provided');
+            }
 
-                $value = $this->_object2array($value);
-                foreach ( $value as $field ) {
+            foreach ( $value as $field ) {
+                $finalField = $field['field'];
+                unset($field['field']);
+                $this->updateColumn($finalField, $field);
 
-                    $finalField = $field['field'];
-                    unset($field['field']);
-                    $this->updateColumn($finalField, $field);
-
-                }
             }
         }
 
@@ -2991,27 +2974,6 @@ abstract class Bvb_Grid
         }
 
         return $this;
-    }
-
-
-    /**
-     * Some debug info
-     */
-    public function debug ($returnSerialized = false)
-    {
-        $result = array();
-        $result['fields'] = $this->getFields(true);
-        $result['colspan'] = $this->_colspan();
-        $result['filters'] = $this->_filters;
-        $result['filtersValues'] = $this->_filtersValues;
-        $result['mainSelect'] = $this->getSource()->getSelectObject()->__toString();
-        $result['form'] = isset($this->_form) ? $this->_form : null;
-
-        if ( $returnSerialized === true ) {
-            return serialize($result);
-        }
-
-        return $result;
     }
 
 
