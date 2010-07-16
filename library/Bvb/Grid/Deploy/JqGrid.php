@@ -34,11 +34,10 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
     public static $defaultJqGridLibPath = "public/scripts/jqgrid";
     /**
      * Code of locale file to use
-     * TODO should be static and how to configure it ?
      *
      * @var string
      */
-    protected $_jqgI18n = "en";
+    public static $defaultJqgI18n = "en";
 
     /**
      * Remember if we are already initialized
@@ -647,7 +646,7 @@ HTML;
             ->enable()
             ->uiEnable()
             ->addStylesheet($jqgridLibPath . "/css/ui.jqgrid.css")
-            ->addJavascriptFile($jqgridLibPath . '/js/i18n/grid.locale-' . $this->_jqgI18n . '.js')
+            ->addJavascriptFile($jqgridLibPath . '/js/i18n/grid.locale-' . $this->getJqgI18n() . '.js')
             // TODO enable following lines when ZendX_Jquery will support it
             //->addJavascriptBetweenFiles($this->getJqgPreloadConfig())
             ->addJavascriptFile($jqgridLibPath . '/js/jquery.jqGrid.min.js');
@@ -657,6 +656,15 @@ HTML;
         $this->_jqInitialized = true;
 
         return $this;
+    }
+    /**
+     * Return language code
+     * 
+     * @return string
+     */
+    public function getJqgI18n()
+    {
+        return $this->getJqgParam('i18n', self::$defaultJqgI18n);
     }
     /**
      * Return URL where jqGrid library is located (it has js and css folders under it).
