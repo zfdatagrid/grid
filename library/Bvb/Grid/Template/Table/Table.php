@@ -195,6 +195,9 @@ class Bvb_Grid_Template_Table_Table
 
         $exp = '';
         foreach ( $exportDeploy as $export ) {
+
+            $caption = Bvb_Grid_Translator::getInstance()->__("Export to ".$export['caption'].' format');
+
             $export['newWindow'] = isset($export['newWindow']) ? $export['newWindow'] : true;
             $class = isset($export['cssClass']) ? 'class="' . $export['cssClass'] . '"' : '';
 
@@ -205,9 +208,9 @@ class Bvb_Grid_Template_Table_Table
             }
 
             if ( isset($export['img']) ) {
-                $exp .= "<a title='{$export['caption'] }' $class $blank href='$url/_exportTo$gridId/{$export['caption']}'><img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
+                $exp .= "<a title='$caption' $class $blank href='$url/_exportTo$gridId/{$export['caption']}'><img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
             } else {
-                $exp .= "<a title='{$export['caption'] }'  $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>" . $export['caption'] . "</a>";
+                $exp .= "<a title='$caption'  $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>" . $export['caption'] . "</a>";
             }
         }
 
