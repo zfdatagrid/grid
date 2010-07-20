@@ -162,15 +162,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected $_comm;
 
     /**
-     * IF user has defined mass actions operations
-     * @var bool
-     */
-    protected $_hasMassActions = false;
-
-
-    protected $_massActions = false;
-
-    /**
      *
      * @var Zend_Form
      */
@@ -3055,108 +3046,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this->_alwaysShowOrderArrows;
     }
 
-
-    public function hasMassActions ()
-    {
-        return $this->_hasMassActions;
-    }
-
-
-    public function getMassActionsOptions ()
-    {
-        if ( ! $this->_hasMassActions ) {
-            return array();
-        }
-
-        return (array) $this->_massActions;
-    }
-
-
-    protected function _buildMassActions ()
-    {
-        if ( ! $this->hasMassActions() ) return false;
-
-
-        $select = array();
-        foreach ( $this->getMassActionsOptions() as $value ) {
-            $select[$value['url']] = $value['caption'];
-        }
-
-        $formSelect = $this->getView()->formSelect("gridAction_" . $this->getGridId(), null, array(), $select);
-        $formSubmit = $this->getView()->formSubmit("send_" . $this->getGridId(), $this->__('Submit'), array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()"));
-
-        if ( $this->getResultsPerPage() < $this->getTotalRecords() ) {
-            $currentRecords = $this->getResultsPerPage();
-        } else {
-            $currentRecords = $this->getTotalRecords();
-        }
-
-        $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
-
-        $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
-        $return .= '<form style="padding:0;margin:0;" method="post" action="" id="massActions_' . $this->getGridId() . '" name="massActions_' . $this->getGridId() . '">';
-        $return .= $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids);
-        $return .= $this->getView()->formHidden('postMassIds', '');
-
-
-        $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
-
-        return $return;
-    }
-
-
-    public function setMassActions (array $options)
-    {
-
-        $this->_hasMassActions = true;
-        $this->_massActions = $options;
-
-        foreach ( $options as $value ) {
-            if ( ! isset($value['url']) || ! isset($value['caption']) ) {
-                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
-            }
-        }
-
-        if ( count($this->getSource()->getPrimaryKey($this->_data['table'])) == 0 ) {
-            throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
-        }
-
-        $pk = '';
-        foreach ( $this->getSource()->getPrimaryKey($this->_data['table']) as $value ) {
-            $aux = explode('.', $value);
-            $pk .= end($aux) . '-';
-        }
-
-        $pk = rtrim($pk, '-');
-
-
-        $left = new Bvb_Grid_Extra_Column();
-        $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='{{{$pk}}}' >");
-
-        $this->addExtraColumns($left);
-
-    }
-
-
-    public function addMassActions (array $options)
-    {
-        if ( $this->_hasMassActions !== true ) {
-            return $this->setMassAction($options);
-        }
-
-
-        foreach ( $options as $value ) {
-            if ( ! isset($value['url']) || ! isset($value['caption']) ) {
-                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
-            }
-        }
-
-        $this->_massActions = array_merge($options, $this->_massActions);
-
-        return $this;
-    }
-
-
     /**
      * Returns any erros from form validation
      */
@@ -3193,6 +3082,53 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     public function getShowOrderImages ()
     {
         return $this->_showOrderImages;
+    }
+
+
+    public function setMassActions (array $options)
+    {
+
+        $pk = parent::setMassActions($options);
+
+        $left = new Bvb_Grid_Extra_Column();
+        $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='{{{$pk}}}' >");
+
+        $this->addExtraColumns($left);
+
+    }
+
+
+    protected function _buildMassActions ()
+    {
+        if ( ! $this->hasMassActions() ) return false;
+
+
+        $select = array();
+        foreach ( $this->getMassActionsOptions() as $value ) {
+            $select[$value['url']] = $value['caption'];
+        }
+
+
+        $formSelect = $this->getView()->formSelect("gridAction_" . $this->getGridId(), null, array(), $select);
+        $formSubmit = $this->getView()->formSubmit("send_" . $this->getGridId(), $this->__('Submit'), array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()"));
+
+        if ( $this->getResultsPerPage() < $this->getTotalRecords() ) {
+            $currentRecords = $this->getResultsPerPage();
+        } else {
+            $currentRecords = $this->getTotalRecords();
+        }
+
+        $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
+
+        $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
+        $return .= '<form style="padding:0;margin:0;" method="post" action="" id="massActions_' . $this->getGridId() . '" name="massActions_' . $this->getGridId() . '">';
+        $return .= $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids);
+        $return .= $this->getView()->formHidden('postMassIds', '');
+
+
+        $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
+
+        return $return;
     }
 
 }

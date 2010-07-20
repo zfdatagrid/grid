@@ -426,6 +426,16 @@ abstract class Bvb_Grid
 
 
     /**
+     * IF user has defined mass actions operations
+     * @var bool
+     */
+    protected $_hasMassActions = false;
+
+
+    protected $_massActions = false;
+
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
@@ -3328,5 +3338,67 @@ abstract class Bvb_Grid
     {
         return $this->deploy;
     }
+
+
+    public function hasMassActions ()
+    {
+        return $this->_hasMassActions;
+    }
+
+
+    public function getMassActionsOptions ()
+    {
+        if ( ! $this->_hasMassActions ) {
+            return array();
+        }
+
+        return (array) $this->_massActions;
+    }
+
+
+    public function setMassActions (array $options)
+    {
+
+        $this->_hasMassActions = true;
+        $this->_massActions = $options;
+
+        foreach ( $options as $value ) {
+            if ( ! isset($value['url']) || ! isset($value['caption']) ) {
+                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
+            }
+        }
+
+        if ( count($this->getSource()->getPrimaryKey($this->_data['table'])) == 0 ) {
+            throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
+        }
+
+        $pk = '';
+        foreach ( $this->getSource()->getPrimaryKey($this->_data['table']) as $value ) {
+            $aux = explode('.', $value);
+            $pk .= end($aux) . '-';
+        }
+
+        return  rtrim($pk, '-');
+
+    }
+
+
+    public function addMassActions (array $options)
+    {
+        if ( $this->_hasMassActions !== true ) {
+            return $this->setMassAction($options);
+        }
+
+        foreach ( $options as $value ) {
+            if ( ! isset($value['url']) || ! isset($value['caption']) ) {
+                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
+            }
+        }
+
+        $this->_massActions = array_merge($options, $this->_massActions);
+
+        return $this;
+    }
+
 
 }
