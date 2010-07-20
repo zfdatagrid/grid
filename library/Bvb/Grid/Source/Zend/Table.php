@@ -161,4 +161,24 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         return $this->getModel()->insert($post);
     }
 
+
+    /**
+     * Get the primary table key
+     * This is important because we only allow edit, add or remove records
+     * From tables that have on primary key
+     *
+     * @return array
+     */
+    public function getPrimaryKey ($table)
+    {
+       $info = $this->_model->info();
+
+       $keys = array();
+       foreach ($info['primary'] as $pk)
+       {
+            $keys[] = $info['metadata'][$pk]['TABLE_NAME'].'.'.$pk;
+       }
+
+        return $keys;
+    }
 }
