@@ -51,7 +51,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
 
 		if (is_array ( $wsData ) && count($wsData)>65569) {
-		    throw new Bvb_Grid_Exception('Maximum number of recordsa allowed is 65569');
+		    throw new Bvb_Grid_Exception('Maximum number of records allowed is 65569');
 		}
 
 		$xml = '<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?>
@@ -117,7 +117,6 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
             throw new Exception('Nothing to do. Please specify download&&|save options');
         }
 
-
         if (empty($this->deploy['name'])) {
             $this->deploy['name'] = date('H_m_d_H_i_s');
         }
@@ -128,30 +127,27 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
         $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
 
-        if (! is_dir($this->deploy['dir'])) {
+        if (! is_dir($this->deploy['dir']) && $this->deploy['save']==1) {
             throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
         }
 
-        if (! is_writable($this->deploy['dir'])) {
+        if (! is_writable($this->deploy['dir']) && $this->deploy['save']==1) {
             throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
         }
 
-        file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".xls", $xml);
+
+        if ( $this->deploy['save'] == 1 ) {
+            file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".xls", $xml);
+        }
 
 
         if ($this->deploy['download'] == 1) {
             header ( 'Content-type: application/excel' );
             header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.xls"');
-            readfile($this->deploy['dir'] . $this->deploy['name'] . '.xls');
+            echo $xml;
         }
-
-        if ($this->deploy['save'] != 1) {
-            unlink($this->deploy['dir'] . $this->deploy['name'] . '.xls');
-        }
-
 
 		die ();
-
 	}
 
 }
