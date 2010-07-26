@@ -19,7 +19,7 @@
  */
 
 
-class Bvb_Grid_Filters_Render_Select extends Bvb_Grid_Filters_Render_RenderAbstract
+class Bvb_Grid_Filters_Render_Table_Select extends Bvb_Grid_Filters_Render_RenderAbstract
 {
 
     public function render ()
