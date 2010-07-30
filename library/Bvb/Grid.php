@@ -634,11 +634,17 @@ abstract class Bvb_Grid
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
 
-        $this->_filtersRenders = new Zend_Loader_PluginLoader();
-        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render', 'Bvb_Grid_Filters_Render');
+
+
 
         $deploy = explode('_', get_class($this));
         $this->_deployName = strtolower(end($deploy));
+
+        $renderDir = ucfirst($this->_deployName);
+
+
+        $this->_filtersRenders = new Zend_Loader_PluginLoader();
+        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/'.$renderDir, 'Bvb_Grid_Filters_Render_'.$renderDir);
 
     }
 
