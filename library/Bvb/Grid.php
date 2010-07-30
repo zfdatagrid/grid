@@ -2859,10 +2859,6 @@ abstract class Bvb_Grid
         $name = strtolower(end($deploy));
 
 
-        if ( isset($this->_options['deploy']) && is_array($this->_options['deploy']) ) {
-            $this->_options['deploy'][$name] = $options;
-        }
-
         if ( isset($this->_options['deploy'][$name]) && is_array($this->_options['deploy'][$name]) ) {
             if ( method_exists($this, '_applyConfigOptions') ) {
                 $this->_applyConfigOptions($this->_options['deploy'][$name], true);
