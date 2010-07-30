@@ -153,8 +153,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $colors = array('title' => '#000000', 'subtitle' => '#111111', 'footer' => '#111111', 'header' => '#AAAAAA', 'row1' => '#EEEEEE', 'row2' => '#FFFFFF', 'sqlexp' => '#BBBBBB', 'lines' => '#111111', 'hrow' => '#E4E4F6', 'text' => '#000000', 'filters' => '#F9EDD2', 'filtersBox' => '#DEDEDE');
 
-        $this->deploy['colors'] = array_merge($colors, $this->deploy['colors']);
-
+        $this->deploy['colors'] = array_merge($colors, (array)$this->deploy['colors']);
 
         $la = '';
 
