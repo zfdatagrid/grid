@@ -135,6 +135,6 @@ array('csv' => array($this, 'configG1PostCsv'))// do post config for Csv export
 
 
         ////////////////// 5. set ajax ID and process response if requested
-        $grid->ajax(get_class($grid));
+        $grid->setAjax(get_class($grid));
     }
 }

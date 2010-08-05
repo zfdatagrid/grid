@@ -79,6 +79,10 @@ class Bvb_Grid_Form
 
     protected $_onDeleteAddCondition = array();
 
+    protected $_deleteColumn = true;
+
+    protected $_editColumn = true;
+
 
     public function getForm ($subForm = null)
     {

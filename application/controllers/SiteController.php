@@ -23,6 +23,15 @@ class SiteController extends Zend_Controller_Action
 
     private $_db;
 
+    function teste()
+    {
+       echo "<pre>";
+
+       print_r(func_get_args());
+
+       echo '<br><br><br><br><br>';
+       die();
+    }
 
     /**
      * If a action don't exist, just redirect to the basic
@@ -107,9 +116,9 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->setExport(array('pdf', 'print',  'excel','wordx'));
+        $grid->setExport(array('pdf', 'csv','excel','wordx'));
         $grid->setView($view);
-        #$grid->saveParamsInSession(true);
+        $grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
@@ -185,6 +194,11 @@ class SiteController extends Zend_Controller_Action
         $grid->updateColumn('GovernmentForm', array('title' => 'Government Form'));
         $grid->updateColumn('HeadOfState', array('title' => 'Head Of State', 'hidden' => 1));
 
+        $grid->setPdfGridColumns(array('Continent','Population'));
+
+        $grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
+        $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
+
         $right = new Bvb_Grid_Extra_Column();
         $right->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
@@ -236,7 +250,7 @@ class SiteController extends Zend_Controller_Action
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Xml('http://zfdatagrid.com/feed/', 'channel,item'));
 
-        $grid->setNumberRecordsPerPage(10);
+        $grid->setRecordsPerPage(10);
 
         $grid->updateColumn('title', array('decorator' => '<a href="{{link}}">{{title}}</a>', 'style' => 'width:200px;'));
         $grid->updateColumn('pubDate', array('class' => 'width_200'));
@@ -278,7 +292,6 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->setShowOrderImages(false);
 
-        #$grid->updateColumn('LocalName',array('style'=>'width:500px;'));
 
         #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
         #$grid->setDefaultFiltersValues(array('Continent'=>'Europe'));
@@ -288,6 +301,10 @@ class SiteController extends Zend_Controller_Action
         #$grid->setDeployOptions(array('title'=>'My Custom Title','subtitle'=>date('Y-m-d')));
 
         #$grid->saveParamsInSession(true);
+
+
+        $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
+
 
         $this->view->pages = $grid->deploy();
 
@@ -306,7 +323,7 @@ class SiteController extends Zend_Controller_Action
         $select2 = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'GovernmentForm'));
         $grid2->query($select2);
         $grid2->setTemplate('outside', 'table');
-        $grid2->setNumberRecordsPerPage(10);
+        $grid2->setRecordsPerPage(10);
         $this->view->pages2 = $grid2->deploy();
 
         $this->render('index');
@@ -362,7 +379,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
 
-        $grid->setNumberRecordsPerPage(15);
+        $grid->setRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
 
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
@@ -391,7 +408,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setMassActions(array(array('url' => $grid->getUrl(), 'caption' => 'Remove (Nothing will happen)', 'confirm' => 'Are you sure?'), array('url' => $grid->getUrl() . '/nothing/happens', 'caption' => 'Some other action', 'confirm' => 'Another confirmation message?')));
 
-        $grid->setNumberRecordsPerPage(15);
+        $grid->setRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
@@ -529,7 +546,7 @@ class SiteController extends Zend_Controller_Action
     {
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('City')));
-        $grid->setNoFilters(1)->setNumberRecordsPerPage(14)->setTemplate('outside', 'table');
+        $grid->setNoFilters(1)->setRecordsPerPage(14)->setTemplate('outside', 'table');
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -547,7 +564,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
-        #$grid->setNumberRecordsPerPage(1200);
+        #$grid->setRecordsPerPage(1200);
 
         $grid->updateColumn('Name', array('title' => 'Country'));
         $grid->updateColumn('Continent', array('title' => 'Continent', 'hRow' => 1));
@@ -621,7 +638,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid = $this->grid();
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from(array('c' => 'Country'), array('Country' => 'Name', 'Continent', 'Population', 'GovernmentForm', 'HeadOfState'))->join(array('ct' => 'City'), 'c.Capital = ct.ID', array('Capital' => 'Name'))));
-        $grid->setNumberRecordsPerPage(15);
+        $grid->setRecordsPerPage(15);
 
         $cap = new Bvb_Grid_Column('Country');
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');

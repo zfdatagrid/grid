@@ -356,7 +356,7 @@ abstract class Bvb_Grid
      * Last name from deploy class (table|pdf|csv|etc...)
      * @var unknown_type
      */
-    protected  $_deployName = null;
+    protected $_deployName = null;
 
 
     /**
@@ -469,14 +469,17 @@ abstract class Bvb_Grid
 
         $this->_source = $source;
 
-        $this->getSource()->setCache($this->getCache());
+        $this->getSource()
+            ->setCache($this->getCache());
 
-        $tables = $this->getSource()->getMainTable();
+        $tables = $this->getSource()
+            ->getMainTable();
 
         $this->_data['table'] = $tables['table'];
         $this->_crudTable = $this->_data['table'];
 
-        $fields = $this->getSource()->buildFields();
+        $fields = $this->getSource()
+            ->buildFields();
 
         foreach ( $fields as $key => $field ) {
             $this->updateColumn($key, $field);
@@ -593,21 +596,20 @@ abstract class Bvb_Grid
         }
 
 
-
         $this->_options = $options;
 
         //Get the controller params and baseurl to use with filters
-        $this->setParams(Zend_Controller_Front::getInstance()->getRequest()->getParams());
+        $this->setParams(Zend_Controller_Front::getInstance()->getRequest()
+            ->getParams());
         $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
 
-        foreach (array('massActionsAll_','gridAction_','send_') as $value)
-        {
+        foreach ( array('massActionsAll_', 'gridAction_', 'send_') as $value ) {
             $this->removeParam($value);
         }
 
-        foreach (Zend_Controller_Front::getInstance()->getRequest()->getParams() as $key=> $value)
-        {
-            if(is_array($value)){
+        foreach ( Zend_Controller_Front::getInstance()->getRequest()
+            ->getParams() as $key => $value ) {
+            if ( is_array($value) ) {
                 $this->removeParam($key);
             }
         }
@@ -634,9 +636,6 @@ abstract class Bvb_Grid
         $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
 
 
-
-
-
         $deploy = explode('_', get_class($this));
         $this->_deployName = strtolower(end($deploy));
 
@@ -644,15 +643,16 @@ abstract class Bvb_Grid
 
 
         $this->_filtersRenders = new Zend_Loader_PluginLoader();
-        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/'.$renderDir, 'Bvb_Grid_Filters_Render_'.$renderDir);
+        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/' . $renderDir, 'Bvb_Grid_Filters_Render_' . $renderDir);
 
     }
 
 
-    public function getRequest()
+    public function getRequest ()
     {
         return Zend_Controller_Front::getInstance()->getRequest();
     }
+
 
     /**
      * Set view object
@@ -742,7 +742,8 @@ abstract class Bvb_Grid
         }
 
         if ( $this->getTranslator() ) {
-            return $this->getTranslator()->translate($message);
+            return $this->getTranslator()
+                ->translate($message);
         }
 
         return $message;
@@ -751,7 +752,7 @@ abstract class Bvb_Grid
 
     public function getTranslator ()
     {
-      return Bvb_Grid_Translator::getInstance()->getTranslator();
+        return Bvb_Grid_Translator::getInstance()->getTranslator();
     }
 
 
@@ -780,7 +781,8 @@ abstract class Bvb_Grid
             $meth[0] = strtolower($meth[0]);
 
             if ( is_object($this->getSource()) && method_exists($this->getSource(), $meth) ) {
-                $this->getSource()->$meth();
+                $this->getSource()
+                    ->$meth();
                 return $this;
             }
         }
@@ -842,7 +844,7 @@ abstract class Bvb_Grid
 
     public function updateColumn ($field, $options = array())
     {
-        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']) ) ) {
+        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields'])) ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
              * @var $_updateColumnQueue Bvb_Grid
@@ -897,7 +899,8 @@ abstract class Bvb_Grid
      */
     public function addFormatterDir ($dir, $prefix)
     {
-        $this->_formatter->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+        $this->_formatter
+            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
         return $this;
     }
 
@@ -924,7 +927,8 @@ abstract class Bvb_Grid
             $options = array();
         }
 
-        $class = $this->_formatter->load($result);
+        $class = $this->_formatter
+            ->load($result);
 
 
         $t = new $class($options);
@@ -962,6 +966,7 @@ abstract class Bvb_Grid
         return $this;
     }
 
+
     /**
      * Number of records to show per page
      * @param $number
@@ -995,7 +1000,7 @@ abstract class Bvb_Grid
 
         //Build an array to know filters values
         $filtersValues = array();
-        $fields  = $this->getFields();
+        $fields = $this->getFields();
 
         $filters = array();
         foreach ( $this->_ctrlParams as $key => $value ) {
@@ -1004,15 +1009,15 @@ abstract class Bvb_Grid
 
                 $name = explode('[', $key);
 
-                if ( in_array($name[0].$this->getGridId(), $fields) ) {
-                    $filters[$name[0].$this->getGridId()][substr($name[1], 0, - 1)] = $value;
+                if ( in_array($name[0] . $this->getGridId(), $fields) ) {
+                    $filters[$name[0] . $this->getGridId()][substr($name[1], 0, - 1)] = $value;
                 }
 
             } else {
 
                 if ( in_array($key, $fields) ) {
                     $filters[$key] = $value;
-                } elseif(in_array(substr($key,0, -strlen($this->getGridId())), $fields)) {
+                } elseif ( in_array(substr($key, 0, - strlen($this->getGridId())), $fields) ) {
                     if ( $this->getGridId() != '' && substr($key, - strlen($this->getGridId())) == $this->getGridId() ) {
                         $key = substr($key, 0, - strlen($this->getGridId()));
                     }
@@ -1022,7 +1027,7 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( count($filters)>0) {
+        if ( count($filters) > 0 ) {
 
             foreach ( $filters as $key => $value ) {
                 if ( is_array($value) ) {
@@ -1061,19 +1066,22 @@ abstract class Bvb_Grid
                             $this->_filters[$key]['callback']['params'] = array();
                         }
 
-                        $this->_filters[$key]['callback']['params'] = array_merge($this->_filters[$key]['callback']['params'], array('field' => $key, 'value' => $filter, 'select' => $this->getSource()->getSelectObject()));
+                        $this->_filters[$key]['callback']['params'] = array_merge($this->_filters[$key]['callback']['params'], array('field' => $key, 'value' => $filter, 'select' => $this->getSource()
+                            ->getSelectObject()));
 
                         $result = call_user_func($this->_filters[$key]['callback']['function'], $this->_filters[$key]['callback']['params']);
 
                     } elseif ( isset($this->_data['fields'][$key]['search']) && is_array($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search']['fulltext'] == true ) {
 
-                        $this->getSource()->addFullTextSearch($filter, $this->_data['fields'][$key]);
+                        $this->getSource()
+                            ->addFullTextSearch($filter, $this->_data['fields'][$key]);
 
                     } else {
 
                         $op = $this->getFilterOp($key, $filter);
 
-                        $this->getSource()->addCondition($op['filter'], $op['op'], $this->_data['fields'][$key]);
+                        $this->getSource()
+                            ->addCondition($op['filter'], $op['op'], $this->_data['fields'][$key]);
                     }
 
                     $filtersValues[$key] = $oldFilter;
@@ -1088,14 +1096,16 @@ abstract class Bvb_Grid
 
                     if ( $render->hasConditions() ) {
                         $cond = $render->getConditions();
-                        $render->setSelect($this->getSource()->getSelectObject());
+                        $render->setSelect($this->getSource()
+                            ->getSelectObject());
 
                         foreach ( $filter as $nkey => $value ) {
 
                             if ( strlen($value) > 0 ) {
                                 $oldValue = $value;
                                 $value = $render->normalize($value, $nkey);
-                                $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
+                                $this->getSource()
+                                    ->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
                                 $filtersValues[$key][$nkey] = $oldValue;
                             }
 
@@ -1116,27 +1126,23 @@ abstract class Bvb_Grid
 
         $this->_applyExternalFilters();
 
-        if(count($this->_filtersValues)>0 && $this->_paramsInSession===true)
-        {
+        if ( count($this->_filtersValues) > 0 && $this->_paramsInSession === true ) {
             $this->_sessionParams->filters = $this->_filtersValues;
         }
 
         return $this;
     }
 
-    protected function _applyExternalFilters()
+
+    protected function _applyExternalFilters ()
     {
-        if(count($this->_externalFilters)==0)
-        return false;
+        if ( count($this->_externalFilters) == 0 ) return false;
 
 
-        foreach ($this->_externalFilters as $id=>$callback)
-        {
-            if($this->getParam($id))
-            call_user_func_array($callback,array($id,$this->getParam($id),$this->getSelect()));
+        foreach ( $this->_externalFilters as $id => $callback ) {
+            if ( $this->getParam($id) ) call_user_func_array($callback, array($id, $this->getParam($id), $this->getSelect()));
 
-            if($this->getParam($id))
-            $this->_filtersValues[$id] = $this->getParam($id);
+            if ( $this->getParam($id) ) $this->_filtersValues[$id] = $this->getParam($id);
         }
 
     }
@@ -1216,41 +1222,39 @@ abstract class Bvb_Grid
         $orderf = strtoupper(end($order1));
 
 
-        if( $this->_paramsInSession === true )
-        {
-            if($this->getParam('start') ===false )
-            {
-                $start = (int)$this->_sessionParams->start;
-                $this->setParam('start'.$this->getGridId(),$start);
-            }else{
+        if ( $this->_paramsInSession === true ) {
+            if ( $this->getParam('start') === false ) {
+                $start = (int) $this->_sessionParams->start;
+                $this->setParam('start' . $this->getGridId(), $start);
+            } else {
                 $this->_sessionParams->start = $start;
             }
         }
 
 
-
-        if ( $orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order))) {
+        if ( $orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order)) ) {
             array_pop($order1);
             $order_field = implode("_", $order1);
 
             #$this->getSource()->buildQueryOrder($order_field, $orderf);
 
+
             if ( $this->_paramsInSession === true ) {
 
-                if($this->getParam('noOrder'))
-                {
-                    $this->_sessionParams->order=null;
+                if ( $this->getParam('noOrder') ) {
+                    $this->_sessionParams->order = null;
                 }
 
-                if ( is_array($this->_sessionParams->order) && !$this->getParam('order')) {
+                if ( is_array($this->_sessionParams->order) && ! $this->getParam('order') ) {
                     $order_field = $this->_sessionParams->order['field'];
                     $orderf = $this->_sessionParams->order['order'];
-                    $this->setParam('order'.$this->getGridId(), $order_field . '_' . $orderf);
+                    $this->setParam('order' . $this->getGridId(), $order_field . '_' . $orderf);
                 }
             }
 
             if ( in_array($order_field, $this->_fieldsOrder) ) {
-                $this->getSource()->buildQueryOrder($order_field, $orderf, true);
+                $this->getSource()
+                    ->buildQueryOrder($order_field, $orderf, true);
 
                 if ( $this->_paramsInSession === true ) {
                     $this->_sessionParams->order = array('field' => $order_field, 'order' => $orderf);
@@ -1260,11 +1264,13 @@ abstract class Bvb_Grid
         }
 
         if ( strlen($this->_fieldHorizontalRow) > 0 ) {
-            $this->getSource()->buildQueryOrder($this->_fieldHorizontalRow, 'ASC', true);
+            $this->getSource()
+                ->buildQueryOrder($this->_fieldHorizontalRow, 'ASC', true);
         }
 
         if ( false === $this->_forceLimit ) {
-            $this->getSource()->buildQueryLimit($this->getResultsPerPage(), $start);
+            $this->getSource()
+                ->buildQueryLimit($this->getResultsPerPage(), $start);
         }
 
         return true;
@@ -1279,10 +1285,10 @@ abstract class Bvb_Grid
 
         $perPage = (int) $this->getParam('perPage', 0);
 
-        if($this->_paramsInSession === true && $this->getParam('perPage')===false ){
-			$perPage = (int) $this->_sessionParams->perPage;
-			$this->setParam('perPage'.$this->getGridId(),$perPage);
-	 	}
+        if ( $this->_paramsInSession === true && $this->getParam('perPage') === false ) {
+            $perPage = (int) $this->_sessionParams->perPage;
+            $this->setParam('perPage' . $this->getGridId(), $perPage);
+        }
 
 
         if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationOptions) ) {
@@ -1300,6 +1306,7 @@ abstract class Bvb_Grid
 
     }
 
+
     /**
      * Returns the url, without the param(s) specified
      *
@@ -1316,25 +1323,23 @@ abstract class Bvb_Grid
         $paramsGet = array('perPage', 'order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
 
 
-
         $params = $this->getAllParams();
-
 
 
         if ( in_array('filters', $situation) ) {
 
-            $fields = array_merge($this->getFields(),array_keys($this->_externalFilters));
+            $fields = array_merge($this->getFields(), array_keys($this->_externalFilters));
 
             foreach ( $fields as $field ) {
-                if ( isset($params[$field.$this->getGridId()]) ) {
-                    unset($params[$field.$this->getGridId()]);
+                if ( isset($params[$field . $this->getGridId()]) ) {
+                    unset($params[$field . $this->getGridId()]);
                 }
             }
             foreach ( $params as $key => $value ) {
                 if ( stripos($key, '[') ) {
                     $fl = explode('[', $key);
-                    if ( in_array(rtrim($fl[0],$this->getGridId()), $fields) ) {
-                        unset($params[rtrim($fl[0],$this->getGridId()).'['.$fl[1]]);
+                    if ( in_array(rtrim($fl[0], $this->getGridId()), $fields) ) {
+                        unset($params[rtrim($fl[0], $this->getGridId()) . '[' . $fl[1]]);
                     }
                 }
             }
@@ -1350,7 +1355,6 @@ abstract class Bvb_Grid
         }
 
 
-
         $params_clean = $params;
         unset($params_clean['controller']);
         unset($params_clean['module']);
@@ -1359,7 +1363,7 @@ abstract class Bvb_Grid
 
         if ( is_array($this->_filters) ) {
             foreach ( $this->_filters as $key => $value ) {
-                if (is_array($key) && isset($key['render']) ) {
+                if ( is_array($key) && isset($key['render']) ) {
                     unset($params_clean[$key]);
                 }
             }
@@ -1367,11 +1371,13 @@ abstract class Bvb_Grid
 
         $url = '';
         foreach ( $params_clean as $key => $param ) {
-            if ( is_array($param) || ($key=='perPage' && $value==0) || ($key=='start' && $value==0) ) {
+            if ( is_array($param) || ($key == 'perPage' && $value == 0) || ($key == 'start' && $value == 0) ) {
                 continue;
             }
 
-           $url .= "/" . $this->getView()->escape($key) . "/" . $this->getView()->escape($param);
+            $url .= "/" . $this->getView()
+                ->escape($key) . "/" . $this->getView()
+                ->escape($param);
         }
 
 
@@ -1549,7 +1555,8 @@ abstract class Bvb_Grid
         $titles = $this->_fields;
 
         if ( ! $this->getParam('noOrder') ) {
-            $selectOrder = $this->getSource()->getSelectOrder();
+            $selectOrder = $this->getSource()
+                ->getSelectOrder();
 
             if ( count($selectOrder) == 1 ) {
                 $this->setParam('order' . $this->getGridId(), $selectOrder[0] . '_' . strtoupper($selectOrder[1]));
@@ -1756,7 +1763,8 @@ abstract class Bvb_Grid
         }
 
         $name = $value['name'];
-        $t = $this->getView()->getHelper($name);
+        $t = $this->getView()
+            ->getHelper($name);
         $re = new ReflectionMethod($t, $name);
 
         if ( isset($value['params']) && is_array($value['params']) ) {
@@ -2018,7 +2026,8 @@ abstract class Bvb_Grid
                 $value['value'] = $key;
             }
 
-            $resultExp = $this->getSource()->getSqlExp($value, $where);
+            $resultExp = $this->getSource()
+                ->getSqlExp($value, $where);
 
             if ( ! isset($value['format']) && isset($this->_data['fields'][$key]['format']) ) {
                 $resultExp = $this->_applyFormat($resultExp, $this->_data['fields'][$key]['format']);
@@ -2165,11 +2174,11 @@ abstract class Bvb_Grid
         return $filters;
     }
 
-    public function hasFilters()
+
+    public function hasFilters ()
     {
 
-        if(count(array_intersect_key(array_combine($this->getFields(),$this->getFields()),$this->_ctrlParams))>0)
-        return true;
+        if ( count(array_intersect_key(array_combine($this->getFields(), $this->getFields()), $this->_ctrlParams)) > 0 ) return true;
 
         return false;
 
@@ -2182,12 +2191,10 @@ abstract class Bvb_Grid
     protected function _buildDefaultFiltersValues ()
     {
 
-        if($this->_paramsInSession === true)
-        {
+        if ( $this->_paramsInSession === true ) {
 
-            if($this->getParam('noFilters'))
-            {
-                $this->_sessionParams->filters=null;
+            if ( $this->getParam('noFilters') ) {
+                $this->_sessionParams->filters = null;
             }
         }
 
@@ -2221,7 +2228,7 @@ abstract class Bvb_Grid
                     }
                 }
 
-                if (is_array($this->_defaultFilters) &&  array_key_exists($key, $this->_defaultFilters) ) {
+                if ( is_array($this->_defaultFilters) && array_key_exists($key, $this->_defaultFilters) ) {
                     $this->_ctrlParams[$key] = $this->_defaultFilters[$key];
                 }
             }
@@ -2244,19 +2251,17 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('Please specify your source');
         }
 
-        if($this->_paramsInSession ===true)
-        {
+        if ( $this->_paramsInSession === true ) {
             $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
         }
 
         //Disable ajax for CRUD operations
-        if(!is_null($this->_crud))
-        {
+        if ( ! is_null($this->_crud) ) {
             $this->setAjax(false);
         }
 
         //Add columns in queue
-        foreach ( $this->_updateColumnQueue as $field=>$options ) {
+        foreach ( $this->_updateColumnQueue as $field => $options ) {
             $this->updateColumn($field, $options);
         }
 
@@ -2291,14 +2296,11 @@ abstract class Bvb_Grid
                 }
             }
 
-            foreach (array_keys($this->_extraFields) as $value)
-            {
-               if($value=='ZFG_MASS_ACTIONS')
-               continue;
+            foreach ( array_keys($this->_extraFields) as $value ) {
+                if ( $value == 'ZFG_MASS_ACTIONS' ) continue;
 
 
-                if(!in_array($value,$this->_gridColumns))
-                {
+                if ( ! in_array($value, $this->_gridColumns) ) {
                     unset($this->_extraFields[$value]);
                 }
             }
@@ -2306,7 +2308,8 @@ abstract class Bvb_Grid
         }
 
         if ( $this->_isDetail == true ) {
-            $result = $this->getSource()->fetchDetail($this->getPkFromUrl());
+            $result = $this->getSource()
+                ->fetchDetail($this->getPkFromUrl());
             if ( $result == false ) {
                 $this->_gridSession->message = $this->__('Record Not Found');
                 $this->_gridSession->_noForm = 1;
@@ -2316,8 +2319,10 @@ abstract class Bvb_Grid
         }
 
 
-        if ( count($this->getSource()->getSelectOrder()) > 0 && ! $this->getParam('order') ) {
-            $norder = $this->getSource()->getSelectOrder();
+        if ( count($this->getSource()
+            ->getSelectOrder()) > 0 && ! $this->getParam('order') ) {
+            $norder = $this->getSource()
+                ->getSelectOrder();
 
             if ( ! $norder instanceof Zend_Db_Expr ) {
                 $this->setParam('order' . $this->getGridId(), $norder[0] . '_' . strtoupper($norder[1]));
@@ -2340,13 +2345,16 @@ abstract class Bvb_Grid
         }
 
         if ( $this->getParam('noOrder') == 1 ) {
-            $this->getSource()->resetOrder();
+            $this->getSource()
+                ->resetOrder();
         }
 
-        $result = $this->getSource()->execute();
+        $result = $this->getSource()
+            ->execute();
 
         if ( $this->_forceLimit === false ) {
-            $resultCount = $this->getSource()->getTotalRecords();
+            $resultCount = $this->getSource()
+                ->getTotalRecords();
         } else {
             $resultCount = $this->_forceLimit;
             if ( count($result) < $resultCount ) {
@@ -2412,7 +2420,8 @@ abstract class Bvb_Grid
             $this->_templates[$type] = new Zend_Loader_PluginLoader();
         }
 
-        $this->_templates[$type]->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/', $type);
+        $this->_templates[$type]
+            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/', $type);
         return $this;
     }
 
@@ -2430,7 +2439,8 @@ abstract class Bvb_Grid
         $options['userDefined'] = $tmp;
 
 
-        $class = $this->_templates[$output]->load($template, $output);
+        $class = $this->_templates[$output]
+            ->load($template, $output);
 
         if ( isset($this->_options['template'][$output][$template]) ) {
             $tpOptions = array_merge($this->_options['template'][$output][$template], $options);
@@ -2439,7 +2449,9 @@ abstract class Bvb_Grid
         }
 
 
-        $tpInfo = array('colspan' => $this->_colspan, 'charEncoding' => $this->getCharEncoding(), 'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output), 'class' => $this->_templates[$output]->getClassName($template, $output));
+        $tpInfo = array('colspan' => $this->_colspan, 'charEncoding' => $this->getCharEncoding(), 'name' => $template, 'dir' => $this->_templates[$output]
+            ->getClassPath($template, $output), 'class' => $this->_templates[$output]
+            ->getClassName($template, $output));
 
         $this->_temp[$output] = new $class();
 
@@ -2524,7 +2536,7 @@ abstract class Bvb_Grid
      */
     public function getField ($field)
     {
-        return isset($this->_data['fields'][$field])?$this->_data['fields'][$field]:false;
+        return isset($this->_data['fields'][$field]) ? $this->_data['fields'][$field] : false;
     }
 
 
@@ -2659,7 +2671,8 @@ abstract class Bvb_Grid
         }
 
         if ( false === $requestData ) {
-            $requestData = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+            $requestData = Zend_Controller_Front::getInstance()->getRequest()
+                ->getParams();
         }
 
         if ( ! isset($requestData['_exportTo' . $id]) ) {
@@ -2759,6 +2772,7 @@ abstract class Bvb_Grid
                 // only export name is passed, we need to get default option
                 $name = $defs;
                 $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
+
 
 
                 if ( Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults') ) {
@@ -2895,7 +2909,7 @@ abstract class Bvb_Grid
      */
     public function setGridId ($id)
     {
-        $this->_gridId = trim(preg_replace("/[^a-zA-Z0-9_]/",'_',$id),'_');
+        $this->_gridId = trim(preg_replace("/[^a-zA-Z0-9_]/", '_', $id), '_');
         return $this;
     }
 
@@ -2906,9 +2920,11 @@ abstract class Bvb_Grid
      */
     public function getGridId ($forceId = false)
     {
-        if($forceId === true && strlen($this->_gridId)==0)
-        {
-            return $this->getRequest()->getActionName().'_'.$this->getRequest()->getControllerName().'_'.$this->getRequest()->getModuleName();
+        if ( $forceId === true && strlen($this->_gridId) == 0 ) {
+            return $this->getRequest()
+                ->getActionName() . '_' . $this->getRequest()
+                ->getControllerName() . '_' . $this->getRequest()
+                ->getModuleName();
         }
         return $this->_gridId;
     }
@@ -3193,7 +3209,7 @@ abstract class Bvb_Grid
 
     public function setRouteUrl ($url)
     {
-        $this->_routeUrl = (string) ltrim($url,'/');
+        $this->_routeUrl = (string) ltrim($url, '/');
         return $this;
     }
 
@@ -3217,11 +3233,11 @@ abstract class Bvb_Grid
             $toRender = $render;
         }
 
-        $classname = $this->_filtersRenders->load(ucfirst($toRender));
+        $classname = $this->_filtersRenders
+            ->load(ucfirst($toRender));
         $class = new $classname();
 
-        if(!$class instanceof  Bvb_Grid_Filters_Render_RenderInterface)
-        {
+        if ( ! $class instanceof Bvb_Grid_Filters_Render_RenderInterface ) {
             throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
         }
 
@@ -3236,7 +3252,8 @@ abstract class Bvb_Grid
 
     public function addFiltersRenderDir ($dir, $prefix)
     {
-        $this->_filtersRenders->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+        $this->_filtersRenders
+            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
         return $this;
     }
 
@@ -3252,7 +3269,8 @@ abstract class Bvb_Grid
      */
     public function getSelect ()
     {
-        return $this->getSource()->getSelectObject();
+        return $this->getSource()
+            ->getSelectObject();
     }
 
 
@@ -3284,19 +3302,21 @@ abstract class Bvb_Grid
         return $this;
     }
 
-    public function setShowFiltersInExport($show)
+
+    public function setShowFiltersInExport ($show)
     {
         $this->_showFiltersInExport = $show;
 
         return $this;
     }
 
+
     /**
      * Whetever to save or not in session filters and order
      * This is based on gridId, if not provided, action_controller_module
      * @param bool $status
      */
-    public function saveParamsInSession($status)
+    public function saveParamsInSession ($status)
     {
         $this->_paramsInSession = (bool) $status;
         return $this;
@@ -3329,19 +3349,21 @@ abstract class Bvb_Grid
         return $this;
     }
 
+
     /**
      *Reset Deploy Options
      */
-    public function clearDeployOptions()
+    public function clearDeployOptions ()
     {
         $this->deploy = array();
         return $this;
     }
 
+
     /**
      * retrieve deploy options
      */
-    public function getDeployOptions()
+    public function getDeployOptions ()
     {
         return $this->deploy;
     }
@@ -3375,21 +3397,27 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( count($this->getSource()->getPrimaryKey($this->_data['table'])) == 0 ) {
+        if ( count($this->getSource()
+            ->getPrimaryKey($this->_data['table'])) == 0 ) {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 
         $pk = '';
-        foreach ( $this->getSource()->getPrimaryKey($this->_data['table']) as $value ) {
+        foreach ( $this->getSource()
+            ->getPrimaryKey($this->_data['table']) as $value ) {
             $aux = explode('.', $value);
             $pk .= end($aux) . '-';
         }
 
-        return  rtrim($pk, '-');
+        return rtrim($pk, '-');
 
     }
 
 
+    /**
+     * Adds a new mass action option
+     * @param $options
+     */
     public function addMassActions (array $options)
     {
         if ( $this->_hasMassActions !== true ) {

@@ -1649,6 +1649,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $urlEdit = $url;
             }
 
+            if($this->_crud->getEditColumn() !==false)
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
 
         }
@@ -1661,8 +1662,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
             if ( $this->_deleteConfirmationPage == true ) {
+                if($this->_crud->getDeleteColumn() !==false)
                 array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->getGridId() . "/1/gridRemove" . $this->getGridId() . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
+                if($this->_crud->getDeleteColumn() !==false)
                 array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
             }
 
@@ -2461,6 +2464,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_crudOptions['deleteAddCondition'] = $crud->getOnDeleteAddCondition();
 
         $this->_form = $crud->getForm();
+
 
         if ( isset($crud->options['callbackBeforeDelete']) ) {
             $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
