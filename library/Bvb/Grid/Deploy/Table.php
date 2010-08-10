@@ -2829,9 +2829,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      * @param $condition
      * @param $class
      */
-    public function addClassRowCondition ($column, $condition, $class)
+    public function addClassRowCondition ($condition, $class, $else = '')
     {
-        $this->_classRowCondition[$column][] = array('condition' => $condition, 'class' => $class);
+        $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
 
@@ -2857,8 +2857,40 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      */
     public function setClassRowCondition ($condition, $class, $else = '')
     {
-        $this->_classRowCondition = array();
-        $this->_classRowCondition[] = array('condition' => $condition, 'class' => $class, 'else' => $else);
+        $this->clearClassRowConditions();
+        $this->addClassRowCondition($condition, $class,$else);
+        return $this;
+    }
+
+
+    /**
+     * Clears all row conditions
+     */
+    public function clearClassRowConditions ()
+    {
+        $this->_classCellCondition = array();
+        return $this;
+    }
+
+
+    /**
+     * Clears a given class cell condition
+     * @param $cell
+     */
+    public function clearClassCellConditions ($cell)
+    {
+        $this->_classCellCondition[$cell] = array();
+        return $this;
+    }
+
+
+    /**
+     * Clears all class cels conditions
+     * @param $cell
+     */
+    public function clearClassCellsConditions ($cell)
+    {
+        $this->_classCellCondition = array();
         return $this;
     }
 
@@ -2869,9 +2901,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      * @param $condition
      * @param $class
      */
-    public function setClassCellCondition ($column, $condition, $class, $else)
+    public function setClassCellCondition ( $column, $condition, $class, $else)
     {
-        $this->_classCellCondition = array();
+        $this->clearClassRowConditions();
         $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
