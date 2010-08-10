@@ -1239,6 +1239,7 @@ abstract class Bvb_Grid
             #$this->getSource()->buildQueryOrder($order_field, $orderf);
 
 
+
             if ( $this->_paramsInSession === true ) {
 
                 if ( $this->getParam('noOrder') ) {
@@ -2319,15 +2320,6 @@ abstract class Bvb_Grid
         }
 
 
-        if ( count($this->getSource()
-            ->getSelectOrder()) > 0 && ! $this->getParam('order') ) {
-            $norder = $this->getSource()
-                ->getSelectOrder();
-
-            if ( ! $norder instanceof Zend_Db_Expr ) {
-                $this->setParam('order' . $this->getGridId(), $norder[0] . '_' . strtoupper($norder[1]));
-            }
-        }
 
         $this->_buildDefaultFiltersValues();
 
