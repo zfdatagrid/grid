@@ -364,7 +364,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     }
 
 
-    public function getMassActionsIds ($table)
+    public function getMassActionsIds ($table,$fields)
     {
 
         $select = clone $this->_select;
@@ -374,7 +374,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::LIMIT_COUNT);
         $select->reset(Zend_Db_Select::ORDER);
 
-        $pks = $this->getPrimaryKey($table);
+
+        if(count($fields)==0)
+        {
+            $pks = $this->getPrimaryKey($table);
+        }else{
+            $pks = $fields;
+        }
 
         if ( count($pks) > 1 ) {
             $concat = '';

@@ -436,6 +436,14 @@ abstract class Bvb_Grid
 
 
     /**
+     *
+     * Columns that should be return when submiting the form
+     * @var array
+     */
+    protected $_massActionsFields = array();
+
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
@@ -3374,11 +3382,12 @@ abstract class Bvb_Grid
     }
 
 
-    public function setMassActions (array $options)
+    public function setMassActions (array $options,array $fields)
     {
 
         $this->_hasMassActions = true;
         $this->_massActions = $options;
+        $this->_massActionsFields = $fields;
 
         foreach ( $options as $value ) {
             if ( ! isset($value['url']) || ! isset($value['caption']) ) {
@@ -3386,7 +3395,7 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( count($this->getSource()
+        if (count($fields)==0 &&  count($this->getSource()
             ->getPrimaryKey($this->_data['table'])) == 0 ) {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
@@ -3407,10 +3416,11 @@ abstract class Bvb_Grid
      * Adds a new mass action option
      * @param $options
      */
-    public function addMassActions (array $options)
+    public function addMassActions (array $options, $fields = null)
     {
         if ( $this->_hasMassActions !== true ) {
-            return $this->setMassAction($options);
+            return $this->setMassActions($options, (array) $fields);
+
         }
 
         foreach ( $options as $value ) {
@@ -3420,6 +3430,11 @@ abstract class Bvb_Grid
         }
 
         $this->_massActions = array_merge($options, $this->_massActions);
+
+        if(is_array($fields))
+        {
+            $this->_massActionsFields = $fields;
+        }
 
         return $this;
     }

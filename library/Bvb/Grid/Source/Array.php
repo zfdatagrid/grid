@@ -451,7 +451,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
-    public function getMassActionsIds ($table)
+    public function getMassActionsIds ($table,$fields)
     {
         if(!$pk = $this->getPrimaryKey())
         {

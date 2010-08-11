@@ -322,5 +322,5 @@ interface Bvb_Grid_Source_SourceInterface
      * This is necessary for mass actions
      * @param $table
      */
-    public function getMassActionsIds ($table);
+     public function getMassActionsIds ($table,$fields);
 }

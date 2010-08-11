@@ -3122,10 +3122,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     }
 
 
-    public function setMassActions (array $options)
+    public function setMassActions (array $options, array $fields = array())
     {
 
-        $pk = parent::setMassActions($options);
+        $pk = parent::setMassActions($options,$fields);
 
         $left = new Bvb_Grid_Extra_Column();
         $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='{{{$pk}}}' >");
@@ -3155,7 +3155,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $currentRecords = $this->getTotalRecords();
         }
 
-        $ids = $this->getSource()->getMassActionsIds($this->_data['table']);
+
+        $ids = $this->getSource()->getMassActionsIds($this->_data['table'],$this->_massActionsFields);
 
         $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
         $return .= '<form style="padding:0;margin:0;" method="post" action="" id="massActions_' . $this->getGridId() . '" name="massActions_' . $this->getGridId() . '">';
