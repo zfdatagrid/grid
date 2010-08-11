@@ -1392,13 +1392,14 @@ abstract class Bvb_Grid
             $finalUrl = $this->getRouteUrl();
         } else {
 
-            if ( Zend_Controller_Front::getInstance()->getDefaultModule() != $params['module'] ) {
-                $urlPrefix = $params['module'] . "/";
-            } else {
-                $urlPrefix = '';
-            }
-
-            $finalUrl = $urlPrefix . $params['controller'] . $action;
+//            if ( Zend_Controller_Front::getInstance()->getDefaultModule() != $params['module'] ) {
+//                $urlPrefix = $params['module'] . "/";
+//            } else {
+//                $urlPrefix = '';
+//            }
+//
+//            $finalUrl = $urlPrefix . $params['controller'] . $action;
+            $finalUrl = $params['module'] . "/" . $params['controller'] . $action;
         }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
@@ -2691,23 +2692,12 @@ abstract class Bvb_Grid
             $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
 
-
-            if ( Zend_Version::compareVersion('1.8.0') == 1 ) {
-                if ( Zend_Loader::autoload($className) ) {
-                    $grid = new $className($options);
-                } else {
-                    $grid = new $defaultClass($options);
-                    $lClass = $defaultClass;
-                }
-            } else {
-
                 if ( Zend_Loader_Autoloader::autoload($className) ) {
                     $grid = new $className($options);
                 } else {
                     $grid = new $defaultClass($options);
                     $lClass = $defaultClass;
                 }
-            }
         }
 
         // add the powerfull configuration callback function
