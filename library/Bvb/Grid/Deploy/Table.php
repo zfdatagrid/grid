@@ -866,7 +866,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
          */
 
 
-        if ( count($this->_filters) > 0 && ($this->getInfo('noOrder') != 1 && $this->getInfo('noFilters') != 1) ) {
+
+        #if ( count($this->_filters) > 0 && ($this->getInfo('noOrder') != 1 && $this->getInfo('noFilters') != 0) ) {
+        if ( count($this->_filters) > 0 ) {
 
             $url = $this->getUrl(array('filters', 'noFilters'));
             $url2 = $this->getUrl(array('order', 'noOrder'));
@@ -916,7 +918,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             //Replace values
-            if ( ($this->getParam('noFilters') != 1 && $this->getInfo('noOrder') != 1) && ($this->getParam('add') != 1 && $this->getParam('edit') != 1) ) {
+            if ( ( $this->getInfo('noOrder') != 1) && ($this->getParam('add') != 1 && $this->getParam('edit') != 1) ) {
 
 
                 if ( strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false ) {
@@ -2401,7 +2403,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
             foreach ( $form->getElements() as $element ) {
                 if ( $element->helper == 'formFile' ) {
-
                     if ( $crud->getUseDecorators() === true ) $element->setDecorators($crud->getFileDecorator());
                 }
             }
