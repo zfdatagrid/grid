@@ -100,7 +100,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         // TODO I don't understand why parent::__constructor will not set this automaticaly,
         // what if it would be loaded from config ?
-        $this->deploy = $options['deploy'][$this->_deployName];
+        $this->_deploy = $options['deploy'][$this->_deployName];
 
          if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
             // check if this kind of export is alowed
@@ -233,11 +233,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         }
         if ($this->actionEnabled('store')) {
             // open file handler
-            $this->_outFile = fopen($this->deploy['dir'] . $this->getFileName(), "w");
+            $this->_outFile = fopen($this->_deploy['dir'] . $this->getFileName(), "w");
         }
 
         // export header
-        if (!(isset($this->deploy['skipHeaders']) && $this->deploy['skipHeaders'])) {
+        if (!(isset($this->_deploy['skipHeaders']) && $this->_deploy['skipHeaders'])) {
             $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles()));
         }
         $i = 0;
@@ -271,13 +271,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected function _prepareOptions()
     {
         // apply options
-        if (isset($this->deploy['set_time_limit'])) {
+        if (isset($this->_deploy['set_time_limit'])) {
             // script needs time to proces huge amount of data (important)
-            set_time_limit($this->deploy['set_time_limit']);
+            set_time_limit($this->_deploy['set_time_limit']);
         }
-        if (isset($this->deploy['memory_limit'])) {
+        if (isset($this->_deploy['memory_limit'])) {
             // adjust memory_limit if needed (not very important)
-            ini_set('memory_limit', $this->deploy['memory_limit']);
+            ini_set('memory_limit', $this->_deploy['memory_limit']);
         }
     }
 
@@ -290,7 +290,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     {
         if ($this->actionEnabled('download')) {
             // if we want to upload data then we should do it now, deploy will die if needed
-            $this->deploy();
+            $this->_deploy();
         }
         return $this;
     }
@@ -304,7 +304,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function actionEnabled($action)
     {
-        return isset($this->deploy[$action])?$this->deploy[$action]:false;
+        return isset($this->_deploy[$action])?$this->_deploy[$action]:false;
     }
 
 }

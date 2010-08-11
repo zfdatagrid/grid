@@ -105,48 +105,47 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 		$xml .= '</Workbook>';
 
 
-        if (! isset($this->deploy['save'])) {
-            $this->deploy['save'] = false;
+        if (! isset($this->_deploy['save'])) {
+            $this->_deploy['save'] = false;
         }
 
-        if (! isset($this->deploy['download'])) {
-            $this->deploy['download'] = false;
+        if (! isset($this->_deploy['download'])) {
+            $this->_deploy['download'] = false;
         }
 
-        if ($this->deploy['save'] != 1 && $this->deploy['download'] != 1) {
+        if ($this->_deploy['save'] != 1 && $this->_deploy['download'] != 1) {
             throw new Exception('Nothing to do. Please specify download&&|save options');
         }
 
-        if (empty($this->deploy['name'])) {
-            $this->deploy['name'] = date('H_m_d_H_i_s');
+        if (empty($this->_deploy['name'])) {
+            $this->_deploy['name'] = date('H_m_d_H_i_s');
         }
 
-        if (substr($this->deploy['name'], - 4) == '.xls') {
-            $this->deploy['name'] = substr($this->deploy['name'], 0, - 4);
+        if (substr($this->_deploy['name'], - 4) == '.xls') {
+            $this->_deploy['name'] = substr($this->_deploy['name'], 0, - 4);
         }
 
-        $this->deploy['dir'] = rtrim($this->deploy['dir'], '/') . '/';
+        $this->_deploy['dir'] = rtrim($this->_deploy['dir'], '/') . '/';
 
-        if (! is_dir($this->deploy['dir']) && $this->deploy['save']==1) {
-            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not a dir');
+        if (! is_dir($this->_deploy['dir']) && $this->_deploy['save']==1) {
+            throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not a dir');
         }
 
-        if (! is_writable($this->deploy['dir']) && $this->deploy['save']==1) {
-            throw new Bvb_Grid_Exception($this->deploy['dir'] . ' is not writable');
-        }
-
-
-        if ( $this->deploy['save'] == 1 ) {
-            file_put_contents($this->deploy['dir'] . $this->deploy['name'] . ".xls", $xml);
+        if (! is_writable($this->_deploy['dir']) && $this->_deploy['save']==1) {
+            throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not writable');
         }
 
 
-        if ($this->deploy['download'] == 1) {
+        if ( $this->_deploy['save'] == 1 ) {
+            file_put_contents($this->_deploy['dir'] . $this->_deploy['name'] . ".xls", $xml);
+        }
+
+
+        if ($this->_deploy['download'] == 1) {
             header ( 'Content-type: application/excel' );
-            header('Content-Disposition: attachment; filename="' . $this->deploy['name'] . '.xls"');
+            header('Content-Disposition: attachment; filename="' . $this->_deploy['name'] . '.xls"');
             echo $xml;
         }
-
 		die ();
 	}
 

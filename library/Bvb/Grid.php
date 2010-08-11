@@ -422,7 +422,7 @@ abstract class Bvb_Grid
      * Hold definitions from configurations
      * @var array
      */
-    public $deploy = array();
+    protected  $_deploy = array();
 
 
     /**
@@ -811,7 +811,7 @@ abstract class Bvb_Grid
         if ( substr(strtolower($name), 0, strlen($class) + 3) == 'set' . $class ) {
             $name = substr($name, strlen($class) + 3);
             $name[0] = strtolower($name[0]);
-            $this->deploy[$name] = $value[0];
+            $this->_deploy[$name] = $value[0];
             return $this;
         }
 
@@ -2874,7 +2874,7 @@ abstract class Bvb_Grid
             if ( method_exists($this, '_applyConfigOptions') ) {
                 $this->_applyConfigOptions($this->_options['deploy'][$name], true);
             } else {
-                $this->deploy = $this->_options['deploy'][$name];
+                $this->_deploy = $this->_options['deploy'][$name];
             }
         }
 
@@ -3342,7 +3342,7 @@ abstract class Bvb_Grid
      */
     public function setDeployOption ($option, $value)
     {
-        $this->deploy[$option] = $value;
+        $this->_deploy[$option] = $value;
         return $this;
     }
 
@@ -3352,7 +3352,7 @@ abstract class Bvb_Grid
      */
     public function clearDeployOptions ()
     {
-        $this->deploy = array();
+        $this->_deploy = array();
         return $this;
     }
 
@@ -3362,7 +3362,7 @@ abstract class Bvb_Grid
      */
     public function getDeployOptions ()
     {
-        return $this->deploy;
+        return $this->_deploy;
     }
 
 
