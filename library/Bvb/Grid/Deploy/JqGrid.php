@@ -659,7 +659,7 @@ HTML;
     }
     /**
      * Return language code
-     * 
+     *
      * @return string
      */
     public function getJqgI18n()
@@ -743,12 +743,19 @@ HTML;
         $titles = $this->_buildTitles();
         //$fields = $this->removeAsFromFields();
         $fields = $this->_data['fields'];
+
         foreach ($titles as $key=>$title) {
             // basic options
             $options = array_merge(
                 $this->_jqgColDefaultParams,
-                array("name" => $title['name'], "label" => $title['value'])
+                array("name" => isset($title['name'])?$title['name']:'', "label" => $title['value'])
             );
+
+            if($title['type']=='extraField')
+            {
+                $options['search']= false;
+            }
+
             // add defined options
             if (isset($fields[$key])) {
                 if (isset($fields[$key]['class'])) {
@@ -790,7 +797,7 @@ HTML;
             }
 
             // fix hidden field
-            if ($options['hidden']) {
+            if (isset($options['hidden'])) {
                 $options['hidden'] = (bool) $options['hidden'];
             } else {
                 unset($options['hidden']);
