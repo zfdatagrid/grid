@@ -68,6 +68,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     function __construct($options)
     {
+        $this->_setRemoveHiddenFields(true);
 
         parent::__construct($options);
 
