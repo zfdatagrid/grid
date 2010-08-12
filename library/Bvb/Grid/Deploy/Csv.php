@@ -221,15 +221,8 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             header('Pragma: public');
             header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-            // force download dialog
-            header('Content-Type: application/force-download');
-            header('Content-Type: application/octet-stream', false);
-            header('Content-Type: application/download', false);
-            //header("Content-Type: application/csv");
-            //header ( 'Content-type: text/plain; charset=utf-8' . $this->charEncoding );
-
+            header("Content-Type: application/csv");
             header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
-
             header('Content-Transfer-Encoding: binary');
         }
         if ($this->actionEnabled('store')) {
