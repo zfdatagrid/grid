@@ -873,9 +873,7 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_FormatterInterface");
         }
 
-        $return = $t->format($value);
-
-        return $return;
+        return $t->format($value);
     }
 
     /**
@@ -1445,7 +1443,6 @@ abstract class Bvb_Grid
             }
 
             if ($this->_displayField($titles[$i])) {
-
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
                 if ($noOrder == 1) {
@@ -1808,29 +1805,21 @@ abstract class Bvb_Grid
      */
     protected function _resetKeys(array $array)
     {
-        $novo_array = array();
-        $i = 0;
-        foreach ($array as $value) {
-            $novo_array[$i] = $value;
-            $i ++;
-        }
-        return $novo_array;
+        return array_values($array);
     }
 
     /**
      * Apply SQL Functions
-     *
      */
     protected function _buildSqlExp($where = array())
     {
-        $return = false;
-
         $final = $this->getInfo('sqlexp') ? $this->getInfo('sqlexp') : '';
 
         if (!is_array($final)) {
             return false;
         }
 
+        $result = array();
         foreach ($final as $key => $value) {
             if (!array_key_exists($key, $this->_data['fields']))
                 continue;
@@ -1849,20 +1838,16 @@ abstract class Bvb_Grid
             }
 
             $result[$key] = $resultExp;
-
         }
 
-        if (isset($result) && is_array($result)) {
-            $return = array();
-            foreach ($this->_finalFields as $key => $value) {
-                if (array_key_exists($key, $result)) {
-                    $class = $this->getInfo("sqlexp,$key,class") ? ' ' . $this->getInfo("sqlexp,$key,class") : '';
-                    $return[] = array('class' => $class, 'value' => $result[$key], 'field' => $key);
-                } else {
-                    $class = $this->getInfo("sqlexp,$key,class") ? ' ' . $this->getInfo("sqlexp,$key,class") : '';
-                    $return[] = array('class' => $class, 'value' => '', 'field' => $key);
-                }
-            }
+        if (!$result)
+            return array();
+
+        $return = array();
+        foreach ($this->_finalFields as $key => $value) {
+            $class    = $this->getInfo("sqlexp,$key,class") ? ' ' . $this->getInfo("sqlexp,$key,class") : '';
+            $value    = (array_key_exists($key, $result)) ? $result[$key] : '';
+            $return[] = array('class' => $class, 'value' => $value, 'field' => $key);
         }
         return $return;
     }
@@ -1896,7 +1881,6 @@ abstract class Bvb_Grid
             } else {
                 $show[$key] = $key;
             }
-
         }
 
         $fields_final = array();
@@ -2567,7 +2551,6 @@ abstract class Bvb_Grid
     {
         if (isset($this->_options['fields']) && is_array($this->_options['fields'])) {
             foreach ($this->_options['fields'] as $field => $options) {
-
                 if (isset($options['format']['function'])) {
                     if (!isset($options['format']['params'])) {
                         $options['format']['params'] = array();
@@ -2576,7 +2559,6 @@ abstract class Bvb_Grid
                 }
 
                 if (isset($options['callback'])) {
-
                     if (!isset($options['callback']['params'])) {
                         $options['callback']['params'] = array();
                     }
@@ -2586,11 +2568,9 @@ abstract class Bvb_Grid
                     } else {
                         $options['callback'] = array('function' => $options['callback']['function'], 'params' => $options['callback']['params']);
                     }
-
                 }
 
                 $this->updateColumn($field, $options);
-
             }
         }
 
@@ -2617,7 +2597,6 @@ abstract class Bvb_Grid
                 $temp = str_replace('_', '/', $temp);
                 $this->addFormatterDir($temp, $formatter);
             }
-
         }
 
         if (isset($this->_options['grid']['recordsPerPage'])) {
@@ -2712,10 +2691,7 @@ abstract class Bvb_Grid
     public function resetColumns(array $columns)
     {
         foreach ($columns as $column) {
-            $support = array();
-            $support[] = $this->_data['fields']['title'];
-            $support[] = $this->_data['fields']['field'];
-            $this->updateColumn($column, $support);
+            $this->resetColumn($column);
         }
 
         return $this;
