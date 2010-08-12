@@ -19,12 +19,10 @@
  */
 class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-
     protected $options = array();
 
     public function __construct($options)
     {
-
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
@@ -33,7 +31,6 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
     public function deploy()
     {
-
         if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) { {
             throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
             }
@@ -42,14 +39,12 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
             parent::deploy ();
 
-
             if (!$this->_temp['word'] instanceof Bvb_Grid_Template_Word_Word) {
                 $this->setTemplate('word', 'word');
             }
 
             $titles = parent::_buildTitles ();
 
-            #$nome = reset($titles);
             $wsData = parent::_buildGrid ();
             $sql = parent::_buildSqlExp ();
 
@@ -64,9 +59,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
             }
             $xml .= $this->_temp ['word']->titlesEnd();
 
-
             if (is_array($wsData)) {
-                /////////////////
                 if ($this->getInfo('hRow,title') != '') {
                     $bar = $wsData;
 
@@ -83,14 +76,9 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
                     $aa = 0;
                 }
 
-                //////////////
-                //////////////
-                //////////////
-
                 $i = 1;
                 $aa = 0;
-                foreach ($wsData as $row) {
-                    ////////////
+                foreach ($wsData as $row) {                    ////////////
                     //A linha horizontal
                     if ($this->getInfo('hRow,title') != '') {
 
@@ -102,7 +90,6 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
                             $xml .= str_replace("{{value}}", $bar [$aa] [$hRowIndex] ['value'], $this->_temp ['word']->hRow());
                         }
                     }
-                    ////////////
 
                     $xml .= $this->_temp ['word']->loopStart();
                     $a = 1;
@@ -120,7 +107,6 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
                 }
             }
 
-
             if (is_array($sql)) {
                 $xml .= $this->_temp ['word']->sqlExpStart();
                 foreach ($sql as $value) {
@@ -129,9 +115,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
                 $xml .= $this->_temp ['word']->sqlExpEnd();
             }
 
-
             $xml .= $this->_temp ['word']->globalEnd();
-
 
             if (!isset($this->_deploy['save'])) {
                 $this->_deploy['save'] = false;
@@ -140,7 +124,6 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
             if (!isset($this->_deploy['download'])) {
                 $this->_deploy['download'] = false;
             }
-
 
             if ($this->_deploy['save'] != 1 && $this->_deploy['download'] != 1) {
                 throw new Exception('Nothing to do. Please specify download&&|save options');
@@ -166,13 +149,11 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
             file_put_contents($this->_deploy['dir'] . $this->_deploy['name'] . ".doc", $xml);
 
-
             if ($this->_deploy['download'] == 1) {
                 header('Content-type: application/word');
                 header('Content-Disposition: attachment; filename="' . $this->_deploy['name'] . '.doc"');
                 readfile($this->_deploy['dir'] . $this->_deploy['name'] . '.doc');
             }
-
 
             if ($this->_deploy['save'] != 1) {
                 unlink($this->_deploy['dir'] . $this->_deploy['name'] . '.doc');
@@ -181,5 +162,4 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
             die ();
         }
     }
-
 }

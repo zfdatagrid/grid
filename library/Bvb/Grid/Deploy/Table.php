@@ -20,8 +20,6 @@
 
 class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-
-
     protected $_deployOptions = null;
 
     /**
@@ -103,7 +101,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_failedValidation;
 
-
     /**
      * Callback to be called after crud operation update
      * @var unknown_type
@@ -147,7 +144,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_deploymentContent = null;
 
-
     /**
      * String containg the inputs ids for fitlers
      * @var array
@@ -176,13 +172,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_crudTable;
 
-
     /**
      * Options for CRUD operations
      * @var unknown_type
      */
     protected $_crudOptions = array();
-
 
     /**
      * If data should be saved or not into the source
@@ -195,7 +189,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @var Zend_Session_Abstract
      */
     protected $_gridSession = null;
-
 
     /**
      * Whether to use or not key events for filters
@@ -221,7 +214,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @var array
      */
     protected $_renderDeploy = array();
-
 
     /**
      * CSS classes to be used
@@ -257,7 +249,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_showOrderImages = true;
 
-
     /**
      * To edit, add, or delete records, a user must be authenticated, so we instantiate
      * it here.
@@ -281,21 +272,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_redirect($this->getUrl());
             die();
         }
-
     }
 
-
     /**
-     *
      * Process all information forms related
      * First we check for permissions to add, edit, delete
      * And then the request->isPost. If true we process the data
-     *
      */
-
     protected function _processForm ()
     {
-
         if ( ! $this->getSource()->hasCrud() ) {
             return false;
         }
@@ -331,13 +316,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $queryUrl = $this->getPkFromUrl();
 
-
             if ( ! $this->getRequest()->isPost() || ($this->getParam('zfmassedit') && $this->getRequest()->isPost()) ) {
-
                 foreach ( $this->_form->getSubForms() as $key => $form ) {
-
                     foreach ( array_keys($form->getElements()) as $element ) {
-
                         if ( $this->_gridSession->noErrors !== true ) {
                             if ( isset($this->_gridSession->errors[$key][$element]) ) {
                                 $form->getElement($element)->setErrors($this->_gridSession->errors[$key][$element]);
@@ -349,28 +330,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
                 }
 
-
                 if ( $this->getParam('add') == 1 ) {
                     $this->_willShow['form'] = true;
                     $this->_willShow['formAdd'] = true;
                 }
 
                 if ( $mode == 'edit' ) {
-
                     $this->_willShow['form'] = true;
                     $this->_willShow['formEdit'] = true;
                     $this->_willShow['formEditId'] = $this->getPkFromUrl();
 
                     if ( $this->getParam('postMassIds') ) {
-
                         $ids = explode(',', $this->getParam('postMassIds'));
                         $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
 
                         $a = 1;
                         foreach ( $ids as $value ) {
-
                             if ( strpos($value, '-') ) {
-
                                 $allIds = explode('-', $value);
                                 $i = 0;
                                 foreach ( $allIds as $fIds ) {
@@ -378,21 +354,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     $i ++;
                                     $a ++;
                                 }
-
                             } else {
                                 $conditions[$a][$pkParentArray[0]] = $value;
                                 $a ++;
                             }
                         }
-
                     } else {
                         $conditions[1] = $this->getPkFromUrl();
                     }
 
-
                     for ( $i = 1; $i <= count($conditions); $i ++ ) {
-
-
                         $r = $this->getSource()->getRecord($this->_crudTable, $conditions[$i]);
 
                         if ( $r === false && count($conditions) == 1 ) {
@@ -402,11 +373,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
                         }
 
-
                         if ( is_array($r) ) {
-
                             foreach ( $r as $key => $value ) {
-
                                 $pk = explode('.', key($conditions[$i]));
                                 if ( $key == end($pk) ) {
                                     $this->getForm($i)->getElement('ZFPK')->setValue($value);
@@ -415,7 +383,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 $isField = $this->getForm($i)->getElement($key);
 
                                 if ( isset($isField) ) {
-
 
                                     if ( isset($this->_data['fields'][$key]) ) {
                                         $fieldType = $this->getSource()->getFieldType($this->_data['fields'][$key]['field']);
@@ -434,8 +401,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                             $this->getForm($i)->getElement($key)->setValue($value);
                                         }
                                     }
-
-
                                 }
                             }
                         }
@@ -443,7 +408,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
             }
         }
-
 
         //Check if the request method is POST
         if ( $this->getRequest()->isPost() && $this->getRequest()->getPost('zfg_form_edit' . $this->getGridId()) == 1 ) {
@@ -459,21 +423,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             if ( $this->_form->isValid($_POST) ) {
-
-
                 $post = array();
 
                 foreach ( $this->_form->getSubForms() as $key => $value ) {
-
-
                     foreach ( $value->getElements() as $el ) {
                         $post[$key][$el->getName()] = is_array($el->getValue()) ? implode(',', $el->getValue()) : $el->getValue();
                     }
 
-
                     unset($post[$key]['ZFIGNORE']);
                 }
-
 
                 $addNew = false;
 
@@ -481,7 +439,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $this->_gridSession->noErrors = true;
                     $addNew = true;
                 }
-
 
                 unset($post['form_submit' . $this->getGridId()]);
                 unset($post['zfg_form_edit' . $this->getGridId()]);
@@ -493,15 +450,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 // Process data
                 if ( $mode == 'add' ) {
-
                     try {
-
                         foreach ( $this->_form->getSubForms() as $key => $value ) {
-
                             if ( $this->_crud->getUseVerticalInputs() === false && $key == 0 ) {
                                 continue;
                             }
-
 
                             $sendCall = array(&$post[$key], $this->getSource());
 
@@ -509,17 +462,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 call_user_func_array($this->_callbackBeforeInsert, $sendCall);
                             }
 
-
                             if ( $this->_crudTableOptions['add'] == true ) {
                                 $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
                                 $sendCall[] = $this->getSource()->insert($this->_crudTable, $post[$key]);
                             }
 
-
                             if ( null !== $this->_callbackAfterInsert ) {
                                 call_user_func_array($this->_callbackAfterInsert, $sendCall);
                             }
-
 
                             unset($this->_gridSession->post[$key]);
                         }
@@ -535,7 +485,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         $this->_gridSession->correct = 1;
 
-
                         $this->_removeFormParams(array('add' . $this->getGridId() => '1'));
 
                         if ( $addNew === true ) {
@@ -544,13 +493,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $finalUrl = '';
                         }
 
-
                         $this->_redirect($this->getUrl() . $finalUrl);
 
                         die();
-
-                    }
-                    catch (Zend_Exception $e) {
+                    } catch (Zend_Exception $e) {
                         $this->_gridSession->messageOk = FALSE;
                         $this->_gridSession->message = $this->__('Error saving record: ') . $e->getMessage();
                         $this->_gridSession->formSuccess = 0;
@@ -561,34 +507,26 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_removeFormParams();
                         $this->_redirect($this->getUrl());
                     }
-
                 }
 
                 // Process data
                 if ( $mode == 'edit' ) {
-
                     try {
-
                         foreach ( $this->_form->getSubForms() as $key => $value ) {
-
                             if ( $this->_crud->getUseVerticalInputs() === false && $key == 0 ) {
                                 continue;
                             }
 
-
                             $pks = $this->getSource()->getPrimaryKey($this->_data['table']);
 
                             if ( isset($post[$key]['ZFPK']) ) {
-
                                 if ( strpos($post[$key]['ZFPK'], '-') ) {
-
                                     $allIds = explode('-', $post[$key]['ZFPK']);
                                     $i = 0;
                                     foreach ( $allIds as $fIds ) {
                                         $condition[$pks[$i]] = $fIds;
                                         $i ++;
                                     }
-
                                 } else {
                                     $condition[$pks[0]] = $post[$key]['ZFPK'];
                                 }
@@ -597,7 +535,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                                 unset($post[$key]['ZFPK']);
                             }
-
 
                             $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
                             $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
@@ -611,7 +548,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             if ( $this->_crudTableOptions['edit'] == true ) {
                                 $this->getSource()->update($this->_crudTable, $post[$key], $queryUrl);
                             }
-
 
                             if ( null !== $this->_callbackAfterUpdate ) {
                                 call_user_func_array($this->_callbackAfterUpdate, $sendCall);
@@ -630,9 +566,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_removeFormParams(array('comm' . $this->getGridId() => '', 'edit' . $this->getGridId() => '', 'zfmassedit' => ''));
 
                         $this->_redirect($this->getUrl());
-
-                    }
-                    catch (Zend_Exception $e) {
+                    } catch (Zend_Exception $e) {
                         $this->_gridSession->messageOk = FALSE;
                         $this->_gridSession->message = $this->__('Error updating record: ') . $e->getMessage();
                         $this->_gridSession->formSuccess = 0;
@@ -644,9 +578,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_redirect($this->getUrl());
                     }
                 }
-
             } else {
-
                 $this->_gridSession->post = $_POST;
 
                 foreach ( $this->_form->getSubForms() as $key => $value ) {
@@ -660,14 +592,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->_gridSession->_noForm = 0;
                 $this->_gridSession->correct = 0;
                 $this->_removeFormParams();
-
-            #$this->_redirect($this->getUrl());
             }
-
         }
-
     }
-
 
     /**
      * Remove unneeded form inputs
@@ -702,10 +629,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->removeParam('zfg_form_edit' . $this->getGridId());
         $this->removeParam('zfg_csrf' . $this->getGridId());
 
-
         return true;
     }
-
 
     /**
      * Remove the record from the table
@@ -716,20 +641,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _deleteRecord ($sql)
     {
-
         if ( $this->getParam('postMassIds') && $this->getParam('zfmassremove' . $this->getGridId()) == 1 ) {
-
             //ID's to remove
             $ids = explode(',', $this->getParam('postMassIds'));
 
             //Lets get PK'/**
             $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
             foreach ( $ids as $value ) {
-
                 $condition = array();
 
                 if ( strpos($value, '-') ) {
-
                     $allIds = explode('-', $value);
                     $i = 0;
                     foreach ( $allIds as $fIds ) {
@@ -742,13 +663,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
 
                 try {
-
                     $sendCall = array(&$condition, $this->getSource());
 
                     if ( null !== $this->_callbackBeforeDelete ) {
                         call_user_func_array($this->_callbackBeforeDelete, $sendCall);
                     }
-
 
                     if ( $this->_crudTableOptions['delete'] == true ) {
                         $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
@@ -760,15 +679,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             call_user_func_array($this->_callbackAfterDelete, $sendCall);
                         }
                     }
-
-
-                }
-                catch (Exception $e) {
+                } catch (Exception $e) {
                     $this->_gridSession->correct = 1;
                     $this->_gridSession->messageOk = FALSE;
                     $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
                 }
-
             }
 
             $this->_gridSession->messageOk = true;
@@ -778,10 +693,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_removeFormParams($_POST);
 
             $this->_redirect($this->getUrl(array('comm', 'zfmassremove', 'postMassIds')));
-
         } else {
-
-
             if ( strpos($sql, ';') === false ) {
                 return false;
             }
@@ -797,13 +709,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 return 0;
             }
 
-
             $condition = $this->getPkFromUrl();
         }
 
-
         try {
-
             $sendCall = array(&$condition, $this->getSource());
 
             if ( null !== $this->_callbackBeforeDelete ) {
@@ -827,9 +736,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_gridSession->correct = 1;
 
             $this->_redirect($this->getUrl('comm'));
-
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $this->_gridSession->correct = 1;
             $this->_gridSession->messageOk = FALSE;
             $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
@@ -840,7 +747,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         return true;
     }
 
-
     /**
      * Build the first line of the table (Not the TH )
      *
@@ -848,7 +754,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildHeader ()
     {
-
         $url = $this->getUrl(array('comm', 'edit', 'filters', 'order'));
 
         $final = '';
@@ -864,12 +769,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         /**
          * We must check if there is a filter set or an order, to show the extra th on top
          */
-
-
-
-        #if ( count($this->_filters) > 0 && ($this->getInfo('noOrder') != 1 && $this->getInfo('noFilters') != 0) ) {
         if ( count($this->_filters) > 0 ) {
-
             $url = $this->getUrl(array('filters', 'noFilters'));
             $url2 = $this->getUrl(array('order', 'noOrder'));
             $url3 = $this->getUrl(array('filters', 'order', 'noFilters', 'noOrder'));
@@ -880,7 +780,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             if ( is_array($this->getSource()->getSelectOrder()) ) {
-
                 $url3 .= '/noOrder' . $this->getGridId() . '/1';
                 $url2 .= '/noOrder' . $this->getGridId() . '/1';
             }
@@ -890,26 +789,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //Filters and order
             if ( $this->getParam('order') && ! $this->getParam('noOrder') && count($this->_filtersValues) > 0 ) {
                 if ( $this->getInfo("ajax") !== false ) {
-
                     $final1 = "<button href=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "')\">" . $this->__('Remove Filters') . "</button><button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "')\">" . $this->__('Remove Order') . "</button><button onclick=\"gridAjax('{$this->_info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
-
                 } else {
                     $final1 = "<button onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">" . $this->__('Remove Filters and Order') . "</button>";
                 }
                 //Only filters
             } elseif ( (! $this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0 ) {
-
                 if ( $this->getInfo("ajax") !== false ) {
-
                     $final1 = "<button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "') \">" . $this->__('Remove Filters') . "</button>";
-
                 } else {
                     $final1 = "<button onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button>";
                 }
 
             //Only order
             } elseif ( count($this->_filtersValues) == 0 && ($this->getParam('order') && ! $this->getParam('noOrder') && $this->getInfo('noOrder') != 1) ) {
-
                 if ( $this->getInfo("ajax") !== false ) {
                     $final1 = "<button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "') \">" . $this->__('Remove Order') . "</button>";
                 } else {
@@ -919,32 +812,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Replace values
             if ( ( $this->getInfo('noOrder') != 1) && ($this->getParam('add') != 1 && $this->getParam('edit') != 1) ) {
-
-
                 if ( strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false ) {
-
                     if ( $this->getUseKeyEventsOnFilters() === false ) {
                         $final1 .= "<button onclick=\"" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
                     }
 
                     $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
                     $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
-
                 }
-
-
             }
-
-
-        //close cycle
         }
 
         return;
     }
 
-
     /**
-     *
      * Build filters.
      *
      * We receive the information from an array
@@ -953,7 +835,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildFiltersTable ($filters)
     {
-
         //There are no filters.
         if ( ! is_array($filters) ) {
             $this->_temp['table']->hasFilters = 0;
@@ -989,7 +870,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $filter['value'] = isset($filter['value']) ? $filter['value'] : '';
                 $grid .= str_replace('{{value}}', $filter['value'], $this->_temp['table']->filtersLoop());
             }
-
         }
 
         //Close template
@@ -997,7 +877,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         return $grid;
     }
-
 
     /**
      * Build Table titles.
@@ -1042,8 +921,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         foreach ( $titles as $title ) {
-
-
             //deal with extra field and template
             if ( $title['type'] == 'extraField' && $title['position'] == 'left' ) {
                 $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
@@ -1052,20 +929,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $hRowTitle = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
 
             if ( (isset($title['field']) && $title['field'] != $hRowTitle && $this->getInfo("hRow,title")) || ! $this->getInfo("hRow,title") ) {
-
                 if ( $title['type'] == 'field' ) {
-
                     $hrefTitle = '';
 
                     $noOrder = $this->getInfo("noOrder") ? $this->getInfo("noOrder") : '';
 
                     if ( $noOrder == 1 ) {
-
                         //user set the noOrder(1) method
                         $grid .= str_replace('{{value}}', $this->__($title['value']), $this->_temp['table']->titlesLoop());
-
                     } else {
-
                         if ( ! isset($this->_data['fields'][$title['field']]['order']) ) {
                             $this->_data['fields'][$title['field']]['order'] = true;
                         }
@@ -1085,7 +957,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $imgFinal = '';
                         }
 
-
                         $spanClass = '';
 
                         if ( $orderField == $title['field'] ) {
@@ -1093,8 +964,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         }
 
                         if ( $this->getInfo("ajax") !== false ) {
-
-
                             if ( $this->getAlwaysShowOrderArrows() === true && $this->getShowOrderImages() === true ) {
                                 $link1 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_DESC')\">{$images['desc']}</a>";
                                 $link2 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}','{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_ASC')\">{$images['asc']}</a>";
@@ -1109,8 +978,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                                 $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
                             } else {
-
-
                                 if ( $this->getShowOrderImages() == false ) {
                                     $hrefTitle = '';
                                     if ( substr($title['url'], - 4) == '_ASC' ) {
@@ -1121,9 +988,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 }
 
                                 $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \"><span >" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
-
                             }
-
                         } else {
                             //Replace values in the template
                             if ( ! array_key_exists('url', $title) ) {
@@ -1144,9 +1009,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     }
 
                                     $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
-
                                 } else {
-
                                     if ( $this->getShowOrderImages() == false ) {
                                         $hrefTitle = '';
                                         if ( substr($title['url'], - 4) == '_ASC' ) {
@@ -1156,12 +1019,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     }
 
-
                                     $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href='" . $title['url'] . "'><span $spanClass>" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
-
                                 }
-
-
                             }
                         }
                     }
@@ -1172,16 +1031,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ( $title['type'] == 'extraField' && $title['position'] == 'right' ) {
                 $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
             }
-
         }
 
         //End template
         $grid .= $this->_temp['table']->titlesEnd();
 
         return $grid;
-
     }
-
 
     /**
      * Build the table
@@ -1191,7 +1047,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildGridTable ($grids)
     {
-
         $i = 0;
         $grid = '';
 
@@ -1219,7 +1074,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $class = 0;
         $fi = array();
         foreach ( $grids as $value ) {
-
             unset($fi);
             // decorators
             $search = $this->_finalFields;
@@ -1232,12 +1086,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $search = array_keys($search);
 
             foreach ( $value as $tia ) {
-
                 if ( isset($tia['field']) ) {
                     $fi[] = $tia['value'];
                 }
             }
-
 
             if ( $this->getSource()->hasCrud() ) {
 
@@ -1260,13 +1112,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $search = $this->_resetKeys($search);
 
-
             $finalFields = array_combine($search, $fi);
 
             //horizontal row
             if ( $this->getInfo("hRow,title") ) {
-
-
                 $col = $this->getInfo("hRow");
                 $firstRow = false;
 
@@ -1284,8 +1133,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     $grid .= str_replace(array("{{value}}", "{{class}}"), array($bar[$aa][$hRowIndex]['value'], isset($value['class']) ? $value['class'] : ''), $this->_temp['table']->hRow($finalFields));
                 }
-
-
             }
 
             $i ++;
@@ -1295,16 +1142,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $set = 0;
             foreach ( $value as $final ) {
-
                 $finalField = isset($final['field']) ? $final['field'] : '';
                 $finalHrow = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
 
                 if ( ($finalField != $finalHrow && $this->getInfo("hRow,title")) || ! $this->getInfo("hRow,title") ) {
-
                     $set ++;
 
                     $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'], $final['style']), $this->_temp['table']->loopLoop($finalFields));
-
                 }
             }
 
@@ -1326,9 +1170,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         return $grid;
-
     }
-
 
     /**
      * Build the table that handles the query result from sql expressions
@@ -1349,15 +1191,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
             }
             $grid .= $this->_temp['table']->sqlExpEnd();
-
         } else {
             return false;
         }
 
         return $grid;
-
     }
-
 
     /**
      * Build pagination
@@ -1366,7 +1205,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _pagination ()
     {
-
         $pageSelect = '';
         if ( count($this->_paginationOptions) > 0 && $this->getTotalRecords() > 0 ) {
             if ( ! array_key_exists($this->_recordsPerPage, $this->_paginationOptions) && ! $this->getParam('perPage') ) {
@@ -1414,7 +1252,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/0')\">1</a>";
         } else {
             $pag = ($actual == 1) ? '<strong>1</strong>' : "<a href=\"$url/start{$this->getGridId()}/0\">1</a>";
-
         }
 
         $pag .= ($actual > 5) ? " ... " : "  ";
@@ -1434,56 +1271,40 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $pag .= ($fin < $npaginas) ? " ... " : "  ";
         } else {
-
             for ( $i = 2; $i < $npaginas; $i ++ ) {
                 if ( $this->getInfo("ajax") !== false ) {
-
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','" . $url . "/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
-
                 } else {
-
                     $pag .= ($i == $actual) ? "<strong> $i </strong>" : " <a href=\"" . $url . "/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "\">$i</a> ";
-
                 }
-
             }
         }
 
         if ( $this->getInfo("ajax") !== false ) {
             $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/" . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
-
         } else {
             $pag .= ($actual == $npaginas) ? "<strong>" . $npaginas . "</strong>" : " <a href=\"$url/start{$this->getGridId()}/" . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
-
         }
 
         if ( $actual != 1 ) {
-
             if ( $this->getInfo("ajax") !== false ) {
                 $pag = " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/0')\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start/" . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
-
             } else {
-
                 $pag = " <a href=\"$url/start/0\">" . $this->__('First') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . (($actual - 2) * $ppagina) . "\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
             }
-
         }
 
         if ( $actual != $npaginas ) {
             if ( $this->getInfo("ajax") !== false ) {
-
                 $pag .= "&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/" . ($actual * $ppagina) . "')\">" . $this->__('Next') . "</a> <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/" . (($npaginas - 1) * $ppagina) . "')\">" . $this->__('Last') . "&nbsp;&nbsp;</a>";
             } else {
 
                 $pag .= "&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . ($actual * $ppagina) . "\">" . $this->__('Next') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . (($npaginas - 1) * $ppagina) . "\">" . $this->__('Last') . "</a>";
             }
-
         }
 
         if ( $npaginas > 1 && $this->getInfo("limit") == 0 ) {
-
             if ( $npaginas <= 100 ) {
-
                 $pageSelectOptions = array();
                 for ( $i = 1; $i <= $npaginas; $i ++ ) {
                     $pageSelectOptions[(($i - 1) * $ppagina)] = $i;
@@ -1495,17 +1316,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 } else {
                     $pageSelect = $this->getView()->formSelect('idf' . $this->getGridId(), ($pa - 1) * $this->getResultsPerPage(), array('onChange' => "window.location='{$url}/start{$this->getGridId()}/'+this.value"), $pageSelectOptions);
                 }
-
             } else {
                 $pageSelect = $this->getView()->formText('idf', $pa, array('style' => 'width:30px !important; ', 'onChange' => "window.location='{$url}/start{$this->getGridId()}/'+(this.value - 1)*" . $this->getResultsPerPage()));
             }
 
             $pageSelect = ' | ' . $this->__('Page') . ':' . $pageSelect;
-
         }
 
         if ( $npaginas > 1 || count($this->_export) > 0 ) {
-
             //get actual record
             if ( $actual <= 1 ) {
                 $registoActual = 1;
@@ -1518,7 +1336,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 } else {
                     $registoFinal = $actual * $ppagina;
                 }
-
             }
 
             $images = $this->_temp['table']->images($this->getImagesUrl());
@@ -1527,44 +1344,34 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $this->_render['export'] = $this->_temp['table']->export($this->getExports(), $this->getImagesUrl(), $url1, $this->getGridId());
 
-
             if ( (int) $this->getInfo("limit") > 0 ) {
                 $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}', '{{pageSelect}}'), array('', (int) $this->getInfo("limit"), $menuPerPage, $pageSelect), $this->_temp['table']->pagination());
-
             } elseif ( $npaginas > 1 && count($this->_export) > 0 ) {
-
                 if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }
 
                 $result2 = str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}', '{{pageSelect}}'), array(' | ' . $pag, $registoActual . ' ' . $this->__('to') . ' ' . $registoFinal . ' ' . $this->__('of') . '  ' . $this->_totalRecords, $menuPerPage, $pageSelect), $this->_temp['table']->pagination());
-
             } elseif ( $npaginas < 2 && count($this->_export) > 0 ) {
-
                 if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }
                 $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}', '{{pageSelect}}'), array('', $this->_totalRecords, $menuPerPage, $pageSelect), $this->_temp['table']->pagination());
-
             } elseif ( count($this->_export) == 0 ) {
-
                 if ( $this->_recordsPerPage == 0 ) {
                     $pag = '';
                     $pageSelect = '';
                 }
                 $result2 .= str_replace(array('{{pagination}}', '{{numberRecords}}', '{{perPage}}', '{{pageSelect}}'), array(' | ' . $pag, $this->_totalRecords, $menuPerPage, $pageSelect), $this->_temp['table']->pagination());
-
             }
-
         } else {
             return '';
         }
 
         return $result2;
     }
-
 
     /**
      * Here we go....
@@ -1573,11 +1380,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     public function deploy ()
     {
-
         if ( $this->getSource() === null ) {
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
-
 
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || $this->allowAdd == 1 ) {
             $this->setAjax(false);
@@ -1585,12 +1390,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_view = $this->getView();
 
-
         parent::deploy();
 
-
         $this->_applyConfigOptions(array());
-
 
         $this->_processForm();
 
@@ -1600,12 +1402,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->setTemplate($this->_temp['table']->options['name'], 'table', $this->_templateParams);
         }
 
-
         $images = $this->_temp['table']->images($this->getImagesUrl());
 
-
         if ( $this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false) ) {
-
             $pkUrl = $this->getSource()->getPrimaryKey($this->_data['table']);
             $urlFinal = '';
 
@@ -1623,7 +1422,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
             }
 
-
             foreach ( $pkUrl as $value ) {
                 if ( strpos($value, '.') !== false ) {
                     $urlFinal .= $value . ':{{' . substr($value, strpos($value, '.') + 1) . '}}-';
@@ -1633,7 +1431,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $urlFinal = trim($urlFinal, '-');
-
         }
 
         if ( $this->allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true ) {
@@ -1653,15 +1450,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if($this->_crud->getEditColumn() !==false)
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
-
         }
-
 
         if ( $this->allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete() !== true ) {
             if ( ! is_array($this->_extraFields) ) {
                 $this->_extraFields = array();
             }
-
 
             if ( $this->_deleteConfirmationPage == true ) {
                 if($this->_crud->getDeleteColumn() !==false)
@@ -1670,9 +1464,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if($this->_crud->getDeleteColumn() !==false)
                 array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
             }
-
         }
-
 
         if ( is_array($this->_detailColumns) && $this->_isDetail == false ) {
             if ( ! is_array($this->_extraFields) ) {
@@ -1685,13 +1477,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
         }
 
-
         if ( $this->allowAdd == 0 && $this->allowDelete == 0 && $this->allowEdit == 0 ) {
             $this->_gridSession->unsetAll();
         }
 
         if ( ! in_array('add' . $this->getGridId(), array_keys($this->getAllParams())) && ! in_array('edit' . $this->getGridId(), array_keys($this->getAllParams())) ) {
-
             if ( $this->_gridSession->correct === NULL || $this->_gridSession->correct === 0 ) {
                 $this->_gridSession->unsetAll();
             }
@@ -1702,8 +1492,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['message'] = $this->_render['message'];
         }
 
-
-        #$this->_render['form'] = $this->_form->render();
         if ( (($this->getParam('edit') == 1) || $this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1 ) {
 
             if ( $this->allowAdd == 1 || $this->allowEdit == 1 ) {
@@ -1720,9 +1508,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
         }
 
-
         $showsForm = $this->willShow();
-
 
         if ( (isset($showsForm['form']) && $showsForm['form'] == 1 && $this->getInfo("doubleTables") == 1) || ! isset($showsForm['form']) ) {
             $this->_render['start'] = $this->_temp['table']->globalStart();
@@ -1730,9 +1516,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if ( ((! $this->getParam('edit') || $this->getParam('edit') != 1) && (! $this->getParam('add') || $this->getParam('add') != 1)) || $this->getInfo("doubleTables") == 1 ) {
-
             if ( $this->_isDetail == true || ($this->_deleteConfirmationPage == true && $this->getParam('gridRemove') == 1) ) {
-
                 $columns = parent::_buildGrid();
 
                 $this->_willShow['detail'] = true;
@@ -1755,7 +1539,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
 
                 if ( $this->getParam('gridRemove') == 1 ) {
-
                     $localCancel = $this->getUrl(array('comm', 'gridDetail', 'gridRemove'));
 
                     $localDelete = $this->getUrl(array('gridRemove', 'gridDetail', 'comm'));
@@ -1772,7 +1555,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->_render['detail'] .= $this->_temp['table']->globalEnd();
 
                 $this->_renderDeploy['detail'] = $this->_render['detail'];
-
             } else {
                 $this->_willShow['grid'] = true;
                 $this->_buildGridRender();
@@ -1785,12 +1567,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_render['end'] = $this->_temp['table']->globalEnd();
         }
 
-
         if ( (isset($showsForm['form']) && $showsForm['form'] == 1 && $this->getInfo("doubleTables") == 1) || ! isset($showsForm['form']) ) {
             $this->_render['end'] = $this->_temp['table']->globalEnd();
             $this->_renderDeploy['end'] = $this->_render['end'];
         }
-
 
         //Build JS
         $this->_printScript();
@@ -1798,7 +1578,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $gridId = $this->getGridId();
 
         if ( $this->getParam('gridmod') == 'ajax' && $this->getInfo("ajax") !== false ) {
-
             $layout = Zend_Layout::getMvcInstance();
             if ( $layout instanceof Zend_Layout ) {
                 $layout->disableLayout();
@@ -1824,7 +1603,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_deploymentContent = $grid;
         return $this;
     }
-
 
     /**
      * Combines all parts from the output
@@ -1853,7 +1631,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $bSqlExp = '';
         }
 
-
         $bPagination = $this->_buildExtraRows('beforePagination');
         $bPagination .= $this->_pagination();
         $bPagination .= $this->_buildExtraRows('afterPagination');
@@ -1875,7 +1652,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_render['pagination'] = $bPagination;
     }
 
-
     /**
      * Render parts of the grid
      * @param $part
@@ -1888,7 +1664,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ( $part == 'start' && $this->getInfo('ajax') !== false ) {
             $result .= "<div id='" . $this->getInfo('ajax') . "'>";
         }
-
 
         if ( $appendGlobal === true ) {
             $result .= $this->_render['start'];
@@ -1909,20 +1684,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         return $result;
     }
 
-
     public function __toString ()
     {
         if ( is_null($this->_deploymentContent) ) {
             die('You must explicitly call the deploy() method before printing the object');
-            # self::deploy();
         }
         return $this->_deploymentContent;
     }
 
-
     protected function _printScript ()
     {
-
         if ( $this->getInfo('ajax') !== false ) {
             $useAjax = 1;
         } else {
@@ -1931,9 +1702,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $script = "";
 
-
         if ( $this->hasMassActions() ) {
-
             $script .= " var confirmMessages_" . $this->getGridId() . " = new Array();" . PHP_EOL;
 
             foreach ( $this->getMassActionsOptions() as $value ) {
@@ -1949,11 +1718,9 @@ var postMassIds_" . $this->getGridId() . " = new Array();
 
 function convertArrayToInput_" . $this->getGridId() . "()
 {
-
     if(postMassIds_" . $this->getGridId() . ".length==0)
     {
           tempArray_" . $this->getGridId() . " = new Array();
-
 
            var campos = document.getElementsByTagName('input');
 
@@ -1989,7 +1756,6 @@ function convertArrayToInput_" . $this->getGridId() . "()
     document.forms.massActions_" . $this->getGridId() . ".action = input_" . $this->getGridId() . ";
 
     document.getElementById('postMassIds').value = postMassIds_" . $this->getGridId() . ".join(',');
-
 }
 
 function updateRecords_" . $this->getGridId() . "()
@@ -2002,17 +1768,16 @@ function observeCheckBox_" . $this->getGridId() . "(box)
     if(box.checked == true)
     {
         if(postMassIds_" . $this->getGridId() . ".indexOf(box.value)== -1)
-            {
-                postMassIds_" . $this->getGridId() . ".push(box.value);
-            }
+        {
+            postMassIds_" . $this->getGridId() . ".push(box.value);
+        }
         recordsSelected_" . $this->getGridId() . "++;
     }else{
-
         if(postMassIds_" . $this->getGridId() . ".indexOf(box.value)!= -1)
-            {
-                postMassIds_" . $this->getGridId() . ".splice(postMassIds_" . $this->getGridId() . ".indexOf(box.value),1);
-                recordsSelected_" . $this->getGridId() . "--;
-            }
+        {
+            postMassIds_" . $this->getGridId() . ".splice(postMassIds_" . $this->getGridId() . ".indexOf(box.value),1);
+            recordsSelected_" . $this->getGridId() . "--;
+        }
     }
     updateRecords_" . $this->getGridId() . "();
 }
@@ -2026,18 +1791,18 @@ function checkAll_" . $this->getGridId() . "(field,total,all)
         for (i=0; i < campos.length; i++)
         {
             if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_" . $this->getGridId() . "')
-                    {
-                        tempArray_" . $this->getGridId() . ".push(campos[i].value);
-                        campos[i].checked = true;
-                    }
+            {
+                tempArray_" . $this->getGridId() . ".push(campos[i].value);
+                campos[i].checked = true;
+            }
         }
 
         if(all ==1)
-            {
-                postMassIds_" . $this->getGridId() . " = document.getElementById('massActionsAll_" . $this->getGridId() . "').value.split(',');
-            }else{
-                postMassIds_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ";
-            }
+        {
+            postMassIds_" . $this->getGridId() . " = document.getElementById('massActionsAll_" . $this->getGridId() . "').value.split(',');
+        }else{
+            postMassIds_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ";
+        }
 
          recordsSelected_" . $this->getGridId() . " = total;
          updateRecords_" . $this->getGridId() . "();
@@ -2045,15 +1810,15 @@ function checkAll_" . $this->getGridId() . "(field,total,all)
 
 function uncheckAll_" . $this->getGridId() . "(field)
 {
-      var campos = document.getElementsByTagName('input');
+    var campos = document.getElementsByTagName('input');
 
-        for (i=0; i < campos.length; i++)
+    for (i=0; i < campos.length; i++)
+    {
+        if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_" . $this->getGridId() . "')
         {
-            if (campos[i].type == 'checkbox' && campos[i].id == 'massCheckBox_" . $this->getGridId() . "')
-            {
-                campos[i].checked = false;
-            }
+            campos[i].checked = false;
         }
+    }
 
     recordsSelected_" . $this->getGridId() . " = 0;
 
@@ -2125,7 +1890,6 @@ function uncheckAll_" . $this->getGridId() . "(field)
         }
     }
     xmlhttp.send(null);
-
 }
 " . PHP_EOL;
         }
@@ -2138,7 +1902,6 @@ function urlencode(str) {
 
 function " . $this->getGridId() . "gridChangeFilters(event)
     {
-
         if(typeof(event)=='undefined')
         {
             event = 1;
@@ -2162,7 +1925,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         if (!document.getElementById(fieldsArray[i])){
             continue;
         }
-
 
         if(document.getElementById(fieldsArray[i]).type=='checkbox' && document.getElementById(fieldsArray[i]).checked ==false)
         {
@@ -2194,7 +1956,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             alert('" . $this->__('No Filters to Apply') . "');
             return false;
         }
-
     " . PHP_EOL;
 
             if ( $useAjax == 1 ) {
@@ -2204,9 +1965,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
 
             $script .= "
-    }
-        ";
-
+    }";
 
         }
         $this->getView()->headScript()->appendScript($script);
@@ -2214,9 +1973,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return;
     }
 
-
     /**
-     *
      * @var Bvb_Grid_Form
      * @return unknown
      */
@@ -2235,7 +1992,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         }
 
         $formElements = $this->getSource()->buildForm($this->_data['fields'], $crud->getInputsType());
-
 
         if ( $this->getParam('add') ) {
             $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;
@@ -2257,7 +2013,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         $arr = array();
 
-        //////
         if ( $crud->getUseVerticalInputs() === false ) {
             $arr[0] = new Zend_Form_SubForm($formElements);
 
@@ -2275,26 +2030,16 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                 $value->setRequired(false);
             }
         }
-        /////
-
-
-
 
         for ( $i = 1; $i <= $formsCount; $i ++ ) {
-
             $arr[$i] = new Zend_Form_SubForm($formElements);
 
-
-            if ( $formsCount > 1 ) $arr[$i]->addElement('checkbox', 'ZFIGNORE', array('label' => $this->__('Ignore record'), 'order' => 0));
-
-            #$arr[$i]->setElementDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
-
-
+            if ( $formsCount > 1 )
+                $arr[$i]->addElement('checkbox', 'ZFIGNORE', array('label' => $this->__('Ignore record'), 'order' => 0));
 
             if ( $crud->getUseDecorators() === true ) {
                $arr[$i]->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubFormDecorator() : $crud->getSubFormDecoratorVertical());
             }
-
 
             if ( $this->getParam('edit') ) {
                 $arr[$i]->addElement('hidden', 'ZFPK', array('decorators' => $crud->getButtonHiddenDecorator()));
@@ -2303,20 +2048,11 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                 $crud->setDisallowedFields(array_merge($crud->getDisallowedFields(), array_flip($crud->getOnAddForce())));
             }
 
-
             $crud->getForm()->addSubForm($arr[$i], $i);
-
-            ////////////////
-            ////////////////
-            ////////////////
-            ////////////////
-
-
 
             $form = $crud->getForm()->getSubForm($i);
 
             foreach ( $oldElements as $key => $value ) {
-
                 if ( $value->helper == 'formHidden' ) {
                     $value->setDecorators($crud->getButtonHiddenDecorator());
                 }
@@ -2330,15 +2066,13 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                         continue;
                     }
 
-                    if ( $crud->getUseDecorators() === true )
-                    {
+                    if ( $crud->getUseDecorators() === true ) {
                         $value->setDecorators($crud->getUseVerticalInputs() ? $crud->getSubformElementDecorator() : $crud->getSubformElementDecoratorVertical());
                     }
                 }
             }
 
             if ( $crud->getFieldsBasedOnQuery() == 1 ) {
-
                 $finalFieldsForm = array();
                 $fieldsToForm = $this->getFields(true);
 
@@ -2347,8 +2081,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                     $finalFieldsForm[] = $field;
                 }
                 foreach ( $form->getElements() as $key => $value ) {
-
-                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' ) continue;
+                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' )
+                        continue;
 
                     if ( ! in_array($key, $finalFieldsForm) ) {
                         $form->removeElement($key);
@@ -2357,11 +2091,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
 
             if ( count($crud->getAllowedFields()) > 0 ) {
-
                 foreach ( $form->getElements() as $key => $value ) {
-
-                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' ) continue;
-
+                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' )
+                        continue;
 
                     if ( ! in_array($key, $crud->getAllowedFields()) ) {
                         $form->removeElement($key);
@@ -2369,12 +2101,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                 }
             }
 
-
             if ( count($crud->getDisallowedFields()) > 0 ) {
-
                 foreach ( $form->getElements() as $key => $value ) {
-
-                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' ) continue;
+                    if ( $key == 'ZFIGNORE' || $key == 'ZFPK' )
+                        continue;
 
                     if ( in_array($key, $crud->getDisallowedFields()) ) {
                         $form->removeElement($key);
@@ -2382,14 +2112,11 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                 }
             }
 
-
             foreach ( $this->_data['fields'] as $key => $title ) {
-
                 if ( $form->getElement($key) && $form->getElement($key)->getLabel() == '' ) {
                     $form->getElement($key)->setLabel($title['title']);
                 }
             }
-
 
             if ( count($form->getElements()) == 0 ) {
                 throw new Bvb_Grid_Exception($this->__("Your form does not have any fields"));
@@ -2406,10 +2133,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                     if ( $crud->getUseDecorators() === true ) $element->setDecorators($crud->getFileDecorator());
                 }
             }
-
-        ////////////////
-        ////////////////
-        ////////////////
         }
 
         if ( $crud->getUseVerticalInputs() === false ) {
@@ -2426,12 +2149,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
-
-
-        if ( $crud->getUseDecorators() === true )
-        {
+        if ( $crud->getUseDecorators() === true ) {
             $crud->getForm()->setDecorators($crud->getFormDecorator());
-        }else{
+        } else {
             $crud->getForm()->setDecorators($crud->getFormDecoratorSimple());
         }
 
@@ -2441,10 +2161,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $crud->getForm()->addElement('submit', 'saveAndAdd' . $this->getGridId(), array('label' => $this->__('Save And New'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         }
 
-
         $crud->getForm()->addElement('submit', 'form_submit' . $this->getGridId(), array('label' => $this->__('Save'), 'class' => 'submit', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addElement('hidden', 'zfg_form_edit' . $this->getGridId(), array('value' => 1, 'decorators' => $crud->getButtonHiddenDecorator()));
-
 
         if ( $crud->getUseCSRF() == 1 ) {
             $crud->addElement('hash', 'zfg_csrf' . $this->getGridId(), array('salt' => 'unique', 'decorators' => $crud->getButtonHiddenDecorator()));
@@ -2452,12 +2170,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         $url = $this->getUrl(array_merge(array('add', 'postMassIds', 'zfmassedit', 'edit', 'comm', 'form_reset'), array_keys($crud->getForm()->getElements())));
 
-
         $crud->getForm()->addElement('button', 'form_reset' . $this->getGridId(), array('onclick' => "window.location='$url'", 'label' => $this->__('Cancel'), 'class' => 'reset', 'decorators' => $crud->getButtonHiddenDecorator()));
         $crud->getForm()->addDisplayGroup(array('zfg_csrf' . $this->getGridId(), 'zfg_form_edit' . $this->getGridId(), 'form_submit' . $this->getGridId(), 'saveAndAdd' . $this->getGridId(), 'form_reset' . $this->getGridId()), 'buttons', array('decorators' => $crud->getSubformGroupDecorator()));
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
-
 
         $this->_crudOptions['addForce'] = $crud->getOnAddForce();
         $this->_crudOptions['editForce'] = $crud->getOnEditForce();
@@ -2465,7 +2181,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_crudOptions['deleteAddCondition'] = $crud->getOnDeleteAddCondition();
 
         $this->_form = $crud->getForm();
-
 
         if ( isset($crud->options['callbackBeforeDelete']) ) {
             $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
@@ -2493,9 +2208,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         $crud = $this->_object2array($crud);
 
-
         $options = $crud['options'];
-
 
         if ( isset($options['table']) && is_string($options['table']) ) {
             $this->_crudTable = $options['table'];
@@ -2529,7 +2242,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $this->_crudTableOptions['delete'] = 0;
         }
 
-
         $this->_info['doubleTables'] = $this->getInfo("doubleTables");
 
         if ( isset($options['delete']) ) {
@@ -2555,7 +2267,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Field type on the filters area. If the field type is enum, build the options
      * Also, we first need to check if the user has defined values to present.
@@ -2567,17 +2278,14 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      */
     protected function _formatField ($campo)
     {
-
         $renderLoaded = false;
         $allFieldsIds = $this->getAllFieldsIds();
 
         if ( isset($this->_filters[$campo]) && is_array($this->_filters[$campo]) && isset($this->_filters[$campo]['render']) ) {
-
             $render = $this->loadFilterRender($this->_filters[$campo]['render']);
             $render->setView($this->getView());
             $renderLoaded = true;
         }
-
 
         $valor = $campo;
 
@@ -2587,11 +2295,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         //check if we need to load  fields for filters
         if ( isset($this->_filters[$valor]['distinct']) && is_array($this->_filters[$valor]['distinct']) && isset($this->_filters[$valor]['distinct']['field']) ) {
-
             $distinctField = $this->_filters[$valor]['distinct']['field'];
             $distinctValue = $this->_filters[$valor]['distinct']['name'];
             $distinctOrder = isset($this->_filters[$valor]['distinct']['order']) ? $this->_filters[$valor]['distinct']['order'] : 'name ASC';
-
 
             $dir = stripos($distinctOrder, ' asc') !== false ? 'ASC' : 'DESC';
             $sort = stripos($distinctOrder, 'name') !== false ? 'value' : 'field';
@@ -2605,10 +2311,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
             $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue, $sort . ' ' . $dir);
 
-
             $this->_filters[$valor]['values'] = $final;
         }
-
 
         //Remove unwanted url params
         $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo', 'noFilters'));
@@ -2619,7 +2323,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $nkey = $fieldsSemAsFinal[$campo]['searchField'];
             @$this->_filtersValues[$campo] = $this->_filtersValues[$nkey];
         }
-
 
         $help_javascript = '';
 
@@ -2646,7 +2349,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         if ( count($this->_externalFilters) > 0 ) {
             foreach ( array_keys($this->_externalFilters) as $fil ) {
-
                 $help_javascript .= $fil . ',';
             }
         }
@@ -2660,11 +2362,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         $opcoes = $this->_filters[$valor];
 
-
         if ( is_array($opcoes) && isset($opcoes['style']) ) {
             $attr['style'] = $opcoes['style'];
         }
-
 
         if ( is_array($opcoes) && isset($opcoes['class']) ) {
             $attr['class'] = $opcoes['class'];
@@ -2693,7 +2393,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         }
 
         if ( isset($opcoes['values']) && is_array($opcoes['values']) ) {
-
             $tipo = 'invalid';
             $values = array();
             $values[''] = '--' . $this->__('All') . '--';
@@ -2723,7 +2422,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         }
 
         if ( $tipo != 'invalid' ) {
-
             if ( $renderLoaded === false ) {
                 $render = $this->loadFilterRender('Text');
                 $render->setView($this->getView());
@@ -2734,7 +2432,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         }
 
         if ( isset($this->_filtersValues[$campo]) && is_array($this->_filtersValues[$campo]) ) {
-
             foreach ( $this->_filtersValues[$campo] as $key => $value ) {
                 $render->setDefaultValue($value, $key);
             }
@@ -2747,28 +2444,21 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $render->render();
     }
 
-
     public function getAllFieldsIds ()
     {
         $fields = array();
         foreach ( $this->_filters as $key => $filter ) {
-
             if ( is_array($filter) && isset($filter['render']) ) {
-
                 $render = $this->loadFilterRender($filter['render']);
                 $fields[$key] = $render->getChilds();
-
             } else {
                 $fields[$key] = $key;
                 $render = false;
             }
-
         }
 
         return $fields;
-
     }
-
 
     /**
      * Apply config options
@@ -2776,11 +2466,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      */
     protected function _applyConfigOptions ($options,$firstCall = false)
     {
-
         $this->_deployOptions = $options;
 
         if ( isset($this->_deployOptions['templateDir']) ) {
-
             $this->_deployOptions['templateDir'] = (array) $this->_deployOptions['templateDir'];
 
             foreach ( $this->_deployOptions['templateDir'] as $templates ) {
@@ -2812,17 +2500,16 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return true;
     }
 
-
     /**
      * Returns form instance
      */
     public function getForm ($subForm = null)
     {
-        if ( ! is_null($subForm) ) return $this->_form->getSubForm($subForm);
+        if ( ! is_null($subForm) )
+            return $this->_form->getSubForm($subForm);
 
         return $this->_form;
     }
-
 
     /**
      * Adds a row class based on a condition
@@ -2836,7 +2523,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Adds a cell class based on a condition
      * @param $column
@@ -2848,7 +2534,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_classCellCondition[$column][] = array('condition' => $condition, 'class' => $class, 'else' => $else);
         return $this;
     }
-
 
     /**
      * Sets a row class based on a condition
@@ -2863,7 +2548,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Clears all row conditions
      */
@@ -2872,7 +2556,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_classCellCondition = array();
         return $this;
     }
-
 
     /**
      * Clears a given class cell condition
@@ -2884,7 +2567,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Clears all class cels conditions
      * @param $cell
@@ -2894,7 +2576,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_classCellCondition = array();
         return $this;
     }
-
 
     /**
      * Set a cell class based on a condition
@@ -2909,7 +2590,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Adds extra rows to the grid.
      * @param Bvb_Grid_Extra_Rows $rows
@@ -2922,16 +2602,13 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Build extra rows
      * @param $position
      */
     protected function _buildExtraRows ($position)
     {
-
         if ( count($this->_extraRows) == 0 ) {
-
             return false;
         }
 
@@ -2941,7 +2618,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         foreach ( $this->_extraRows as $key => $value ) {
 
-
             if ( count($this->_getExtraFields('left')) > 0 ) {
                 $result .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
             }
@@ -2950,10 +2626,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                 $result .= " <td colspan='" . count($this->_getExtraFields('left')) . "'></td>";
             }
 
-
             if ( $value['position'] != $position ) continue;
-
-
 
             foreach ( $value['values'] as $final ) {
                 $colspan = isset($final['colspan']) ? "colspan='" . $final['colspan'] . "'" : '';
@@ -2974,9 +2647,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             return false;
         }
         return $result;
-
     }
-
 
     /**
      * Defines the default classes to be used on odd and even td
@@ -2989,13 +2660,11 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * So user can know what is going to be done
      */
     public function buildFormDefinitions ()
     {
-
         if ( $this->getParam('add') == 1 ) {
             $this->_formSettings['mode'] = 'add';
             $this->_formSettings['action'] = $this->getForm()->getAction();
@@ -3014,20 +2683,16 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
-
     }
-
 
     /**
      * Return actions from the form
      */
     public function getFormSettings ()
     {
-
         $this->buildFormDefinitions();
         return $this->_formSettings;
     }
-
 
     /**
      * Show a confirmation page instead a alert window
@@ -3038,7 +2703,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_deleteConfirmationPage = (bool) $status;
         return $this;
     }
-
 
     /**
      * Defines Images location
@@ -3053,7 +2717,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     /**
      * Returns the actual URL images location
      */
@@ -3062,9 +2725,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this->_imagesUrl;
     }
 
-
     /**
-     *
      * Always show arrows on all fields or show only when a field
      * is sorted
      *
@@ -3076,7 +2737,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_alwaysShowOrderArrows = (bool) $status;
         return $this;
     }
-
 
     public function getAlwaysShowOrderArrows ()
     {
@@ -3091,7 +2751,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return isset($this->_gridSession->errors) ? $this->_gridSession->errors : false;
     }
 
-
     /**
      * If we should use onclick, and onkeyup instead a button over the filters
      * @param $flag
@@ -3102,12 +2761,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     public function getUseKeyEventsOnFilters ()
     {
         return $this->_useKeyEventsOnFilters;
     }
-
 
     public function setShowOrderImages ($status = true)
     {
@@ -3115,36 +2772,30 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
-
     public function getShowOrderImages ()
     {
         return $this->_showOrderImages;
     }
 
-
     public function setMassActions (array $options, array $fields = array())
     {
-
         $pk = parent::setMassActions($options,$fields);
 
         $left = new Bvb_Grid_Extra_Column();
         $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='{{{$pk}}}' >");
 
         $this->addExtraColumns($left);
-
     }
-
 
     protected function _buildMassActions ()
     {
-        if ( ! $this->hasMassActions() ) return false;
-
+        if ( ! $this->hasMassActions() )
+            return false;
 
         $select = array();
         foreach ( $this->getMassActionsOptions() as $value ) {
             $select[$value['url']] = $value['caption'];
         }
-
 
         $formSelect = $this->getView()->formSelect("gridAction_" . $this->getGridId(), null, array(), $select);
         $formSubmit = $this->getView()->formSubmit("send_" . $this->getGridId(), $this->__('Submit'), array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()"));
@@ -3155,7 +2806,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $currentRecords = $this->getTotalRecords();
         }
 
-
         $ids = $this->getSource()->getMassActionsIds($this->_data['table'],$this->_massActionsFields);
 
         $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
@@ -3163,10 +2813,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $return .= $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids);
         $return .= $this->getView()->formHidden('postMassIds', '');
 
-
         $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
 
         return $return;
     }
-
 }

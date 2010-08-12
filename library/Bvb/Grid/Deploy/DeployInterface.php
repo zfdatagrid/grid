@@ -20,10 +20,5 @@
 
 interface Bvb_Grid_Deploy_DeployInterface
 {
-
     public function deploy();
-
 }
-
-
-?>

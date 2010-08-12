@@ -61,9 +61,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * dir - directory where to store data
      *
      * @param array $options options
-     *
      * @see _prepareOptions
-     *
      * @return void
      */
     function __construct($options)
@@ -99,7 +97,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             // check if this kind of export is alowed
             throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
-
     }
 
     /**
@@ -111,10 +108,8 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     function buildTitlesCsv($titles)
     {
-
         $grid = '';
         foreach ($titles as $title) {
-
             $grid .= '"' . $title ['value'] . '",';
         }
 
@@ -130,7 +125,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     function buildSqlexpCsv($sql)
     {
-
         $grid = '';
         if (is_array($sql)) {
 
@@ -151,7 +145,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     function buildGridCsv($grids)
     {
-
         $grid = '';
         foreach ($grids as $value) {
 
@@ -200,7 +193,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::deploy();
 
         if ($this->getDeployOption('download')) {
-
             // send first headers
             ob_end_clean();
 

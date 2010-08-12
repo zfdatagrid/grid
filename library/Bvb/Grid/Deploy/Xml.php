@@ -18,84 +18,56 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-
 class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-
     public $templateInfo;
 
     /**
-     *
      * @param array $options
      */
     public function __construct ($options = array('download'))
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
-
     }
 
     public function buildTitlesXml ($titles)
     {
-
-
-
-        $grid = '';
-
-        $grid .= "    <fields>\n";
-
+        $grid = "    <fields>\n";
         foreach ($titles as $title) {
-
-              if(!isset($title['field']))
-              continue;
+            if(!isset($title['field']))
+                continue;
 
             $grid .= "        <" . $title['field'] . "><![CDATA[" . strip_tags($title['value']) . "]]></" . $title['field'] . ">\n";
-
         }
 
         $grid .= "    </fields>\n";
 
         return $grid;
-
     }
-
 
     public function buildSqlexpXml ($sql)
     {
-
         $grid = '';
-
         if (is_array($sql)) {
             $grid .= "    <sqlexp>\n";
 
-
             foreach ($sql as $exp) {
-
-              if(!isset($exp['field']))
-              continue;
-
+                if (!isset($exp['field']))
+                    continue;
 
                 $grid .= "        <" . $exp['field'] . "><![CDATA[" . strip_tags($exp['value']) . "]]></" . $exp['field'] . ">\n";
-                ;
             }
 
             $grid .= "    </sqlexp>\n";
         }
 
         return $grid;
-
     }
-
 
     public function buildGridXml ($grids)
     {
-
-        $grid = '';
-
-        $grid .= "    <results>\n";
-
-
+        $grid = "    <results>\n";
         foreach ($grids as $value) {
             $grid .= "        <row>\n";
             foreach ($value as $final) {
@@ -112,14 +84,11 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $grid;
     }
 
-
     public function deploy ()
     {
-
         if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
             throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
-
 
         $this->setRecordsPerPage(0);
         parent::deploy();
@@ -134,7 +103,6 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $grid .= "</grid>";
 
-
         if (! isset($this->_deploy['save'])) {
             $this->_deploy['save'] = false;
         }
@@ -146,7 +114,6 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         if ($this->_deploy['save'] != 1 && $this->_deploy['download'] != 1) {
             header("Content-type: application/xml");
         }
-
 
         if (! isset($this->_deploy['save']) && ! isset($this->options['download'])) {
             echo $grid;
@@ -174,12 +141,10 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         file_put_contents($this->_deploy['dir'] . $this->_deploy['name'] . ".xml", $grid);
 
-
         if ($this->_deploy['download']==1) {
             header('Content-Disposition: attachment; filename="' . $this->_deploy['name'] . '.xml"');
             readfile($this->_deploy['dir'] . $this->_deploy['name'] . '.xml');
         }
-
 
         if ($this->_deploy['save']!=1) {
             unlink($this->_deploy['dir'] . $this->_deploy['name'] . '.xml');
@@ -187,7 +152,4 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         die();
     }
-
 }
-
-
