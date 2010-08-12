@@ -97,7 +97,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
          if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
             // check if this kind of export is alowed
-            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
+            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
 
     }
@@ -109,7 +109,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      *
      * @return string
      */
-    function buildTitltesCsv($titles)
+    function buildTitlesCsv($titles)
     {
 
         $grid = '';
@@ -224,7 +224,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         // export header
         if (!$this->getDeployOption('skipHeaders')) {
-            $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles()));
+            $this->csvAddData(self::buildTitlesCsv(parent::_buildTitles()));
         }
         $i = 0;
         do {

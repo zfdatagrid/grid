@@ -29,11 +29,11 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
 
         if ( ! in_array($this->_deployName, $this->_export) && ! array_key_exists($this->_deployName, $this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
+            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
     }
 
-    public function buildTitltesJson ($titles)
+    public function buildTitlesJson ($titles)
     {
 
         $grid = array();
@@ -86,7 +86,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
         header('Content-Type', 'application/json');
 
-        $grid['titles'] = self::buildTitltesJson(parent::_buildTitles());
+        $grid['titles'] = self::buildTitlesJson(parent::_buildTitles());
         $grid['rows'] = self::buildGridJson(parent::_buildGrid());
         $grid['sqlexp'] = self::buildSqlexpJson(parent::_buildSqlExp());
 

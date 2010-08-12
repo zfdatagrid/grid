@@ -216,7 +216,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
 
-            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
+            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
 
         }
 

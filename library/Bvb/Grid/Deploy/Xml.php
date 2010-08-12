@@ -36,7 +36,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     }
 
-    public function buildTitltesXml ($titles)
+    public function buildTitlesXml ($titles)
     {
 
 
@@ -117,7 +117,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     {
 
         if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You dont' have permission to export the results to this format"));
+            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
 
 
@@ -128,7 +128,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $grid .= '<?xml version="1.0" encoding="' . $this->getCharEncoding() . '"?>' . "\n";
         $grid .= "<grid>\n";
 
-        $grid .= self::buildTitltesXml(parent::_buildTitles());
+        $grid .= self::buildTitlesXml(parent::_buildTitles());
         $grid .= self::buildGridXml(parent::_buildGrid());
         $grid .= self::buildSqlexpXml(parent::_buildSqlExp());
 
