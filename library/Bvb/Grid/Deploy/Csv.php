@@ -75,33 +75,25 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         // default pagination, should be adjusted based on data processed to improve speed
         $this->setRecordsPerPage(5000);
 
-        $options = $this->_options;
-
         // fix configuration options
-        $deploy = isset($options['deploy'][$this->_deployName]) ? $options['deploy'][$this->_deployName] : array();
-        if (!isset($deploy['dir'])) {
-            $deploy['dir'] = "";
-        } else {
+        $deploy = $this->getDeployOption($this->_deployName, array());
+        $defaults = array(
+            'dir'       => '',
+            'store'     => false,
+            'download'  => (!isset($deploy['download']) && !isset($deploy['store'])),
+        );
+        $deploy = array_merge($defaults, $deploy);
+
+        if (!empty($deploy['dir'])) {
             $deploy['dir'] = rtrim($deploy['dir'], "/") . "/";
         }
 
-        if (!isset($deploy['download']) && !isset($deploy['store'])) {
-            $deploy['download'] = true;
-            $deploy['store'] = false;
-        } else {
-            if (!isset($deploy['download'])) {
-                $deploy['download'] = false;
-            }
-            if (!isset($deploy['store'])) {
-                $deploy['store'] = false;
-            }
-        }
         // set the changed options
-        $options['deploy'][$this->_deployName] = $deploy;
+        $this->setDeployOption($this->_deployName, $deploy);
 
         // TODO I don't understand why parent::__constructor will not set this automaticaly,
         // what if it would be loaded from config ?
-        $this->_deploy = $options['deploy'][$this->_deployName];
+        $this->_deploy = $this->getDeployOption($this->_deployName);
 
          if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
             // check if this kind of export is alowed
@@ -184,13 +176,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected function csvAddData($data)
     {
-        if ($this->actionEnabled('download')) {
+        if ($this->getDeployOption('download')) {
             // send first headers
             echo $data;
             flush();
             ob_flush();
         }
-        if ($this->actionEnabled('store')) {
+        if ($this->getDeployOption('store')) {
             // open file handler
             fwrite($this->_outFile, $data);
         }
@@ -207,7 +199,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->_prepareOptions();
         parent::deploy();
 
-        if ($this->actionEnabled('download')) {
+        if ($this->getDeployOption('download')) {
 
             // send first headers
             ob_end_clean();
@@ -225,13 +217,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
             header('Content-Transfer-Encoding: binary');
         }
-        if ($this->actionEnabled('store')) {
+        if ($this->getDeployOption('store')) {
             // open file handler
             $this->_outFile = fopen($this->_deploy['dir'] . $this->getFileName(), "w");
         }
 
         // export header
-        if (!(isset($this->_deploy['skipHeaders']) && $this->_deploy['skipHeaders'])) {
+        if (!$this->getDeployOption('skipHeaders')) {
             $this->csvAddData(self::buildTitltesCsv(parent::_buildTitles()));
         }
         $i = 0;
@@ -245,11 +237,11 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $this->_result = $this->getSource()->execute();
         } while (count($this->_result));
 
-        if ($this->actionEnabled('store')) {
+        if ($this->getDeployOption('store')) {
             // close file handler
             fclose($this->_outFile);
         }
-        if ($this->actionEnabled('download')) {
+        if ($this->getDeployOption('download')) {
             // we set special headers and uploaded data, there is nothing more we could do
             die();
         }
@@ -282,23 +274,10 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function setAjax()
     {
-        if ($this->actionEnabled('download')) {
+        if ($this->getDeployOption('download')) {
             // if we want to upload data then we should do it now, deploy will die if needed
             $this->_deploy();
         }
         return $this;
     }
-
-    /**
-     * Is action (download or store) enabled
-     *
-     * @param string $action name of action to test
-     *
-     * @return boolean
-     */
-    public function actionEnabled($action)
-    {
-        return isset($this->_deploy[$action])?$this->_deploy[$action]:false;
-    }
-
 }

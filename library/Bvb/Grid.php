@@ -3346,6 +3346,17 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Retrieve a value and return $default if there is no element set.
+     *
+     * @param string $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getDeployOption($name, $default = null)
+    {
+        return (array_key_exists($name, $this->_deploy)) ? $this->_deploy[$name] : $default;
+    }
 
     /**
      *Reset Deploy Options
