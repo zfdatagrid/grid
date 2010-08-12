@@ -877,8 +877,11 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 $fieldName = trim($field);
                 $fieldAlias = null;
 
-                if (count(explode(' ', trim($field))) > 1) {
-                    list($fieldName, $fieldAlias) = explode(' ', trim($field));
+                if (strpos($field, ' ') !== false) {
+                    // since our field expression may contain spaces, assume the last space marks the alias
+                    $parts      = explode(' ', $field);
+                    $fieldAlias = array_pop($parts);
+                    $fieldName  = implode(' ', $parts);
                 }
 
                 if (empty($fieldAlias)) {
@@ -917,14 +920,14 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 
             foreach ($fields as $field) {
                 if (strpos(strtoupper($field), 'JOIN') === false) {
-                    $this->_queryParts = array_merge($this->_queryParts, $this->_explodeFrom($field));
+                    $this->_queryParts = array_merge_recursive($this->_queryParts, $this->_explodeFrom($field));
                 } else {
                     $join = explode('JOIN', $field);
                     $join = array_map('trim', $join);
 
                     $joinType = strtolower($join[0]);
 
-                    $this->_queryParts = array_merge($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
+                    $this->_queryParts = array_merge_recursive($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
                 }
             }
 
