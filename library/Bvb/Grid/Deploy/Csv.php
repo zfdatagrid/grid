@@ -142,7 +142,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         if (is_array($sql)) {
 
             foreach ($sql as $exp) {
-                $grid .= '"' . $exp ['value'] . '",';
+                $grid .= '"' . strip_tags($exp['value']) . '",';
             }
         }
 
@@ -163,7 +163,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         foreach ($grids as $value) {
 
             foreach ($value as $final) {
-                $grid .= '"' . $final ['value'] . '",';
+                $grid .= '"' . strip_tags($final['value']) . '",';
             }
 
             $grid = substr($grid, 0, - 1) . " \n";
