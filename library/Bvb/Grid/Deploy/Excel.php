@@ -24,27 +24,24 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
-
-        if ( ! in_array($this->_deployName, $this->_export) && ! array_key_exists($this->_deployName, $this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
+        $this->checkExportRights();
     }
 
     public function deploy()
     {
-		$this->setRecordsPerPage ( 0 );
+		$this->setRecordsPerPage(0);
 
-		parent::deploy ();
+		parent::deploy();
 
 		if(!isset($this->options['title'])) {
 		    $this->options['title'] = 'ZFDatagrid';
 		}
 
-		$titles = parent::_buildTitles ();
-		$wsData = parent::_buildGrid ();
-		$sql = parent::_buildSqlExp ();
+		$titles = parent::_buildTitles();
+		$wsData = parent::_buildGrid();
+		$sql    = parent::_buildSqlExp();
 
-		if (is_array ( $wsData ) && count($wsData)>65569) {
+		if (is_array($wsData) && count($wsData)>65569) {
 		    throw new Bvb_Grid_Exception('Maximum number of records allowed is 65569');
 		}
 
@@ -57,7 +54,6 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid  implements Bvb_Grid_Deploy_DeployI
 
 		$xml .= '<ss:Row>';
 		foreach ( $titles as $value ) {
-
 			$type = ! is_numeric ($value ['value'] ) ? 'String' : 'Number';
 
 			$xml .= '<ss:Cell><Data ss:Type="' . $type . '">' . $value ['value'] . '</Data></ss:Cell>';

@@ -182,12 +182,9 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return true;
     }
 
-    public function deploy ()
+    public function deploy()
     {
-        if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
-
+        $this->checkExportRights();
         $this->setRecordsPerPage(0);
 
         parent::deploy();
@@ -267,7 +264,6 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $titles = parent::_buildTitles();
 
-        #$nome = reset ( $titles );
         $wsData = parent::_buildGrid();
         $sql = parent::_buildSqlExp();
 

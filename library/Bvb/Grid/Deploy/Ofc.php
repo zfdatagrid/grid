@@ -141,11 +141,9 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->multiple = $flag;
     }
 
-    public function deploy ()
+    public function deploy()
     {
-        if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
+        $this->checkExportRights();
 
         if ( $this->_filesLocation === null ) {
             throw new Bvb_Grid_Exception($this->__("Please set Javascript and Flash file locations using SetFilesLocation()"));

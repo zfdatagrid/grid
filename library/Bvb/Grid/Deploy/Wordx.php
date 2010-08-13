@@ -30,9 +30,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     protected $templateDir;
 
-    public function __construct ($options)
+    public function __construct($options)
     {
-        if ( ! class_exists('ZipArchive') ) {
+        if (!class_exists('ZipArchive')) {
             throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');
         }
 
@@ -56,12 +56,12 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $directory_tree = array();
 
         // if the path is not valid or is not a directory ...
-        if ( ! file_exists($directory) || ! is_dir($directory) ) {
+        if (!file_exists($directory) || !is_dir($directory)) {
             // ... we return false and exit the function
             return FALSE;
 
         // ... else if the path is readable
-        } elseif ( is_readable($directory) ) {
+        } elseif (is_readable($directory)) {
             // we open the directory
             $directory_list = opendir($directory);
 
@@ -69,17 +69,17 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             while (FALSE !== ($file = readdir($directory_list))) {
                 // if the filepointer is not the current directory
                 // or the parent directory
-                if ( $file != '.' && $file != '..' && $file != '.DS_Store' ) {
+                if ($file != '.' && $file != '..' && $file != '.DS_Store') {
                     // we build the new path to scan
                     $path = $directory . '/' . $file;
 
                     // if the path is readable
-                    if ( is_readable($path) ) {
+                    if (is_readable($path)) {
                         // we split the new path by directories
                         $subdirectories = explode('/', $path);
 
                         // if the new path is a directory
-                        if ( is_dir($path) ) {
+                        if (is_dir($path)) {
                             // add the directory details to the file list
                             $directory_tree[] = array('path' => $path . '|',
 
@@ -87,14 +87,14 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             'content' => $this->scan_directory_recursively($path, $filter));
 
                         // if the new path is a file
-                        } elseif ( is_file($path) ) {
+                        } elseif (is_file($path)) {
                             // get the file extension by taking everything after the last dot
                             $extension = end($subdirectories);
                             $extension = explode('.', $extension);
                             $extension = end($extension);
 
                             // if there is no filter set or the filter is set and matches
-                            if ( $filter === FALSE || $filter == $extension ) {
+                            if ($filter === FALSE || $filter == $extension) {
                                 // add the file details to the file list
                                 $directory_tree[] = array('path' => $path . '|', 'name' => end($subdirectories));
                             }
@@ -121,9 +121,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     {
         $current_dir = @opendir($dir);
         while ($entryname = @readdir($current_dir)) {
-            if ( is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..") ) {
+            if (is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..")) {
                 $this->deldir($dir . '/' . $entryname);
-            } elseif ( $entryname != "." and $entryname != ".." ) {
+            } elseif ($entryname != "." and $entryname != "..") {
                 @unlink($dir . '/' . $entryname);
             }
         }
@@ -139,8 +139,8 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     public function zipPaths ($dirs)
     {
-        foreach ( $dirs as $key => $value ) {
-            if ( ! is_array(@$value['content']) ) {
+        foreach ($dirs as $key => $value) {
+            if (!is_array(@$value['content'])) {
                 @$file .= $value['path'];
             } else {
                 @$file .= $this->zipPaths($value['content']);
@@ -159,25 +159,25 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function copyDir ($source, $dest)
     {
         // Se for ficheiro
-        if ( is_file($source) ) {
+        if (is_file($source)) {
             $c = copy($source, $dest);
             chmod($dest, 0777);
             return $c;
         }
 
         // criar directorio de destino
-        if ( ! is_dir($dest) ) {
+        if (!is_dir($dest)) {
             mkdir($dest, 0777, 1);
         }
 
         $dir = dir($source);
         while (false !== $entry = $dir->read()) {
-            if ( $entry == '.' || $entry == '..' || $entry == '.svn' ) {
+            if ($entry == '.' || $entry == '..' || $entry == '.svn') {
                 continue;
             }
 
             // copiar directorios
-            if ( $dest !== "$source/$entry" ) {
+            if ($dest !== "$source/$entry") {
                 $this->copyDir("$source/$entry", "$dest/$entry");
             }
         }
@@ -186,47 +186,44 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         return true;
     }
 
-    public function deploy ()
+    public function deploy()
     {
-        if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
-
+        $this->checkExportRights();
         $this->setRecordsPerPage(0);
 
         parent::deploy();
 
-        if ( ! $this->_temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx ) {
+        if (!$this->_temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
             $this->setTemplate('wordx', 'wordx');
         }
 
         $this->templateInfo = $this->_temp['wordx']->options;
 
-        if ( ! isset($this->_deploy['title']) ) {
+        if (!isset($this->_deploy['title'])) {
             $this->_deploy['title'] = '';
         }
 
-        if ( ! isset($this->_deploy['subtitle']) ) {
+        if (!isset($this->_deploy['subtitle'])) {
             $this->_deploy['subtitle'] = '';
         }
 
-        if ( ! isset($this->_deploy['logo']) ) {
+        if (!isset($this->_deploy['logo'])) {
             $this->_deploy['logo'] = '';
         }
 
-        if ( ! isset($this->_deploy['footer']) ) {
+        if (!isset($this->_deploy['footer'])) {
             $this->_deploy['footer'] = '';
         }
 
-        if ( ! isset($this->_deploy['save']) ) {
+        if (!isset($this->_deploy['save'])) {
             $this->_deploy['save'] = false;
         }
 
-        if ( ! isset($this->_deploy['download']) ) {
+        if (!isset($this->_deploy['download'])) {
             $this->_deploy['download'] = false;
         }
 
-        if ( $this->_deploy['save'] != 1 && $this->_deploy['download'] != 1 ) {
+        if ($this->_deploy['save'] != 1 && $this->_deploy['download'] != 1) {
             throw new Exception('Nothing to do. Please specify download&&|save options');
         }
 
@@ -234,19 +231,19 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->inicialDir = $this->_deploy['dir'];
 
-        if ( empty($this->_deploy['name']) ) {
+        if (empty($this->_deploy['name'])) {
             $this->_deploy['name'] = date('H_m_d_H_i_s');
         }
 
-        if ( substr($this->_deploy['name'], - 5) == '.docx' ) {
+        if (substr($this->_deploy['name'], - 5) == '.docx') {
             $this->_deploy['name'] = substr($this->_deploy['name'], 0, - 5);
         }
 
-        if ( ! is_dir($this->_deploy['dir']) ) {
+        if (!is_dir($this->_deploy['dir'])) {
             throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not a dir');
         }
 
-        if ( ! is_writable($this->_deploy['dir']) ) {
+        if (!is_writable($this->_deploy['dir'])) {
             throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not writable');
         }
 
@@ -257,7 +254,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_deploy['dir'] = rtrim($this->_deploy['dir'], '/') . '/' . ucfirst($this->_deploy['name']) . '/';
 
-        if ( ! defined('APPLICATION_PATH') ) {
+        if (!defined('APPLICATION_PATH')) {
             $pathTemplate = substr($this->templateInfo['dir'], 0, - 4) . '/';
         } else {
             $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
@@ -274,7 +271,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $sql = parent::_buildSqlExp();
 
         # HEADER
-        if ( file_exists($this->_deploy['logo']) ) {
+        if (file_exists($this->_deploy['logo'])) {
             $data = explode("/", $this->_deploy['logo']);
             copy($this->_deploy['logo'], $this->_deploy['dir'] . 'word/media/' . end($data));
 
@@ -298,25 +295,22 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $xml .= $this->_temp['wordx']->titlesStart();
 
-        foreach ( $titles as $value ) {
-
-            if ( (isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
-
+        foreach ($titles as $value) {
+            if ((isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                 $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->_temp['wordx']->titlesLoop());
-
             }
         }
         $xml .= $this->_temp['wordx']->titlesEnd();
 
-        if ( is_array($wsData) ) {
-            if ( $this->getInfo('hRow,title') != '' ) {
+        if (is_array($wsData)) {
+            if ($this->getInfo('hRow,title') != '') {
                 $bar = $wsData;
 
                 $hbar = trim($this->getInfo('hRow,title'));
 
                 $p = 0;
-                foreach ( $wsData[0] as $value ) {
-                    if ( isset($value['field']) && $value['field'] == $hbar ) {
+                foreach ($wsData[0] as $value) {
+                    if (isset($value['field']) && $value['field'] == $hbar) {
                         $hRowIndex = $p;
                     }
 
@@ -327,10 +321,10 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $i = 1;
             $aa = 0;
-            foreach ( $wsData as $row ) {
+            foreach ($wsData as $row) {
                 //A linha horizontal
-                if ( @$this->getInfo('hRow,title') != '' ) {
-                    if ( @$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value'] ) {
+                if (@$this->getInfo('hRow,title') != '') {
+                    if (@$bar[$aa][$hRowIndex]['value'] != @$bar[$aa - 1][$hRowIndex]['value']) {
                         $xml .= str_replace("{{value}}", utf8_encode(@$bar[$aa][$hRowIndex]['value']), $this->_temp['wordx']->hRow());
                     }
                 }
@@ -338,10 +332,10 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $xml .= $this->_temp['wordx']->loopStart();
 
                 $a = 1;
-                foreach ( $row as $value ) {
+                foreach ($row as $value) {
                     $value['value'] = strip_tags($value['value']);
 
-                    if ( (isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '' ) {
+                    if ((isset($value['field']) && $value['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '') || $this->getInfo('hRow,title') == '') {
                         $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->_temp['wordx']->loopLoop());
                     }
                     $a ++;
@@ -352,9 +346,9 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
         }
 
-        if ( is_array($sql) ) {
+        if (is_array($sql)) {
             $xml .= $this->_temp['wordx']->sqlExpStart();
-            foreach ( $sql as $value ) {
+            foreach ($sql as $value) {
                 $xml .= str_replace("{{value}}", utf8_encode($value['value']), $this->_temp['wordx']->sqlExpLoop());
             }
             $xml .= $this->_temp['wordx']->sqlExpEnd();
@@ -371,11 +365,11 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $zip = new ZipArchive();
         $filename = $this->_deploy['dir'] . $this->_deploy['name'] . ".zip";
 
-        if ( $zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE ) {
+        if ($zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE) {
             exit("cannot open <$filename>\n");
         }
 
-        foreach ( $f as $value ) {
+        foreach ($f as $value) {
             $zip->addFile($value, str_replace($this->_deploy['dir'], '', $value));
         }
 
@@ -383,13 +377,13 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         rename($filename, $this->inicialDir . $this->_deploy['name'] . '.docx');
 
-        if ( $this->_deploy['download'] == 1 ) {
+        if ($this->_deploy['download'] == 1) {
             header('Content-type: application/word');
             header('Content-Disposition: attachment; filename="' . $this->_deploy['name'] . '.docx"');
             readfile($this->inicialDir . $this->_deploy['name'] . '.docx');
         }
 
-        if ( $this->_deploy['save'] != 1 ) {
+        if ($this->_deploy['save'] != 1) {
             unlink($this->inicialDir . $this->_deploy['name'] . '.docx');
         }
 

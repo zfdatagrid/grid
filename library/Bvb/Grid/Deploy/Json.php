@@ -24,9 +24,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
-        if ( ! in_array($this->_deployName, $this->_export) && ! array_key_exists($this->_deployName, $this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
+        $this->checkExportRights();
     }
 
     public function buildTitles()

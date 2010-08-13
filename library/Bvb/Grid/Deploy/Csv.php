@@ -74,11 +74,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         // TODO I don't understand why parent::__constructor will not set this automaticaly,
         // what if it would be loaded from config ?
         $this->_deploy = $this->getDeployOption($this->_deployName);
-
-         if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
-            // check if this kind of export is alowed
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
+        $this->checkExportRights();
     }
 
     /**
@@ -191,9 +187,9 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             header('Pragma: public');
             header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-//            header("Content-Type: application/csv");
-//            header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
-//            header('Content-Transfer-Encoding: binary');
+            header("Content-Type: application/csv");
+            header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
+            header('Content-Transfer-Encoding: binary');
         }
         if ($this->getDeployOption('store')) {
             // open file handler

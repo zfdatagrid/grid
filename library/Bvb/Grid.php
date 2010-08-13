@@ -3101,6 +3101,13 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    public function checkExportRights()
+    {
+        if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
+            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
+        }
+    }
+
     /**
      * Build an array based on the given key name (why this never made it to PHP core I'll never know).
      *

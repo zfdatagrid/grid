@@ -22,7 +22,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 {
     public $templateInfo;
 
-    public function __construct ($options)
+    public function __construct($options)
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -30,11 +30,9 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->addTemplateDir('Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print');
     }
 
-    public function deploy ()
+    public function deploy()
     {
-        if ( ! in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName,$this->_export) ) {
-            throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
-        }
+        $this->checkExportRights();
         $this->setRecordsPerPage(0);
 
         parent::deploy();
