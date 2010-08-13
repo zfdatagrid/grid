@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-abstract class Bvb_Grid_Source_Db_DbAbstract
+abstract class Bvb_Grid_Source_Db_Abstract
 {
     /**
      * Builds form elements based on field definition
