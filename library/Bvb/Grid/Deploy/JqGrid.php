@@ -24,7 +24,7 @@ require_once 'Zend/Json.php';
 /** Zend_Controller_Front */
 require_once 'Zend/Controller/Front.php';
 
-class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
+class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
     /**
      * URL path to place where JqGrid library resides

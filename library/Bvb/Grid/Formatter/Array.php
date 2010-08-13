@@ -16,7 +16,7 @@
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    $Id: Date.php 492 2010-01-26 17:08:02Z pao.fresco $
  */
-class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_FormatterInterface
+class Bvb_Grid_Formatter_Array implements Bvb_Grid_Formatter_Interface
 {
     // custom callback function
     protected $_callBack;

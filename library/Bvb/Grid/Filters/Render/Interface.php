@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-interface Bvb_Grid_Filters_Render_RenderInterface
+interface Bvb_Grid_Filters_Render_Interface
 {
     /**
      * @return the $_view

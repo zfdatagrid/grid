@@ -17,7 +17,7 @@
  * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
-class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
+class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_Interface
 {
     public function __construct($options)
     {

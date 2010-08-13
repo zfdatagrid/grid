@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-interface Bvb_Grid_GridInterface
+interface Bvb_Grid_Interface
 {
     public function buildFilters();
 

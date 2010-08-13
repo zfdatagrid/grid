@@ -6,7 +6,7 @@
  *
  * @author James Solomon <labs@clickbooth.com>
  */
-class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
+class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_Interface
 {
     /**
      * Stores the supplied Doctrine_Query
