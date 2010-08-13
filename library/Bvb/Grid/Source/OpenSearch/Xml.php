@@ -20,8 +20,6 @@
 
 class Bvb_Grid_Source_OpenSearch_Xml extends Bvb_Grid_Source_Array
 {
-
-
     function __construct ($url)
     {
         $channel = new Zend_Feed_Rss($url);

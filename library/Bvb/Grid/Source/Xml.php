@@ -18,13 +18,10 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
 {
-
     public function __construct ($url, $loop, $columns = null)
     {
-
         if (strstr($url, '<?xml')) {
             $xml = simplexml_load_string($url);
         } else {
@@ -43,7 +40,7 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
         //Remove possible arrays
         for ($i = 0; $i < count($xml); $i ++) {
             foreach ($xml[$i] as $key => $final) {
-                if (! is_string($final)) {
+                if (!is_string($final)) {
                     unset($xml[$i][$key]);
                 }
             }
@@ -63,6 +60,5 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
 
         unset($columns);
         unset($xml);
-
     }
 }

@@ -18,17 +18,13 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 class Bvb_Grid_Filters
 {
-
     public $_filters = array();
 
-
-    public function addFilter ($field, $options = array())
+    public function addFilter($field, $options = array())
     {
         $this->_filters[$field] = $options;
         return $this;
     }
-
 }

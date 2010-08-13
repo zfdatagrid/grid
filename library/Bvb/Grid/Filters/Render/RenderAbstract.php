@@ -20,7 +20,6 @@
 
 abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filters_Render_RenderInterface
 {
-
     protected $_defaultValue;
 
     protected $_view;
@@ -35,71 +34,63 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
 
     protected $_select;
 
-
     /**
      * @return the $_view
      */
-    public function getView ()
+    public function getView()
     {
         return $this->_view;
     }
 
-
-    public function setTranslator ($translate)
+    public function setTranslator($translate)
     {
         $this->_translator = $translate;
     }
 
-
-    public function getTranslator ()
+    public function getTranslator()
     {
         return $this->_translator;
     }
 
-
-    public function __ ($name)
+    public function __($name)
     {
-        if ( $this->getTranslator() ) return $this->getTranslator()->translate($name);
+        if ($this->getTranslator())
+            return $this->getTranslator()->translate($name);
 
         return $name;
     }
 
-
     /**
      * @return the $_attributes
      */
-    public function getAttributes ()
+    public function getAttributes()
     {
         return $this->_attributes;
     }
 
-
-    public function getAttribute ($name)
+    public function getAttribute($name)
     {
         return isset($this->_attributes[$name]) ? $this->_attributes[$name] : null;
     }
 
-
     /**
      * @param $_view the $_view to set
      */
-    public function setView ($_view)
+    public function setView($_view)
     {
         $this->_view = $_view;
     }
 
-
     /**
      * @param $_attributes the $_attributes to set
      */
-    public function setAttributes ($_attributes)
+    public function setAttributes($_attributes)
     {
         $this->_attributes = $_attributes;
         return $this;
     }
 
-
-    public function setAttribute ($name, $value)
+    public function setAttribute($name, $value)
     {
         $this->_attributes[$name] = $value;
         return $this;
@@ -110,33 +101,29 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
         return isset($this->_attributes[$name])?true:false;
     }
 
-
-    public function removeAttribute ($name)
+    public function removeAttribute($name)
     {
-        if ( isset($this->_attributes[$name]) ) {
+        if (isset($this->_attributes[$name])) {
             unset($this->_attributes[$name]);
         }
 
         return $this;
     }
 
-
-    public function setValues (array $options)
+    public function setValues(array $options)
     {
         $this->_values = $options;
         return $this;
     }
 
-
-    public function getValues ()
+    public function getValues()
     {
         return $this->_values;
     }
 
-
-    public function setDefaultValue ($value, $field = '')
+    public function setDefaultValue($value, $field = '')
     {
-        if ( $field != '' ) {
+        if ($field != '') {
             $this->_defaultValue[$field] = $value;
         } else {
             $this->_defaultValue = $value;
@@ -144,61 +131,51 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
         return $this;
     }
 
-
-    public function getDefaultValue ($name = '')
+    public function getDefaultValue($name = '')
     {
-        if ( $name != '' ) {
+        if ($name != '') {
             return isset($this->_defaultValue[$name]) ? $this->_defaultValue[$name] : null;
         }
         return $this->_defaultValue;
     }
 
-
-    public function setFieldName ($name)
+    public function setFieldName($name)
     {
         $this->_fieldName = $name;
         return $this;
     }
 
-
-    public function getFieldName ()
+    public function getFieldName()
     {
         return $this->_fieldName;
     }
 
-
-    public function normalize ($value, $part = '')
+    public function normalize($value, $part = '')
     {
         return $value;
     }
 
-
-    public function setSelect ($select)
+    public function setSelect($select)
     {
         $this->_select = $select;
         return $this;
     }
 
-
-    public function getSelect ()
+    public function getSelect()
     {
         return $this->_select;
     }
 
-
-    public function hasConditions ()
+    public function hasConditions()
     {
         return true;
     }
 
-
-    public function buildQuery (array $filter)
+    public function buildQuery(array $filter)
     {
-
     }
 
-    public function getChilds ()
+    public function getChilds()
     {
-
     }
 }

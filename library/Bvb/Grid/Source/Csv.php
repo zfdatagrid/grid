@@ -18,23 +18,19 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
 {
-
-
     protected $_dataSource;
 
     protected $_columns;
 
     protected $_separator;
 
-
     public function __construct ($dataSource, $columns = null, $separator = ',')
     {
         $final = array();
 
-        if ( ! is_readable($dataSource) ) {
+        if (! is_readable($dataSource)) {
             throw new Bvb_Grid_Exception('Could not read file: ' . $dataSource);
         }
 
@@ -42,35 +38,30 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         $handle = fopen($dataSource, "r");
         while (($data = fgetcsv($handle, 1000, $separator)) !== FALSE) {
             $num = count($data);
-            if ( null !== $columns ) {
-
+            if (null !== $columns) {
                 $field = $columns;
 
-                for ( $c = 0; $c < $num; $c ++ ) {
-
-                    if ( $c == 0 ) {
+                for ($c = 0; $c < $num; $c ++) {
+                    if ($c == 0) {
                         $final[$row]['_zfgId'] = $row;
                         $final[$row][$columns[$c]] = $data[$c];
                     } else {
                         $final[$row][$columns[$c]] = $data[$c];
                     }
-
                 }
             } else {
-                if ( $row == 0 ) {
-                    for ( $c = 0; $c < $num; $c ++ ) {
+                if ($row == 0) {
+                    for ($c = 0; $c < $num; $c ++) {
                         $field[] = $data[$c];
                     }
                 } else {
-                    for ( $c = 0; $c < $num; $c ++ ) {
-
-                        if ( $c == 0 ) {
+                    for ($c = 0; $c < $num; $c ++) {
+                        if ($c == 0) {
                             $final[$row - 1]['_zfgId'] = $row;
                             $final[$row - 1][$field[$c]] = $data[$c];
                         } else {
                             $final[$row - 1][$field[$c]] = $data[$c];
                         }
-
                     }
                 }
             }
@@ -82,11 +73,10 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         $this->_columns = $columns;
         $this->_separator = $separator;
 
-        if ( $this->_columns !== null ) {
-
+        if ($this->_columns !== null) {
             array_unshift($this->_columns, 'zfgId');
 
-            foreach ( $final as $key => $value ) {
+            foreach ($final as $key => $value) {
                 $final[$key] = array_combine($this->_columns, $value);
             }
         } else {
@@ -103,7 +93,6 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         return true;
     }
 
-
     public function insert ($table, array $post)
     {
         $fp = fopen($this->_dataSource, 'a');
@@ -112,10 +101,8 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         fclose($fp);
     }
 
-
     public function update ($table, array $post, array $condition)
     {
-
         $filename = $this->_dataSource;
 
         $filesize = filesize($filename);
@@ -125,43 +112,38 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
 
         $position = $condition['_zfgId'] - 1;
 
-        if ( $this->_columns === null ) {
+        if ($this->_columns === null) {
             $position ++;
         }
         $file[$position] = $result . "\n";
 
         file_put_contents($this->_dataSource, implode($file, ''));
-
     }
-
 
     public function delete ($table, array $condition)
     {
-
         $filename = $this->_dataSource;
 
         $filesize = filesize($filename);
 
         $file = file($this->_dataSource);
         $position = $condition['_zfgId'] - 1;
-        if ( $this->_columns === null ) {
+        if ($this->_columns === null) {
             $position ++;
         }
         unset($file[$position]);
         file_put_contents($this->_dataSource, implode($file, ''));
     }
 
-
     public function getRecord ($table, array $condition)
     {
         $position = $condition['_zfgId'];
-        if ( $this->_columns === null ) {
-            $position --;
+        if ($this->_columns === null) {
+            $position--;
         }
 
         return $this->_rawResult[$position];
     }
-
 
     public function hasCrud ()
     {

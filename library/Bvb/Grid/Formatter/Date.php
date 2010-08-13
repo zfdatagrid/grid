@@ -20,14 +20,13 @@
 
 class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
 {
-
     protected $locale = null;
 
     protected $date_format = null;
 
     protected $type = null;
 
-    public function __construct ($options = array())
+    public function __construct($options = array())
     {
         if ($options instanceof Zend_Locale) {
             $this->locale = $options;
@@ -54,15 +53,13 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
         }
     }
 
-    public function format ($value)
+    public function format($value)
     {
         try {
             $date = new Zend_Date($value);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return $value;
         }
         return $date->toString($this->date_format, $this->type, $this->locale);
     }
-
 }

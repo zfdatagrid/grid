@@ -18,22 +18,13 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 interface Bvb_Grid_GridInterface
 {
-
     public function buildFilters();
-
 
     public function buildGrid();
 
-
     public function buildTitles();
 
-
     public function buildSqlExp();
-
 }
-
-
-?>

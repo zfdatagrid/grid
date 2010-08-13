@@ -18,8 +18,6 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-
 class Bvb_Grid_Extra_Rows
 {
     public   $_rows;
@@ -27,7 +25,5 @@ class Bvb_Grid_Extra_Rows
     public function addRow($position,$rows)
     {
         $this->_rows[] = array('position'=>$position,'values'=>$rows);
-
     }
-
 }

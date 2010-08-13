@@ -18,85 +18,61 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 interface Bvb_Grid_Filters_Render_RenderInterface
 {
-
-
     /**
      * @return the $_view
      */
-    public function getView ();
+    public function getView();
 
+    public function setTranslator($translate);
 
-    public function setTranslator ($translate);
+    public function getTranslator();
 
-
-    public function getTranslator ();
-
-
-    public function __ ($name);
-
+    public function __($name);
 
     /**
      * @return the $_attributes
      */
-    public function getAttributes ();
+    public function getAttributes();
 
-
-    public function getAttribute ($name);
-
+    public function getAttribute($name);
 
     /**
      * @param $_view the $_view to set
      */
-    public function setView ($_view);
-
+    public function setView($_view);
 
     /**
      * @param $_attributes the $_attributes to set
      */
-    public function setAttributes ($_attributes);
+    public function setAttributes($_attributes);
 
+    public function setAttribute($name, $value);
 
-    public function setAttribute ($name, $value);
+    public function removeAttribute($name);
 
+    public function setValues(array $options);
 
-    public function removeAttribute ($name);
+    public function getValues();
 
+    public function setDefaultValue($value, $field = '');
 
-    public function setValues (array $options);
+    public function getDefaultValue($name = '');
 
+    public function setFieldName($name);
 
-    public function getValues ();
+    public function getFieldName();
 
+    public function normalize($value, $part = '');
 
-    public function setDefaultValue ($value, $field = '');
+    public function setSelect($select);
 
+    public function getSelect();
 
-    public function getDefaultValue ($name = '');
+    public function getChilds();
 
+    public function buildQuery(array $filter);
 
-    public function setFieldName ($name);
-
-
-    public function getFieldName ();
-
-
-    public function normalize ($value, $part = '');
-
-
-    public function setSelect ($select);
-
-
-    public function getSelect ();
-
-
-    public function getChilds ();
-
-
-    public function buildQuery (array $filter);
-
-
-    public function render ();
+    public function render();
 }

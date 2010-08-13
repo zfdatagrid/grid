@@ -20,7 +20,6 @@
 
 class Bvb_Grid_Form
 {
-
     protected $_form;
 
     protected $_inputsType = array();
@@ -30,7 +29,6 @@ class Bvb_Grid_Form
     public $fields;
 
     protected $_fieldsBasedOnQuery = false;
-
 
     protected $_subformGroupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '90', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
 
@@ -66,7 +64,6 @@ class Bvb_Grid_Form
 
     protected $_useDecorators = true;
 
-
     protected $_allowedFields = array();
 
     protected $_disallowedFields = array();
@@ -83,18 +80,22 @@ class Bvb_Grid_Form
 
     protected $_editColumn = true;
 
-
-    public function getForm ($subForm = null)
+    public function __construct($formClass = 'Zend_Form', $formOptions = array())
     {
-        if ( ! is_null($subForm) ) return $this->_form->getSubForm($subForm);
+        $this->_form = new $formClass($formOptions);
+    }
+
+    public function getForm($subForm = null)
+    {
+        if (!is_null($subForm))
+            return $this->_form->getSubForm($subForm);
 
         return $this->_form;
     }
 
-
-    public function __call ($name, $args)
+    public function __call($name, $args)
     {
-        if ( method_exists($this->getForm(), $name) ) {
+        if (method_exists($this->getForm(), $name)) {
             return call_user_func_array(array($this->getForm(), $name), $args);
         }
 
@@ -124,19 +125,10 @@ class Bvb_Grid_Form
 
             return $this;
         }
-
     }
 
-
-    public function __construct ($formClass = 'Zend_Form', $formOptions = array())
+    public function setCallbackBeforeDelete($callback)
     {
-        $this->_form = new $formClass($formOptions);
-    }
-
-
-    public function setCallbackBeforeDelete ($callback)
-    {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -145,10 +137,8 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
-    public function setCallbackBeforeUpdate ($callback)
+    public function setCallbackBeforeUpdate($callback)
     {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -158,10 +148,8 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
-    public function setCallbackBeforeInsert ($callback)
+    public function setCallbackBeforeInsert($callback)
     {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -171,10 +159,8 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
-    public function setCallbackAfterDelete ($callback)
+    public function setCallbackAfterDelete($callback)
     {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -184,10 +170,8 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
-    public function setCallbackAfterUpdate ($callback)
+    public function setCallbackAfterUpdate($callback)
     {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -197,10 +181,8 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
-    public function setCallbackAfterInsert ($callback)
+    public function setCallbackAfterInsert($callback)
     {
-
         if ( ! is_callable($callback) ) {
             throw new Exception($callback . ' not callable');
         }
@@ -209,5 +191,4 @@ class Bvb_Grid_Form
 
         return $this;
     }
-
 }

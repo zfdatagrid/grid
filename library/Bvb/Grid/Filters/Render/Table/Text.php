@@ -18,13 +18,10 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 class Bvb_Grid_Filters_Render_Table_Text extends Bvb_Grid_Filters_Render_RenderAbstract
 {
-
-    public function render ()
+    public function render()
     {
         return $this->getView()->formText($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes());
     }
-
 }

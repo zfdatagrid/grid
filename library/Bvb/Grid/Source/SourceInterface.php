@@ -18,11 +18,8 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 interface Bvb_Grid_Source_SourceInterface
 {
-
-
     /**
      * Should return true|false if this source support
      * crud operations
@@ -30,14 +27,12 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function hasCrud ();
 
-
     /**
      *Gets a unique record as a associative array
      * @param $table
      * @param $condition
      */
     public function getRecord ($table, array $condition);
-
 
     /**
      * builds a key=>value array
@@ -64,7 +59,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function buildFields ();
 
-
     /**
      * Should return the database server name or source name
      *
@@ -72,12 +66,10 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getSourceName ();
 
-
     /**
      *Runs the query and returns the result as a associative array
      */
     public function execute ();
-
 
     /**
      * Get a record detail based the current query
@@ -86,12 +78,10 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function fetchDetail (array $where);
 
-
     /**
      * Return the total of records
      */
     public function getTotalRecords ();
-
 
     /**
      * @return key=>value array with all tables
@@ -101,7 +91,6 @@ interface Bvb_Grid_Source_SourceInterface
      * c should be the table name
      */
     public function getTableList ();
-
 
     /**
      * Return possible filters values based on field definition
@@ -118,7 +107,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getFilterValuesBasedOnFieldDefinition ($field);
 
-
     /**
      * Return field type
      * char, varchar, int
@@ -132,14 +120,12 @@ interface Bvb_Grid_Source_SourceInterface
 
     public function getFieldType ($field);
 
-
     /**
      * Returns the "main" table
      * the one after select * FROM {MAIN_TABLE}
      *
      */
     public function getMainTable ();
-
 
     /**
      *
@@ -156,7 +142,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function buildQueryOrder ($field, $order, $reset = false);
 
-
     /**
      * Build the query limit clause
      * @param $start
@@ -164,12 +149,10 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function buildQueryLimit ($start, $offset);
 
-
     /**
      * Returns the select object
      */
     public function getSelectObject ();
-
 
     /**
      * returns the selected order
@@ -191,7 +174,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getSelectOrder ();
 
-
     /**
      * Should perform a query based on the provided by the user
      * select the two fields and return an array $field=>$value
@@ -205,7 +187,6 @@ interface Bvb_Grid_Source_SourceInterface
      * @return array
      */
     public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC');
-
 
     /**
      *
@@ -225,7 +206,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getSqlExp (array $value, $where = array());
 
-
     /**
      * Adds a fulltext search instead of a addcondition method
      *
@@ -242,7 +222,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function addFullTextSearch ($filter, $field);
 
-
     /**
      * Adds a new condition to the current query
      * $filter is the value to be filtered
@@ -256,14 +235,12 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function addCondition ($filter, $op, $completeField);
 
-
     /**
      *Insert an array of key=>values in the specified table
      * @param string $table
      * @param array $post
      */
     public function insert ($table, array $post);
-
 
     /**
      *Update values in a table using the $condition clause
@@ -282,7 +259,6 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function update ($table, array $post, array $condition);
 
-
     /**
      * Delete a record from a table
      *
@@ -298,24 +274,20 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function delete ($table, array $condition);
 
-
     /**
      * Removes any order in que query
      */
     public function resetOrder ();
-
 
     /**
      * Cache handler.
      */
     public function setCache ($cache);
 
-
     /**
      * Build the form based on a Model or query
      */
     public function buildForm ($fields = array(), $inputsType = array());
-
 
     /**
      * Returns tables primary keys separeted by commas ","
