@@ -48,7 +48,6 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * Options for x Labels
      * @var unknown_type
      */
-
     protected $_xLabelsOptions = array();
 
     /**
@@ -119,9 +118,9 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     protected $_xAxisOptions = array();
 
-    /*
-    * @param array $data
-    */
+    /**
+     * @param array $data
+     */
     public function __construct ($options)
     {
         $this->options = $options;

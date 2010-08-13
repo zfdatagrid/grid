@@ -23,6 +23,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * Storing file
      */
     protected $_outFile = null;
+
     /**
      * We don't want to display hidden fields
      *
@@ -31,25 +32,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $_removeHiddenFields = true;
 
     /**
-     * Return name of file
-     *
-     * @return string
-     */
-    public function getFileName()
-    {
-        $fileName = $this->getInfo('fileName');
-        if (!$fileName) {
-            $fileName = $this->getInfo('title');
-        }
-        if (!$fileName) {
-            $fileName = Zend_Controller_Front::getInstance()->getRequest()->getParam('controller') . '-' . date("Ymd");
-        }
-        return $fileName . '.csv';
-    }
-
-    /**
-     * Constructor
-     *
      * Optimize performance by setting best value for $this->setPagination(?);
      *
      * Options (deploy.csv.<option>):
@@ -64,7 +46,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * @see _prepareOptions
      * @return void
      */
-    function __construct($options)
+    public function __construct($options)
     {
         $this->_setRemoveHiddenFields(true);
 
@@ -100,62 +82,71 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     }
 
     /**
-     * Build list of column names for header row
-     *
-     * @param array $titles column titles
+     * Return name of file
      *
      * @return string
      */
-    function buildTitlesCsv($titles)
+    public function getFileName()
     {
-        $grid = '';
-        foreach ($titles as $title) {
-            $grid .= '"' . $title ['value'] . '",';
+        $fileName = $this->getInfo('fileName');
+        if (!$fileName) {
+            $fileName = $this->getInfo('title');
         }
+        if (!$fileName) {
+            $fileName = Zend_Controller_Front::getInstance()->getRequest()->getParam('controller') . '-' . date("Ymd");
+        }
+        return $fileName . '.csv';
+    }
 
-        return substr($grid, 0, - 1) . "\n";
+    /**
+     * Build list of column names for header row
+     *
+     * @return string
+     */
+    public function buildTitles()
+    {
+        return $this->formatLine($this->_buildTitles());
     }
 
     /**
      * Create line with values build based on sql expressions
      *
-     * @param array $sql SQL expression values
-     *
-     * @return <type> string
+     * @return string
      */
-    function buildSqlexpCsv($sql)
+    public function buildSqlexp()
     {
-        $grid = '';
-        if (is_array($sql)) {
-
-            foreach ($sql as $exp) {
-                $grid .= '"' . strip_tags($exp['value']) . '",';
-            }
-        }
-
-        return substr($grid, 0, - 1) . " \n";
+        return $this->formatLine($this->_buildSqlExp());
     }
 
     /**
      * Build data rows
      *
-     * @param array $grids all rows
-     *
      * @return string
      */
-    function buildGridCsv($grids)
+    public function buildGrid()
     {
-        $grid = '';
-        foreach ($grids as $value) {
+        return implode('', array_map(array($this, 'formatLine'), $this->_buildGrid()));
+    }
 
-            foreach ($value as $final) {
-                $grid .= '"' . strip_tags($final['value']) . '",';
-            }
+    /**
+     * Escape/format an array of row data as a single line of CSV
+     * @param array $row
+     * @return string
+     */
+    protected function formatLine($row)
+    {
+        // TODO: _buildGrid should be refactored so we don't have to call arrayPluck here
+        return implode(',', array_map(array($this, 'formatCell'), $this->arrayPluck($row))) . "\n";
+    }
 
-            $grid = substr($grid, 0, - 1) . " \n";
-        }
-
-        return $grid;
+    /**
+     * Format CSV cell
+     * @param string $value
+     * @return string
+     */
+    protected function formatCell($value)
+    {
+        return '"' . strip_tags($value) . '"';
     }
 
     /**
@@ -164,7 +155,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      * Depending on settings store to file and/or directly upload
      *
      * @param array $data data
-     *
      * @return void
      */
     protected function csvAddData($data)
@@ -186,7 +176,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      *
      * @return boolean FALSE if error
      */
-    function deploy()
+    public function deploy()
     {
         // prepare data
         $this->_prepareOptions();
@@ -196,18 +186,14 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             // send first headers
             ob_end_clean();
 
-            /* if(ini_get('zlib.output_compression')) {
-              die;
-              ini_set('zlib.output_compression', 'Off');
-              } */
             header('Content-Description: File Transfer');
             header('Cache-Control: public, must-revalidate, max-age=0'); // HTTP/1.1
             header('Pragma: public');
             header('Expires: Sat, 26 Jul 1997 05:00:00 GMT'); // Date in the past
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
-            header("Content-Type: application/csv");
-            header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
-            header('Content-Transfer-Encoding: binary');
+//            header("Content-Type: application/csv");
+//            header('Content-Disposition: attachment; filename="' . $this->getFileName() . '"');
+//            header('Content-Transfer-Encoding: binary');
         }
         if ($this->getDeployOption('store')) {
             // open file handler
@@ -216,15 +202,15 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         // export header
         if (!$this->getDeployOption('skipHeaders')) {
-            $this->csvAddData(self::buildTitlesCsv(parent::_buildTitles()));
+            $this->csvAddData($this->buildTitles());
         }
         $i = 0;
         do {
             $i += $this->_recordsPerPage;
-            $this->csvAddData(self::buildGridCsv(parent::_buildGrid()));
-            $this->csvAddData(self::buildSqlexpCsv(parent::_buildSqlExp()));
-            // get next data
+            $this->csvAddData($this->buildGrid());
+            $this->csvAddData($this->buildSqlexp());
 
+            // get next page
             $this->getSource()->buildQueryLimit($this->_recordsPerPage, $i);
             $this->_result = $this->getSource()->execute();
         } while (count($this->_result));

@@ -31,8 +31,9 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::__construct($options);
     }
 
-    public function buildTitlesXml ($titles)
+    public function buildTitles()
     {
+        $titles = $this->_buildTitles();
         $grid = "    <fields>\n";
         foreach ($titles as $title) {
             if(!isset($title['field']))
@@ -46,8 +47,9 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $grid;
     }
 
-    public function buildSqlexpXml ($sql)
+    public function buildSqlexp()
     {
+        $sql = $this->_buildSqlExp();
         $grid = '';
         if (is_array($sql)) {
             $grid .= "    <sqlexp>\n";
@@ -65,15 +67,16 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $grid;
     }
 
-    public function buildGridXml ($grids)
+    public function buildGrid()
     {
-        $grid = "    <results>\n";
+        $grids = $this->_buildGrid();
+        $grid  = "    <results>\n";
         foreach ($grids as $value) {
             $grid .= "        <row>\n";
             foreach ($value as $final) {
+                if(!isset($final['field']))
+                    continue;
 
-              if(!isset($final['field']))
-              continue;
                 $grid .= "            <" . $final['field'] . "><![CDATA[" . strip_tags($final['value']) . "]]></" . $final['field'] . ">\n";
             }
             $grid .= "        </row>\n";
@@ -93,14 +96,12 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->setRecordsPerPage(0);
         parent::deploy();
 
-        $grid = '';
-        $grid .= '<?xml version="1.0" encoding="' . $this->getCharEncoding() . '"?>' . "\n";
+        $grid = '<?xml version="1.0" encoding="' . $this->getCharEncoding() . '"?>' . "\n";
+
         $grid .= "<grid>\n";
-
-        $grid .= self::buildTitlesXml(parent::_buildTitles());
-        $grid .= self::buildGridXml(parent::_buildGrid());
-        $grid .= self::buildSqlexpXml(parent::_buildSqlExp());
-
+        $grid .= $this->buildTitles();
+        $grid .= $this->buildGrid();
+        $grid .= $this->buildSqlexp();
         $grid .= "</grid>";
 
         if (! isset($this->_deploy['save'])) {
@@ -124,8 +125,7 @@ class Bvb_Grid_Deploy_Xml extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $this->_deploy['name'] = date('H_m_d_H_i_s');
         }
 
-        if(substr($this->_deploy['name'],-4)=='.xml')
-        {
+        if(substr($this->_deploy['name'],-4)=='.xml') {
             $this->_deploy['name'] = substr($this->_deploy['name'],0,-4);
         }
 

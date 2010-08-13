@@ -19,8 +19,6 @@
  */
 class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-    protected $options = array();
-
     public function __construct($options)
     {
         $this->_setRemoveHiddenFields(true);
@@ -78,7 +76,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
                 $i = 1;
                 $aa = 0;
-                foreach ($wsData as $row) {                    ////////////
+                foreach ($wsData as $row) {
                     //A linha horizontal
                     if ($this->getInfo('hRow,title') != '') {
 

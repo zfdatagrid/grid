@@ -3100,4 +3100,26 @@ abstract class Bvb_Grid
 
         return $this;
     }
+
+    /**
+     * Build an array based on the given key name (why this never made it to PHP core I'll never know).
+     *
+     * @see http://www.php.net/manual/en/function.array-map.php#96269
+     * @param array $array
+     * @param string $key
+     * @return array
+     */
+    public function arrayPluck($array, $key = 'value')
+    {
+        if (!is_array($array))
+            return array();
+
+        $result = array();
+        foreach ($array as $row) {
+            if (array_key_exists($key, $row))
+                $result[] = $row[$key];
+        }
+
+        return $result;
+    }
 }

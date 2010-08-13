@@ -257,7 +257,6 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      * @param array $options set Bvb_Grid_Deploy_JqGrid
      *
      * @return Bvb_Grid_Deploy_JqGrid
-     *
      */
     public function setBvbParams(array $options)
     {
@@ -290,6 +289,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         $this->_bvbParams[$var] = $value;
         return $this;
     }
+
     /**
      * Return value of parameter from Bvb_Grid_Deploy_JqGrid domain
      *
@@ -762,7 +762,6 @@ HTML;
         $defaultFilters = array_flip(is_null($this->_defaultFilters) ? array() : $this->_defaultFilters);
 
         $titles = $this->_buildTitles();
-        //$fields = $this->removeAsFromFields();
         $fields = $this->_data['fields'];
 
         foreach ($titles as $key=>$title) {
@@ -772,8 +771,7 @@ HTML;
                 array("name" => isset($title['name'])?$title['name']:'', "label" => $title['value'])
             );
 
-            if($title['type']=='extraField')
-            {
+            if($title['type']=='extraField') {
                 $options['search']= false;
             }
 
@@ -1229,8 +1227,6 @@ class JqGridCommand
      * Constructor
      *
      * @param Bvb_Grid_Deploy_JqGrid $grid grid object
-     *
-     * @return void
      */
     public function __construct($grid)
     {
@@ -1257,10 +1253,10 @@ class JqGridCommand
     }
 
     /**
-     * Add command to chain. See http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods.
+     * Add command to chain.
      *
-     * @param string $command jqGrid command
-     *               there could be any number of additional parameters
+     * @param string $command jqGrid command there could be any number of additional parameters
+     * @link http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods
      *
      * @return JqGridCommand
      */
