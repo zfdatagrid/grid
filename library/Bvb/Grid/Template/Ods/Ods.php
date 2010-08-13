@@ -18,18 +18,12 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-
-
 class Bvb_Grid_Template_Ods_Ods
 {
-
     public  $options;
-
 
     public function globalStart()
     {
-
         return '<?xml version="1.0" encoding="UTF-8"?>
 <office:document-content
 	xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
@@ -85,83 +79,61 @@ class Bvb_Grid_Template_Ods_Ods
 	<table:table-column table:style-name="co1"  table:default-cell-style-name="Default" />';
     }
 
-
     public function globalEnd()
     {
-
         return '</table:table> </office:spreadsheet>
 	</office:body>
 </office:document-content>';
     }
 
-
     public function titlesStart()
     {
-
         return '<table:table-row table:style-name="ro1">';
     }
-
 
     public function titlesEnd()
     {
-
         return '</table:table-row>';
     }
-
 
     public function titlesLoop()
     {
-
         return '<table:table-cell office:value-type="string">
 			<text:p><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
     }
-
 
     public function loopStart()
     {
-
         return '<table:table-row table:style-name="ro1">';
     }
-
 
     public function loopEnd()
     {
-
         return '</table:table-row>';
     }
-
 
     public function loopLoop()
     {
-
         return '<table:table-cell office:value-type="string">
 			<text:p><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
     }
-
 
     public function sqlExpStart()
     {
-
         return '<table:table-row table:style-name="ro1">';
     }
 
-
     public function sqlExpEnd()
     {
-
         return '</table:table-row>';
     }
 
-
     public function sqlExpLoop()
     {
-
         return '<table:table-cell office:value-type="string">
 			<text:p><![CDATA[{{value}}]]></text:p>
 		</table:table-cell>';
     }
-
-
 }

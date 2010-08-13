@@ -18,10 +18,8 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
 class Bvb_Grid_Template_Print_Print
 {
-
     public $i;
 
     /**
@@ -30,11 +28,8 @@ class Bvb_Grid_Template_Print_Print
      */
     public $options = array();
 
-
-    public function globalStart ()
+    public function globalStart()
     {
-
-
         $return = "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=" . $this->options['charEncoding']. "\" />
         </head><body onload='window.print()';>";
         $return .= "<table  border=1 cellspacing=0 cellpadding=0 width='100%'
@@ -43,11 +38,9 @@ class Bvb_Grid_Template_Print_Print
         return $return;
     }
 
-
-    public function header ()
+    public function header()
     {
-
-        if (isset($this->options ['logo']) && is_file ( $this->options ['logo'] )){
+        if (isset($this->options['logo']) && is_file ($this->options['logo'])){
             $img = "<img align=\"left\" src=\"" . $this->options['logo'] . "\" border=\"0\">";
         } else {
             $img = '';
@@ -60,68 +53,55 @@ class Bvb_Grid_Template_Print_Print
   </td></tr>";
     }
 
-
-    public function globalEnd ()
+    public function globalEnd()
     {
         return "</table></div></body></html>";
     }
 
-
-    public function titlesStart ()
+    public function titlesStart()
     {
         return "<tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>";
     }
 
-    public function titlesEnd ()
+    public function titlesEnd()
     {
         return "</tr>";
     }
 
-
-    public function titlesLoop ()
+    public function titlesLoop()
     {
         return " <td style='border:solid black 1.0pt;background-color:black;color:#FFFFFF;padding:5px'>
           <p align=center style='text-align:center'><b><span style='font-size:10.0pt;'>{{value}}<o:p></o:p></span></b></p>
   </td>";
     }
 
-
-    public function loopStart ()
+    public function loopStart()
     {
         $this->i ++;
 
         return "<tr>";
     }
 
-
-
-    public function loopEnd ()
+    public function loopEnd()
     {
         return "</tr>";
     }
 
-
-
-    public function loopLoop ()
+    public function loopLoop()
     {
-
-
         if ($this->i % 2) {
             return "<td style='border-top:none;border-left:solid black 1.0pt;border-bottom:solid black 1.0pt;
              border-right:solid black 1.0pt; background:#E0E0E0;padding:3px'> <p><span>
              <span style='font-size:8.0pt;font-family:Helvetica;'>{{value}}<o:p></o:p></span></p> </td>";
-
         } else {
             return "<td style='border-top:none;border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;
             border-right:solid black 1.0pt; padding:3px'> <p class=MsoNormal><span style='font-size:8.0pt;
   font-family:Helvetica;'>{{value}}<o:p></o:p></span></p>
   </td>";
         }
-
     }
 
-
-    public function hRow ()
+    public function hRow()
     {
         return "<tr><td colspan=\"" . $this->options['colspan']. "\" style='border-top:none; color:#FFFFFF;
         border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
@@ -130,7 +110,7 @@ class Bvb_Grid_Template_Print_Print
   </td></tr>";
     }
 
-    public function noResults ()
+    public function noResults()
     {
         return "<tr><td colspan=\"" . $this->options['colspan'] . "\" style='border-top:none; color:#FFFFFF;
         border-left:solid black 1.0pt; border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
@@ -139,27 +119,20 @@ class Bvb_Grid_Template_Print_Print
   </td></tr>";
     }
 
-    public function sqlExpStart ()
+    public function sqlExpStart()
     {
         return "<tr>";
     }
 
-
-
-    public function sqlExpEnd ()
+    public function sqlExpEnd()
     {
         return "</tr>";
     }
 
-
-
-    public function sqlExpLoop ()
+    public function sqlExpLoop()
     {
         return "<td  style='border-top:none;border-left:none;  border-bottom:solid black 1.0pt;border-right:solid black 1.0pt;
         padding:5px;'> <p><span style='font-size:8.0pt; font-family:Helvetica;'>{{value}}<o:p></o:p></span></p>
   </td>";
     }
-
-
 }
-

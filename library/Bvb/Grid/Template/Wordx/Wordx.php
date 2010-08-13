@@ -18,40 +18,34 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-
-
 class Bvb_Grid_Template_Wordx_Wordx
 {
-
     public $colSpan;
 
     public $wordOptions;
 
     public $options;
 
-
-    public function __construct ($options = array())
+    public function __construct($options = array())
     {
         $this->wordOptions = $options;
-
     }
 
     public function info()
     {
         $pdf = array(
-        'logo'=>'public/images/logo.png',
-        'title'=>'DataGrid Zend Framework',
-        'subtitle'=>'Easy and powerfull - (Demo document)',
-        'footer'=>'Downloaded from: http://www.petala-azul.com ' );
+            'logo'=>'public/images/logo.png',
+            'title'=>'DataGrid Zend Framework',
+            'subtitle'=>'Easy and powerfull - (Demo document)',
+            'footer'=>'Downloaded from: http://www.petala-azul.com '
+        );
 
         $pdf = array_merge($pdf,$this->wordOptions);
 
         return $pdf;
     }
 
-
-
-    public function globalStart ()
+    public function globalStart()
     {
         return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:mv="urn:schemas-microsoft-com:mac:vml"
@@ -79,7 +73,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 			</w:tblGrid>';
     }
 
-    public function globalEnd ()
+    public function globalEnd()
     {
         return '</w:tbl>
 		<w:p w:rsidR="00B65C80" w:rsidRDefault="0034373E" />
@@ -96,8 +90,6 @@ class Bvb_Grid_Template_Wordx_Wordx
 </w:document>';
     }
 
-
-
     public function logo()
     {
     	$arrayLogo = explode("/",@$this->options['logo']);
@@ -107,20 +99,15 @@ class Bvb_Grid_Template_Wordx_Wordx
 </Relationships>';
     }
 
-
-
     public function header()
     {
-
-        if (isset($this->options ['logo']) && is_file ( $this->options ['logo'] ))
-        {
-         $arrayLogo = explode("/",@$this->options['logo']);
+        if (isset($this->options['logo']) && is_file($this->options['logo'])) {
+            $arrayLogo = explode("/",@$this->options['logo']);
 
             $logo = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
 <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/'.end($arrayLogo).'"/>
 </Relationships>';
-
 
             $header = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:hdr xmlns:mv="urn:schemas-microsoft-com:mac:vml"
@@ -230,9 +217,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 	</w:p>
 </w:hdr>';
 
-
         }else{
-
 
             $header = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:hdr xmlns:mv="urn:schemas-microsoft-com:mac:vml"
@@ -288,16 +273,12 @@ class Bvb_Grid_Template_Wordx_Wordx
 		<w:proofErr w:type="spellEnd" />
 	</w:p>
 </w:hdr>';
-
         }
-
 
         return $header;
     }
 
-
-
-    public function titlesStart ()
+    public function titlesStart()
     {
         return '<w:tr w:rsidR="006C2FDC">
 				<w:trPr>
@@ -305,14 +286,12 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:trPr>';
     }
 
-    public function titlesEnd ()
+    public function titlesEnd()
     {
         return '</w:tr>';
     }
 
-
-
-    public function titlesLoop ()
+    public function titlesLoop()
     {
         return '<w:tc>
 					<w:tcPr>
@@ -339,9 +318,6 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:tc>';
     }
 
-
-
-
     public function noResults()
     {
         return '<w:tr w:rsidR="0034373E">
@@ -364,10 +340,8 @@ class Bvb_Grid_Template_Wordx_Wordx
 			</w:tr>';
     }
 
-
-    public function hRow ()
+    public function hRow()
     {
-
         return '<w:tr w:rsidR="0034373E">
 				<w:tc>
 					<w:tcPr>
@@ -388,9 +362,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 			</w:tr>';
     }
 
-
-
-    public function loopStart ()
+    public function loopStart()
     {
         return '<w:tr w:rsidR="006C2FDC">
 				<w:trPr>
@@ -398,13 +370,12 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:trPr>';
     }
 
-
-    public function loopEnd ()
+    public function loopEnd()
     {
         return '</w:tr>';
     }
 
-    public function loopLoop ()
+    public function loopLoop()
     {
         return '<w:tc>
 					<w:tcPr>
@@ -421,9 +392,7 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:tc>';
     }
 
-
-
-    public function sqlExpStart ()
+    public function sqlExpStart()
     {
         return '<w:tr w:rsidR="006C2FDC" w:rsidTr="0034373E">
 				<w:trPr>
@@ -431,16 +400,12 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:trPr>';
     }
 
-
-
-    public function sqlExpEnd ()
+    public function sqlExpEnd()
     {
         return '</w:tr>';
     }
 
-
-
-    public function sqlExpLoop ()
+    public function sqlExpLoop()
     {
         return '
 				<w:tc>
@@ -460,12 +425,8 @@ class Bvb_Grid_Template_Wordx_Wordx
 				</w:tc>';
     }
 
-
-
     public function footer()
     {
-
-
         return  '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:ftr xmlns:mv="urn:schemas-microsoft-com:mac:vml"
 	xmlns:mo="http://schemas.microsoft.com/office/mac/office/2008/main"
@@ -556,6 +517,4 @@ class Bvb_Grid_Template_Wordx_Wordx
 	</w:p>
 </w:ftr>';
     }
-
 }
-
