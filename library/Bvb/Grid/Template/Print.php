@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Template_Print_Print
+class Bvb_Grid_Template_Print
 {
     public $i;
 

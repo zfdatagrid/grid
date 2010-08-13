@@ -37,7 +37,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         parent::deploy();
 
-        if ( ! $this->_temp['print'] instanceof Bvb_Grid_Template_Print_Print ) {
+        if ( ! $this->_temp['print'] instanceof Bvb_Grid_Template_Print ) {
             $this->setTemplate('print', 'print');
         }
 

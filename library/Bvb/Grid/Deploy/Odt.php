@@ -189,7 +189,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         parent::deploy();
 
-        if (! $this->_temp['odt'] instanceof Bvb_Grid_Template_Odt_Odt) {
+        if (! $this->_temp['odt'] instanceof Bvb_Grid_Template_Odt) {
             $this->setTemplate('odt', 'odt');
         }
 

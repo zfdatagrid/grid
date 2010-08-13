@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Template_Ods_Ods
+class Bvb_Grid_Template_Ods
 {
     public  $options;
 

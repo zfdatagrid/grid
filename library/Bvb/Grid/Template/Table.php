@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Template_Table_Table
+class Bvb_Grid_Template_Table
 {
     public $hasExtraRow = 0;
 

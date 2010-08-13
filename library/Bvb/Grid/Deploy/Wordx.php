@@ -193,7 +193,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         parent::deploy();
 
-        if (!$this->_temp['wordx'] instanceof Bvb_Grid_Template_Wordx_Wordx) {
+        if (!$this->_temp['wordx'] instanceof Bvb_Grid_Template_Wordx) {
             $this->setTemplate('wordx', 'wordx');
         }
 

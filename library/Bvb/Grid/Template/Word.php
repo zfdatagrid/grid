@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Template_Word_Word
+class Bvb_Grid_Template_Word
 {
     /**
      * [PT] A colspan das td's. Este valor é recebido pelo classe mão.
