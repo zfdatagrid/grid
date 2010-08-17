@@ -14,11 +14,13 @@
  * @package    Bvb_Grid
  * @copyright  Copyright (c)  (http://www.petala-azul.com)
  * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id: Csv.php 492 2010-01-26 17:08:02Z pao.fresco $
+ * @version    $Id: Image.php 492 2010-01-26 17:08:02Z pao.fresco $
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-interface Bvb_Grid_Deploy_Interface
+interface Bvb_Grid_Formatter_FormatterInterface
 {
-    public function deploy();
+    public function __construct($options = array());
+
+    public function format($value);
 }

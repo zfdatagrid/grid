@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_Interface
+class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
 {
     public function __construct($options = array())
     {

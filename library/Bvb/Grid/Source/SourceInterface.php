@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-interface Bvb_Grid_Source_Interface
+interface Bvb_Grid_Source_SourceInterface
 {
     /**
      * Should return true|false if this source support

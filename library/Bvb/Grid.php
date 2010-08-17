@@ -438,10 +438,10 @@ abstract class Bvb_Grid
      *
      * Bvb_Grid_Source_*
      *
-     * @param Bvb_Grid_Source_Interface $source
+     * @param Bvb_Grid_Source_SourceInterface $source
      * @return Bvb_Grid
      */
-    public function setSource(Bvb_Grid_Source_Interface $source)
+    public function setSource(Bvb_Grid_Source_SourceInterface $source)
     {
         $this->_source = $source;
 
@@ -550,7 +550,7 @@ abstract class Bvb_Grid
      */
     public function __construct($options)
     {
-        if (!$this instanceof Bvb_Grid_Deploy_Interface) {
+        if (!$this instanceof Bvb_Grid_Deploy_DeployInterface) {
             throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment the Bvb_Grid_Deploy_Interface');
         }
 
@@ -869,8 +869,8 @@ abstract class Bvb_Grid
 
         $t = new $class($options);
 
-        if (!$t instanceof Bvb_Grid_Formatter_Interface) {
-            throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_Interface");
+        if (!$t instanceof Bvb_Grid_Formatter_FormatterInterface) {
+            throw new Bvb_Grid_Exception("$class must implement the Bvb_Grid_Formatter_FormatterInterface");
         }
 
         return $t->format($value);
@@ -2904,8 +2904,8 @@ abstract class Bvb_Grid
             ->load(ucfirst($toRender));
         $class = new $classname();
 
-        if (!$class instanceof Bvb_Grid_Filters_Render_Interface) {
-            throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_Interface");
+        if (!$class instanceof Bvb_Grid_Filters_Render_RenderInterface) {
+            throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
         }
 
         if (is_array($render)) {

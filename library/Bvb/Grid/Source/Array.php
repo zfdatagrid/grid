@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Source_Array implements Bvb_Grid_Source_Interface
+class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 {
     protected $_fields;
 
