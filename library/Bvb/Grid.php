@@ -551,7 +551,7 @@ abstract class Bvb_Grid
     public function __construct($options)
     {
         if (!$this instanceof Bvb_Grid_Deploy_DeployInterface) {
-            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment the Bvb_Grid_Deploy_Interface');
+            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment Bvb_Grid_Deploy_DeployInterface');
         }
 
         if ($options instanceof Zend_Config) {
