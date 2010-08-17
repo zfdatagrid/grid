@@ -39,7 +39,7 @@ class Bvb_Grid_Deploy_Wordx extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
-        $this->addTemplateDir('Bvb/Grid/Template/Wordx', 'Bvb_Grid_Template_Wordx', 'wordx');
+        $this->addTemplateDir('Bvb/Grid/Template/', 'Bvb_Grid_Template', 'wordx');
     }
 
     /**
