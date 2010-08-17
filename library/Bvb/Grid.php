@@ -1326,17 +1326,17 @@ abstract class Bvb_Grid
             return false;
         }
 
-        $data = $this->_fields;
+        $class = isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '';
 
-        $tcampos = count($data);
+        $data = $this->_fields;
 
         foreach ($this->_extraFields as $key => $value) {
             if ($value['position'] == 'left') {
-                $return[$key] = array('type' => 'extraField', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'position' => 'left');
+                $return[$key] = array('type' => 'extraField', 'class' => $class, 'position' => 'left');
             }
         }
 
-        for ($i = 0; $i < $tcampos; $i ++) {
+        for ($i = 0; $i < count($data); $i++) {
             $nf = $this->_fields[$i];
 
             if (!isset($this->_data['fields'][$nf]['search'])) {
@@ -1345,16 +1345,16 @@ abstract class Bvb_Grid
 
             if ($this->_displayField($nf)) {
                 if (is_array($this->_filters) && array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false) {
-                    $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'class' => $class, 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
-                    $return[] = array('type' => 'field', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'class' => $class, 'field' => $data[$i]);
                 }
             }
         }
 
         foreach ($this->_extraFields as $key => $value) {
             if ($value['position'] == 'right') {
-                $return[$key] = array('type' => 'extraField', 'class' => isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '', 'position' => 'right');
+                $return[$key] = array('type' => 'extraField', 'class' => $class, 'position' => 'right');
             }
         }
 
@@ -1402,8 +1402,6 @@ abstract class Bvb_Grid
         $return = array();
         $url = $this->getUrl(array('order', 'start', 'comm', 'noOrder'));
 
-        $tcampos = count($this->_fields);
-
         foreach ($this->_extraFields as $key => $value) {
             if ($value['position'] == 'left') {
                 $title = $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'left');
@@ -1421,7 +1419,7 @@ abstract class Bvb_Grid
             }
         }
 
-        for ($i = 0; $i < $tcampos; $i ++) {
+        for ($i = 0; $i < count($this->_fields); $i++) {
             if ($this->getParam('order')) {
                 $explode = explode('_', $this->getParam('order'));
                 $name = str_replace('_' . end($explode), '', $this->getParam('order'));
@@ -1637,21 +1635,18 @@ abstract class Bvb_Grid
         $classConditional = array();
         foreach ($this->_result as $dados) {
             $outputToReplace = array();
-            foreach (array_combine($fields, $fields) as $key => $value) {
-                $outputToReplace[$key] = $dados[$value];
+            foreach ($fields as $field) {
+                $outputToReplace[$field] = $dados[$field];
             }
 
             if ($this->_deployName == 'table') {
+                $this->_classRowConditionResult[$i] = '';
                 if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0])) {
-                    $this->_classRowConditionResult[$i] = '';
-
                     foreach ($this->_classRowCondition as $key => $value) {
                         $cond = str_replace($search, $outputToReplace, $value['condition']);
                         $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
                         $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                     }
-                } else {
-                    $this->_classRowConditionResult[$i] = '';
                 }
 
                 $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
@@ -1667,12 +1662,12 @@ abstract class Bvb_Grid
                     }
                 }
             }
+
             /**
              *Deal with extrafield from the left
              */
             foreach ($this->_getExtraFields('left') as $value) {
                 $value['class'] = !isset($value['class']) ? '' : $value['class'];
-
                 $value['style'] = !isset($value['style']) ? '' : $value['style'];
 
                 $new_value = '';
@@ -1699,45 +1694,39 @@ abstract class Bvb_Grid
             /**
              * Deal with the grid itself
              */
-            $is = 0;
-            foreach ($fields as $campos) {
-                $new_value = $dados[$fields[$is]];
+            foreach ($fields as $field) {
+                $new_value = $this->_escapeField($field, $dados[$field]);
 
-                $new_value = $this->_escapeField($fields[$is], $new_value);
-
-                if (isset($this->_data['fields'][$fields[$is]]['callback']['function'])) {
-                    $new_value = $this->_applyFieldCallback($new_value, $this->_data['fields'][$fields[$is]]['callback'], $search, $outputToReplace);
-                    $outputToReplace[$fields[$is]] = $new_value;
+                if (isset($this->_data['fields'][$field]['callback']['function'])) {
+                    $new_value = $this->_applyFieldCallback($new_value, $this->_data['fields'][$field]['callback'], $search, $outputToReplace);
+                    $outputToReplace[$field] = $new_value;
                 }
 
-                if (isset($this->_data['fields'][$fields[$is]]['format'])) {
-                    $new_value = $this->_applyFieldFormat($new_value, $this->_data['fields'][$fields[$is]]['format'], $search, $outputToReplace);
-                    $outputToReplace[$fields[$is]] = $new_value;
+                if (isset($this->_data['fields'][$field]['format'])) {
+                    $new_value = $this->_applyFieldFormat($new_value, $this->_data['fields'][$field]['format'], $search, $outputToReplace);
+                    $outputToReplace[$field] = $new_value;
                 }
 
-                if (isset($this->_data['fields'][$fields[$is]]['helper'])) {
-                    $new_value = $this->_applyFieldHelper($new_value, $this->_data['fields'][$fields[$is]]['helper'], $search, $outputToReplace);
-                    $outputToReplace[$fields[$is]] = $new_value;
+                if (isset($this->_data['fields'][$field]['helper'])) {
+                    $new_value = $this->_applyFieldHelper($new_value, $this->_data['fields'][$field]['helper'], $search, $outputToReplace);
+                    $outputToReplace[$field] = $new_value;
                 }
 
-                if (isset($this->_data['fields'][$fields[$is]]['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $this->_data['fields'][$fields[$is]]['decorator']);
+                if (isset($this->_data['fields'][$field]['decorator'])) {
+                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $this->_data['fields'][$field]['decorator']);
                 }
 
-                if ($this->_displayField($fields[$is])) {
-
-                    if (isset($this->_data['fields'][$fields[$is]]['translate']) && $this->_data['fields'][$fields[$is]]['translate'] == true) {
+                if ($this->_displayField($field)) {
+                    if (isset($this->_data['fields'][$field]['translate']) && $this->_data['fields'][$field]['translate'] == true) {
                         $new_value = $this->__($new_value);
                     }
 
-                    $style = !isset($this->_data['fields'][$fields[$is]]['style']) ? '' : $this->_data['fields'][$fields[$is]]['style'];
-                    $fieldClass = isset($this->_data['fields'][$fields[$is]]['class']) ? $this->_data['fields'][$fields[$is]]['class'] : '';
-                    $finalClassConditional = isset($classConditional[$fields[$is]]) ? $classConditional[$fields[$is]] : '';
+                    $style = !isset($this->_data['fields'][$field]['style']) ? '' : $this->_data['fields'][$field]['style'];
+                    $fieldClass = isset($this->_data['fields'][$field]['class']) ? $this->_data['fields'][$field]['class'] : '';
+                    $finalClassConditional = isset($classConditional[$field]) ? $classConditional[$field] : '';
 
-                    $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $this->_fields[$is], 'style' => $style);
+                    $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $field, 'style' => $style);
                 }
-
-                $is ++;
             }
 
             /**
@@ -1747,7 +1736,6 @@ abstract class Bvb_Grid
             //Reset the value. This is an extra field.
             $new_value = null;
             foreach ($this->_getExtraFields('right') as $value) {
-
                 $value['class'] = !isset($value['class']) ? '' : $value['class'];
                 $value['style'] = !isset($value['style']) ? '' : $value['style'];
 
@@ -1769,7 +1757,7 @@ abstract class Bvb_Grid
 
                 $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
             }
-            $i ++;
+            $i++;
         }
 
         return $return;
