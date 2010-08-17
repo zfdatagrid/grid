@@ -24,7 +24,7 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
-        $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template_Word', 'word');
+        $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template', 'word');
     }
 
     public function deploy()

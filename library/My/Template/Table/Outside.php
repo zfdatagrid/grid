@@ -20,7 +20,7 @@
  */
 
 
-class My_Template_Table_Outside extends Bvb_Grid_Template_Table_Table
+class My_Template_Table_Outside extends Bvb_Grid_Template_Table
 {
 
     public $ic;

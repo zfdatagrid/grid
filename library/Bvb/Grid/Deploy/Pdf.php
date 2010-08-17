@@ -232,7 +232,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
         $page->setFont($font, 14);
-        //logotipo FederaÃ§Ã£o $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+        //$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
 
         if ( file_exists($this->_deploy['logo']) ) {
             $image = Zend_Pdf_Image::imageWithPath($this->_deploy['logo']);
@@ -335,7 +335,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
                     $page->setFont($font, 14);
 
-                    //logotipo FederaÃ§Ã£o $font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
+                    //$font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
                     if ( file_exists($this->_deploy['logo']) ) {
                         $image = Zend_Pdf_Image::imageWithPath($this->_deploy['logo']);
                         list ($width, $height, $type, $attr) = getimagesize($this->_deploy['logo']);
@@ -355,7 +355,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                         $page->drawText($this->__($this->_deploy['page']) . ' ' . $pagina . '/' . $totalPaginas, $page->getWidth() - (strlen($this->__($this->_deploy['page'])) * $cellFontSize) - 50, 40, $this->getCharEncoding());
                     }
 
-                    //Colocar novamento os tÃ­tulos em cada pÃ¡gina
+                    //
                     reset($titulos);
                     $i = 0;
                     $largura1 = 40;

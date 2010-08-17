@@ -39,7 +39,7 @@ abstract class Bvb_Grid
     /**
      * Fields order
      *
-     * @var unknown_type
+     * @var array
      */
     private $_fieldsOrder;
 
@@ -69,7 +69,6 @@ abstract class Bvb_Grid
     /**
      * dir and prefix list to be used when formatting fields
      *
-     * @var unknown_type
      */
     protected $_formatter;
 
@@ -191,7 +190,7 @@ abstract class Bvb_Grid
     /**
      * Final fields list (after all procedures).
      *
-     * @var unknown_type
+     * @var array
      */
     protected $_finalFields;
 
@@ -264,7 +263,7 @@ abstract class Bvb_Grid
 
     /**
      * Functions to be applied on every fields before display
-     * @var unknown_type
+     * @var string
      */
     protected $_escapeFunction = 'htmlspecialchars';
 
@@ -296,25 +295,25 @@ abstract class Bvb_Grid
 
     /**
      * To let a user know if the grid will be displayed or not
-     * @var unknown_type
+     * @var bool
      */
     protected $_showsGrid = false;
 
     /**
      * Array of fields that should appear on detail view
-     * @var unknown_type
+     * @var array
      */
     protected $_gridColumns = null;
 
     /**
      * Array of columns that should appear on detail view
-     * @var unknown_type
+     * @var array
      */
     protected $_detailColumns = null;
 
     /**
      * If we are on detail or grid view
-     * @var unknown_type
+     * @var bool
      */
     protected $_isDetail = false;
 
@@ -337,13 +336,13 @@ abstract class Bvb_Grid
 
     /**
      * Last name from deploy class (table|pdf|csv|etc...)
-     * @var unknown_type
+     * @var string
      */
     protected $_deployName = null;
 
     /**
      * What is being done with this request
-     * @var unknown_type
+     * @var array
      */
     protected $_willShow = array();
 
@@ -361,7 +360,7 @@ abstract class Bvb_Grid
 
     /**
      * Condition to apply a CSS class to a table cell <td>
-     * @var unknown_type
+     * @var array
      */
     protected $_classCellCondition = array();
 
@@ -391,7 +390,7 @@ abstract class Bvb_Grid
 
     /**
      * Session Params Zend_Session
-     * @var unknown_type
+     * @var array
      */
     protected $_sessionParams = false;
 

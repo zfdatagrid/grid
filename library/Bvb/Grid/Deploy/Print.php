@@ -27,7 +27,7 @@ class Bvb_Grid_Deploy_Print extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
 
-        $this->addTemplateDir('Bvb/Grid/Template/Print', 'Bvb_Grid_Template_Print', 'print');
+        $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template', 'print');
     }
 
     public function deploy()

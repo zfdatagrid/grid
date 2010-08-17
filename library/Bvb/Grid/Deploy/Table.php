@@ -266,7 +266,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->getGridId());
-        $this->addTemplateDir('Bvb/Grid/Template/Table', 'Bvb_Grid_Template', 'table');
+        $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template', 'table');
 
         if ($this->getRequest()->isPost() && $this->getRequest()->getPost('postMassIds')) {
             $this->_redirect($this->getUrl());
@@ -1396,7 +1396,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_processForm();
 
-        if (!$this->_temp['table'] instanceof Bvb_Grid_Template_Table_Table) {
+        if (!$this->_temp['table'] instanceof Bvb_Grid_Template_Table) {
             $this->setTemplate('table', 'table', $this->_templateParams);
         } else {
             $this->setTemplate($this->_temp['table']->options['name'], 'table', $this->_templateParams);
