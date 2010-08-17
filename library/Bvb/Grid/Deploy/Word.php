@@ -132,24 +132,24 @@ class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
 
         $this->_deploy['dir'] = rtrim($this->_deploy['dir'], '/') . '/';
 
-        if (!is_dir($this->_deploy['dir'])) {
+        if (!is_dir($this->_deploy['dir']) && $this->_deploy['save']==1) {
             throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not a dir');
         }
 
-        if (!is_writable($this->_deploy['dir'])) {
+        if (!is_writable($this->_deploy['dir']) && $this->_deploy['save']==1) {
             throw new Bvb_Grid_Exception($this->_deploy['dir'] . ' is not writable');
         }
 
-        file_put_contents($this->_deploy['dir'] . $this->_deploy['name'] . ".doc", $xml);
+
+        if ( $this->_deploy['save'] == 1 ) {
+            file_put_contents($this->_deploy['dir'] . $this->_deploy['name'] . ".doc", $xml);
+        }
+
 
         if ($this->_deploy['download'] == 1) {
             header('Content-type: application/word');
             header('Content-Disposition: attachment; filename="' . $this->_deploy['name'] . '.doc"');
-            readfile($this->_deploy['dir'] . $this->_deploy['name'] . '.doc');
-        }
-
-        if ($this->_deploy['save'] != 1) {
-            unlink($this->_deploy['dir'] . $this->_deploy['name'] . '.doc');
+            echo $xml;
         }
 
         die ();
