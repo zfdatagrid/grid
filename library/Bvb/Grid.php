@@ -1522,7 +1522,7 @@ abstract class Bvb_Grid
             array_walk_recursive($toReplaceArray, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
-        for ($i = 0; $i <= count($toReplace); $i ++) {
+        for ($i = 0; $i <= count($toReplace); $i++) {
             if (isset($toReplaceArray[$i])) {
                 $toReplace[$i] = $toReplaceArray[$i];
             } elseif (isset($toReplaceObj[$i])) {
@@ -1666,29 +1666,8 @@ abstract class Bvb_Grid
             /**
              *Deal with extrafield from the left
              */
-            foreach ($this->_getExtraFields('left') as $value) {
-                $value['class'] = !isset($value['class']) ? '' : $value['class'];
-                $value['style'] = !isset($value['style']) ? '' : $value['style'];
-
-                $new_value = '';
-
-                if (isset($value['format'])) {
-                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $outputToReplace);
-                }
-
-                if (isset($value['callback']['function'])) {
-                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
-                }
-
-                if (isset($value['helper'])) {
-                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $outputToReplace);
-                }
-
-                if (isset($value['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
-                }
-
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+            foreach ($this->_getExtraFields('left') as $field) {
+                $return[$i][] = $this->_buildExtraField($field, $search, $outputToReplace);
             }
 
             /**
@@ -1734,28 +1713,8 @@ abstract class Bvb_Grid
              */
 
             //Reset the value. This is an extra field.
-            $new_value = null;
-            foreach ($this->_getExtraFields('right') as $value) {
-                $value['class'] = !isset($value['class']) ? '' : $value['class'];
-                $value['style'] = !isset($value['style']) ? '' : $value['style'];
-
-                if (isset($value['callback']['function'])) {
-                    $new_value = $this->_applyFieldCallback($new_value, $value['callback'], $search, $outputToReplace);
-                }
-
-                if (isset($value['format'])) {
-                    $new_value = $this->_applyFieldFormat($new_value, $value['format'], $search, $outputToReplace);
-                }
-
-                if (isset($value['helper'])) {
-                    $new_value = $this->_applyFieldHelper($new_value, $value['helper'], $search, $outputToReplace);
-                }
-
-                if (isset($value['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $value['decorator']);
-                }
-
-                $return[$i][] = array('class' => $value['class'], 'value' => $new_value, 'style' => $value['style']);
+            foreach ($this->_getExtraFields('right') as $field) {
+                $return[$i][] = $this->_buildExtraField($field, $search, $outputToReplace);
             }
             $i++;
         }
@@ -1784,6 +1743,38 @@ abstract class Bvb_Grid
         }
 
         return $final;
+    }
+
+    /**
+     * Build extra fields (apply callbacks, helpers, etc)
+     *
+     * @param array $field
+     * @param array $search
+     * @param array $replace
+     * @return array
+     */
+    protected function _buildExtraField($field, $search, $replace)
+    {
+        $field = array_merge(array('class'=>'', 'style'=>''), $field);
+
+        $value = '';
+        if (isset($field['format'])) {
+            $value = $this->_applyFieldFormat($value, $field['format'], $search, $replace);
+        }
+
+        if (isset($field['callback']['function'])) {
+            $value = $this->_applyFieldCallback($value, $field['callback'], $search, $replace);
+        }
+
+        if (isset($field['helper'])) {
+            $value = $this->_applyFieldHelper($value, $field['helper'], $search, $replace);
+        }
+
+        if (isset($field['decorator'])) {
+            $value = $this->_applyFieldDecorator($search, $replace, $field['decorator']);
+        }
+
+        return array('class' => $field['class'], 'value' => $value, 'style' => $field['style']);
     }
 
     /**
