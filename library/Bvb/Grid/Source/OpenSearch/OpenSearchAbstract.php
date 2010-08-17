@@ -18,6 +18,6 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Source_OpenSearch_Abstract
+class Bvb_Grid_Source_OpenSearch_OpenSearchAbstract
 {
 }

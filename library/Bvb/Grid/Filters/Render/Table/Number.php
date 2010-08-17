@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Filters_Render_Table_Number extends Bvb_Grid_Filters_Render_Abstract
+class Bvb_Grid_Filters_Render_Table_Number extends Bvb_Grid_Filters_Render_RenderAbstract
 {
     public function getChilds()
     {

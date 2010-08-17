@@ -18,7 +18,7 @@
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
 
-class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_Abstract implements Bvb_Grid_Source_Interface
+class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_Interface
 {
     protected $_select;
 
