@@ -1636,6 +1636,7 @@ abstract class Bvb_Grid
         foreach ($this->_result as $dados) {
             $outputToReplace = array();
             foreach ($fields as $field) {
+                $dados[$field] = isset($dados[$field]) ? $dados[$field] : null;
                 $outputToReplace[$field] = $dados[$field];
             }
 
@@ -1674,6 +1675,8 @@ abstract class Bvb_Grid
              * Deal with the grid itself
              */
             foreach ($fields as $field) {
+                $dados[$field] = isset($dados[$field]) ? $dados[$field] : null;
+
                 $new_value = $this->_escapeField($field, $dados[$field]);
 
                 if (isset($this->_data['fields'][$field]['callback']['function'])) {
