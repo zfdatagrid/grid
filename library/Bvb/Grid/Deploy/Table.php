@@ -340,6 +340,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $this->_willShow['formEdit'] = true;
                     $this->_willShow['formEditId'] = $this->getPkFromUrl();
 
+                    $conditions = array();
                     if ($this->getParam('postMassIds')) {
                         $ids = explode(',', $this->getParam('postMassIds'));
                         $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
@@ -1897,7 +1898,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
         if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1) {
             $script .= "
 function urlencode(str) {
-    return escape(str).replace(/\+/g,'%2B').replace(/%20/g, '+').replace(/\*/g, '%2A').replace(/\//g, '%2F').replace(/@/g, '%40');
+    return encodeURIComponent(str).replace(/\+/g,'%2B').replace(/%20/g, '+').replace(/\*/g, '%2A').replace(/\//g, '%2F').replace(/@/g, '%40');
 }
 
 function " . $this->getGridId() . "gridChangeFilters(event)
