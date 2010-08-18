@@ -23,6 +23,9 @@ abstract class Bvb_Grid
 {
     const VERSION = '$Rev$';
 
+
+    protected static $defaultConfig = array();
+
     /**
      * Char encoding
      *
@@ -559,7 +562,7 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
         }
 
-        $this->_options = $options;
+        $this->_options = array_merge_recursive(self::getDefaultConfig(), $options);
 
         //Get the controller params and baseurl to use with filters
         $this->setParams(Zend_Controller_Front::getInstance()->getRequest()
@@ -604,6 +607,11 @@ abstract class Bvb_Grid
 
         $this->_filtersRenders = new Zend_Loader_PluginLoader();
         $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/' . $renderDir, 'Bvb_Grid_Filters_Render_' . $renderDir);
+        if (! defined('E_USER_DEPRECATED')) {
+            define('E_USER_DEPRECATED', E_USER_WARNING);
+        }
+
+
     }
 
     public function getRequest()
@@ -2521,7 +2529,7 @@ abstract class Bvb_Grid
      */
     public function setOptions($options)
     {
-        $this->_options = array_merge($options, $this->_options);
+        $this->_options = array_merge_recursive($options, $this->_options);
         return $this;
     }
 
@@ -3110,4 +3118,21 @@ abstract class Bvb_Grid
 
         return $result;
     }
+
+
+    public static function setDefaultConfig ($options)
+    {
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        } elseif (! is_array( $options)) {
+            throw new Bvb_Grid_Exception( 'options must be an instance from Zend_Config or an array');
+        }
+
+        self::$defaultConfig = $options;
+    }
+
+    public static function getDefaultConfig(){
+        return self::$defaultConfig;
+    }
+
 }
