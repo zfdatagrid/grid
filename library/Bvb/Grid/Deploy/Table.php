@@ -1918,7 +1918,6 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         var fieldsArray = fields.split(\",\");
         var filtro = new Array();
-        var values = new Array();
 
         for (var i = 0; i < fieldsArray.length -1; i++)
         {
@@ -1943,19 +1942,8 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $script .= "         value = value.replace(/\//,'');" . PHP_EOL;
             $script .= "         filtro += urlencode(document.getElementById(fieldsArray[i]).name)+'" . $this->getGridId() . "/'+urlencode(value)+'/';
 
-                values.push(value);
             }
 
-            if(document.getElementById(fieldsArray[i]).type == 'select-one')
-            {
-                values.push(value);
-            }
-        }
-
-        if(values.length==0)
-        {
-            alert('" . $this->__('No Filters to Apply') . "');
-            return false;
         }
     " . PHP_EOL;
 
