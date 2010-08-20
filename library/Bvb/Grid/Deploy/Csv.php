@@ -250,7 +250,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     {
         if ($this->getDeployOption('download')) {
             // if we want to upload data then we should do it now, deploy will die if needed
-            $this->_deploy();
+            $this->deploy();
         }
         return $this;
     }
