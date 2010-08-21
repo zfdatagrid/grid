@@ -1768,15 +1768,20 @@ function observeCheckBox_" . $this->getGridId() . "(box)
 {
     if(box.checked == true)
     {
-        if(postMassIds_" . $this->getGridId() . ".indexOf(box.value)== -1)
+        if(postMassIds_" . $this->getGridId() . "[box.value] != 'undefined')
         {
             postMassIds_" . $this->getGridId() . ".push(box.value);
         }
         recordsSelected_" . $this->getGridId() . "++;
     }else{
-        if(postMassIds_" . $this->getGridId() . ".indexOf(box.value)!= -1)
+         if(postMassIds_" . $this->getGridId() . "[box.value] != 'undefined')
         {
-            postMassIds_" . $this->getGridId() . ".splice(postMassIds_" . $this->getGridId() . ".indexOf(box.value),1);
+            for(var i=0; i< postMassIds_" . $this->getGridId() . ".length;i++ )
+                 {
+                    if( postMassIds_" . $this->getGridId() . "[i]==box.value)
+                         postMassIds_" . $this->getGridId() . ".splice(i,1);
+                  }
+           // postMassIds_" . $this->getGridId() . ".splice(postMassIds_" . $this->getGridId() . ".indexOf(box.value),1);
             recordsSelected_" . $this->getGridId() . "--;
         }
     }
