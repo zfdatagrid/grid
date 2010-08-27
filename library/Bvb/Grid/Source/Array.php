@@ -408,4 +408,12 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         $this->_primaryKey = $pk;
         return $this;
     }
+
+
+    public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC')
+    {
+
+        throw new Exception('Not possible');
+
+    }
 }

@@ -519,6 +519,32 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $final;
     }
 
+    public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC')
+    {
+
+        $select = $this->_getDb()->select()->from($table,array('field'=>$field,'value'=>$fieldValue))->order($order);
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($select->__toString());
+            if (!$result = $this->_cache['instance']->load($hash)) {
+                $result = $select->query(Zend_Db::FETCH_ASSOC);
+                $result = $result->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+            $result = $select->query(Zend_Db::FETCH_ASSOC);
+            $result = $result->fetchAll();
+        }
+
+        $final = array();
+
+        foreach ($result as $value) {
+            $final[$value['field']] = $value['value'];
+        }
+
+        return $final;
+    }
+
     public function getSqlExp (array $value, $where = array())
     {
         $cols = array();

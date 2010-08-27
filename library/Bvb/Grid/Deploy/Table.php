@@ -20,6 +20,9 @@
 
 class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
+    /**
+     * @var unknown_type
+     */
     protected $_deployOptions = null;
 
     /**
@@ -2304,6 +2307,20 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
 
             $final = $this->getSource()->getDistinctValuesForFilters($distinctField, $distinctValue, $sort . ' ' . $dir);
+
+            $this->_filters[$valor]['values'] = $final;
+        }
+
+        if (isset($this->_filters[$valor]['table']) && is_array($this->_filters[$valor]['table']) && isset($this->_filters[$valor]['table']['field'])) {
+            $tableField = $this->_filters[$valor]['table']['field'];
+            $tableValue = $this->_filters[$valor]['table']['name'];
+            $tableName = $this->_filters[$valor]['table']['table'];
+            $tableOrder = isset($this->_filters[$valor]['table']['order']) ? $this->_filters[$valor]['table']['order'] : 'name ASC';
+
+            $dir = stripos($tableOrder, ' asc') !== false ? 'ASC' : 'DESC';
+            $sort = stripos($tableOrder, 'name') !== false ? 'value' : 'field';
+
+            $final = $this->getSource()->getValuesForFiltersFromTable($tableName,$tableField, $tableValue, $sort . ' ' . $dir);
 
             $this->_filters[$valor]['values'] = $final;
         }

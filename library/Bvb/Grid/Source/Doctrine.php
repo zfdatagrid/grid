@@ -1165,7 +1165,20 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     }
 
 
+    /**
+     * @todo Implement
+     * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getMassActionsIds()
+     */
     public function getMassActionsIds ($table,$fields)
+    {
+        throw new Exception('Not yet Implemented');
+    }
+
+    /**
+     * @todo Implement
+     * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getValuesForFiltersFromTable()
+     */
+    public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC')
     {
 
         throw new Exception('Not yet Implemented');

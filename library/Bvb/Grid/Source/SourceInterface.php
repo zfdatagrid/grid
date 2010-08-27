@@ -295,4 +295,14 @@ interface Bvb_Grid_Source_SourceInterface
      * @param $table
      */
      public function getMassActionsIds ($table,$fields);
+
+     /**
+      *
+      * Fetch pairs from a table
+      * @param $table
+      * @param $field
+      * @param $fieldValue
+      * @param $order
+      */
+     public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC');
 }
