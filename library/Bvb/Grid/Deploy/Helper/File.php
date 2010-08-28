@@ -12,8 +12,6 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
  * @version    $Id$
  * @author     Bento Vilas Boas <geral@petala-azul.com >
  */
@@ -98,7 +96,7 @@ class Bvb_Grid_Deploy_Helper_File
         $current_dir = @opendir($dir);
         while ($entryname = @readdir($current_dir)) {
             if (is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..")) {
-                Bvb_Grid_Deploy_Helper_File::deldir($dir . '/' . $entryname);
+                self::deldir($dir . '/' . $entryname);
             } elseif ($entryname != "." and $entryname != "..") {
                 @unlink($dir . '/' . $entryname);
             }
