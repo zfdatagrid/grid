@@ -21,9 +21,17 @@
 
 abstract class Bvb_Grid
 {
+    /**
+     * Actual Revision
+     * @var string
+     */
     const VERSION = '$Rev$';
 
 
+    /**
+     * Default Configuration to be applied to all grids
+     * @var array
+     */
     protected static $defaultConfig = array();
 
     /**
@@ -95,8 +103,6 @@ abstract class Bvb_Grid
      * @var array
      */
     protected $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json');
-
-    #protected $_export = array('pdf', 'word', 'wordx', 'excel', 'print', 'xml', 'csv', 'ods', 'odt', 'json','ofc');
 
     /**
      * All info that is not directly related to the database
@@ -380,7 +386,7 @@ abstract class Bvb_Grid
     protected $_translator;
 
     /**
-     *
+     * If filters by user will be showed when exporting
      * @var bool
      */
     protected $_showFiltersInExport = false;
@@ -409,6 +415,10 @@ abstract class Bvb_Grid
      */
     protected $_hasMassActions = false;
 
+    /**
+     * Mass Actions
+     * @var array
+     */
     protected $_massActions = false;
 
     /**
@@ -614,6 +624,10 @@ abstract class Bvb_Grid
 
     }
 
+    /**
+     * @return Zend_Controller_Front::getInstance()->getReguest();
+     * Enter description here ...
+     */
     public function getRequest()
     {
         return Zend_Controller_Front::getInstance()->getRequest();
@@ -708,6 +722,9 @@ abstract class Bvb_Grid
         return $message;
     }
 
+    /**
+     * @return Zend_Translate
+     */
     public function getTranslator()
     {
         return Bvb_Grid_Translator::getInstance()->getTranslator();
@@ -715,7 +732,7 @@ abstract class Bvb_Grid
 
     /**
      * Check if a string is available
-     * @param unknown_type $message
+     * @param string $message
      */
     protected function is__($message)
     {
@@ -1043,6 +1060,9 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Adds external filters to the grid
+     */
     protected function _applyExternalFilters()
     {
         if (count($this->_externalFilters) == 0)
@@ -1118,7 +1138,7 @@ abstract class Bvb_Grid
     /**
      * Build query.
      *
-     * @return string
+     * @return bool
      */
     protected function _buildQueryOrderAndLimit()
     {
@@ -1951,6 +1971,10 @@ abstract class Bvb_Grid
         return $filters;
     }
 
+    /**
+     * Checks if there are any filters
+     * @return bool
+     */
     public function hasFilters()
     {
         if (count(array_intersect_key(array_combine($this->getFields(), $this->getFields()), $this->_ctrlParams)) > 0)
@@ -2001,7 +2025,7 @@ abstract class Bvb_Grid
     }
 
     /**
-     * Done. Send the grid to the user
+     * Deploys
      *
      * @return string
      */
@@ -2867,12 +2891,20 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Defines the route URL to be applied
+     * @param string $url
+     */
     public function setRouteUrl($url)
     {
         $this->_routeUrl = (string) ltrim($url, '/');
         return $this;
     }
 
+    /**
+     * Returns the current route URL
+     * @return string
+     */
     public function getRouteUrl()
     {
         return $this->_routeUrl;
@@ -2905,6 +2937,11 @@ abstract class Bvb_Grid
         return $class;
     }
 
+    /**
+     * Adds a new dir to check for filters
+     * @param $dir
+     * @param $prefix
+     */
     public function addFiltersRenderDir($dir, $prefix)
     {
         $this->_filtersRenders
@@ -2912,6 +2949,10 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Checks if the active request is a export
+     * @return bool
+     */
     public function isExport()
     {
         return in_array($this->getParam('_exportTo'), $this->_export);
@@ -2926,6 +2967,12 @@ abstract class Bvb_Grid
             ->getSelectObject();
     }
 
+    /**
+     * Adds a new external filters
+     * @param string $fieldId
+     * @param string $callback
+     * @throws Bvb_Grid_Exception
+     */
     public function addExternalFilter($fieldId, $callback)
     {
         if (!is_callable($callback)) {
@@ -2937,12 +2984,19 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Clears all external filters
+     */
     public function clearExternalFilters()
     {
         $this->_externalFilters = array();
         return $this;
     }
 
+    /**
+     * Removes a specified filter
+     * @param $fieldId
+     */
     public function removeExternalFilter($fieldId)
     {
         if (isset($this->_externalFilters[$fieldId])) {
@@ -2952,6 +3006,10 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Defines if filters should be showned in export
+     * @param bool $show
+     */
     public function setShowFiltersInExport($show)
     {
         $this->_showFiltersInExport = $show;
@@ -3024,11 +3082,19 @@ abstract class Bvb_Grid
         return $this->_deploy;
     }
 
+    /**
+     * Checks if there are any mass actions registered
+     * @return bool
+     */
     public function hasMassActions()
     {
         return $this->_hasMassActions;
     }
 
+    /**
+     * Returns the active mass options
+     * @return array
+     */
     public function getMassActionsOptions()
     {
         if (!$this->_hasMassActions) {
@@ -3038,6 +3104,11 @@ abstract class Bvb_Grid
         return (array) $this->_massActions;
     }
 
+    /**
+     * Defines mass actions, overriden any previous
+     * @param array $options
+     * @param array $fields
+     */
     public function setMassActions(array $options,array $fields)
     {
         $this->_hasMassActions = true;
@@ -3090,6 +3161,10 @@ abstract class Bvb_Grid
         return $this;
     }
 
+    /**
+     * Checks if the user has the right to export for the defined format
+     * @throws Bvb_Grid_Exception
+     */
     public function checkExportRights()
     {
         if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
@@ -3120,6 +3195,11 @@ abstract class Bvb_Grid
     }
 
 
+    /**
+     * Defines the default grid configuration
+     * @param Zend_Config|array $options
+     * @throws Bvb_Grid_Exception
+     */
     public static function setDefaultConfig ($options)
     {
         if ($options instanceof Zend_Config) {
@@ -3131,6 +3211,10 @@ abstract class Bvb_Grid
         self::$defaultConfig = $options;
     }
 
+    /**
+     * Returns the current default configuration
+     * @return array
+     */
     public static function getDefaultConfig(){
         return self::$defaultConfig;
     }
