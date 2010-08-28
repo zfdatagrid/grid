@@ -105,16 +105,10 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $_filesLocation = array();
 
     /**
-     * View
-     * @var unknown_type
-     */
-    protected $_view = null;
-
-    /**
      * flag to indicate if you will be having more than one chart on a page
      * @var bool
      */
-    protected $multiple = true;
+    protected $_multiple = true;
 
     protected $_xAxisOptions = array();
 
@@ -138,7 +132,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function setMultiple($flag)
     {
-        $this->multiple = $flag;
+        $this->_multiple = $flag;
     }
 
     public function deploy()
@@ -157,6 +151,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::deploy();
 
         $data = parent::_buildGrid();
+
+        if(count($data)==0)
+        {
+            $this->_deploymentContent = '';
+            return;
+        }
 
         foreach ( $data as $value ) {
             foreach ( $value as $final ) {
@@ -320,7 +320,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         To test for your version of flash, <a href="http://www.bobbyvandersluis.com/swfobject/testsuite_2_1/test_api_getflashplayerversion.html" target="_blank">click here</a>
         </p>
         </div>';
-        if(!$this->multiple)$final = '<div style="width: 100%;text-align: center">'.$final.'</div>';
+        if(!$this->_multiple)$final = '<div style="width: 100%;text-align: center">'.$final.'</div>';
 
         $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
         $this->getView()->headScript()->appendFile($this->_filesLocation['json']);
