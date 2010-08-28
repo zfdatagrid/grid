@@ -638,6 +638,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
     public function addCondition ($filter, $op, $completeField)
     {
+
+        $op = strtolower($op);
+
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -710,14 +713,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $filter = explode(',', $filter);
                 $this->_select->where($field . " IN  (?)", $filter);
                 break;
+            case 'flag':
+                $this->_select->where($field . " & ? <> 0", $filter);
+                break;
             case 'range':
             case '&':
             case 'and':
             case 'AND':
-            case 'flag':
-            case 'FLAG':
-                $this->_select->where($field . " & ? <> 0", $filter);
-                break;
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
                 $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
@@ -727,6 +729,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
                 break;
         }
+
     }
 
     /**
