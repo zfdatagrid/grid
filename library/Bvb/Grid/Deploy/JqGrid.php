@@ -606,7 +606,7 @@ HTML;
         // override with options defined on Bvb_Grid level
         $this->_jqgParams['url'] = isset($this->_jqgParams['url']) ? (empty($this->_jqgParams['url']) ? $url : $this->_jqgParams['url']) : $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
-        $this->_jqgParams['rowNum'] = $this->_recordsPerPage;
+        $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum']) : $this->_recordsPerPage;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
