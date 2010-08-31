@@ -428,6 +428,17 @@ abstract class Bvb_Grid
      */
     protected $_massActionsFields = array();
 
+
+    /**
+     * Contains URL's for edit and delete records
+     * Can be called from a decorator using
+     * {{deleteUrl}}
+     * {{editUrl}}
+     * {{addUrl}}
+     * @var array
+     */
+    protected $_actionsUrls = array('add'=>'','edit'=>'','delete'=>'');
+
     /**
      * Backwards compatibility
      * @param $object
@@ -1698,6 +1709,15 @@ abstract class Bvb_Grid
                 $dados[$field] = isset($dados[$field]) ? $dados[$field] : null;
                 $outputToReplace[$field] = $dados[$field];
             }
+
+
+            $outputToReplace['editUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['edit']);
+            $outputToReplace['addUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['add']);
+            $outputToReplace['deleteUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['delete']);
+
+            $search[] = '{{editUrl}}';
+            $search[] = '{{addUrl}}';
+            $search[] = '{{deleteUrl}}';
 
             if ($this->_deployName == 'table') {
                 $this->_classRowConditionResult[$i] = '';

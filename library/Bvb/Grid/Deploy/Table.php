@@ -253,10 +253,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected $_showOrderImages = true;
 
     /**
-     * To edit, add, or delete records, a user must be authenticated, so we instantiate
-     * it here.
-     *
-     * @param array $data
+     * @param array $options
      */
     public function __construct ($options)
     {
@@ -763,8 +760,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $final = '';
         $final1 = '';
 
+        $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/1";
+
         if ($this->getSource()->hasCrud()) {
-            $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"$url/add" . $this->getGridId() . "/1\">" . $this->__('Add Record') . "</a></div>";
+            $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"".$this->_actionsUrls['add']."\">" . $this->__('Add Record') . "</a></div>";
             if (($this->getInfo('doubleTables') == 0 && $this->getParam('add') != 1 && $this->getParam('edit') != 1) && $this->getSource()->getPrimaryKey($this->_data['table']) && $this->getInfo('add,allow') == 1 && $this->getInfo('add,button') == 1 && $this->getInfo('add,noButton') != 1) {
                 $this->_renderDeploy['addButton'] = $this->_render['addButton'];
             }
@@ -1437,14 +1436,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $urlFinal = trim($urlFinal, '-');
         }
 
+            $removeParams = array('add', 'edit', 'comm');
+
+            $url = $this->getUrl($removeParams);
         if ($this->allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
             if (!is_array($this->_extraFields)) {
                 $this->_extraFields = array();
             }
 
-            $removeParams = array('add', 'edit', 'comm');
-
-            $url = $this->getUrl($removeParams);
 
             if ($this->allowEdit == 1 && $this->getInfo("ajax") !== false) {
                 $urlEdit = $this->_baseUrl . '/' . str_replace("/gridmod" . $this->getGridId() . "/ajax", "", $url);
@@ -1452,8 +1451,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $urlEdit = $url;
             }
 
+            $this->_actionsUrls['edit'] = "$urlEdit/edit" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:edit;[" . $urlFinal . "]";
+
             if($this->_crud->getEditColumn() !==false)
-            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"$urlEdit/edit" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:edit;[" . $urlFinal . "]\" > " . $images['edit'] . "</a>", 'edit' => true));
+            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"".$this->_actionsUrls['edit']."\" > " . $images['edit'] . "</a>", 'edit' => true));
         }
 
         if ($this->allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete() !== true) {
@@ -1462,11 +1463,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             if ($this->_deleteConfirmationPage == true) {
+                $this->_actionsUrls['delete'] = "$url/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->getGridId() . "/1/gridRemove" . $this->getGridId() . "/1";
+
                 if($this->_crud->getDeleteColumn() !==false)
-                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"$url/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->getGridId() . "/1/gridRemove" . $this->getGridId() . "/1\" > " . $images['delete'] . "</a>", 'delete' => true));
+                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"".$this->_actionsUrls['delete']."\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
+                $this->_actionsUrls['delete'] = "_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]');";
+
                 if($this->_crud->getDeleteColumn() !==false)
-                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]');\" > " . $images['delete'] . "</a>", 'delete' => true));
+                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"".$this->_actionsUrls['delete']."\" > " . $images['delete'] . "</a>", 'delete' => true));
             }
         }
 
