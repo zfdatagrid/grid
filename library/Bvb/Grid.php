@@ -438,7 +438,7 @@ abstract class Bvb_Grid
      * {{addUrl}}
      * @var array
      */
-    protected $_actionsUrls = array('add'=>'','edit'=>'','delete'=>'');
+    protected $_actionsUrls = array('add'=>'','edit'=>'','delete'=>'','detail'=>'');
 
     /**
      * Backwards compatibility
