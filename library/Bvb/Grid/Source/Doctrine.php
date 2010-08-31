@@ -833,9 +833,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 
                 foreach ($rows as $col => $val) {
                     $parts = explode('_', $col, 2);
+                    $field = implode('.', $parts);
 
                     foreach ($this->_queryParts['select'] as $alias => $select) {
-                        if (implode('.', $parts) == $select['field'] || $parts[1] == $alias) {
+                        if ($field == $select['field'] || $parts[1] == $alias) {
                             $temp[$alias] = $val;
                         }
                     }
