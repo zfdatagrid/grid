@@ -1253,7 +1253,19 @@ abstract class Bvb_Grid
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
-        $paramsGet = array('perPage', 'order', 'start', 'filters', 'noFilters', '_exportTo', 'add', 'edit', 'noOrder', 'comm', 'gridDetail', 'gridRemove');
+        $paramsGet = array('perPage',
+                            'order',
+                            'start',
+                            'filters',
+                            'noFilters',
+                            '_exportTo',
+                            'add',
+                            'edit',
+                            'noOrder',
+                            'comm',
+                            'gridDetail',
+                            'gridRemove'
+                            );
 
         $params = $this->getAllParams();
 
@@ -1729,16 +1741,26 @@ abstract class Bvb_Grid
                 if (isset($this->_data['fields'][$field]['callback']['function'])) {
                     $new_value = $this->_applyFieldCallback($new_value, $this->_data['fields'][$field]['callback'], $search, $outputToReplace);
                     $outputToReplace[$field] = $new_value;
+
+                    $search[] = '{{callback}}';
+                    $outputToReplace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['format'])) {
                     $new_value = $this->_applyFieldFormat($new_value, $this->_data['fields'][$field]['format'], $search, $outputToReplace);
                     $outputToReplace[$field] = $new_value;
+
+
+                    $search[] = '{{format}}';
+                    $outputToReplace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['helper'])) {
                     $new_value = $this->_applyFieldHelper($new_value, $this->_data['fields'][$field]['helper'], $search, $outputToReplace);
                     $outputToReplace[$field] = $new_value;
+
+                    $search[] = '{{helper}}';
+                    $outputToReplace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['decorator'])) {

@@ -8,7 +8,9 @@ class My_Form extends Zend_Form
     {
         $this->setName('Foo');
         $this->setMethod('post');
-        $this->addElement('checkbox', 'next');$this->addElement('text', 'bug_description', array(
+        $this->addElement('checkbox', 'next');
+
+        $this->addElement('text', 'bug_description', array(
                     'label'      => 'Bugggg desc',
                     'required'   => true,
                     'value'=>'sss',
