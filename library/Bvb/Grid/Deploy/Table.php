@@ -1468,10 +1468,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if($this->_crud->getDeleteColumn() !==false)
                 array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"".$this->_actionsUrls['delete']."\" > " . $images['delete'] . "</a>", 'delete' => true));
             } else {
-                $this->_actionsUrls['delete'] = "_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]');";
+                $this->_actionsUrls['delete'] = "$url/comm" . $this->getGridId() . "/" . "mode:delete;[" . $urlFinal . "]";
 
                 if($this->_crud->getDeleteColumn() !==false)
-                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"".$this->_actionsUrls['delete']."\" > " . $images['delete'] . "</a>", 'delete' => true));
+                array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'D', 'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('" . $this->__('Are you sure?') . "','".$this->_actionsUrls['delete']."');\" > " . $images['delete'] . "</a>", 'delete' => true));
             }
         }
 
