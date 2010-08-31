@@ -432,6 +432,7 @@ abstract class Bvb_Grid
     /**
      * Contains URL's for edit and delete records
      * Can be called from a decorator using
+     * {{detailUrl}}
      * {{deleteUrl}}
      * {{editUrl}}
      * {{addUrl}}
@@ -1714,10 +1715,12 @@ abstract class Bvb_Grid
             $outputToReplace['editUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['edit']);
             $outputToReplace['addUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['add']);
             $outputToReplace['deleteUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['delete']);
+            $outputToReplace['detailUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['detail']);
 
             $search[] = '{{editUrl}}';
             $search[] = '{{addUrl}}';
             $search[] = '{{deleteUrl}}';
+            $search[] = '{{detailUrl}}';
 
             if ($this->_deployName == 'table') {
                 $this->_classRowConditionResult[$i] = '';

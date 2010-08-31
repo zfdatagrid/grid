@@ -252,6 +252,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_showOrderImages = true;
 
+
+    /**
+     * Wheter to show or not the detail column
+     * @var bool
+     */
+    protected $_showDetailColumn = true;
+
     /**
      * @param array $options
      */
@@ -1483,7 +1490,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $removeParams = array('add', 'edit', 'comm');
             $url = $this->getUrl($removeParams, false);
 
-            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"$url/gridDetail" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/\" >" . $images['detail'] . "</a>", 'detail' => true));
+            $this->_actionsUrls['detail'] = "$url/gridDetail" . $this->getGridId() . "/1/comm" . $this->getGridId() . "/" . "mode:view;[" . $urlFinal . "]/";
+
+            if($this->_showDetailColumn===true)
+            array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"".$this->_actionsUrls['detail']."\" >" . $images['detail'] . "</a>", 'detail' => true));
         }
 
         if ($this->allowAdd == 0 && $this->allowDelete == 0 && $this->allowEdit == 0) {
@@ -2826,5 +2836,17 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
 
         return $return;
+    }
+
+
+    /**
+     * If we should show the detail column
+     * @param $flag
+     * @return Bvb_Grid_Deploy_Table
+     */
+    public function setShowDetailColumn( $flag)
+    {
+         $this->_showDetailColumn = (bool)$flag;
+         return $this;
     }
 }
