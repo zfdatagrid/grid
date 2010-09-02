@@ -1553,7 +1553,7 @@ abstract class Bvb_Grid
     protected function _applyFieldFormat($new_value, $value, $search, $replace)
     {
         if (is_array($value)) {
-            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         return $this->_applyFormat($new_value, $value);
@@ -1590,7 +1590,7 @@ abstract class Bvb_Grid
         }
 
         if (is_array($toReplace)) {
-            array_walk_recursive($toReplaceArray, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk($toReplaceArray, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         for ($i = 0; $i <= count($toReplace); $i++) {
@@ -1671,7 +1671,7 @@ abstract class Bvb_Grid
     protected function _applyFieldHelper($new_value, $value, array $search, array $replace)
     {
         if (is_array($value)) {
-            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         $name = $value['name'];
