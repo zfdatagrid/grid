@@ -369,6 +369,12 @@ abstract class Bvb_Grid
     protected $_classRowConditionResult = array();
 
     /**
+     * CSS classes to be used
+     * @var array
+     */
+    protected $_cssClasses = array('odd' => 'alt', 'even' => '');
+
+    /**
      * Condition to apply a CSS class to a table cell <td>
      * @var array
      */
@@ -1722,26 +1728,23 @@ abstract class Bvb_Grid
             $search[] = '{{deleteUrl}}';
             $search[] = '{{detailUrl}}';
 
-            if ($this->_deployName == 'table') {
-                $this->_classRowConditionResult[$i] = '';
-                if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0])) {
-                    foreach ($this->_classRowCondition as $key => $value) {
-                        $cond = str_replace($search, $outputToReplace, $value['condition']);
-                        $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                        $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
-                    }
+
+            $this->_classRowConditionResult[$i] = '';
+            if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0])) {
+                foreach ($this->_classRowCondition as $key => $value) {
+                    $cond = str_replace($search, $outputToReplace, $value['condition']);
+                    $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                 }
-
-                $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
-
-                if (count($this->_classCellCondition) > 0) {
-                    foreach ($this->_classCellCondition as $key => $value) {
-                        $classConditional[$key] = '';
-                        foreach ($value as $condFinal) {
-                            $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
-                            $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                            $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
-                        }
+            }
+            $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
+            if (count($this->_classCellCondition) > 0) {
+                foreach ($this->_classCellCondition as $key => $value) {
+                    $classConditional[$key] = '';
+                    foreach ($value as $condFinal) {
+                        $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
+                        $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
+                        $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
                     }
                 }
             }

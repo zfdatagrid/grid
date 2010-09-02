@@ -218,11 +218,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_renderDeploy = array();
 
-    /**
-     * CSS classes to be used
-     * @var array
-     */
-    protected $_cssClasses = array('odd' => 'alt', 'even' => '');
 
     /**
      * Definitions from form
