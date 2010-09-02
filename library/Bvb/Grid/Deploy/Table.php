@@ -31,14 +31,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @var array|empty
      */
 
-    public $templateInfo;
-
-    /**
-     * If the form has been submitted
-     *
-     * @var bool
-     */
-    protected $formPost = 0;
+    protected $_templateInfo;
 
     /**
      * Deploy options
@@ -57,30 +50,30 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     /**
      * Permission to add records
      *
-     * @var array
+     * @var bool
      */
-    private $allowAdd = null;
+    protected $_allowAdd = false;
+
+    /**
+     * Options for adition
+     * @var a
+     */
+    private $_allowAddButton = array();
 
     /**
      * Permission to edit records
      *
-     * @var array
+     * @var bool
      */
-    private $allowEdit = null;
+    protected $_allowEdit = false;
 
     /**
      * Permission to delete records
      *
-     * @var array
-     */
-    private $allowDelete = null;
-
-    /**
-     * Override the form presentation
-     *
      * @var bool
      */
-    protected $_editNoForm;
+    protected $_allowDelete = false;
+
 
     /**
      * Images url for export
@@ -89,20 +82,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_imagesUrl;
 
-    /**
-     * If we are allowed to add records to the database if we
-     * show two tables (the form and the grid) or just one
-     *
-     * @var bool
-     */
-    protected $double_tables = 0;
-
-    /**
-     * Set if form validation failed
-     *
-     * @var bool
-     */
-    protected $_failedValidation;
 
     /**
      * Callback to be called after crud operation update
@@ -153,12 +132,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_javaScriptHelper = array('js' => '', 'url' => '');
 
-    /**
-     * Url param with the information about removing records
-     *
-     * @var string
-     */
-    protected $_comm;
 
     /**
      *
@@ -288,30 +261,29 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if ($this->getInfo("add,allow") == 1) {
-            $this->allowAdd = 1;
+            $this->_allowAdd = 1;
         }
 
         if ($this->getInfo("delete,allow") == 1) {
-            $this->allowDelete = 1;
+            $this->_allowDelete = 1;
         }
 
         if ($this->getInfo("edit,allow") == 1) {
-            $this->allowEdit = 1;
+            $this->_allowEdit = 1;
         }
 
-        if ($this->allowEdit == 1 || $this->allowDelete == 1) {
+        if ($this->_allowEdit == 1 || $this->_allowDelete == 1) {
             $dec = $this->getParam('comm');
-            $this->_comm = $dec;
         }
 
         /**
          * Remove if there is something to remove
          */
-        if ($this->allowDelete == 1) {
+        if ($this->_allowDelete == 1) {
             self::_deleteRecord($dec);
         }
 
-        if ($this->allowAdd == 1 || $this->allowEdit == 1) {
+        if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
             $opComm = $this->getParam('comm');
 
             $mode = $this->getParam('edit') ? 'edit' : 'add';
@@ -766,7 +738,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ($this->getSource()->hasCrud()) {
             $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"".$this->_actionsUrls['add']."\">" . $this->__('Add Record') . "</a></div>";
-            if (($this->getInfo('doubleTables') == 0 && $this->getParam('add') != 1 && $this->getParam('edit') != 1) && $this->getSource()->getPrimaryKey($this->_data['table']) && $this->getInfo('add,allow') == 1 && $this->getInfo('add,button') == 1 && $this->getInfo('add,noButton') != 1) {
+            if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1 ) && $this->getSource()->getPrimaryKey($this->_data['table']) &&  $this->_allowAddButton == 1) {
                 $this->_renderDeploy['addButton'] = $this->_render['addButton'];
             }
         }
@@ -1389,7 +1361,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
 
-        if ($this->allowDelete == 1 || $this->allowEdit == 1 || $this->allowAdd == 1) {
+        if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || $this->_allowAdd == 1) {
             $this->setAjax(false);
         }
 
@@ -1409,7 +1381,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $images = $this->_temp['table']->images($this->getImagesUrl());
 
-        if ($this->allowDelete == 1 || $this->allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false)) {
+        if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false)) {
             $pkUrl = $this->getSource()->getPrimaryKey($this->_data['table']);
             $urlFinal = '';
 
@@ -1441,13 +1413,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $removeParams = array('add', 'edit', 'comm');
 
             $url = $this->getUrl($removeParams);
-        if ($this->allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
+        if ($this->_allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
             if (!is_array($this->_extraFields)) {
                 $this->_extraFields = array();
             }
 
 
-            if ($this->allowEdit == 1 && $this->getInfo("ajax") !== false) {
+            if ($this->_allowEdit == 1 && $this->getInfo("ajax") !== false) {
                 $urlEdit = $this->_baseUrl . '/' . str_replace("/gridmod" . $this->getGridId() . "/ajax", "", $url);
             } else {
                 $urlEdit = $url;
@@ -1459,7 +1431,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'E', 'decorator' => "<a href=\"".$this->_actionsUrls['edit']."\" > " . $images['edit'] . "</a>", 'edit' => true));
         }
 
-        if ($this->allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete() !== true) {
+        if ($this->_allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete() !== true) {
             if (!is_array($this->_extraFields)) {
                 $this->_extraFields = array();
             }
@@ -1491,7 +1463,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             array_unshift($this->_extraFields, array('position' => 'left', 'name' => 'V', 'decorator' => "<a href=\"".$this->_actionsUrls['detail']."\" >" . $images['detail'] . "</a>", 'detail' => true));
         }
 
-        if ($this->allowAdd == 0 && $this->allowDelete == 0 && $this->allowEdit == 0) {
+        if ($this->_allowAdd == 0 && $this->_allowDelete == 0 && $this->_allowEdit == 0) {
             $this->_gridSession->unsetAll();
         }
 
@@ -1508,7 +1480,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ((($this->getParam('edit') == 1) || $this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1) {
 
-            if ($this->allowAdd == 1 || $this->allowEdit == 1) {
+            if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
 
                 // Remove the unnecessary URL params
                 $removeParams = array('filters', 'add');
@@ -1849,7 +1821,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
 
         }
 
-        if ($this->allowDelete == 1) {
+        if ($this->_allowDelete == 1) {
 
             $script .= "function _" . $this->getGridId() . "confirmDel(msg, url)
         {
@@ -2255,7 +2227,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         if (isset($options['delete'])) {
             if ($options['delete'] == 1) {
-                $this->delete = array('allow' => 1);
+                $this->_allowDelete = true;
                 if (isset($options['onDeleteAddWhere'])) {
                     $this->_info['delete']['where'] = $options['onDeleteAddWhere'];
                 }
@@ -2266,11 +2238,12 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             if (!isset($options['addButton'])) {
                 $options['addButton'] = 0;
             }
-            $this->add = array('allow' => 1, 'button' => $options['addButton']);
+            $this->_allowAdd = true;
+            $this->_allowAddButton = $options['addButton'];
         }
 
         if (isset($options['edit']) && $options['edit'] == 1) {
-            $this->edit = array('allow' => 1);
+            $this->_allowEdit = true;
         }
 
         return $this;
@@ -2576,7 +2549,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
      */
     public function clearClassRowConditions ()
     {
-        $this->_classCellCondition = array();
+        $this->_classRowCondition = array();
         return $this;
     }
 

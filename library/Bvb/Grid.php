@@ -2342,11 +2342,11 @@ abstract class Bvb_Grid
             }
         }
 
-        if ($this->getInfo("delete,allow") == 1) {
+        if ($this->_allowDelete == 1) {
             $totalFields ++;
         }
 
-        if ($this->getInfo("edit,allow") == 1) {
+        if ($this->_allowEdit == 1) {
             $totalFields ++;
         }
 

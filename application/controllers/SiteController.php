@@ -302,7 +302,6 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->saveParamsInSession(true);
 
-
         $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
 
 
