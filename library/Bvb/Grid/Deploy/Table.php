@@ -21,7 +21,7 @@
 class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
     /**
-     * @var unknown_type
+     * @var mixed
      */
     protected $_deployOptions = null;
 
@@ -106,37 +106,37 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     /**
      * Callback to be called after crud operation update
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackAfterUpdate = null;
 
     /**
      * Callback to be called after crud operation delete
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackAfterDelete = null;
 
     /**
      * Callback to be called after crud operation insert
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackAfterInsert = null;
 
     /**
      * Callback to be called Before crud operation update
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackBeforeUpdate = null;
 
     /**
      * Callback to be called Before crud operation delete
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackBeforeDelete = null;
 
     /**
      * Callback to be called Before crud operation insert
-     * @var unknown_type
+     * @var mixed
      */
     protected $_callbackBeforeInsert = null;
 
@@ -171,19 +171,19 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * should be performed.
      * by default the table is fetched from the quaery
      * but the user can set other manually
-     * @var unknown_type
+     * @var mixed
      */
     protected $_crudTable;
 
     /**
      * Options for CRUD operations
-     * @var unknown_type
+     * @var array
      */
     protected $_crudOptions = array();
 
     /**
      * If data should be saved or not into the source
-     * @var unknown_type
+     * @var array
      */
     protected $_crudTableOptions = array('add' => 1, 'edit' => 1, 'delete' => 1);
 
@@ -195,20 +195,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
     /**
      * Whether to use or not key events for filters
-     * @var unknown_type
+     * @var bool
      */
     protected $_useKeyEventsOnFilters = false;
 
     /**
      * Extra Rows
-     * @var unknown_typearray
+     * @var array
      */
     protected $_extraRows = array();
 
     /**
      * An array with all the parts that can be rendered
      * even
-     * @var unknown_type
+     * @var array
      */
     protected $_render = array();
 
