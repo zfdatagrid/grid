@@ -738,7 +738,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ($this->getSource()->hasCrud()) {
             $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"".$this->_actionsUrls['add']."\">" . $this->__('Add Record') . "</a></div>";
-            if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1 ) && $this->getSource()->getPrimaryKey($this->_data['table']) &&  $this->_allowAddButton == 1) {
+            if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1 ) && $this->getSource()->getPrimaryKey($this->_data['table']) &&  $this->_allowAddButton == 1 && $this->getParam('add')!=1) {
                 $this->_renderDeploy['addButton'] = $this->_render['addButton'];
             }
         }
