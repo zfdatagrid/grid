@@ -447,6 +447,33 @@ abstract class Bvb_Grid
     protected $_actionsUrls = array('add'=>'','edit'=>'','delete'=>'','detail'=>'');
 
     /**
+     * Permission to add records
+     *
+     * @var bool
+     */
+    protected $_allowAdd = false;
+
+    /**
+     * Options for adition
+     * @var a
+     */
+    private $_allowAddButton = array();
+
+    /**
+     * Permission to edit records
+     *
+     * @var bool
+     */
+    protected $_allowEdit = false;
+
+    /**
+     * Permission to delete records
+     *
+     * @var bool
+     */
+    protected $_allowDelete = false;
+
+    /**
      * Backwards compatibility
      * @param $object
      * @return Bvb_Grid
