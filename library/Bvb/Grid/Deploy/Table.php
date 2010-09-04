@@ -47,33 +47,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $output = 'table';
 
-    /**
-     * Permission to add records
-     *
-     * @var bool
-     */
-    protected $_allowAdd = false;
-
-    /**
-     * Options for adition
-     * @var a
-     */
-    private $_allowAddButton = array();
-
-    /**
-     * Permission to edit records
-     *
-     * @var bool
-     */
-    protected $_allowEdit = false;
-
-    /**
-     * Permission to delete records
-     *
-     * @var bool
-     */
-    protected $_allowDelete = false;
-
 
     /**
      * Images url for export

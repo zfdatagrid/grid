@@ -1356,7 +1356,8 @@ abstract class Bvb_Grid
 
         $url = '';
         foreach ($params_clean as $key => $param) {
-            if (is_array($param) || ($key == 'perPage' && $value == 0) || ($key == 'start' && $value == 0)) {
+
+            if (is_array($param) || ($key == 'perPage' && $this->_recordsPerPage == $param) || ($key == 'perPage' && (int)$param == 0) || ($key == 'start' && (int)$param == 0)) {
                 continue;
             }
 
@@ -1382,6 +1383,7 @@ abstract class Bvb_Grid
         } else {
             return $this->_baseUrl . "/" . $finalUrl . $url;
         }
+
     }
 
     /**
@@ -3052,15 +3054,15 @@ abstract class Bvb_Grid
 
         $classname = $this->_filtersRenders
             ->load(ucfirst($toRender));
-        $class = new $classname();
+
+        if (is_array($render)) {
+            $class = new $classname($render[$toRender]);
+        }else{
+            $class = new $classname();
+        }
 
         if (!$class instanceof Bvb_Grid_Filters_Render_RenderInterface) {
             throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
-        }
-
-        if (is_array($render)) {
-            $re = new ReflectionMethod($class, '__construct');
-            $new_value = $re->invokeArgs($class, $render[$toRender]);
         }
 
         return $class;

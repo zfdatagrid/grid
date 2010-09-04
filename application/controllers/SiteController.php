@@ -373,7 +373,6 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country');
         $grid->query($select);
 
-        $grid->setAjax('barcelos');
         $grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
         $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
