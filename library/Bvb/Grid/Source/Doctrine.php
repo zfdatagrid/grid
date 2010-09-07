@@ -181,9 +181,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 
         $results = $newQuery->execute(array(), Doctrine::HYDRATE_SCALAR);
 
-        $newArray = $this->_cleanQueryResults($results);
-
-        return $newArray;
+        return $this->_cleanQueryResults($results);
     }
 
     /**
@@ -305,25 +303,21 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     public function getFieldType($field)
     {
-        $tableModel = $this->_getModelFromColumn($field);
-
-        if (isset($this->_queryParts['select'][$field]['field'])) {
-            if (strpos($this->_queryParts['select'][$field]['field'], '.') !== false) {
-                list($alias, $fieldName) = explode('.', $this->_queryParts['select'][$field]['field']);
-            } else {
-                $fieldName = $field;
-            }
-        } else {
+        if (!isset($this->_queryParts['select'][$field]['field']))
             return null;
+
+        if (strpos($this->_queryParts['select'][$field]['field'], '.') !== false) {
+            list($alias, $fieldName) = explode('.', $this->_queryParts['select'][$field]['field']);
+        } else {
+            $fieldName = $field;
         }
 
-        $fieldType = Doctrine::getTable($tableModel)->getTypeOfColumn($fieldName);
+        $tableModel = $this->_getModelFromColumn($field);
 
-        return $fieldType;
+        return Doctrine::getTable($tableModel)->getTypeOfColumn($fieldName);
     }
 
     /**
-     *
      * Build the order part from the query.
      *
      * The first arg is the field to be ordered and the $order
@@ -391,34 +385,33 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     public function getSelectOrder()
     {
-        $newOrderBys = array();
         $orderBy = $this->_query->getDqlPart('orderby');
 
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $anOrderby) {
-                $orderBys = explode(',', $anOrderby);
+        if (empty($orderBy))
+            return array();
 
-                foreach ($orderBys as $order) {
-                    $parts = explode(' ', trim($order));
-                    if (strtolower($parts[1]) != 'desc' && strtolower($parts[1]) != 'asc') {
-                        $parts[1] = '';
-                    }
-                    $newOrderBys[] = $parts;
+        $result = array();
+        foreach ($orderBy as $anOrderby) {
+            $orderBys = explode(',', $anOrderby);
+
+            foreach ($orderBys as $order) {
+                $parts = explode(' ', trim($order));
+                if (strtolower($parts[1]) != 'desc' && strtolower($parts[1]) != 'asc') {
+                    $parts[1] = '';
                 }
+                $result[] = $parts;
             }
-
-            /**
-             * FIX : #215
-             *
-             * This function seems to be needed to only return the
-             * first order, even if more than one is present
-             *
-             * @see Bvb_Grid_Source_Zend_Select::getSelectOrder()
-             */
-            $newOrderBys = $newOrderBys[0];
         }
 
-        return $newOrderBys;
+        /**
+         * FIX : #215
+         *
+         * This function seems to be needed to only return the
+         * first order, even if more than one is present
+         *
+         * @see Bvb_Grid_Source_Zend_Select::getSelectOrder()
+         */
+        return $result[0];
     }
 
     /**
@@ -433,7 +426,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @param string $value
      * @return array
      */
-    public function getDistinctValuesForFilters ($field, $fieldValue,$order = 'name ASC')
+    public function getDistinctValuesForFilters($field, $fieldValue, $order = 'name ASC')
     {
         $return = array();
 
@@ -486,7 +479,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      *
      * @param array $value
      */
-   public function getSqlExp (array $value, $where = array())
+    public function getSqlExp(array $value, $where = array())
     {
         $return = array();
 
@@ -508,9 +501,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                  ->removeDqlQueryPart('offset')
                  ->select("$exp AS total");
 
-        $result = $newQuery->fetchOne(array(), Doctrine::HYDRATE_ARRAY);
-
-        return $result['total'];
+        return $newQuery->fetchOne(array(), Doctrine::HYDRATE_SINGLE_SCALAR);
     }
 
     /**
@@ -723,12 +714,12 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      *
      * @return array
      */
-     public function buildForm ($fields = array(), $inputsType = array())
+    public function buildForm($fields = array(), $inputsType = array())
     {
         $table = $this->_queryParts['from']['tableModel'];
         $columns = Doctrine::getTable($table)->getColumns();
 
-        return $this->buildFormElements($columns,array(),$inputsType);
+        return $this->buildFormElements($columns, array(), $inputsType);
     }
 
     /**
@@ -931,7 +922,6 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                     $this->_queryParts = array_merge_recursive($this->_queryParts, $this->_explodeJoin($join[1], $joinType));
                 }
             }
-
         }
 
         return $this;
@@ -1170,7 +1160,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getMassActionsIds()
      */
-    public function getMassActionsIds ($table,$fields)
+    public function getMassActionsIds($table,$fields)
     {
         throw new Exception('Not yet Implemented');
     }
@@ -1179,10 +1169,8 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getValuesForFiltersFromTable()
      */
-    public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC')
+    public function getValuesForFiltersFromTable($table,$field, $fieldValue, $order = 'name ASC')
     {
-
         throw new Exception('Not yet Implemented');
-
     }
 }
