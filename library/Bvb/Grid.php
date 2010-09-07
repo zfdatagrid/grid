@@ -919,7 +919,7 @@ abstract class Bvb_Grid
     public function addFormatterDir($dir, $prefix)
     {
         $this->_formatter
-            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+            ->addPrefixPath(trim($prefix, '_'), trim($dir, '/') . '/');
         return $this;
     }
 
@@ -1206,7 +1206,7 @@ abstract class Bvb_Grid
     {
         $start = (int) $this->getParam('start');
         $order = $this->getParam('order');
-        $order1 = explode("_", $order);
+        $order1 = explode('_', $order);
         $orderf = strtoupper(end($order1));
 
         if ($this->_paramsInSession === true) {
@@ -1220,7 +1220,7 @@ abstract class Bvb_Grid
 
         if ($orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order))) {
             array_pop($order1);
-            $order_field = implode("_", $order1);
+            $order_field = implode('_', $order1);
 
             #$this->getSource()->buildQueryOrder($order_field, $orderf);
 
@@ -1356,32 +1356,30 @@ abstract class Bvb_Grid
 
         $url = '';
         foreach ($params_clean as $key => $param) {
-
             if (is_array($param) || ($key == 'perPage' && $this->_recordsPerPage == $param) || ($key == 'perPage' && (int)$param == 0) || ($key == 'start' && (int)$param == 0)) {
                 continue;
             }
 
-            $url .= "/" . $this->getView()
-                ->escape($key) . "/" . $this->getView()
-                ->escape($param);
+            $url .= '/' . $this->getView()->escape($key)
+                  . '/' . $this->getView()->escape($param);
         }
 
         $action = '';
         if (isset($params['action'])) {
-            $action = "/" . $params['action'];
+            $action = '/' . $params['action'];
         }
 
         if ($this->getRouteUrl() !== false) {
             $finalUrl = $this->getRouteUrl();
         } else {
-            $finalUrl = $params['module'] . "/" . $params['controller'] . $action;
+            $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
         }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true) {
-            return $finalUrl . $url . "/gridmod/ajax";
+            return $finalUrl . $url . '/gridmod/ajax';
         } else {
-            return $this->_baseUrl . "/" . $finalUrl . $url;
+            return $this->_baseUrl . '/' . $finalUrl . $url;
         }
 
     }
@@ -1396,9 +1394,10 @@ abstract class Bvb_Grid
      */
     public function getInfo($param, $default = false)
     {
-        if (isset($this->_info[$param])) {
+        if (isset($this->_info[$param]))
             return $this->_info[$param];
-        } elseif (strpos($param, ',')) {
+
+        if (strpos($param, ',')) {
             $params = explode(',', $param);
             $param = array_map('trim', $params);
 
@@ -1645,7 +1644,7 @@ abstract class Bvb_Grid
      * @param array $replace
      * @param string $value
      */
-    protected function _applyFieldDecorator(array $find,array $replace,  $value)
+    protected function _applyFieldDecorator(array $find, array $replace, $value)
     {
         return str_replace($find, $replace, $value);
     }
@@ -1672,28 +1671,28 @@ abstract class Bvb_Grid
     /**
      * Apply escape functions to column
      * @param string $field
-     * @param string $new_value
+     * @param string $value
      * @return mixed
      */
-    private function _escapeField($field, $new_value)
+    private function _escapeField($field, $value)
     {
         if (!isset($this->_data['fields'][$field]['escape'])) {
             $this->_data['fields'][$field]['escape'] = 1;
         }
 
         if (($this->_data['fields'][$field]['escape'] ? 1 : 0) == 0) {
-            return $new_value;
+            return $value;
         }
 
         if ($this->_data['fields'][$field]['escape'] == 1) {
-            return $this->_applyFieldEscape($new_value);
+            return $this->_applyFieldEscape($value);
         }
 
         if (!is_callable($this->_data['fields'][$field]['escape'])) {
             throw new Bvb_Grid_Exception($this->_data['fields'][$field]['escape'] . ' not callable');
         }
 
-        return call_user_func($this->_data['fields'][$field]['escape'], $new_value);
+        return call_user_func($this->_data['fields'][$field]['escape'], $value);
     }
 
     /**
@@ -1739,29 +1738,27 @@ abstract class Bvb_Grid
         $i = 0;
 
         $classConditional = array();
-        foreach ($this->_result as $dados) {
-            $outputToReplace = array();
+        foreach ($this->_result as $row) {
+            $replace = array();
             foreach ($fields as $field) {
-                $dados[$field] = isset($dados[$field]) ? $dados[$field] : null;
-                $outputToReplace[$field] = $dados[$field];
+                $row[$field] = isset($row[$field]) ? $row[$field] : null;
+                $replace[$field] = $row[$field];
             }
 
-
-            $outputToReplace['editUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['edit']);
-            $outputToReplace['addUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['add']);
-            $outputToReplace['deleteUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['delete']);
-            $outputToReplace['detailUrl'] = str_replace($search, $outputToReplace,$this->_actionsUrls['detail']);
+            $replace['editUrl'] = str_replace($search, $replace, $this->_actionsUrls['edit']);
+            $replace['addUrl'] = str_replace($search, $replace, $this->_actionsUrls['add']);
+            $replace['deleteUrl'] = str_replace($search, $replace, $this->_actionsUrls['delete']);
+            $replace['detailUrl'] = str_replace($search, $replace, $this->_actionsUrls['detail']);
 
             $search[] = '{{editUrl}}';
             $search[] = '{{addUrl}}';
             $search[] = '{{deleteUrl}}';
             $search[] = '{{detailUrl}}';
 
-
             $this->_classRowConditionResult[$i] = '';
             if (isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0])) {
-                foreach ($this->_classRowCondition as $key => $value) {
-                    $cond = str_replace($search, $outputToReplace, $value['condition']);
+                foreach ($this->_classRowCondition as $value) {
+                    $cond = str_replace($search, $replace, $value['condition']);
                     $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
                     $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                 }
@@ -1771,7 +1768,7 @@ abstract class Bvb_Grid
                 foreach ($this->_classCellCondition as $key => $value) {
                     $classConditional[$key] = '';
                     foreach ($value as $condFinal) {
-                        $cond = str_replace($search, $outputToReplace, $condFinal['condition']);
+                        $cond = str_replace($search, $replace, $condFinal['condition']);
                         $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
                         $classConditional[$key] .= $final == true ? $condFinal['class'] . ' ' : $condFinal['else'] . ' ';
                     }
@@ -1782,44 +1779,43 @@ abstract class Bvb_Grid
              *Deal with extrafield from the left
              */
             foreach ($this->_getExtraFields('left') as $field) {
-                $return[$i][] = $this->_buildExtraField($field, $search, $outputToReplace);
+                $return[$i][] = $this->_buildExtraField($field, $search, $replace);
             }
 
             /**
              * Deal with the grid itself
              */
             foreach ($fields as $field) {
-                $dados[$field] = isset($dados[$field]) ? $dados[$field] : null;
+                $row[$field] = isset($row[$field]) ? $row[$field] : null;
 
-                $new_value = $this->_escapeField($field, $dados[$field]);
+                $new_value = $this->_escapeField($field, $row[$field]);
 
                 if (isset($this->_data['fields'][$field]['callback']['function'])) {
-                    $new_value = $this->_applyFieldCallback($new_value, $this->_data['fields'][$field]['callback'], $search, $outputToReplace);
-                    $outputToReplace[$field] = $new_value;
+                    $new_value = $this->_applyFieldCallback($new_value, $this->_data['fields'][$field]['callback'], $search, $replace);
+                    $replace[$field] = $new_value;
 
                     $search[] = '{{callback}}';
-                    $outputToReplace[] = $new_value;
+                    $replace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['format'])) {
-                    $new_value = $this->_applyFieldFormat($new_value, $this->_data['fields'][$field]['format'], $search, $outputToReplace);
-                    $outputToReplace[$field] = $new_value;
-
+                    $new_value = $this->_applyFieldFormat($new_value, $this->_data['fields'][$field]['format'], $search, $replace);
+                    $replace[$field] = $new_value;
 
                     $search[] = '{{format}}';
-                    $outputToReplace[] = $new_value;
+                    $replace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['helper'])) {
-                    $new_value = $this->_applyFieldHelper($new_value, $this->_data['fields'][$field]['helper'], $search, $outputToReplace);
-                    $outputToReplace[$field] = $new_value;
+                    $new_value = $this->_applyFieldHelper($new_value, $this->_data['fields'][$field]['helper'], $search, $replace);
+                    $replace[$field] = $new_value;
 
                     $search[] = '{{helper}}';
-                    $outputToReplace[] = $new_value;
+                    $replace[] = $new_value;
                 }
 
                 if (isset($this->_data['fields'][$field]['decorator'])) {
-                    $new_value = $this->_applyFieldDecorator($search, $outputToReplace, $this->_data['fields'][$field]['decorator']);
+                    $new_value = $this->_applyFieldDecorator($search, $replace, $this->_data['fields'][$field]['decorator']);
                 }
 
                 if ($this->_displayField($field)) {
@@ -1841,7 +1837,7 @@ abstract class Bvb_Grid
 
             //Reset the value. This is an extra field.
             foreach ($this->_getExtraFields('right') as $field) {
-                $return[$i][] = $this->_buildExtraField($field, $search, $outputToReplace);
+                $return[$i][] = $this->_buildExtraField($field, $search, $replace);
             }
             $i++;
         }
@@ -1970,6 +1966,7 @@ abstract class Bvb_Grid
     {
         $hidden = array();
         $show = array();
+        $titles = array();
         foreach ($fields as $key => $value) {
             if (!isset($value['order']) || $value['order'] == 1) {
                 if (isset($value['orderField'])) {
@@ -1980,9 +1977,9 @@ abstract class Bvb_Grid
             }
 
             if (isset($value['title'])) {
-                $titulos[$key] = $value['title'];
+                $titles[$key] = $value['title'];
             } else {
-                $titulos[$key] = ucwords(str_replace('_', ' ', $key));
+                $titles[$key] = ucwords(str_replace('_', ' ', $key));
             }
 
             if (isset($this->_data['fields'][$key]['hidden']) && $this->_data['fields'][$key]['hidden'] == 1) {
@@ -2011,7 +2008,7 @@ abstract class Bvb_Grid
                     }
 
                     if (array_key_exists($norder, $fields_final)) {
-                        for ($i = count($fields_final); $i >= $norder; $i --) {
+                        for ($i = count($fields_final); $i >= $norder; $i--) {
                             $fields_final[($i + 1)] = $fields_final[$i];
                         }
                         $fields_final[$norder] = $key;
@@ -2023,7 +2020,7 @@ abstract class Bvb_Grid
             } elseif (!isset($value['hidden']) || $value['hidden'] == 0) {
                 while (true) {
                     if (array_key_exists($lastIndex, $fields_final)) {
-                        $lastIndex ++;
+                        $lastIndex++;
                     } else {
                         break;
                     }
@@ -2042,7 +2039,7 @@ abstract class Bvb_Grid
         }
 
         $this->_fields = $fields_final;
-        $this->_titles = $titulos;
+        $this->_titles = $titles;
         $this->_fieldsOrder = $orderFields;
     }
 
@@ -2057,19 +2054,13 @@ abstract class Bvb_Grid
      */
     protected function _validateFilters()
     {
-        if ($this->getInfo("noFilters") == 1) {
+        if ($this->getInfo('noFilters') == 1)
             return false;
-        }
 
-        $filters = null;
-
-        if (is_array($this->_filters)) {
+        if (is_array($this->_filters))
             return $this->_filters;
-        } else {
-            $filters = array_combine($this->_fields, $this->_fields);
-        }
 
-        return $filters;
+        return array_combine($this->_fields, $this->_fields);
     }
 
     /**
@@ -2222,12 +2213,10 @@ abstract class Bvb_Grid
         }
 
         if ($this->getParam('noOrder') == 1) {
-            $this->getSource()
-                ->resetOrder();
+            $this->getSource()->resetOrder();
         }
 
-        $result = $this->getSource()
-            ->execute();
+        $result = $this->getSource()->execute();
 
         if ($this->_forceLimit === false) {
             $resultCount = $this->getSource()
@@ -2239,10 +2228,7 @@ abstract class Bvb_Grid
             }
         }
 
-        //Total records found
         $this->_totalRecords = $resultCount;
-
-        //The result
         $this->_result = $result;
 
         $this->_colspan();
@@ -2290,7 +2276,7 @@ abstract class Bvb_Grid
         }
 
         $this->_templates[$type]
-            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/', $type);
+            ->addPrefixPath(trim($prefix, '_'), trim($dir, '/') . '/', $type);
         return $this;
     }
 
@@ -2335,7 +2321,6 @@ abstract class Bvb_Grid
         $fields = func_get_args();
 
         foreach ($fields as $value) {
-
             if (!$value instanceof Bvb_Grid_Column) {
                 throw new Bvb_Grid_Exception('Instance of Bvb_Grid_Column must be provided');
             }
@@ -2344,10 +2329,8 @@ abstract class Bvb_Grid
                 $finalField = $field['field'];
                 unset($field['field']);
                 $this->updateColumn($finalField, $field);
-
             }
         }
-
     }
 
     /**
@@ -2361,37 +2344,35 @@ abstract class Bvb_Grid
 
         foreach ($this->_data['fields'] as $value) {
             if (isset($value['remove']) && $value['remove'] == 1) {
-                $totalFields --;
+                $totalFields--;
             } elseif (isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true) {
-                $totalFields --;
+                $totalFields--;
             }
 
             if (isset($value['hRow']) && $value['hRow'] == 1) {
-                $totalFields --;
+                $totalFields--;
             }
         }
 
         if ($this->_allowDelete == 1) {
-            $totalFields ++;
+            $totalFields++;
         }
 
         if ($this->_allowEdit == 1) {
-            $totalFields ++;
+            $totalFields++;
         }
 
         if (is_array($this->_detailColumns) && $this->_isDetail == false) {
-            $totalFields ++;
+            $totalFields++;
         }
 
-        $colspan = $totalFields + count($this->_extraFields);
+        $this->_colspan = $totalFields + count($this->_extraFields);
 
-        $this->_colspan = $colspan;
-
-        return $colspan;
+        return $this->_colspan;
     }
 
     /**
-     * Returns a field and is options
+     * Returns a field and its options
      * @param $field
      * @return mixed
      */
@@ -2401,8 +2382,8 @@ abstract class Bvb_Grid
     }
 
     /**
-     *Return fields list.
-     *Optional param returns also fields options
+     * Return fields list.
+     * Optional param returns also fields options
      * @param $returnOptions
      * @return array
      */
@@ -2517,7 +2498,7 @@ abstract class Bvb_Grid
     public static function factory($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestData = false)
     {
         if (!is_string($id)) {
-            $id = "";
+            $id = '';
         }
 
         if (strpos($defaultClass, '_') === false) {
@@ -2542,7 +2523,7 @@ abstract class Bvb_Grid
             }
 
             // now we need to find and load the right Bvb deploy class
-            $className = "Bvb_Grid_Deploy_" . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
+            $className = 'Bvb_Grid_Deploy_' . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
             if (Zend_Loader_Autoloader::autoload($className)) {
                 $grid = new $className($options);
@@ -2611,11 +2592,11 @@ abstract class Bvb_Grid
             if (!is_array($defs)) {
                 // only export name is passed, we need to get default option
                 $name = $defs;
-                $className = "Bvb_Grid_Deploy_" . ucfirst($name); // TODO support user defined classes
+                $className = 'Bvb_Grid_Deploy_' . ucfirst($name); // TODO support user defined classes
 
                 if (Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults')) {
                     // learn the defualt values
-                    $defs = call_user_func(array($className, "getExportDefaults"));
+                    $defs = call_user_func(array($className, 'getExportDefaults'));
                 } else {
                     // there are no defaults, we need at least some caption
                     $defs = array('caption' => $name);
@@ -3077,7 +3058,7 @@ abstract class Bvb_Grid
     public function addFiltersRenderDir($dir, $prefix)
     {
         $this->_filtersRenders
-            ->addPrefixPath(trim($prefix, "_"), trim($dir, "/") . '/');
+            ->addPrefixPath(trim($prefix, '_'), trim($dir, '/') . '/');
         return $this;
     }
 
