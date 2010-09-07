@@ -615,7 +615,6 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     public function insert($table, array $post)
     {
         $tableModel = $this->_getModelFromTable($table);
-        $id = Doctrine::getTable($tableModel)->getIdentifier();
 
         /**
          * @var Doctrine_Record
@@ -1075,7 +1074,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     private function _removeAs($subject)
     {
-        return str_replace(array(' AS', ' As', ' aS', ' as'), array('', '', '', ''), $subject);
+        return str_ireplace(' as', '', $subject);
     }
 
     /**
@@ -1160,7 +1159,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getMassActionsIds()
      */
-    public function getMassActionsIds($table,$fields)
+    public function getMassActionsIds($table, $fields)
     {
         throw new Exception('Not yet Implemented');
     }
@@ -1169,7 +1168,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getValuesForFiltersFromTable()
      */
-    public function getValuesForFiltersFromTable($table,$field, $fieldValue, $order = 'name ASC')
+    public function getValuesForFiltersFromTable($table, $field, $fieldValue, $order = 'name ASC')
     {
         throw new Exception('Not yet Implemented');
     }
