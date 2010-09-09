@@ -34,6 +34,20 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
 
     protected $_select;
 
+    protected $_gridId;
+
+
+    public function getGridId()
+    {
+        return $this->_gridId;
+    }
+
+    public function setGridId($id)
+    {
+        $this->_gridId = $id;
+        return $this;
+    }
+
     /**
      * @return the $_view
      */
