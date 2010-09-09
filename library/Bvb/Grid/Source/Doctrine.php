@@ -4,6 +4,7 @@
  * Provides you the ability to use Doctrine as a source
  * with the Grid.
  *
+ * @package   Bvb_Grid
  * @author James Solomon <labs@clickbooth.com>
  */
 class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
