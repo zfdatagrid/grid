@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,28 +10,37 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 interface Bvb_Grid_Source_SourceInterface
 {
+
+
     /**
      * Should return true|false if this source support
      * crud operations
+     *
      * @return bool
      */
     public function hasCrud ();
 
+
     /**
-     *Gets a unique record as a associative array
-     * @param $table
-     * @param $condition
+     * Gets a unique record as a associative array
+     *
+     * @param string $table
+     * @param array $condition
+     *
+     * @return array
      */
     public function getRecord ($table, array $condition);
+
 
     /**
      * builds a key=>value array
@@ -55,42 +63,56 @@ interface Bvb_Grid_Source_SourceInterface
      * its not bad idea to apply this to fields titles
      * $title = ucwords(str_replace('_',' ',$title));
      *
-     *
+     * @return string
      */
     public function buildFields ();
+
 
     /**
      * Should return the database server name or source name
      *
      * Ex: mysql, pgsql, array, xml
+     *
+     * @return string
      */
     public function getSourceName ();
 
+
     /**
-     *Runs the query and returns the result as a associative array
+     * Runs the query and returns the result as a associative array
+     *
+     * @return array
      */
     public function execute ();
 
+
     /**
      * Get a record detail based the current query
+     *
      * @param array $where
+     *
      * @return array
      */
     public function fetchDetail (array $where);
 
+
     /**
      * Return the total of records
+     *
+     * @return int
      */
     public function getTotalRecords ();
 
+
     /**
-     * @return key=>value array with all tables
-     *
      * Ex: array('c'=>array('tableName'=>'Country'));
      * where c is the table alias. If the table as no alias,
      * c should be the table name
+     *
+     * @return array
      */
     public function getTableList ();
+
 
     /**
      * Return possible filters values based on field definition
@@ -103,9 +125,12 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * array('Yes'=>'Yes','No'=>'No','Empty'=>'Empty');
      *
-     * @param $field
+     * @param string $field
+     *
+     * @return mixed
      */
     public function getFilterValuesBasedOnFieldDefinition ($field);
+
 
     /**
      * Return field type
@@ -116,16 +141,21 @@ interface Bvb_Grid_Source_SourceInterface
      * and not the full definition
      *
      * @param string $field
+     *
+     * @return string
      */
 
     public function getFieldType ($field);
+
 
     /**
      * Returns the "main" table
      * the one after select * FROM {MAIN_TABLE}
      *
+     * @return string
      */
     public function getMainTable ();
+
 
     /**
      *
@@ -139,20 +169,30 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $field
      * @param string $order
      * @param bool $reset
+     *
+     * @return void
      */
     public function buildQueryOrder ($field, $order, $reset = false);
 
+
     /**
      * Build the query limit clause
+     *
      * @param $start
      * @param $offset
+     *
+     * @return void
      */
     public function buildQueryLimit ($start, $offset);
 
+
     /**
      * Returns the select object
+     *
+     * @return mixed
      */
     public function getSelectObject ();
+
 
     /**
      * returns the selected order
@@ -174,6 +214,7 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getSelectOrder ();
 
+
     /**
      * Should perform a query based on the provided by the user
      * select the two fields and return an array $field=>$value
@@ -184,9 +225,11 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * @param string $field
      * @param string $value
+     *
      * @return array
      */
     public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC');
+
 
     /**
      *
@@ -203,8 +246,12 @@ interface Bvb_Grid_Source_SourceInterface
      *SELECT SUM(AVG(Population)) FROM *
      *
      * @param array $value
+     * @param array $where
+     *
+     * @return array
      */
     public function getSqlExp (array $value, $where = array());
+
 
     /**
      * Adds a fulltext search instead of a addcondition method
@@ -217,10 +264,13 @@ interface Bvb_Grid_Source_SourceInterface
      *boolean =>  IN BOOLEAN MODE
      *queryExpansion =>  WITH QUERY EXPANSION
      *
-     * @param $filter
-     * @param $field
+     * @param string $filter
+     * @param string $field
+     *
+     * @return mixed
      */
     public function addFullTextSearch ($filter, $field);
+
 
     /**
      * Adds a new condition to the current query
@@ -229,11 +279,12 @@ interface Bvb_Grid_Source_SourceInterface
      * $completeField. use the index $completField['field'] to
      * specify the field, to avoid ambiguous
      *
-     * @param $filter
-     * @param $op
-     * @param $completeField
+     * @param string $filter
+     * @param string $op
+     * @param array $completeField
      */
     public function addCondition ($filter, $op, $completeField);
+
 
     /**
      *Insert an array of key=>values in the specified table
@@ -241,6 +292,7 @@ interface Bvb_Grid_Source_SourceInterface
      * @param array $post
      */
     public function insert ($table, array $post);
+
 
     /**
      *Update values in a table using the $condition clause
@@ -259,6 +311,7 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function update ($table, array $post, array $condition);
 
+
     /**
      * Delete a record from a table
      *
@@ -274,35 +327,47 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function delete ($table, array $condition);
 
+
     /**
      * Removes any order in que query
      */
     public function resetOrder ();
 
+
     /**
      * Cache handler.
+     *
+     * @param Zend_Cache
      */
     public function setCache ($cache);
 
+
     /**
      * Build the form based on a Model or query
+     *
+     * @param array $fields
+     * @param array $inputsType
      */
     public function buildForm ($fields = array(), $inputsType = array());
+
 
     /**
      * Returns tables primary keys separeted by commas ","
      * This is necessary for mass actions
-     * @param $table
+     *
+     * @param string $table
+     * @param array $fields
      */
-     public function getMassActionsIds ($table,$fields);
+    public function getMassActionsIds ($table, $fields);
 
-     /**
-      *
-      * Fetch pairs from a table
-      * @param $table
-      * @param $field
-      * @param $fieldValue
-      * @param $order
-      */
-     public function getValuesForFiltersFromTable ($table,$field, $fieldValue, $order = 'name ASC');
+
+    /**
+     * Fetch pairs from a table
+     *
+     * @param string $table
+     * @param string $field
+     * @param string $fieldValue
+     * @param string $order
+     */
+    public function getValuesForFiltersFromTable ($table, $field, $fieldValue, $order = 'name ASC');
 }

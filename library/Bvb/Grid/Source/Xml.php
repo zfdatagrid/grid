@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,18 +10,21 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
 {
+
+
     public function __construct ($url, $loop, $columns = null)
     {
-        if (strstr($url, '<?xml')) {
+        if ( strstr($url, '<?xml') ) {
             $xml = simplexml_load_string($url);
         } else {
             $xml = simplexml_load_file($url);
@@ -31,23 +33,23 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
         $xml = $this->_object2array($xml);
 
         $cols = explode(',', $loop);
-        if (is_array($cols)) {
-            foreach ($cols as $value) {
+        if ( is_array($cols) ) {
+            foreach ( $cols as $value ) {
                 $xml = $xml[$value];
             }
         }
 
         //Remove possible arrays
-        for ($i = 0; $i < count($xml); $i ++) {
-            foreach ($xml[$i] as $key => $final) {
-                if (!is_string($final)) {
+        for ( $i = 0; $i < count($xml); $i ++ ) {
+            foreach ( $xml[$i] as $key => $final ) {
+                if ( ! is_string($final) ) {
                     unset($xml[$i][$key]);
                 }
             }
         }
 
-        if (is_array($columns)) {
-            foreach ($columns as $value) {
+        if ( is_array($columns) ) {
+            foreach ( $columns as $value ) {
                 $columns = $columns[$value];
             }
         } else {

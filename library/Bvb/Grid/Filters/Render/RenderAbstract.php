@@ -20,124 +20,214 @@
 
 abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filters_Render_RenderInterface
 {
+
+    /**
+     * Default valud for the field
+     * @var string
+     */
     protected $_defaultValue;
 
+    /**
+     * View Instance
+     * @var Zend_View_Abstract
+     */
     protected $_view;
 
+    /**
+     * Translator interface
+     * @var mixed
+     */
     protected $_translator = false;
 
+    /**
+     * Input attributes
+     * @var array
+     */
     protected $_attributes;
 
+    /**
+     * Input(s) attributes
+     * @var mixed
+     */
     protected $_values;
 
+    /**
+     * Input name
+     * @var string
+     */
     protected $_fieldName;
 
+    /**
+     * Data Source Instance
+     * @var object
+     */
     protected $_select;
 
+    /**
+     * Grid's id
+     * @var string
+     */
     protected $_gridId;
 
 
-    public function getGridId()
+    /**
+     * Returns the current grid Id
+     *
+     * @return string
+     */
+    public function getGridId ()
     {
         return $this->_gridId;
     }
 
-    public function setGridId($id)
+
+    /**
+     * sets grid Id
+     * @param string $id
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function setGridId ($id)
     {
         $this->_gridId = $id;
         return $this;
     }
 
+
     /**
-     * @return the $_view
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getView()
      */
-    public function getView()
+    public function getView ()
     {
         return $this->_view;
     }
 
-    public function setTranslator($translate)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setTranslator()
+     */
+    public function setTranslator ($translate)
     {
         $this->_translator = $translate;
     }
 
-    public function getTranslator()
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getTranslator()
+     */
+    public function getTranslator ()
     {
         return $this->_translator;
     }
 
-    public function __($name)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::__()
+     */
+    public function __ ($name)
     {
-        if ($this->getTranslator())
-            return $this->getTranslator()->translate($name);
+        if ( $this->getTranslator() ) return $this->getTranslator()
+            ->translate($name);
 
         return $name;
     }
 
+
     /**
-     * @return the $_attributes
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getAttributes()
      */
-    public function getAttributes()
+    public function getAttributes ()
     {
         return $this->_attributes;
     }
 
-    public function getAttribute($name)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getAttribute()
+     */
+    public function getAttribute ($name)
     {
         return isset($this->_attributes[$name]) ? $this->_attributes[$name] : null;
     }
 
+
     /**
-     * @param $_view the $_view to set
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setView()
      */
-    public function setView($_view)
+    public function setView ($_view)
     {
         $this->_view = $_view;
     }
 
+
     /**
-     * @param $_attributes the $_attributes to set
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setAttributes()
      */
-    public function setAttributes($_attributes)
+    public function setAttributes ($_attributes)
     {
         $this->_attributes = $_attributes;
         return $this;
     }
 
-    public function setAttribute($name, $value)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setAttribute()
+     */
+    public function setAttribute ($name, $value)
     {
         $this->_attributes[$name] = $value;
         return $this;
     }
 
-    public function hasAttribute($name)
+
+    /**
+     * Checks if a given attribute exists
+     * @param bool $name
+     */
+    public function hasAttribute ($name)
     {
-        return isset($this->_attributes[$name])?true:false;
+        return isset($this->_attributes[$name]) ? true : false;
     }
 
-    public function removeAttribute($name)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::removeAttribute()
+     */
+    public function removeAttribute ($name)
     {
-        if (isset($this->_attributes[$name])) {
+        if ( isset($this->_attributes[$name]) ) {
             unset($this->_attributes[$name]);
         }
 
         return $this;
     }
 
-    public function setValues(array $options)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setValues()
+     */
+    public function setValues (array $options)
     {
         $this->_values = $options;
         return $this;
     }
 
-    public function getValues()
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getValues()
+     */
+    public function getValues ()
     {
         return $this->_values;
     }
 
-    public function setDefaultValue($value, $field = '')
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setDefaultValue()
+     */
+    public function setDefaultValue ($value, $field = '')
     {
-        if ($field != '') {
+        if ( $field != '' ) {
             $this->_defaultValue[$field] = $value;
         } else {
             $this->_defaultValue = $value;
@@ -145,51 +235,87 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
         return $this;
     }
 
-    public function getDefaultValue($name = '')
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getDefaultValue()
+     */
+    public function getDefaultValue ($name = '')
     {
-        if ($name != '') {
+        if ( $name != '' ) {
             return isset($this->_defaultValue[$name]) ? $this->_defaultValue[$name] : null;
         }
         return $this->_defaultValue;
     }
 
-    public function setFieldName($name)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setFieldName()
+     */
+    public function setFieldName ($name)
     {
         $this->_fieldName = $name;
         return $this;
     }
 
-    public function getFieldName()
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getFieldName()
+     */
+    public function getFieldName ()
     {
         return $this->_fieldName;
     }
 
-    public function normalize($value, $part = '')
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::normalize()
+     */
+    public function normalize ($value, $part = '')
     {
         return $value;
     }
 
-    public function setSelect($select)
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::setSelect()
+     */
+    public function setSelect ($select)
     {
         $this->_select = $select;
         return $this;
     }
 
-    public function getSelect()
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getSelect()
+     */
+    public function getSelect ()
     {
         return $this->_select;
     }
 
-    public function hasConditions()
+
+    /**
+     * If this input has conditions to be added to the query
+     *
+     * @return bool
+     */
+    public function hasConditions ()
     {
         return true;
     }
 
-    public function buildQuery(array $filter)
-    {
-    }
 
-    public function getChilds()
-    {
-    }
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::buildQuery()
+     */
+    public function buildQuery (array $filter)
+    {}
+
+
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::getChilds()
+     */
+    public function getChilds ()
+    {}
 }

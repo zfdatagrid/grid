@@ -20,59 +20,201 @@
 
 interface Bvb_Grid_Filters_Render_RenderInterface
 {
-    /**
-     * @return the $_view
-     */
-    public function getView();
 
-    public function setTranslator($translate);
-
-    public function getTranslator();
-
-    public function __($name);
 
     /**
-     * @return the $_attributes
+     * Returns the current View
+     *
+     * @return Zend_View_Abstract
      */
-    public function getAttributes();
+    public function getView ();
 
-    public function getAttribute($name);
 
     /**
-     * @param $_view the $_view to set
+     * Defines the translator instance to be used
+     * @param Zend_Translate $translate
      */
-    public function setView($_view);
+    public function setTranslator ($translate);
+
 
     /**
-     * @param $_attributes the $_attributes to set
+     * Returns current translator
+     *
+     * @return Zend_Translate
      */
-    public function setAttributes($_attributes);
+    public function getTranslator ();
 
-    public function setAttribute($name, $value);
 
-    public function removeAttribute($name);
+    /**
+     * Translates a string
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public function __ ($name);
 
-    public function setValues(array $options);
 
-    public function getValues();
+    /**
+     * Returns currents input attributes
+     *
+     * @return array
+     */
+    public function getAttributes ();
 
-    public function setDefaultValue($value, $field = '');
 
-    public function getDefaultValue($name = '');
+    /**
+     * Returns the requested atttribute if it exists
+     *
+     * @param string $name Attributes name
+     *
+     * @return mixed
+     */
+    public function getAttribute ($name);
 
-    public function setFieldName($name);
 
-    public function getFieldName();
+    /**
+     * Sets the current view
+     *
+     * @param Zend_View_Abstract $_view
+     */
+    public function setView ($_view);
 
-    public function normalize($value, $part = '');
 
-    public function setSelect($select);
+    /**
+     * Defines multiples atttributes for the current input
+     *
+     * @param array $_attributes
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function setAttributes ($_attributes);
 
-    public function getSelect();
 
-    public function getChilds();
+    /**
+     * Defines a sinle attribute to the current input
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function setAttribute ($name, $value);
 
-    public function buildQuery(array $filter);
 
-    public function render();
+    /**
+     * Removes an attribute from the input
+     *
+     * @param string $name
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function removeAttribute ($name);
+
+
+    /**
+     * Defines values for current inputs
+     *
+     * @param array $options
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function setValues (array $options);
+
+
+    /**
+     * Returns currents inputs values
+     *
+     * @return array
+     */
+    public function getValues ();
+
+
+    /**
+     * Defines the default value for the input
+     *
+     * @param string $value
+     * @param string $field
+     */
+    public function setDefaultValue ($value, $field = '');
+
+
+    /**
+     * Returns the default value for the input
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public function getDefaultValue ($name = '');
+
+
+    /**
+     * Sets the current field name
+     *
+     * @param string $name
+     */
+    public function setFieldName ($name);
+
+
+    /**
+     * Returns the current field name
+     *
+     * @return string
+     */
+    public function getFieldName ();
+
+
+    /**
+     * Normalizes user's input to a compatible value (think about dates)
+     *
+     * @param string $value
+     * @param string $part
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function normalize ($value, $part = '');
+
+
+    /**
+     * Sets the current data source instance
+     *
+     * @param object $select
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function setSelect ($select);
+
+
+    /**
+     * Returns the current Data Source Instance
+     *
+     * @return Bvb_Grid_Source_Interface
+     */
+    public function getSelect ();
+
+
+    /**
+     * Returns the current element childs.
+     * In a date example could be from and to
+     *
+     * @return array
+     */
+    public function getChilds ();
+
+
+    /**
+     * Builds the query
+     *
+     * @param array $filter
+     *
+     * @return Bvb_Grid_Filters_Render_RenderAbstract
+     */
+    public function buildQuery (array $filter);
+
+
+    /**
+     * Renders the current input
+     *
+     * @return string
+     */
+    public function render ();
 }

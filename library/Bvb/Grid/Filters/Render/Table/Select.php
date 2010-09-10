@@ -20,6 +20,9 @@
 
 class Bvb_Grid_Filters_Render_Table_Select extends Bvb_Grid_Filters_Render_RenderAbstract
 {
+    /**
+     * @see library/Bvb/Grid/Filters/Render/Bvb_Grid_Filters_Render_RenderInterface::render()
+     */
     public function render()
     {
         return $this->getView()->formSelect($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes(),$this->getValues());
