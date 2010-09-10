@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,21 +10,54 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
 {
-    public function __construct($options = array())
+
+    /**
+     * Options to be aplied
+     * @var array
+     */
+    protected $_options = array('border' => 0);
+
+
+    /**
+     * Constructor
+     *
+     * @param array $options
+     *
+     * @return void
+     */
+    public function __construct (array $options = array())
     {
+        $this->_options = $options;
+
+        return;
     }
 
-    public function format($value)
+
+    /**
+     * Formats a given value
+     * @see library/Bvb/Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
+     */
+    public function format ($value)
     {
-        return "<img src=\"$value\" border=\"0\">";
+        $attrs = '';
+        if ( count($this->_options) > 0 ) {
+
+            foreach ( $this->_options as $key => $value ) {
+                $attrs .= " {$key} = \"$value\" ";
+            }
+
+        }
+
+        return "<img  src=\"$value\" $attrs>";
     }
 }

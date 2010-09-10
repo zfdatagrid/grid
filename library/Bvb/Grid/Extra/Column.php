@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,17 +10,28 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Extra_Column
 {
+    /**
+     * Columns to be added
+     * @var array
+     */
     public   $_field;
 
+    /**
+     * Add new extra columns
+     *
+     * @param string $name
+     * @param mixed  $args
+     */
     public function __call($name, $args)
     {
         $this->_field[$name] = $args[0];

@@ -1,27 +1,36 @@
 <?php
 
 /**
- *
  * LICENSE
  *
- * This source file is subject to the GNU General Public License 2.0
+ * This source file is subject to the new BSD license
  * It is  available through the world-wide-web at this URL:
- * http://www.opensource.org/licenses/gpl-2.0.php
+ * http://www.petala-azul.com/bsd.txt
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.opensource.org/licenses/gpl-2.0.php   GNU General Public License 2.0
- * @version    0.1
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_FormatterInterface
 {
+
+    /**
+     * Locale to be applied
+     * @var mixed
+     */
     protected $_locale = null;
 
+    /**
+     * Constructor
+     * @param array $options
+     */
     public function __construct($options = array())
     {
         if (Zend_Locale::isLocale($options)) {
@@ -31,6 +40,10 @@ class Bvb_Grid_Formatter_Currency implements Bvb_Grid_Formatter_FormatterInterfa
         }
     }
 
+    /**
+     * Formats a given value
+     * @see library/Bvb/Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
+     */
     public function format($value)
     {
         if ($this->_locale === null || !is_numeric($value)) {

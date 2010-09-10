@@ -11,36 +11,38 @@
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
  * @package   Bvb_Grid
- * @author     Bento Vilas Boas <geral@petala-azul.com >
- * @copyright  Copyright (c) 2010  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
  * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Column
 {
+
     public $_field;
+
 
     /**
      * @param string $field field from query
      *
      * @return void
      */
-    public function __construct($field)
+    public function __construct ($field)
     {
         $this->_field['field'] = trim($field);
     }
+
 
     /**
      * @param string $name field name
      * @param array $args array of options
      * @return Bvb_Grid_Column
      */
-    public function __call($name, $args)
+    public function __call ($name, $args)
     {
-        if ( substr(strtolower($name), 0, 3) == 'set'
-            || substr(strtolower($name), 0, 3) == 'add'
-        ) {
+        if ( substr(strtolower($name), 0, 3) == 'set' || substr(strtolower($name), 0, 3) == 'add' ) {
             $name = substr($name, 3);
             $name[0] = strtolower($name[0]);
         }

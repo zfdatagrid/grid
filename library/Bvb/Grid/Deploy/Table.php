@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * LICENSE
  *
@@ -15,6 +16,7 @@
  * @copyright 2010 ZFDatagrid
  * @license   http://www.petala-azul.com/bsd.txt   New BSD License
  * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface

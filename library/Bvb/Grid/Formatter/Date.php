@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * LICENSE
  *
  * This source file is subject to the new BSD license
@@ -11,29 +10,48 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c)  (http://www.petala-azul.com)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     Bento Vilas Boas <geral@petala-azul.com >
+ * @package   Bvb_Grid
+ * @author    Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright 2010 ZFDatagrid
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @link      http://zfdatagrid.com
  */
 
 class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
 {
+
+    /**
+     * Locale to be applied
+     * @var mixed
+     */
     protected $locale = null;
 
+    /**
+     * Date formay
+     * @var mixed
+     */
     protected $date_format = null;
 
+    /**
+     * Format Type to be aplied
+     * @var mixed
+     */
     protected $type = null;
 
-    public function __construct($options = array())
+
+    /**
+     * Constructor
+     * @param array $options
+     */
+    public function __construct ($options = array())
     {
-        if ($options instanceof Zend_Locale) {
+        if ( $options instanceof Zend_Locale ) {
             $this->locale = $options;
-        } elseif (is_string($options)) {
+        } elseif ( is_string($options) ) {
             $this->date_format = $options;
-        } elseif (is_array($options)) {
-            foreach ($options as $k => $v) {
+        } elseif ( is_array($options) ) {
+            foreach ( $options as $k => $v ) {
                 switch ($k) {
                     case 'locale':
                         $this->locale = $v;
@@ -48,16 +66,22 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
                         throw new Bvb_Grid_Exception($this->__("Unknown option '$k'."));
                 }
             }
-        } elseif (Zend_Registry::isRegistered('Zend_Locale')) {
+        } elseif ( Zend_Registry::isRegistered('Zend_Locale') ) {
             $this->locale = Zend_Registry::get('Zend_Locale');
         }
     }
 
-    public function format($value)
+
+    /**
+     * Formats a given value
+     * @see library/Bvb/Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
+     */
+    public function format ($value)
     {
         try {
             $date = new Zend_Date($value);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             return $value;
         }
         return $date->toString($this->date_format, $this->type, $this->locale);

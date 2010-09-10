@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * LICENSE
@@ -18,84 +19,119 @@
  */
 class Bvb_Grid_Translator
 {
+
+    /**
+     * Class Instance
+     *
+     * @var mixed
+     */
     protected static $_instance = null;
+
     /**
      * @var Zend_Translate
      */
     protected $_translator = null;
 
-    final protected function __construct()
-    {}
+
+    /**
+     * Protect from instantiation
+     *
+     * @return void
+     */
+    final protected function __construct ()
+    {
+    }
+
 
     /**
      * Translator instante
+     *
      * @return Zend_Translate
      */
-    public static function getInstance()
+    public static function getInstance ()
     {
-        if (self::$_instance === NULL) {
+        if ( self::$_instance === null ) {
             self::$_instance = new self();
         }
         return self::$_instance;
     }
 
+
     /**
      * Defines translator
+     *
      * @param Zend_Translate $translator
+     *
      * @return Zend_Translate
      */
-    public function setTranslator(Zend_Translate $translator)
+    public function setTranslator (Zend_Translate $translator)
     {
         $this->_translator = $translator;
         return $this;
     }
 
+
     /**
      * Returns current translator
+     *
      * @return Zend_Translate
      */
-    public function getTranslator()
+    public function getTranslator ()
     {
-        if ($this->_translator instanceof Zend_Translate) {
+        if ( $this->_translator instanceof Zend_Translate ) {
             return $this->_translator;
-        } elseif (Zend_Registry::isRegistered('Zend_Translate')) {
+        } elseif ( Zend_Registry::isRegistered('Zend_Translate') ) {
             $this->_translator = Zend_Registry::get('Zend_Translate');
         }
         return $this->_translator;
     }
 
+
     /**
      * Translate a string
-     * @param $message
+     *
+     * @param string $message
+     *
+     * @return string
      */
-    public function __($message)
+    public function __ ($message)
     {
-        if (strlen($message) == 0) {
+        if ( strlen($message) == 0 ) {
             return $message;
         }
-        if ($this->getTranslator()) {
+        if ( $this->getTranslator() ) {
             return $this->getTranslator()
                 ->translate($message);
         }
         return $message;
     }
 
+
     /**
      * Checks if a string is translatable
-     * @param $message
+     *
+     * @param string $message
+     *
+     * @return mixed
      */
-    public function isTranslated($message)
+    public function isTranslated ($message)
     {
-        if (strlen($message) == 0) {
+        if ( strlen($message) == 0 ) {
             return false;
         }
-        if ($this->getTranslator()) {
+        if ( $this->getTranslator() ) {
             return $this->_translator
                 ->isTranslated($message);
         }
         return false;
     }
 
-    final protected function __clone()
-    {}
+    /**
+     * Protect from instantiation
+     *
+     * @return void
+     */
+    final protected function __clone ()
+    {
+    }
 }
