@@ -39,7 +39,7 @@ class Bvb_Grid_Template_Word
     /**
      * [PT] Valor para depois poder-mos fazer zebra na listagem de resultados
      *
-     * @var unknown_type
+     * @var array
      */
     public $i;
 

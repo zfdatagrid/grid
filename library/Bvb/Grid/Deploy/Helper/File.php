@@ -21,6 +21,7 @@
 class Bvb_Grid_Deploy_Helper_File
 {
 
+
     /**
      * @param string $directory
      * @param mixed $filter
@@ -28,66 +29,47 @@ class Bvb_Grid_Deploy_Helper_File
      */
     public static function scan_directory_recursively ($directory, $filter = FALSE)
     {
-        // if the path has a slash at the end we remove it here
         $directory = rtrim($directory, '/');
         $directory_tree = array();
 
-        // if the path is not valid or is not a directory ...
-        if (! file_exists($directory) || ! is_dir($directory)) {
-            // ... we return false and exit the function
+        if ( ! file_exists($directory) || ! is_dir($directory) ) {
             return FALSE;
 
-        // ... else if the path is readable
-        } elseif (is_readable($directory)) {
-            // we open the directory
+        } elseif ( is_readable($directory) ) {
             $directory_list = opendir($directory);
 
-            // and scan through the items inside
             while (FALSE !== ($file = readdir($directory_list))) {
-                // if the filepointer is not the current directory
-                // or the parent directory
-                if ($file != '.' && $file != '..' && $file != '.DS_Store') {
-                    // we build the new path to scan
+                if ( $file != '.' && $file != '..' && $file != '.DS_Store' ) {
                     $path = $directory . '/' . $file;
 
-                    // if the path is readable
-                    if (is_readable($path)) {
-                        // we split the new path by directories
+                    if ( is_readable($path) ) {
                         $subdirectories = explode('/', $path);
 
-                        // if the new path is a directory
-                        if (is_dir($path)) {
-                            // add the directory details to the file list
+                        if ( is_dir($path) ) {
                             $directory_tree[] = array('path' => $path . '|',
 
-                            // we scan the new path by calling this function
                             'content' => self::scan_directory_recursively($path, $filter));
 
-                        // if the new path is a file
-                        } elseif (is_file($path)) {
-                            // get the file extension by taking everything after the last dot
+                        } elseif ( is_file($path) ) {
                             $extension = end($subdirectories);
                             $extension = explode('.', $extension);
                             $extension = end($extension);
 
-                            // if there is no filter set or the filter is set and matches
-                            if ($filter === FALSE || $filter == $extension) {
-                                // add the file details to the file list
+                            if ( $filter === FALSE || $filter == $extension ) {
                                 $directory_tree[] = array('path' => $path . '|', 'name' => end($subdirectories));
                             }
                         }
                     }
                 }
             }
-            // close the directory
             closedir($directory_list);
 
-            // return file list
             return $directory_tree;
         }
 
         return false;
     }
+
 
     /**
      *
@@ -97,9 +79,9 @@ class Bvb_Grid_Deploy_Helper_File
     {
         $current_dir = @opendir($dir);
         while ($entryname = @readdir($current_dir)) {
-            if (is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..")) {
+            if ( is_dir($dir . '/' . $entryname) and ($entryname != "." and $entryname != "..") ) {
                 self::deldir($dir . '/' . $entryname);
-            } elseif ($entryname != "." and $entryname != "..") {
+            } elseif ( $entryname != "." and $entryname != ".." ) {
                 @unlink($dir . '/' . $entryname);
             }
         }
@@ -107,15 +89,16 @@ class Bvb_Grid_Deploy_Helper_File
         @rmdir($dir);
     }
 
+
     /**
      *
-     * @param unknown_type $dirs
-     * @return unknown
+     * @param array $dirs
+     * @return array
      */
     public static function zipPaths ($dirs)
     {
-        foreach ($dirs as $key => $value) {
-            if (! is_array(@$value['content'])) {
+        foreach ( $dirs as $key => $value ) {
+            if ( ! is_array(@$value['content']) ) {
                 @$file .= $value['path'];
             } else {
                 @$file .= self::zipPaths($value['content']);
@@ -124,34 +107,33 @@ class Bvb_Grid_Deploy_Helper_File
         return $file;
     }
 
+
     /**
      *
-     * @param unknown_type $source
-     * @param unknown_type $dest
-     * @return unknown
+     * @param string $source
+     * @param string $dest
+     *
+     * @return mixed
      */
     public static function copyDir ($source, $dest)
     {
-        // Se for ficheiro
-        if (is_file($source)) {
+        if ( is_file($source) ) {
             $c = copy($source, $dest);
             chmod($dest, 0777);
             return $c;
         }
 
-        // criar directorio de destino
-        if (! is_dir($dest)) {
+        if ( ! is_dir($dest) ) {
             mkdir($dest, 0777, 1);
         }
 
         $dir = dir($source);
         while (false !== $entry = $dir->read()) {
-            if ($entry == '.' || $entry == '..' || $entry == '.svn') {
+            if ( $entry == '.' || $entry == '..' || $entry == '.svn' ) {
                 continue;
             }
 
-            // copiar directorios
-            if ($dest !== "$source/$entry") {
+            if ( $dest !== "$source/$entry" ) {
                 self::copyDir("$source/$entry", "$dest/$entry");
             }
         }

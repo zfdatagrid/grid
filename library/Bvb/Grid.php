@@ -66,14 +66,6 @@ abstract class Bvb_Grid
     protected $_libraryDir = 'library';
 
     /**
-     * classes location
-     *
-     * @var array
-     */
-    //TODO set template classes from config file
-    protected $_template = array();
-
-    /**
      * templates type to be used
      *
      * @var array
@@ -94,9 +86,9 @@ abstract class Bvb_Grid
     protected $_recordsPerPage = 15;
 
     /**
-     * Number of results per page
+     * Number of results to per page
      *
-     * @var int
+     * @var array
      */
     protected $_paginationOptions = array();
 
@@ -168,6 +160,8 @@ abstract class Bvb_Grid
     protected $_filtersRenders;
 
     /**
+     * External fielters to be applied
+     *
      * @var array
      */
     protected $_externalFilters = array();
@@ -223,7 +217,7 @@ abstract class Bvb_Grid
     /**
      * Template instance
      *
-     * @var unknown_type
+     * @var object
      */
     protected $_temp;
 
@@ -269,7 +263,7 @@ abstract class Bvb_Grid
      * List of callback functions to apply
      * on grid deploy and ajax
      *
-     * @var $_configCallbacks
+     * @var array
      */
     protected $_configCallbacks = array();
 
@@ -406,7 +400,7 @@ abstract class Bvb_Grid
     /**
      * Order setted by adapter
      *
-     * @var unknown_type
+     * @var string
      */
     protected $_order;
 
@@ -686,8 +680,7 @@ abstract class Bvb_Grid
 
         //Get the controller params and baseurl to use with filters
         $this->setParams(Zend_Controller_Front::getInstance()->getRequest()
-            ->getParams()
-        );
+            ->getParams());
         $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
 
         foreach ( array('massActionsAll_', 'gridAction_', 'send_') as $value ) {
@@ -1162,8 +1155,7 @@ abstract class Bvb_Grid
                         }
 
                         $this->_filters[$key]['callback']['params'] = array_merge($this->_filters[$key]['callback']['params'], array('field' => $key, 'value' => $filter, 'select' => $this->getSource()
-                            ->getSelectObject())
-                        );
+                            ->getSelectObject()));
 
                         $result = call_user_func($this->_filters[$key]['callback']['function'], $this->_filters[$key]['callback']['params']);
 
@@ -1188,8 +1180,7 @@ abstract class Bvb_Grid
                     if ( $render->hasConditions() ) {
                         $cond = $render->getConditions();
                         $render->setSelect($this->getSource()
-                            ->getSelectObject()
-                        );
+                            ->getSelectObject());
 
                         foreach ( $filter as $nkey => $value ) {
                             if ( strlen($value) > 0 ) {
@@ -1324,6 +1315,7 @@ abstract class Bvb_Grid
             $order_field = implode('_', $order1);
 
             #$this->getSource()->buildQueryOrder($order_field, $orderf);
+
 
 
             if ( $this->_paramsInSession === true ) {
@@ -1517,7 +1509,7 @@ abstract class Bvb_Grid
      * Build Filters. If defined put the values
      * Also check if the user wants to hide a field
      *
-     * @return string
+     * @return mixed
      */
     protected function _buildFilters ()
     {
@@ -1526,13 +1518,12 @@ abstract class Bvb_Grid
             return false;
         }
 
-        $class = isset($this->_template['classes']['filter']) ? $this->_template['classes']['filter'] : '';
 
         $data = $this->_fields;
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'left' ) {
-                $return[$key] = array('type' => 'extraField', 'class' => $class, 'position' => 'left');
+                $return[$key] = array('type' => 'extraField', 'position' => 'left');
             }
         }
 
@@ -1545,9 +1536,9 @@ abstract class Bvb_Grid
 
             if ( $this->_displayField($nf) ) {
                 if ( is_array($this->_filters) && array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
-                    $return[] = array('type' => 'field', 'class' => $class, 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
                 } else {
-                    $return[] = array('type' => 'field', 'class' => $class, 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'field' => $data[$i]);
                 }
             }
         }
@@ -2333,9 +2324,8 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( count($this->getSource()->getSelectOrder()) == 1
-            && ! $this->getParam('order')
-        ) {
+        if ( count($this->getSource()
+            ->getSelectOrder()) == 1 && ! $this->getParam('order') ) {
             $norder = $this->getSource()
                 ->getSelectOrder();
 
@@ -2460,7 +2450,7 @@ abstract class Bvb_Grid
 
         $tpInfo = array('colspan' => $this->_colspan, 'charEncoding' => $this->getCharEncoding(), 'name' => $template, 'dir' => $this->_templates[$output]
             ->getClassPath($template, $output), 'class' => $this->_templates[$output]
-                ->getClassName($template, $output));
+            ->getClassName($template, $output));
 
         $this->_temp[$output] = new $class();
 
@@ -2706,6 +2696,7 @@ abstract class Bvb_Grid
             $className = 'Bvb_Grid_Deploy_' . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
 
+
             if ( Zend_Loader_Autoloader::autoload($className) ) {
                 $grid = new $className($options);
             } else {
@@ -2778,6 +2769,7 @@ abstract class Bvb_Grid
                 // only export name is passed, we need to get default option
                 $name = $defs;
                 $className = 'Bvb_Grid_Deploy_' . ucfirst($name); // TODO support user defined classes
+
 
 
                 if ( Zend_Loader_Autoloader::autoload($className) && method_exists($className, 'getExportDefaults') ) {
@@ -3554,9 +3546,8 @@ abstract class Bvb_Grid
             }
         }
 
-        if ( count($fields) == 0
-            && count($this->getSource() ->getPrimaryKey($this->_data['table'])) == 0
-        ) {
+        if ( count($fields) == 0 && count($this->getSource()
+            ->getPrimaryKey($this->_data['table'])) == 0 ) {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 

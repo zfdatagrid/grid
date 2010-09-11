@@ -46,7 +46,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     /**
      * Options for x Labels
-     * @var unknown_type
+     * @var array
      */
     protected $_xLabelsOptions = array();
 
@@ -58,7 +58,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     /**
      * Values to show
-     * @var unknown_type
+     * @var array
      */
     protected $_values = array();
 

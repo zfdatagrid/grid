@@ -38,6 +38,7 @@ class Bvb_Grid_Column
     /**
      * @param string $name field name
      * @param array $args array of options
+     *
      * @return Bvb_Grid_Column
      */
     public function __call ($name, $args)

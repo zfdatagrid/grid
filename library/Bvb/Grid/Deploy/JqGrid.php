@@ -900,14 +900,14 @@ HTML;
     protected $_id = 0;
 
     /**
-     * @var unknown_type
+     * @var mixed
      */
     protected $_logger = null;
 
     /**
      * Set to true if you want to debug this class
      *
-     * @var unknown_type
+     * @var bool
      */
     public static $debug = false;
 
