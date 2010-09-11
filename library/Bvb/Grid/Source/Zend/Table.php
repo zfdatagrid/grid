@@ -67,7 +67,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
             $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
 
-            $select->from($info['name'], $columnsMainTable);
+            $select->from($info['name'], $columnsMainTable, $info['schema']);
 
             $tAlias = array();
 
@@ -98,7 +98,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                 $tAlias[$infoNewClass['name']] ++;
             }
         } else {
-            $select->from($info['name']);
+            $select->from($info['name'], '*', $info['schema']); 
         }
 
         parent::__construct($select);

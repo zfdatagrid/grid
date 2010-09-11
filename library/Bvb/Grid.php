@@ -543,6 +543,7 @@ abstract class Bvb_Grid
             ->getMainTable();
 
         $this->_data['table'] = $tables['table'];
+        $this->_data['schema'] = $tables['schema'];
         $this->_crudTable = $this->_data['table'];
 
         $fields = $this->getSource()

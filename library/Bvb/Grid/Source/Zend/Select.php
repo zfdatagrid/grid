@@ -380,9 +380,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         if (array_key_exists($tableName, $tableList)) {
             $tableName = $tableList[$tableName]['tableName'];
+            $schema = $tableList[$tableName]['schema'];
         }
 
-        $table = $this->getDescribeTable($tableName);
+        $table = $this->getDescribeTable($tableName, $schema);
 
         if (!isset($table[$field])) {
             return 'text';
@@ -410,9 +411,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         if (array_key_exists($tableName, $tableList)) {
             $tableName = $tableList[$tableName]['tableName'];
+            $schema = $tableList[$tableName]['schema'];
         }
 
-        $table = $this->getDescribeTable($tableName);
+        $table = $this->getDescribeTable($tableName, $schema);
         $type = $table[$field]['DATA_TYPE'];
 
         if (substr($type, 0, 3) == 'set') {
@@ -432,6 +434,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
             if ($tables['joinType'] == 'from' || count($from) == 1) {
                 $return['table'] = $tables['tableName'];
+                $return['schema'] = $tables['schema']; 
                 break;
             }
         }
@@ -801,7 +804,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function buildForm ($fields = array(), $inputsType = array())
     {
         $table = $this->getMainTable();
-        $cols = $this->getDescribeTable($table['table']);
+        $cols = $this->getDescribeTable($table['table'], $table['schema']);
 
         return $this->buildFormElements($cols, array(), $inputsType);
     }

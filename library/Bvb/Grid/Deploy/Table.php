@@ -311,7 +311,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $conditions = array();
                     if ($this->getParam('postMassIds')) {
                         $ids = explode(',', $this->getParam('postMassIds'));
-                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
+                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
 
                         $a = 1;
                         foreach ($ids as $value) {
@@ -487,7 +487,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 continue;
                             }
 
-                            $pks = $this->getSource()->getPrimaryKey($this->_data['table']);
+                            $pks = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
 
                             if (isset($post[$key]['ZFPK'])) {
                                 if (strpos($post[$key]['ZFPK'], '-')) {
