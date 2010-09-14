@@ -1106,6 +1106,10 @@ abstract class Bvb_Grid
 
         $filters = array();
         foreach ( $this->_ctrlParams as $key => $value ) {
+            // only build filter if search is enabled
+            if (isset($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search'] == false)
+                continue;
+
             if ( stripos($key, '[') ) {
                 $name = explode('[', $key);
 
