@@ -2886,8 +2886,15 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     {
         $pk = parent::setMassActions($options, $fields);
 
+       if(count($fields)>0)
+       {
+           $pk = "{{".implode('}}-{{',$fields)."}}";
+       }else{
+           $pk = "{{$pk}}";
+       }
+
         $left = new Bvb_Grid_Extra_Column();
-        $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='{{{$pk}}}' >");
+        $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='".$pk."' >");
 
         $this->addExtraColumns($left);
     }

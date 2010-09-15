@@ -953,10 +953,12 @@ abstract class Bvb_Grid
      */
     public function updateColumn ($field, $options = array())
     {
-        if ( null == $this->getSource() || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields'])) ) {
+        if ( null == $this->getSource()
+            || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']))
+        ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
-             * @var $_updateColumnQueue Bvb_Grid
+             * @var $_updateColumnQueue
              */
             if ( isset($this->_updateColumnQueue[$field]) ) {
                 $this->_updateColumnQueue[$field] = array_merge($this->_updateColumnQueue[$field], $options);
@@ -1120,7 +1122,9 @@ abstract class Bvb_Grid
                 if ( in_array($key, $fields) ) {
                     $filters[$key] = $value;
                 } elseif ( in_array(substr($key, 0, - strlen($this->getGridId())), $fields) ) {
-                    if ( $this->getGridId() != '' && substr($key, - strlen($this->getGridId())) == $this->getGridId() ) {
+                    if ( $this->getGridId() != ''
+                        && substr($key, - strlen($this->getGridId())) == $this->getGridId()
+                    ) {
                         $key = substr($key, 0, - strlen($this->getGridId()));
                     }
 
