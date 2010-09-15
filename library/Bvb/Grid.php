@@ -1561,7 +1561,7 @@ abstract class Bvb_Grid
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'right' ) {
-                $return[$key] = array('type' => 'extraField', 'class' => $class, 'position' => 'right');
+                $return[$key] = array('type' => 'extraField',  'position' => 'right');
             }
         }
 

@@ -379,8 +379,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $field = end($explode);
 
         if (array_key_exists($tableName, $tableList)) {
-            $tableName = $tableList[$tableName]['tableName'];
             $schema = $tableList[$tableName]['schema'];
+            $tableName = $tableList[$tableName]['tableName'];
         }
 
         $table = $this->getDescribeTable($tableName, $schema);
@@ -434,7 +434,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
             if ($tables['joinType'] == 'from' || count($from) == 1) {
                 $return['table'] = $tables['tableName'];
-                $return['schema'] = $tables['schema']; 
+                $return['schema'] = $tables['schema'];
                 break;
             }
         }
