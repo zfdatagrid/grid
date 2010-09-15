@@ -460,6 +460,12 @@ abstract class Bvb_Grid
      */
     protected $_massActionsFields = array();
 
+    /**
+     * The defaulf separator for mass actions post values
+     * @var string
+     */
+    protected $_massActionsSeparator = ',';
+
 
     /**
      * Contains URL's for edit and delete records
@@ -3670,4 +3676,35 @@ abstract class Bvb_Grid
         return self::$defaultConfig;
     }
 
+
+    /**
+     * Defines the separator for primary keys or fields for mass actions post values
+     *
+     * @param string $separator
+     *
+     * @return Bvb_Grid
+     */
+    public function setMassActionsSeparator ($separator)
+    {
+
+        if ( 0 == strlen($separator) ) {
+            throw new Bvb_Grid_Exception('Please provide a Mass Actions separator');
+        }
+
+        $this->_massActionsSeparator = (string) $separator;
+
+        return $this;
+    }
+
+
+    /**
+     * Returns the current Mass Action separator for post values
+     * Enter description here ...
+     *
+     * @return string
+     */
+    public function getMassActionsSeparator ()
+    {
+        return $this->_massActionsSeparator;
+    }
 }

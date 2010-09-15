@@ -1761,7 +1761,7 @@ function convertArrayToInput_" . $this->getGridId() . "()
 
     document.forms.massActions_" . $this->getGridId() . ".action = input_" . $this->getGridId() . ";
 
-    document.getElementById('postMassIds').value = postMassIds_" . $this->getGridId() . ".join(',');
+    document.getElementById('postMassIds').value = postMassIds_" . $this->getGridId() . ".join('".$this->_massActionsSeparator."');
 }
 
 function updateRecords_" . $this->getGridId() . "()
@@ -2891,7 +2891,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $fields = explode('-',$pk);
         }
 
-        $pk = "{{".implode('}}-{{',$fields)."}}";
+        $pk = "{{".implode('}}'.$this->_massActionsSeparator.'{{',$fields)."}}";
 
         $left = new Bvb_Grid_Extra_Column();
         $left->position('left')->title('')->name('ZFG_MASS_ACTIONS')->decorator("<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' name='gridMassActions_" . $this->getGridId() . "' id='massCheckBox_" . $this->getGridId() . "' value='".$pk."' >");
@@ -2948,4 +2948,5 @@ function " . $this->getGridId() . "gridChangeFilters(event)
          $this->_showDetailColumn = (bool)$flag;
          return $this;
     }
+
 }
