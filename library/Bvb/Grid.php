@@ -18,6 +18,18 @@
  * @link      http://zfdatagrid.com
  */
 
+
+/**
+ * This class will abstract results from a data source for descendants
+ *
+ *
+ * @package    Bvb_Grid
+ * @author     Bento Vilas Boas <geral@petala-azul.com>
+ * @copyright  2010 ZFDatagrid
+ * @license    http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version    Release: @package_version@
+ */
+
 abstract class Bvb_Grid
 {
 
@@ -1444,9 +1456,9 @@ abstract class Bvb_Grid
         }
 
         $params_clean = $params;
-        unset($params_clean['controller']);
-        unset($params_clean['module']);
-        unset($params_clean['action']);
+        #unset($params_clean['controller']);
+        #unset($params_clean['module']);
+        #unset($params_clean['action']);
         unset($params_clean['gridmod']);
 
         if ( is_array($this->_filters) ) {
@@ -1483,7 +1495,9 @@ abstract class Bvb_Grid
         if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true ) {
             return $finalUrl . $url . '/gridmod/ajax';
         } else {
-            return $this->_baseUrl . '/' . $finalUrl . $url;
+            $ur = new Zend_View_Helper_Url();
+            return $ur->url($params_clean, null, true);
+            #return $this->_baseUrl . '/' . $finalUrl . $url;
         }
 
     }
@@ -1887,10 +1901,10 @@ abstract class Bvb_Grid
             $replace['deleteUrl'] = str_replace($search, $replace, $this->_actionsUrls['delete']);
             $replace['detailUrl'] = str_replace($search, $replace, $this->_actionsUrls['detail']);
 
-            $search[] = '{{editUrl}}';
-            $search[] = '{{addUrl}}';
-            $search[] = '{{deleteUrl}}';
-            $search[] = '{{detailUrl}}';
+            if(!in_array('{{editUrl}}', $search)){$search[] = '{{editUrl}}';}
+            if(!in_array('{{addUrl}}', $search)){$search[] = '{{addUrl}}';}
+            if(!in_array('{{deleteUrl}}', $search)){$search[] = '{{deleteUrl}}';}
+            if(!in_array('{{detailUrl}}', $search)){$search[] = '{{detailUrl}}';}
 
             $this->_classRowConditionResult[$i] = '';
             if ( isset($this->_classRowCondition[0]) && is_array($this->_classRowCondition[0]) ) {
@@ -1971,8 +1985,6 @@ abstract class Bvb_Grid
             /**
              * Deal with extra fields from the right
              */
-
-            //Reset the value. This is an extra field.
             foreach ( $this->_getExtraFields('right') as $field ) {
                 $return[$i][] = $this->_buildExtraField($field, $search, $replace);
             }
@@ -2024,14 +2036,20 @@ abstract class Bvb_Grid
         $value = '';
         if ( isset($field['format']) ) {
             $value = $this->_applyFieldFormat($value, $field['format'], $search, $replace);
+            $search[] = '{{format}}';
+            $replace[] = $value;
         }
 
-        if ( isset($field['callback']['function']) ) {
+        if ( isset($field['callback']) ) {
             $value = $this->_applyFieldCallback($value, $field['callback'], $search, $replace);
+            $search[] = '{{callback}}';
+            $replace[] = $value;
         }
 
         if ( isset($field['helper']) ) {
             $value = $this->_applyFieldHelper($value, $field['helper'], $search, $replace);
+            $search[] = '{{helper}}';
+            $replace[] = $value;
         }
 
         if ( isset($field['decorator']) ) {

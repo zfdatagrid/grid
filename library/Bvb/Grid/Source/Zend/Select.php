@@ -426,7 +426,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $field = end($explode);
 
         if ( array_key_exists($tableName, $tableList) ) {
-            $tableName = $tableList[$tableName]['tableName'];
+
+            if ( $tableList[$tableName]['schema'] != NULL ) {
+                $tableName = $tableList[$tableName]['schema'] . "." . $tableList[$tableName]['tableName'];
+            } else {
+                $tableName = $tableList[$tableName]['tableName'];
+            }
+
             $schema = $tableList[$tableName]['schema'];
         }
 

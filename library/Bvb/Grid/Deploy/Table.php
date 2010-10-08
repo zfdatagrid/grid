@@ -1905,7 +1905,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
 " . PHP_EOL;
         }
 
-        if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1) {
+        if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail ) {
             $script .= "
 function urlencode(str) {
     str=escape(str);
@@ -1932,31 +1932,31 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         var filtro = new Array();
 
         for (var i = 0; i < fieldsArray.length -1; i++)
-        {
+            {
 
-        if (!document.getElementById(fieldsArray[i])){
-            continue;
-        }
+                if (!document.getElementById(fieldsArray[i])){
+                    continue;
+                }
 
-        if(document.getElementById(fieldsArray[i]).type=='checkbox' && document.getElementById(fieldsArray[i]).checked ==false)
-        {
-            value = '';
-        }else{
-            value = document.getElementById(fieldsArray[i]).value;
-        }
-         " . PHP_EOL;
+                if(document.getElementById(fieldsArray[i]).type=='checkbox' && document.getElementById(fieldsArray[i]).checked ==false)
+                {
+                    value = '';
+                }else{
+                    value = document.getElementById(fieldsArray[i]).value;
+                }
+                 " . PHP_EOL;
 
-            $script .= "
-        if(value.length>0)
-            {";
+                    $script .= "
+                if(value.length>0)
+                    {";
 
-            $script .= "         value = value.replace(/^\s+|\s+$/g,'');" . PHP_EOL;
-            $script .= "         value = value.replace(/\//,'');" . PHP_EOL;
-            $script .= "         filtro += urlencode(document.getElementById(fieldsArray[i]).name)+'" . $this->getGridId() . "/'+urlencode(value)+'/';
+                    $script .= "         value = value.replace(/^\s+|\s+$/g,'');" . PHP_EOL;
+                    $script .= "         value = value.replace(/\//,'');" . PHP_EOL;
+                    $script .= "         filtro += urlencode(document.getElementById(fieldsArray[i]).name)+'" . $this->getGridId() . "/'+urlencode(value)+'/';
+
+                    }
 
             }
-
-        }
     " . PHP_EOL;
 
             if ($useAjax == 1) {
