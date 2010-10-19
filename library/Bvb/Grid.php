@@ -1491,10 +1491,14 @@ abstract class Bvb_Grid
             $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
         }
 
+        $params_clean['action'] = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
+        $params_clean['controller'] = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true ) {
             return $finalUrl . $url . '/gridmod/ajax';
         } else {
+
             $ur = new Zend_View_Helper_Url();
             return $ur->url($params_clean, null, true);
             #return $this->_baseUrl . '/' . $finalUrl . $url;
