@@ -1909,6 +1909,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
             $script .= "
 function urlencode(str) {
     str=escape(str);
+    str = str.replace(/\/+/,'');
     str=str.replace(new RegExp('\\\+','g'),'%2B');
     return str.replace(new RegExp('%20','g'),'+');
 }
