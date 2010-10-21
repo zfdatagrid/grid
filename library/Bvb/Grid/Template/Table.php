@@ -59,7 +59,7 @@ class Bvb_Grid_Template_Table
 
     public function titlesLoop()
     {
-        return "    <th>{{value}}</th>".PHP_EOL;
+        return "    <th {{rowspan}} {{colspan}}>{{value}}</th>".PHP_EOL;
     }
 
     public function filtersStart()
@@ -79,7 +79,7 @@ class Bvb_Grid_Template_Table
 
     public function filtersLoop()
     {
-        return "        <td class=\"subtitulo\" >{{value}}</td>".PHP_EOL;
+        return "        <td {{rowspan}} {{colspan}} class=\"subtitulo\" >{{value}}</td>".PHP_EOL;
     }
 
     public function hRow($values)
@@ -87,7 +87,7 @@ class Bvb_Grid_Template_Table
         return "        <td  colspan=\"{$this->options['colspan']}\" class=\"hbar\"><div>{{value}}</div></td>".PHP_EOL;
     }
 
-    public function loopStart($class)
+    public function loopStart ($class, $style)
     {
         $this->i ++;
         $this->insideLoop = 1;
@@ -96,7 +96,11 @@ class Bvb_Grid_Template_Table
             $class = " class='$class' ";
         }
 
-        return "    <tr $class>".PHP_EOL;
+        if ( strlen($style) > 0 ) {
+            $style = " style='$style' ";
+        }
+
+        return "<tr $class $style>";
     }
 
     public function loopEnd()
@@ -116,7 +120,7 @@ class Bvb_Grid_Template_Table
 
     public function loopLoop()
     {
-        return "        <td class=\"{{class}} \" style=\"{{style}}\" >{{value}}</td>".PHP_EOL;
+        return "        <td class=\"{{class}} \" style=\"{{style}}\" {{rowspan}} {{colspan}}>{{value}}</td>".PHP_EOL;
     }
 
     public function sqlExpStart()

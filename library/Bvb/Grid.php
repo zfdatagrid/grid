@@ -1636,7 +1636,11 @@ abstract class Bvb_Grid
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'left' ) {
-                $title = $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'left');
+                $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
+                $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
+                $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
+              
+                $title = $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'left', 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
             }
         }
 

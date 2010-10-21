@@ -20,6 +20,7 @@
 
 class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
+
     public static $url;
 
     /**
@@ -40,7 +41,8 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      *
      * If string, then we use the column,
      * If array, we use the array
-     * @var
+     *
+     * @var mixed
      */
     protected $_xLabels = null;
 
@@ -112,6 +114,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     protected $_xAxisOptions = array();
 
+
     /**
      * @param array $data
      */
@@ -126,16 +129,18 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::__construct($options);
     }
 
+
     /**
      * To use multiples instances per page
      * @param $flag
      */
-    public function setMultiple($flag)
+    public function setMultiple ($flag)
     {
         $this->_multiple = $flag;
     }
 
-    public function deploy()
+
+    public function deploy ()
     {
         $this->checkExportRights();
 
@@ -152,8 +157,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $data = parent::_buildGrid();
 
-        if(count($data)==0)
-        {
+        if ( count($data) == 0 ) {
             $this->_deploymentContent = '';
             return;
         }
@@ -191,10 +195,10 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $graph->set_x_axis($x);
         }
 
-        if (!empty($this->_xLegendText) && !empty($this->_xLegendStyle)) {
+        if ( ! empty($this->_xLegendText) && ! empty($this->_xLegendStyle) ) {
             $x_legend = new OFC_Elements_Legend_X($this->_xLegendText);
             $x_legend->set_style($this->_xLegendStyle);
-            $graph->set_x_legend( $x_legend );
+            $graph->set_x_legend($x_legend);
         }
 
         $min = 0;
@@ -293,7 +297,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $this->_chartId = 'chart_' . rand(1, 10000);
         }
 
-         $script = '
+        $script = '
         swfobject.embedSWF(
         "' . $this->_filesLocation['flash'] . '", "' . $this->_chartId . '",
         "' . $this->_chartDimensions['x'] . '", "' . $this->_chartDimensions['y'] . '", "9.0.0", "expressInstall.swf",{"id":"' . $this->_chartId . '"},{"z-index":"1","wmode":"transparent"} );
@@ -310,7 +314,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             return document[movieName];
           }
         }
-        var '. $this->_chartId.' = ' . $final . ';';
+        var ' . $this->_chartId . ' = ' . $final . ';';
 
         $final = '<div id="' . $this->_chartId . '" >
         loading...
@@ -320,21 +324,29 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         To test for your version of flash, <a href="http://www.bobbyvandersluis.com/swfobject/testsuite_2_1/test_api_getflashplayerversion.html" target="_blank">click here</a>
         </p>
         </div>';
-        if(!$this->_multiple)$final = '<div style="width: 100%;text-align: center">'.$final.'</div>';
+        if ( ! $this->_multiple ) $final = '<div style="width: 100%;text-align: center">' . $final . '</div>';
 
-        $this->getView()->headScript()->appendFile($this->_filesLocation['js']);
-        $this->getView()->headScript()->appendFile($this->_filesLocation['json']);
-        $this->getView()->headScript()->appendScript($script);
+        $this->getView()
+            ->headScript()
+            ->appendFile($this->_filesLocation['js']);
+        $this->getView()
+            ->headScript()
+            ->appendFile($this->_filesLocation['json']);
+        $this->getView()
+            ->headScript()
+            ->appendScript($script);
 
         $this->_deploymentContent = $final;
         return $this;
     }
+
 
     public function setXLabels ($labels, $options = array())
     {
         $this->_xLabels = $labels;
         $this->_xLabelsOptions = $options;
     }
+
 
     public function setChartType ($type, $args = array())
     {
@@ -343,6 +355,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->_typeArgs = $args;
         return $this;
     }
+
 
     public function setValues ($values, $options = array())
     {
@@ -358,6 +371,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+
     public function addValues ($values, $options = array())
     {
         if ( ! is_string($values) ) {
@@ -371,10 +385,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+
     public function getValues ($name)
     {
         return isset($this->_values[$name]) ? $this->_values[$name] : false;
     }
+
 
     public function setChartDimensions ($x, $y)
     {
@@ -382,11 +398,13 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+
     public function setTitle ($title)
     {
         $this->_title = $title;
         return $this;
     }
+
 
     public function setTitleStyle ($style)
     {
@@ -394,10 +412,12 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+
     public function setChartOptions (array $options = array())
     {
         $this->_chartOptions = $options;
     }
+
 
     public function __toString ()
     {
@@ -407,16 +427,19 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this->_deploymentContent;
     }
 
+
     public function setChartId ($id)
     {
         $htis->_id = $id;
         return $this;
     }
 
+
     public function getChartId ()
     {
         return $this->_chartId;
     }
+
 
     public function setFilesLocation (array $locations)
     {
@@ -424,16 +447,19 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
+
     public function getFilesLocation ()
     {
         return $this->_filesLocation;
     }
+
 
     public function setFlashParams ($flashParams)
     {
         $this->_flashParams = $flashParams;
         return $this;
     }
+
 
     public function setXLegend ($text, $style)
     {
@@ -442,11 +468,13 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         return $this;
     }
 
-    public function setXAxisOptions($xAxisOptions)
+
+    public function setXAxisOptions ($xAxisOptions)
     {
         $this->_xAxisOptions = $xAxisOptions;
         return $this;
     }
+
 
     protected function _applyConfigOptions ($options)
     {

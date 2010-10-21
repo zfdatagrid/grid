@@ -1119,7 +1119,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $i ++;
 
             //loop tr
-            $grid .= $this->_temp['table']->loopStart(isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '');
+            $rowclass = isset($this->_classRowConditionResult[$class]) ? $this->_classRowConditionResult[$class] : '';
+            $grid .= $this->_temp['table']->loopStart($rowclass, '');
 
             $set = 0;
             foreach ($value as $final) {
@@ -1401,8 +1402,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
                 }
 
-                throw new Bvb_Grid_Exception("You don't have your primary key in your query.
-                So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
+               # throw new Bvb_Grid_Exception("You don't have your primary key in your query.
+               # So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
             }
 
             foreach ($pkUrl as $value) {

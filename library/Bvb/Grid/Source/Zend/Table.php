@@ -98,7 +98,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                 $tAlias[$infoNewClass['name']] ++;
             }
         } else {
-            $select->from($info['name'], '*', $info['schema']); 
+            $select->from($info['name'], '*', $info['schema']);
         }
 
         parent::__construct($select);
@@ -138,8 +138,14 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']
                 ->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->getModel()
-            ->delete($this->buildWhereCondition($condition));
+
+        $records = $this->getModel()->find($condition);
+        $delete = $records->current();
+        return $delete->delete();
+
+
+       # return $this->getModel()
+           # ->delete($this->buildWhereCondition($condition));
     }
 
 
