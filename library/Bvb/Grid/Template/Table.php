@@ -59,7 +59,7 @@ class Bvb_Grid_Template_Table
 
     public function titlesLoop()
     {
-        return "    <th {{rowspan}} {{colspan}}>{{value}}</th>".PHP_EOL;
+        return "    <th  {{colspan}}>{{value}}</th>".PHP_EOL;
     }
 
     public function filtersStart()
@@ -79,7 +79,7 @@ class Bvb_Grid_Template_Table
 
     public function filtersLoop()
     {
-        return "        <td {{rowspan}} {{colspan}} class=\"subtitulo\" >{{value}}</td>".PHP_EOL;
+        return "        <td  {{colspan}} class=\"subtitulo\" >{{value}}</td>".PHP_EOL;
     }
 
     public function hRow($values)
