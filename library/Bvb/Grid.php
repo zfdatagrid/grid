@@ -1557,7 +1557,12 @@ abstract class Bvb_Grid
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'left' ) {
-                $return[$key] = array('type' => 'extraField', 'position' => 'left');
+
+                $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
+                $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
+                $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
+
+                $return[$key] = array('type' => 'extraField',  'position' => 'left', 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
             }
         }
 
@@ -1569,17 +1574,27 @@ abstract class Bvb_Grid
             }
 
             if ( $this->_displayField($nf) ) {
+
+                $newrow = ! isset($this->_data['fields'][$nf]['newrow']) ? false : $this->_data['fields'][$nf]['newrow'];
+                $rowspan = ! isset($this->_data['fields'][$nf]['rowspan']) ? null : $this->_data['fields'][$nf]['rowspan'];
+                $colspan = ! isset($this->_data['fields'][$nf]['colspan']) ? null : $this->_data['fields'][$nf]['colspan'];
+
                 if ( is_array($this->_filters) && array_key_exists($data[$i], $this->_filters) && $this->_data['fields'][$nf]['search'] != false ) {
-                    $return[] = array('type' => 'field', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'value' => isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '', 'field' => $data[$i], 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
                 } else {
-                    $return[] = array('type' => 'field', 'field' => $data[$i]);
+                    $return[] = array('type' => 'field', 'field' => $data[$i], 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
                 }
             }
         }
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'right' ) {
-                $return[$key] = array('type' => 'extraField',  'position' => 'right');
+
+                $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
+                $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
+                $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
+
+                $return[$key] = array('type' => 'extraField','position' => 'right', 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
             }
         }
 
@@ -1636,10 +1651,11 @@ abstract class Bvb_Grid
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'left' ) {
+
                 $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
                 $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
                 $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
-              
+
                 $title = $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'left', 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
             }
         }
@@ -1677,19 +1693,29 @@ abstract class Bvb_Grid
             }
 
             if ( $this->_displayField($titles[$i]) ) {
+
+                $newrow = ! isset($this->_data['fields'][$titles[$i]]['newrow']) ? false : $this->_data['fields'][$titles[$i]]['newrow'];
+                $rowspan = ! isset($this->_data['fields'][$titles[$i]]['rowspan']) ? null : $this->_data['fields'][$titles[$i]]['rowspan'];
+                $colspan = ! isset($this->_data['fields'][$titles[$i]]['colspan']) ? null : $this->_data['fields'][$titles[$i]]['colspan'];
+
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
                 if ( $noOrder == 1 ) {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $titles[$i], 'value' => ($this->is__($titles[$i])) ? $this->__($titles[$i]) : $this->__($this->_titles[$titles[$i]]));
+                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $titles[$i], 'value' => ($this->is__($titles[$i])) ? $this->__($titles[$i]) : $this->__($this->_titles[$titles[$i]]), 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
                 } else {
-                    $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => ($this->is__($titles[$i])) === true ? $this->__($titles[$i]) : $this->__($this->_titles[$titles[$i]]));
+                     $return[$titles[$i]] = array('type' => 'field', 'name' => $titles[$i], 'field' => $orderFinal, 'simpleUrl' => $url, 'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order", 'value' => ($this->is__($titles[$i])) === true ? $this->__($titles[$i]) : $this->__($this->_titles[$titles[$i]]), 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
                 }
             }
         }
 
         foreach ( $this->_extraFields as $key => $value ) {
             if ( $value['position'] == 'right' ) {
-                $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'right');
+
+                $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
+                $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
+                $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
+
+                $return[$key] = array('type' => 'extraField', 'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']), 'position' => 'right', 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
             }
         }
 
@@ -1986,7 +2012,12 @@ abstract class Bvb_Grid
                     $fieldClass = isset($this->_data['fields'][$field]['class']) ? $this->_data['fields'][$field]['class'] : '';
                     $finalClassConditional = isset($classConditional[$field]) ? $classConditional[$field] : '';
 
-                    $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $field, 'style' => $style);
+                    $newrow = ! isset($this->_data['fields'][$field]['newrow']) ? false : $this->_data['fields'][$field]['newrow'];
+                    $rowspan = ! isset($this->_data['fields'][$field]['rowspan']) ? null : $this->_data['fields'][$field]['rowspan'];
+                    $colspan = ! isset($this->_data['fields'][$field]['colspan']) ? null : $this->_data['fields'][$field]['colspan'];
+
+                    $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional, 'value' => $new_value, 'field' => $field, 'style' => $style, 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
+
                 }
             }
 
@@ -2039,7 +2070,7 @@ abstract class Bvb_Grid
      */
     protected function _buildExtraField ($field, $search, $replace)
     {
-        $field = array_merge(array('class' => '', 'style' => ''), $field);
+        $field = array_merge(array('class' => '', 'style' => '','newrow'=>'','rowspan'=>'','colspan'=>''), $field);
 
         $value = '';
         if ( isset($field['format']) ) {
@@ -2064,7 +2095,8 @@ abstract class Bvb_Grid
             $value = $this->_applyFieldDecorator($search, $replace, $field['decorator']);
         }
 
-        return array('class' => $field['class'], 'value' => $value, 'style' => $field['style']);
+
+        return array('class' => $field['class'], 'value' => $value, 'style' => $field['style'], 'newrow'=>$field['newrow'], 'rowspan'=>$field['rowspan'], 'colspan'=>$field['colspan']);
     }
 
 
@@ -2104,6 +2136,10 @@ abstract class Bvb_Grid
                 $value['value'] = $key;
             }
 
+            $value['newrow'] = ! isset($value['newrow']) ? false : $value['newrow'];
+            $value['rowspan'] = ! isset($value['rowspan']) ? null : $value['rowspan'];
+            $value['colspan'] = ! isset($value['colspan']) ? null : $value['colspan'];
+
             $resultExp = $this->getSource()
                 ->getSqlExp($value, $where);
 
@@ -2122,7 +2158,7 @@ abstract class Bvb_Grid
         foreach ( $this->_finalFields as $key => $value ) {
             $class = $this->getInfo("sqlexp,$key,class") ? ' ' . $this->getInfo("sqlexp,$key,class") : '';
             $value = (array_key_exists($key, $result)) ? $result[$key] : '';
-            $return[] = array('class' => $class, 'value' => $value, 'field' => $key);
+            $return[] = array('class' => $class, 'value' => $value, 'field' => $key, 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
         }
         return $return;
     }
@@ -2532,33 +2568,99 @@ abstract class Bvb_Grid
      */
     protected function _colspan ()
     {
-        $totalFields = count($this->_fields);
+        $row = 0;
+        $totalFields[$row] = 0;
 
-        foreach ( $this->_data['fields'] as $value ) {
-            if ( isset($value['remove']) && $value['remove'] == 1 ) {
-                $totalFields --;
-            } elseif ( isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true ) {
-                $totalFields --;
+
+     // add the extra left fields
+        foreach ( $this->_extraFields as $value ) {
+            if ( $value['position'] != 'left' ) {
+                continue;
             }
 
-            if ( isset($value['hRow']) && $value['hRow'] == 1 ) {
-                $totalFields --;
+            $rows = 1;
+            $cols = 1;
+            if ( isset($value['newrow']) && $value['newrow'] ) {
+                $row ++;
+            }
+            if ( isset($value['rowspan']) && $value['rowspan'] !== null ) {
+                $rows = $value['rowspan'];
+            }
+            if ( isset($value['colspan']) && $value['colspan'] !== null ) {
+                $cols = $value['colspan'];
+            }
+            if ( $cols < 0 ) {
+                $cols = 1;
+            }
+
+            // add the appropriate number of columns for the relevant rows
+            for ( $a = 0; $a < $rows; $a ++ ) {
+                $totalFields[$row + $a] += $cols;
             }
         }
 
+
+        // loop through the fields
+        foreach ( $this->_fields as $nf )
+        {
+            $rows = 1;
+            $cols = 1;
+
+            if (isset($this->_data['fields'][$nf]))
+            {
+                // skip certain types of fields
+                $value = $this->_data['fields'][$nf];
+                if ( isset($value['remove']) && $value['remove'] == 1 ) {continue;}
+                elseif ( isset($value['hidden']) && $value['hidden'] == 1 && $this->_removeHiddenFields === true ) {continue;}
+                if ( isset($value['hRow']) && $value['hRow'] == 1 ) {continue;}
+
+                if ( isset($value['newrow']) && $value['newrow']) {$row++;}
+                if ( isset($value['rowspan']) && $value['rowspan'] !== null) {$rows = $value['rowspan'];}
+                if ( isset($value['colspan']) && $value['colspan'] !== null) {$cols = $value['colspan'];}
+                if ($cols < 0) {$cols = 1;}
+            }
+
+            // add the appropriate number of columns for the relevant rows
+            for ($a = 0; $a < $rows; $a++)
+            {
+                if (!isset($totalFields[$row + $a])) {$totalFields[$row + $a] = 0;}
+                $totalFields[$row + $a] += $cols;
+            }
+        }
+
+        // add the extra right fields
+        foreach ( $this->_extraFields as $value )
+        {
+            if ( $value['position'] != 'left' ) {continue;}
+
+            $rows = 1; $cols = 1;
+            if ( isset($value['newrow']) && $value['newrow']) {$row++;}
+            if ( isset($value['rowspan']) && $value['rowspan'] !== null) {$rows = $value['rowspan'];}
+            if ( isset($value['colspan']) && $value['colspan'] !== null) {$cols = $value['colspan'];}
+            if ($cols < 0) {$cols = 1;}
+
+            // add the appropriate number of columns for the relevant rows
+            for ($a = 0; $a < $rows; $a++)
+            {
+                $totalFields[$row + $a] += $cols;
+             }
+         }
+
+
+
         if ( $this->_allowDelete == 1 ) {
-            $totalFields ++;
+            $totalFields[$row]++;
         }
 
         if ( $this->_allowEdit == 1 ) {
-            $totalFields ++;
+            $totalFields[$row]++;
         }
 
         if ( is_array($this->_detailColumns) && $this->_isDetail == false ) {
-            $totalFields ++;
+           $totalFields[$row]++;
         }
 
-        $this->_colspan = $totalFields + count($this->_extraFields);
+        $this->_colspan = max($totalFields);
 
         return $this->_colspan;
     }

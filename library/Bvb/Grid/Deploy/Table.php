@@ -822,13 +822,26 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $grid = $this->_temp['table']->filtersStart();
 
         foreach ($filters as $filter) {
+                // check if this goes on a new row
+            if ( isset($filter['newrow']) && $filter['newrow'] ) {
+                break; // only filters from the first row can be displayed
+            }
+
+            // compute colowspan stuff
+            $colspan = isset($filter['colspan']) && $filter['colspan'] !== null ? $filter['colspan'] : null;
+            if ( $colspan == "*" ) {
+                $colspan = $this->_colspan;
+            } else if ( $colspan < 0 ) {
+                $colspan = $this->_colspan + $colspan;
+            }
+            $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
 
             //Check extra fields
             if ($filter['type'] == 'extraField' && $filter['position'] == 'left') {
                 //Replace values
                 $filterValue = isset($filter['value']) ? $filter['value'] : '';
 
-                $grid .= str_replace('{{value}}', $filterValue . '&nbsp;', $this->_temp['table']->filtersLoop());
+                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($filterValue . '&nbsp;', $colspan), $this->_temp['table']->filtersLoop());
             }
 
             $hRowField = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
@@ -838,14 +851,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ($filter['type'] == 'field') {
                     //Replace values
-                    $grid .= str_replace('{{value}}', $this->_formatField($filter['field']), $this->_temp['table']->filtersLoop());
+                    $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($this->_formatField($filter['field']), $colspan), $this->_temp['table']->filtersLoop());
                 }
             }
 
             //Check extra fields from the right
             if ($filter['type'] == 'extraField' && $filter['position'] == 'right') {
                 $filter['value'] = isset($filter['value']) ? $filter['value'] : '';
-                $grid .= str_replace('{{value}}', $filter['value'], $this->_temp['table']->filtersLoop());
+                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($filter['value'], $colspan), $this->_temp['table']->filtersLoop());
             }
         }
 
@@ -900,9 +913,26 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         foreach ($titles as $title) {
+
+
+            // check if this goes on a new row
+            if ( isset($title['newrow']) && $title['newrow'] ) {
+                break; // only titles from the first row can be displayed
+            }
+
+            // compute colowspan stuff
+            $colspan = isset($title['colspan']) && $title['colspan'] !== null ? $title['colspan'] : null;
+            if ( $colspan == "*" ) {
+                $colspan = $this->_colspan;
+            } else if ( $colspan < 0 ) {
+                $colspan = $this->_colspan + $colspan;
+            }
+            $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
+
+
             //deal with extra field and template
             if ($title['type'] == 'extraField' && $title['position'] == 'left') {
-                $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
+                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($title['value'], $colspan), $this->_temp['table']->titlesLoop());
             }
 
             $hRowTitle = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
@@ -915,7 +945,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     if ($noOrder == 1) {
                         //user set the noOrder(1) method
-                        $grid .= str_replace('{{value}}', $this->__($title['value']), $this->_temp['table']->titlesLoop());
+                        $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($this->__($title['value']), $colspan), $this->_temp['table']->titlesLoop());
                     } else {
                         if (!isset($this->_data['fields'][$title['field']]['order'])) {
                             $this->_data['fields'][$title['field']]['order'] = true;
@@ -955,7 +985,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     $link2 = '';
                                 }
 
-                                $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
+                                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($link2 . $title['value'] . $link1, $colspan), $this->_temp['table']->titlesLoop());
                             } else {
                                 if ($this->getShowOrderImages() == false) {
                                     $hrefTitle = '';
@@ -966,12 +996,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     }
                                 }
 
-                                $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \"><span >" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
+                                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array("<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','" . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $colspan), $this->_temp['table']->titlesLoop());
                             }
                         } else {
                             //Replace values in the template
                             if (!array_key_exists('url', $title)) {
-                                $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
+                                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($title['value'], $colspan), $this->_temp['table']->titlesLoop());
                             } else {
 
                                 if ($this->getAlwaysShowOrderArrows() === true && $this->getShowOrderImages() == true) {
@@ -987,7 +1017,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         $link2 = '';
                                     }
 
-                                    $grid .= str_replace('{{value}}', $link2 . $title['value'] . $link1, $this->_temp['table']->titlesLoop());
+                                    $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($link2 . $title['value'] . $link1, $colspan), $this->_temp['table']->titlesLoop());
                                 } else {
                                     if ($this->getShowOrderImages() == false) {
                                         $hrefTitle = '';
@@ -998,7 +1028,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     }
 
-                                    $grid .= str_replace('{{value}}', "<a title='$hrefTitle' href='" . $title['url'] . "'><span $spanClass>" . $title['value'] . $imgFinal . "</span></a>", $this->_temp['table']->titlesLoop());
+                                    $grid .= str_replace(array('{{value}}', "{{colspan}}"), array("<a title='$hrefTitle' href='" . $title['url'] . "'><span $spanClass>" . $title['value'] . $imgFinal . "</span></a>", $colspan), $this->_temp['table']->titlesLoop());
                                 }
                             }
                         }
@@ -1008,7 +1038,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Deal with extra fields
             if ($title['type'] == 'extraField' && $title['position'] == 'right') {
-                $grid .= str_replace('{{value}}', $title['value'], $this->_temp['table']->titlesLoop());
+                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($title['value'], $colspan), $this->_temp['table']->titlesLoop());
             }
         }
 
@@ -1055,6 +1085,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $class = 0;
         $fi = array();
         foreach ($grids as $value) {
+
             unset($fi);
             // decorators
             $search = $this->_finalFields;
@@ -1124,13 +1155,40 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $set = 0;
             foreach ($value as $final) {
+
                 $finalField = isset($final['field']) ? $final['field'] : '';
                 $finalHrow = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
+
+
+                // check if this goes on a new row
+                if ( isset($final['newrow']) && $final['newrow'] ) {
+                    $grid .= $this->_temp['table']->loopEnd($finalFields);
+                    if ( is_array($final['newrow']) ) {
+                        $grid .= $this->_temp['table']->loopStart(isset($final['newrow']['class']) ? $final['newrow']['class'] . ' subrow ' . $rowclass : $rowclass . ' subrow', isset($final['newrow']['style']) ? $final['newrow']['style'] : '');
+                    } else {
+                        $grid .= $this->_temp['table']->loopStart($rowclass . ' subrow', '');
+                    }
+                }
+
 
                 if (($finalField != $finalHrow && $this->getInfo("hRow,title")) || !$this->getInfo("hRow,title")) {
                     $set ++;
 
-                    $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}"), array($final['value'], $final['class'], $final['style']), $this->_temp['table']->loopLoop($finalFields));
+                    // compute rowspan/colowspan stuff
+                    $rowspan = isset($final['rowspan']) && $final['rowspan'] !== null ? "rowspan='" . $final['rowspan'] . "'" : '';
+                    $colspan = isset($final['colspan']) && $final['colspan'] !== null ? $final['colspan'] : null;
+
+                    if ( $colspan == "*" ) {
+                        $colspan = $this->_colspan;
+                    } else if ( $colspan < 0 ) {
+                        $colspan = $this->_colspan + $colspan;
+                    }
+
+
+                    $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
+
+                    $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}", "{{rowspan}}", "{{colspan}}"), array($final['value'], $final['class'], $final['style'], $rowspan, $colspan), $this->_temp['table']->loopLoop($finalFields));
+
                 }
             }
 
@@ -2400,9 +2458,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $selected = null;
 
         if (isset($this->_filters[$field]['values']) && is_array($this->_filters[$field]['values'])) {
-            $hasValues = false;
-        } else {
             $hasValues = $this->getSource()->getFilterValuesBasedOnFieldDefinition($this->_data['fields'][$field]['field']);
+        } else {
+            $hasValues = false;
         }
 
         if (is_array($hasValues)) {
