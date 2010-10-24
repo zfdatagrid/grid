@@ -1185,9 +1185,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
 
 
-                    $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
-                    $classLoop = isset($final['class'])?' class=" '.$final['class'].'" ':'';
-                    $styleLoop = isset($final['style'])?' style=" '.$final['style'].'" ':'';
+                    $colspan = $colspan !== null ? " colspan='" . $colspan . "' " : '';
+                    $classLoop = strlen($final['class'])>1?' class=" '.$final['class'].'" ':'';
+                    $styleLoop = strlen($final['style'])>1?' style=" '.$final['style'].'" ':'';
+
 
                     $grid .= str_replace(array("{{value}}", "{{class}}", "{{style}}", "{{rowspan}}", "{{colspan}}"), array($final['value'], $classLoop, $styleLoop, $rowspan, $colspan), $this->_temp['table']->loopLoop($finalFields));
 
