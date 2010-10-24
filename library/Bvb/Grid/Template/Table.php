@@ -120,7 +120,7 @@ class Bvb_Grid_Template_Table
 
     public function loopLoop()
     {
-        return "        <td {{class}} {{style}} {{rowspan}} {{colspan}}>{{value}}</td>".PHP_EOL;
+        return "        <td{{class}}{{style}}{{rowspan}}{{colspan}}>{{value}}</td>".PHP_EOL;
     }
 
     public function sqlExpStart()
@@ -149,7 +149,7 @@ class Bvb_Grid_Template_Table
 
     public function images($url)
     {
-        return array('asc' => "<img src=\"" . $url . "arrow_up.gif\" border=\"0\">", 'desc' => "<img src=\"" . $url . "arrow_down.gif\" border=\"0\">", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\">", 'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\">", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\">");
+        return array('asc' => "<img src=\"" . $url . "arrow_up.gif\" border=\"0\" />", 'desc' => "<img src=\"" . $url . "arrow_down.gif\" border=\"0\" />", 'delete' => "<img src=\"" . $url . "delete.png\" border=\"0\" />", 'detail' => "<img src=\"" . $url . "detail.png\" border=\"0\" />", 'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\" />");
     }
 
     public function detail()
