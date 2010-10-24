@@ -120,7 +120,7 @@ class Bvb_Grid_Template_Table
 
     public function loopLoop()
     {
-        return "        <td class=\"{{class}} \" style=\"{{style}}\" {{rowspan}} {{colspan}}>{{value}}</td>".PHP_EOL;
+        return "        <td {{class}} {{style}} {{rowspan}} {{colspan}}>{{value}}</td>".PHP_EOL;
     }
 
     public function sqlExpStart()
