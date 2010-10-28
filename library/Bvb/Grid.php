@@ -1635,7 +1635,14 @@ abstract class Bvb_Grid
      */
     protected function _prepareReplace ($fields)
     {
-        return array_map(create_function('$value', 'return "{{{$value}}}";'), $fields);
+        // Make an array of field names in format {{$fieldname}}
+        $map =  array_map(create_function('$value', 'return "{{{$value}}}";'), $fields);
+        if ( isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders']) && $this->_options['grid']['enableUnmodifiedFieldPlaceholders']==true) {
+            // Enable placeholders for unmodified fields: Make an array of field names in format {{=$fieldname}}
+            $map2 = array_map(create_function('$value', 'return "{{={$value}}}";'), $fields);
+            $map = array_merge($map, $map2);
+        }
+        return $map;
     }
 
 
@@ -1924,10 +1931,23 @@ abstract class Bvb_Grid
 
         $classConditional = array();
         foreach ( $this->_result as $row ) {
+
+
+            // Create a map of field values with which to replace special field placeholders (ex. {{field_name}})
             $replace = array();
             foreach ( $fields as $field ) {
                 $row[$field] = isset($row[$field]) ? $row[$field] : null;
                 $replace[$field] = $row[$field];
+            }
+
+            if ( isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders']) && $this->_options['grid']['enableUnmodifiedFieldPlaceholders']==true ) {
+                // Enable placeholders for unmodified fields:
+                // Append a second set of fields to the replacement map, with field names prefixed by '=' (ex. {{=field_name}})
+                // These will allow access to the original field values unmodified by formatters, etc.
+                foreach ( $fields as $field ) {
+                    $row[$field] = isset($row[$field]) ? $row[$field] : null;
+                    $replace['='.$field] = $row[$field];
+                }
             }
 
             $replace['editUrl'] = str_replace($search, $replace, $this->_actionsUrls['edit']);
