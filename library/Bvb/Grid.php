@@ -2178,7 +2178,11 @@ abstract class Bvb_Grid
         foreach ( $this->_finalFields as $key => $value ) {
             $class = $this->getInfo("sqlexp,$key,class") ? ' ' . $this->getInfo("sqlexp,$key,class") : '';
             $value = (array_key_exists($key, $result)) ? $result[$key] : '';
-            $return[] = array('class' => $class, 'value' => $value, 'field' => $key, 'newrow'=>$value['newrow'], 'rowspan'=>$value['rowspan'], 'colspan'=>$value['colspan']);
+            $newrow = isset($value['newrow'])?$value['newrow']:'';
+            $rowspan = isset($value['rowspan'])?$value['rowspan']:'';
+            $colspan = isset($value['colspan'])?$value['colspan']:'';
+
+            $return[] = array('class' => $class, 'value' => $value, 'field' => $key, 'newrow'=>$newrow, 'rowspan'=>$rowspan, 'colspan'=>$colspan);
         }
         return $return;
     }
