@@ -118,7 +118,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setEscapeOutput(false);
         $grid->setExport(array('pdf', 'csv','excel','wordx'));
         $grid->setView($view);
-        $grid->saveParamsInSession(true);
+        #$grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
@@ -158,7 +158,7 @@ class SiteController extends Zend_Controller_Action
     public function dateAction ()
     {
 
-        $grid = $this->grid();
+        $grid = $this->grid('o');
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs', array('bug_status', 'status', 'date', 'time'))));
 
@@ -311,6 +311,22 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    public function referenceAction ()
+    {
+
+        $grid = $this->grid();
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Products()));
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(true)->setEdit(true)->setDelete(true);
+        $grid->setForm($form);
+
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
+
     public function multiAction ()
     {
         $grid = $this->grid('a');
@@ -406,6 +422,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setMassActions(array(array('url' => $grid->getUrl(), 'caption' => 'Remove (Nothing will happen)', 'confirm' => 'Are you sure?'), array('url' => $grid->getUrl() . '/nothing/happens', 'caption' => 'Some other action', 'confirm' => 'Another confirmation message?')));
 
+
         $grid->setRecordsPerPage(15);
         $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
@@ -435,6 +452,35 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+    public function csAction ()
+    {
+        $grid = $this->grid();
+
+        $t = shell_exec('phpcs -n -s /Library/WebServer/Documents/grid/library/Bvb/Grid/Form.php');
+
+        $final = explode("\n", $t);
+        $final = array_slice($final, 5, - 3);
+
+        $array = array();
+        $i = - 1;
+        foreach ( $final as $value ) {
+            $gh = array_map("trim", explode("|", $value));
+            if ( is_numeric($gh[0]) ) {
+                $i ++;
+                $array[$i] = $gh;
+            } else {
+                $array[$i][2] = $array[$i][2] .' '. $gh[2];
+            }
+        }
+
+        $source = new Bvb_Grid_Source_Array($array, array('Line', 'Type', 'Comment'));
+        $grid->setSource($source);
+        $grid->setRecordsPerPage(500);
+        $this->view->pages = $grid->deploy();
+
+        $this->render('index');
+    }
+
 
     /**
      * The 'most' basic example.
@@ -447,7 +493,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setAjax('ajax_grid');
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $grid->setAlwaysShowOrderArrows(false);
-
+$grid->setNoFilters(1);
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -520,14 +566,15 @@ class SiteController extends Zend_Controller_Action
 
         $grid->updateColumn('date', array('format' => array('date', array('date_format' => "d-MM-Y"))));
 
-
         $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
+
         #$grid->setDetailColumns();
 
         $grid->setForm($form);
+#        $teste = $grid->getForm(1)->getElement('bug_description')->addValidator('EmailAddress');
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();

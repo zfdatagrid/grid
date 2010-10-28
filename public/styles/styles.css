@@ -119,6 +119,7 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 	color: #55391c;
 	font-size: 10px;
 	margin-left: 5px;
+	margin-right: 5px;
 	background: #FFF url(../images/bg_helper_button.jpg);
 	cursor: pointer;
 }
@@ -140,14 +141,9 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 }
 
 .addRecord {
-	padding: 2px;
-	margin: 4px;
-	display: block;
-	width: 120px;
 	text-align: center;
-	border: 1px solid #333;
 	background-color: #DEDEDE;
-	border: 1px solid #333;
+	float:left;
 }
 
 .addRecord a {

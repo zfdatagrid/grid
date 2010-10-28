@@ -735,10 +735,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/1";
 
         if ($this->getSource()->hasCrud()) {
-            $this->_render['addButton'] = "<div class=\"addRecord\" ><a href=\"".$this->_actionsUrls['add']."\">" . $this->__('Add Record') . "</a></div>";
-            if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1 ) && $this->getSource()->getPrimaryKey($this->_data['table']) &&  $this->_allowAddButton == 1 && $this->getParam('add')!=1 && $this->getParam('edit')!=1) {
-                $this->_renderDeploy['addButton'] = $this->_render['addButton'];
-            }
+            $addButton = "<button class='addRecord' onclick=\"window.location='".$this->_actionsUrls['add']."';\">" . $this->__('Add Record') . "</button>";
         }
 
         /**
@@ -791,6 +788,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     if ($this->getUseKeyEventsOnFilters() === false) {
                         $final1 .= "<button onclick=\"" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
                     }
+
+                    $final1 .= $addButton;
 
                     $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
                     $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
