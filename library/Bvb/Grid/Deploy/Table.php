@@ -1175,8 +1175,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $set ++;
 
                     // compute rowspan/colowspan stuff
-                    $rowspan = isset($final['rowspan']) && $final['rowspan'] !== null ? "rowspan='" . $final['rowspan'] . "'" : '';
-                    $colspan = isset($final['colspan']) && $final['colspan'] !== null ? $final['colspan'] : null;
+                    $rowspan = isset($final['rowspan']) && strlen($final['rowspan'])>0 ? "rowspan='" . $final['rowspan'] . "'" : '';
+                    $colspan = isset($final['colspan']) && strlen($final['colspan'])>0 ? $final['colspan'] : null;
 
                     if ( $colspan == "*" ) {
                         $colspan = $this->_colspan;
