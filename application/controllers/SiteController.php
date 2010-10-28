@@ -452,35 +452,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    public function csAction ()
-    {
-        $grid = $this->grid();
-
-        $t = shell_exec('phpcs -n -s /Library/WebServer/Documents/grid/library/Bvb/Grid/Form.php');
-
-        $final = explode("\n", $t);
-        $final = array_slice($final, 5, - 3);
-
-        $array = array();
-        $i = - 1;
-        foreach ( $final as $value ) {
-            $gh = array_map("trim", explode("|", $value));
-            if ( is_numeric($gh[0]) ) {
-                $i ++;
-                $array[$i] = $gh;
-            } else {
-                $array[$i][2] = $array[$i][2] .' '. $gh[2];
-            }
-        }
-
-        $source = new Bvb_Grid_Source_Array($array, array('Line', 'Type', 'Comment'));
-        $grid->setSource($source);
-        $grid->setRecordsPerPage(500);
-        $this->view->pages = $grid->deploy();
-
-        $this->render('index');
-    }
-
 
     /**
      * The 'most' basic example.
