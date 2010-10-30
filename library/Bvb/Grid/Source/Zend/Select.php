@@ -36,7 +36,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
     public function __construct (Zend_Db_Select $select)
     {
-        if ( count($select->getPart('UNION')) > 0 ) { #throw new Bvb_Grid_Exception('UNION queries not supportes yet');
+        if ( count($select->getPart('UNION')) > 0 ) {
+            throw new Bvb_Grid_Exception('UNION queries not supported yet');
         }
 
         $this->_select = $select;
