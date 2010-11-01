@@ -398,10 +398,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 
             foreach ($orderBys as $order) {
                 $parts = explode(' ', trim($order));
-                if (strtolower($parts[1]) != 'desc' && strtolower($parts[1]) != 'asc') {
+                if (isset($parts[1]) && !in_array(strtolower($parts[1]), array('desc', 'asc'))) {
                     $parts[1] = '';
                 }
-                $result[] = $parts;
+                $result[] = implode(' ', $parts);
             }
         }
 
