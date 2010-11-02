@@ -440,6 +440,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 call_user_func_array($this->_callbackBeforeInsert, $sendCall);
                             }
 
+                            //Let's see if the field is nullable and empty
+                            //If so, we need to remove it from the array
+                            $tableFields = $this->getSource()->getDescribeTable($this->_crudTable);
+
+                            foreach ( array_keys($post[$key]) as $field ) {
+                                if ( $tableFields[$field]['NULLABLE'] == 1 && strlen($post[$field]) == 0 ) {
+                                    unset($post[$key][$field]);
+                                }
+                            }
+
+
                             if ($this->_crudTableOptions['add'] == true) {
                                 $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
                                 $sendCall[] = $this->getSource()->insert($this->_crudTable, $post[$key]);
