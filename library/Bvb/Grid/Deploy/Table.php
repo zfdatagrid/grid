@@ -241,6 +241,111 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
     }
 
+
+    protected function _buildFormValues ()
+    {
+
+        if ( $this->_allowAdd == 1 || $this->_allowEdit == 1 ) {
+            $opComm = $this->getParam('comm');
+
+            $mode = $this->getParam('edit') ? 'edit' : 'add';
+
+            $queryUrl = $this->getPkFromUrl();
+
+            if ( ! $this->getRequest()->isPost() || ($this->getParam('zfmassedit') && $this->getRequest()->isPost()) ) {
+                foreach ( $this->_form->getSubForms() as $key => $form ) {
+                    foreach ( array_keys($form->getElements()) as $element ) {
+                        if ( $this->_gridSession->noErrors !== true ) {
+                            if ( isset($this->_gridSession->errors[$key][$element]) ) {
+                                $form->getElement($element)->setErrors($this->_gridSession->errors[$key][$element]);
+                            }
+                        }
+                        if ( isset($this->_gridSession->post[$key][$element]) ) {
+                            $form->getElement($element)->setValue($this->_gridSession->post[$key][$element]);
+                        }
+                    }
+                }
+
+                if ( $this->getParam('add') == 1 ) {
+                    $this->_willShow['form'] = true;
+                    $this->_willShow['formAdd'] = true;
+                }
+
+                if ( $mode == 'edit' ) {
+                    $this->_willShow['form'] = true;
+                    $this->_willShow['formEdit'] = true;
+                    $this->_willShow['formEditId'] = $this->getPkFromUrl();
+
+                    $conditions = array();
+                    if ( $this->getParam('postMassIds') ) {
+                        $ids = explode(',', $this->getParam('postMassIds'));
+                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
+
+                        $a = 1;
+                        foreach ( $ids as $value ) {
+                            if ( strpos($value, '-') ) {
+                                $allIds = explode('-', $value);
+                                $i = 0;
+                                foreach ( $allIds as $fIds ) {
+                                    $conditions[$a][$pkParentArray[$i]] = $fIds;
+                                    $i ++;
+                                    $a ++;
+                                }
+                            } else {
+                                $conditions[$a][$pkParentArray[0]] = $value;
+                                $a ++;
+                            }
+                        }
+                    } else {
+                        $conditions[1] = $this->getPkFromUrl();
+                    }
+
+                    for ( $i = 1; $i <= count($conditions); $i ++ ) {
+                        $r = $this->getSource()->getRecord($this->_crudTable, $conditions[$i]);
+
+                        if ( $r === false && count($conditions) == 1 ) {
+                            $this->_gridSession->message = $this->__('Record Not Found');
+                            $this->_gridSession->_noForm = 1;
+                            $this->_gridSession->correct = 1;
+                            $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
+                        }
+
+                        if ( is_array($r) ) {
+                            foreach ( $r as $key => $value ) {
+                                $pk = explode('.', key($conditions[$i]));
+                                if ( $key == end($pk) ) {
+                                    $this->getForm($i)->getElement('ZFPK')->setValue($value);
+                                }
+
+                                $isField = $this->getForm($i)->getElement($key);
+
+                                if ( isset($isField) ) {
+
+                                    if ( isset($this->_data['fields'][$key]) ) {
+                                        $fieldType = $this->getSource()->getFieldType($this->_data['fields'][$key]['field']);
+                                    } else {
+                                        $fieldType = 'text';
+                                    }
+
+                                    if ( isset($this->_gridSession->post) && is_array($this->_gridSession->post) ) {
+                                        if ( isset($this->_gridSession->post[$i][$key]) ) {
+                                            $this->getForm($i)->getElement($key)->setValue($this->_gridSession->post[$i][$key]);
+                                        }
+                                    } else {
+
+                                        if ( strlen($this->getForm($i)->getElement($key)->getValue()) == 0 || $this->getForm($i)->getElement($key)->getValue() == 0 ) {
+                                            $this->getForm($i)->getElement($key)->setValue($value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Process all information forms related
      * First we check for permissions to add, edit, delete
@@ -277,107 +382,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             self::_deleteRecord($dec);
         }
 
-        if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
-            $opComm = $this->getParam('comm');
+        $opComm = $this->getParam('comm');
 
-            $mode = $this->getParam('edit') ? 'edit' : 'add';
+        $mode = $this->getParam('edit') ? 'edit' : 'add';
 
-            $queryUrl = $this->getPkFromUrl();
-
-            if (!$this->getRequest()->isPost() || ($this->getParam('zfmassedit') && $this->getRequest()->isPost())) {
-                foreach ($this->_form->getSubForms() as $key => $form) {
-                    foreach (array_keys($form->getElements()) as $element) {
-                        if ($this->_gridSession->noErrors !== true) {
-                            if (isset($this->_gridSession->errors[$key][$element])) {
-                                $form->getElement($element)->setErrors($this->_gridSession->errors[$key][$element]);
-                            }
-                        }
-                        if (isset($this->_gridSession->post[$key][$element])) {
-                            $form->getElement($element)->setValue($this->_gridSession->post[$key][$element]);
-                        }
-                    }
-                }
-
-                if ($this->getParam('add') == 1) {
-                    $this->_willShow['form'] = true;
-                    $this->_willShow['formAdd'] = true;
-                }
-
-                if ($mode == 'edit') {
-                    $this->_willShow['form'] = true;
-                    $this->_willShow['formEdit'] = true;
-                    $this->_willShow['formEditId'] = $this->getPkFromUrl();
-
-                    $conditions = array();
-                    if ($this->getParam('postMassIds')) {
-                        $ids = explode(',', $this->getParam('postMassIds'));
-                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
-
-                        $a = 1;
-                        foreach ($ids as $value) {
-                            if (strpos($value, '-')) {
-                                $allIds = explode('-', $value);
-                                $i = 0;
-                                foreach ($allIds as $fIds) {
-                                    $conditions[$a][$pkParentArray[$i]] = $fIds;
-                                    $i ++;
-                                    $a ++;
-                                }
-                            } else {
-                                $conditions[$a][$pkParentArray[0]] = $value;
-                                $a ++;
-                            }
-                        }
-                    } else {
-                        $conditions[1] = $this->getPkFromUrl();
-                    }
-
-                    for ($i = 1; $i <= count($conditions); $i ++) {
-                        $r = $this->getSource()->getRecord($this->_crudTable, $conditions[$i]);
-
-                        if ($r === false && count($conditions) == 1) {
-                            $this->_gridSession->message = $this->__('Record Not Found');
-                            $this->_gridSession->_noForm = 1;
-                            $this->_gridSession->correct = 1;
-                            $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
-                        }
-
-                        if (is_array($r)) {
-                            foreach ($r as $key => $value) {
-                                $pk = explode('.', key($conditions[$i]));
-                                if ($key == end($pk)) {
-                                    $this->getForm($i)->getElement('ZFPK')->setValue($value);
-                                }
-
-                                $isField = $this->getForm($i)->getElement($key);
-
-                                if (isset($isField)) {
-
-                                    if (isset($this->_data['fields'][$key])) {
-                                        $fieldType = $this->getSource()->getFieldType($this->_data['fields'][$key]['field']);
-                                    } else {
-                                        $fieldType = 'text';
-                                    }
-
-                                    if (isset($this->_gridSession->post) && is_array($this->_gridSession->post)) {
-                                        if (isset($this->_gridSession->post[$i][$key])) {
-                                            $this->getForm($i)->getElement($key)->setValue($this->_gridSession->post[$i][$key]);
-                                        }
-                                    } else {
-
-                                        if (strlen($this->getForm($i)->getElement($key)->getValue()) == 0
-                                            || $this->getForm($i)->getElement($key)->getValue() ==0
-                                        ) {
-                                            $this->getForm($i)->getElement($key)->setValue($value);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         //Check if the request method is POST
         if ($this->getRequest()->isPost() && $this->getRequest()->getPost('zfg_form_edit' . $this->getGridId()) == 1) {
@@ -2338,6 +2346,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $this->_allowEdit = true;
         }
 
+        $this->_buildFormValues();
         return $this;
     }
 
