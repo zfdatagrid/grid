@@ -1328,15 +1328,15 @@ abstract class Bvb_Grid
         $order = $this->getParam('order');
         $order1 = explode('_', $order);
         $orderf = strtoupper(end($order1));
-
-        if ( $this->_paramsInSession === true ) {
-            if ( $this->getParam('start') === false ) {
-                $start = (int) $this->_sessionParams->start;
-                $this->setParam('start' . $this->getGridId(), $start);
-            } else {
-                $this->_sessionParams->start = $start;
-            }
-        }
+//
+//        if ( $this->_paramsInSession === true ) {
+//            if ( $this->getParam('start') === false ) {
+//                $start = (int) $this->_sessionParams->start;
+//                $this->setParam('start' . $this->getGridId(), $start);
+//            } else {
+//                $this->_sessionParams->start = $start;
+//            }
+//        }
 
         if ( $orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order)) ) {
             array_pop($order1);
