@@ -784,7 +784,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->_getDb()->insert($table, $post);
+        $this->_getDb()->insert($table, $post);
+        return $this->_getDb()->lastInsertId();
     }
 
 
