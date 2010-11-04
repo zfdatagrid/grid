@@ -30,7 +30,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
-    public function buildForm ($fields = array(), $inputsType = array())
+    public function buildForm ($inputsType = array())
     {
         $info = $this->getModel()
             ->info();

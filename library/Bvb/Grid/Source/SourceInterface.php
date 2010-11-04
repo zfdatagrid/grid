@@ -345,10 +345,9 @@ interface Bvb_Grid_Source_SourceInterface
     /**
      * Build the form based on a Model or query
      *
-     * @param array $fields
      * @param array $inputsType
      */
-    public function buildForm ($fields = array(), $inputsType = array());
+    public function buildForm ($inputsType = array());
 
 
     /**

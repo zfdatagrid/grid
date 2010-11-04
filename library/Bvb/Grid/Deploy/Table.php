@@ -808,7 +808,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             //Replace values
-            if (($this->getInfo('noFilters') != 1 && ($this->getParam('add') != 1 && $this->getParam('edit') != 1)) || $this->_allowAdd==true) {
+            if ($this->getInfo('noFilters') != 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 && $this->_allowAdd==true) {
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') !=1 ) {
@@ -1268,6 +1268,27 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         return $grid;
     }
 
+
+    /**
+     * Change form elements order to match query order
+     *
+     * @return void
+     */
+    private function _orderFormElements()
+    {
+        $fieldsOrder = array_flip($this->_fields);
+
+        foreach ($this->_form->getSubForms() as $form)
+        {
+            $i = 10;
+            foreach($form->getElements() as $key=>$element)
+            {
+                $fieldOrder = isset($fieldsOrder[$key])?$fieldsOrder[$key]:$i++;
+                $element->setOrder($fieldOrder);
+            }
+        }
+    }
+
     /**
      * Build pagination
      *
@@ -1579,6 +1600,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $removeParams = array('filters', 'add');
 
                 $url = $this->getUrl($removeParams);
+
+                $this->_orderFormElements();
 
                 $this->_renderDeploy['form'] = $this->_form->render();
                 $this->_render['form'] = $this->_form->render();
@@ -2084,7 +2107,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
-        $formElements = $this->getSource()->buildForm($this->_data['fields'], $crud->getInputsType());
+        $formElements = $this->getSource()->buildForm($crud->getInputsType());
 
         if ($this->getParam('add')) {
             $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;

@@ -371,7 +371,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         $this->_cache = $cache;
     }
 
-    public function buildForm ($fields = array(), $inputsType = array())
+    public function buildForm ( $inputsType = array())
     {
         $form = array();
 
