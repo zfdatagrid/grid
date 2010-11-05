@@ -1276,6 +1276,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     private function _orderFormElements()
     {
+        $hasCustomOrder = false;
+
+        foreach ($this->_form->getSubForms() as $form)
+        {
+            foreach($form->getElements() as $key=>$element)
+            {
+                if(is_numeric($element->getOrder()))
+                {
+                    $hasCustomOrder = true;
+                    break;
+                }
+            }
+        }
+
+        if($hasCustomOrder===true)
+        return;
+
         $fieldsOrder = array_flip($this->_fields);
 
         foreach ($this->_form->getSubForms() as $form)
