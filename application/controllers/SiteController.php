@@ -158,7 +158,7 @@ class SiteController extends Zend_Controller_Action
     public function dateAction ()
     {
 
-        $grid = $this->grid('o');
+        $grid = $this->grid();
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs', array('bug_status', 'status', 'date', 'time'))));
 
@@ -288,10 +288,9 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->getSelect()->columns(array('calc'=>" CONCAT(Name,'')"));
         #$grid->setSqlExp(array('calc' => array('functions' => array('LENGTH'))));
-        #$grid->setUseKeyEventsOnFilters(true);
+        $grid->setUseKeyEventsOnFilters(true);
 
         #$grid->setShowOrderImages(false);
-
 
         #$grid->setShowFiltersInExport(array('User'=>'Barcelos'));
         #$grid->setDefaultFiltersValues(array('Continent'=>'Europe'));
@@ -300,7 +299,7 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->setDeployOptions(array('title'=>'My Custom Title','subtitle'=>date('Y-m-d')));
 
-        #$grid->saveParamsInSession(true);
+        $grid->saveParamsInSession(true);
 
         $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
 
@@ -544,8 +543,11 @@ $grid->setNoFilters(1);
 
         #$grid->setDetailColumns();
 
+
+
         $grid->setForm($form);
 #        $teste = $grid->getForm(1)->getElement('bug_description')->addValidator('EmailAddress');
+
 
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
