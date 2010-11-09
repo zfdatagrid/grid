@@ -808,13 +808,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             //Replace values
-            if ($this->getInfo('noFilters') != 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 && $this->_allowAdd==true) {
+            if ($this->getInfo('noFilters') != 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') !=1 ) {
                         $final1 .= "<button onclick=\"" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
                     }
 
+                    if($this->_allowAdd==true)
                     $final1 .= $addButton;
 
                     $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
