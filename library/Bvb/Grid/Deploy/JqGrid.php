@@ -378,7 +378,10 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         $getUrl = <<<JS
 var url = $cmd1;
 var data = $cmd2;
-url = url + "&_exportFrom=jqGrid&_exportTo=$exportTo";
+var sdata = [];
+for(var p in data)
+    sdata.push(p + "=" + encodeURIComponent(data[p]));
+url = url + "&_exportFrom=jqGrid&_exportTo=$exportTo&" + sdata.join("&");
 JS;
         if ($newWindow) {
             return
