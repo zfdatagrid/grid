@@ -818,6 +818,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     if($this->_allowAdd==true)
                     $final1 .= $addButton;
 
+                    $this->_render['addButton'] = $addButton;
+
                     $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
                     $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
                 }

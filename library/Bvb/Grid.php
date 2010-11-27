@@ -969,7 +969,7 @@ abstract class Bvb_Grid
      *
      * @return Bvb_Grid
      */
-    public function updateColumn ($field, $options = array())
+    public function updateColumn ($field, array $options = array())
     {
         if ( null == $this->getSource()
             || ($this->_allFieldsAdded == true && ! array_key_exists($field, $this->_data['fields']))
