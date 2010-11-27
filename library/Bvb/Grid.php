@@ -1456,9 +1456,9 @@ abstract class Bvb_Grid
         }
 
         $params_clean = $params;
-        #unset($params_clean['controller']);
-        #unset($params_clean['module']);
-        #unset($params_clean['action']);
+        unset($params_clean['controller']);
+        unset($params_clean['module']);
+        unset($params_clean['action']);
         unset($params_clean['gridmod']);
 
         if ( is_array($this->_filters) ) {
@@ -1468,6 +1468,7 @@ abstract class Bvb_Grid
                 }
             }
         }
+
 
         $url = '';
         foreach ( $params_clean as $key => $param ) {
@@ -1491,17 +1492,13 @@ abstract class Bvb_Grid
             $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
         }
 
-        $params_clean['action'] = Zend_Controller_Front::getInstance()->getRequest()->getActionName();
-        $params_clean['controller'] = Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
-
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true ) {
             return $finalUrl . $url . '/gridmod/ajax';
         } else {
-
-            $ur = new Zend_View_Helper_Url();
-            return $ur->url($params_clean, null, true);
-            #return $this->_baseUrl . '/' . $finalUrl . $url;
+            #$ur = new Zend_View_Helper_Url();
+            #return $ur->url($params_clean, null, true);
+            return $this->_baseUrl . '/' . $finalUrl . $url;
         }
 
     }
