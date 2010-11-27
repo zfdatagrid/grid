@@ -301,7 +301,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         if ( $hasExp == false ) {
             $selectCount->reset(Zend_Db_Select::COLUMNS);
-            $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS total '));
+            $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL'));
         }
 
         $selectCount->reset(Zend_Db_Select::LIMIT_OFFSET);
@@ -312,32 +312,17 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-                $result = $final->fetchAll();
-
-                if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
-                    $result = count($result);
-                } elseif ( count($result) == 1 && isset($result[0]['total']) ) {
-                    $result = $result[0]['total'];
-                } else {
-                    return 0;
-                }
-
-                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+                $result = $final->fetch();
+                $count = (int) $result['TOTAL'];
+                $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
         } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-            $result = $final->fetchAll();
-
-            if ( count($result) > 1 || (count($result) == 1 && ! isset($result[0]['total'])) ) {
-                $result = count($result);
-            } elseif ( count($result) == 1 ) {
-                $result = $result[0]['total'];
-            } else {
-                return 0;
-            }
+            $result = $final->fetch();
+            $count = (int) $result['TOTAL'];
         }
 
-        return $result;
+        return $count;
     }
 
 
