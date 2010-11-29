@@ -312,18 +312,19 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-                $result = $final->fetch();
+                $result = array_change_key_case($final->fetch(), CASE_UPPER);
                 $count = (int) $result['TOTAL'];
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
         } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
-            $result = $final->fetch();
+            $result = array_change_key_case($final->fetch(), CASE_UPPER);
             $count = (int) $result['TOTAL'];
         }
 
         return $count;
     }
+
 
 
     public function getMassActionsIds ($table, $fields)
