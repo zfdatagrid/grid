@@ -48,14 +48,12 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
         $this->_model = $model;
         $info = $model->info();
-
         $select = new Zend_Db_Select($model->getAdapter());
 
         $map = $info['referenceMap'];
-
         if ( is_array($map) && count($map) > 0 ) {
-            $columnsToRemove = array();
 
+            $columnsToRemove = array();
             foreach ( $map as $sel ) {
                 if ( is_array($sel['columns']) ) {
                     $columnsToRemove = array_merge($columnsToRemove, $sel['columns']);
@@ -65,12 +63,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             }
 
             $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
-
             $select->from($info['name'], $columnsMainTable, $info['schema']);
 
             $tAlias = array();
-
             foreach ( $map as $sel ) {
+
                 $newClass = new $sel['refTableClass']();
                 $infoNewClass = $newClass->info();
 
@@ -78,29 +75,69 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                     $tAlias[$infoNewClass['name']] = 0;
                 }
 
-                $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : '';
+                $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : null;
+                $cAlias = $infoNewClass['name'] . $alias;
 
                 if ( is_array($sel['columns']) ) {
-                    $cols = array_combine($sel['columns'], $sel['refColumns']);
 
-                    foreach ( $sel['columns'] as $key => $value ) {
-                        $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : '';
-
-                        $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . reset($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'][$key], $cols, $infoNewClass['schema']);
-                        $tAlias[$infoNewClass['name']] ++;
+                    if(!isset($sel['refBvbColumns']) || !is_array($sel['refBvbColumns']))
+                    {
+                        $sel['refBvbColumns'] = array();
                     }
+
+                    if ( ! is_array($sel['refColumns']) || (count($sel['columns']) != count($sel['refColumns'])) ) {
+                        throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type. In case of arrays, they must have same length.');
+                    }
+
+                    if ( ! array_key_exists('refBvbColumns', $sel) ) {
+                        $cols = array_combine($sel['columns'], $sel['refBvbColumns']);
+                    } else {
+                        if ( ! is_array($sel['refBvbColumns']) ) {
+                            $cols = array($sel['columns'][0] => $sel['refBvbColumns']);
+                        } else {
+                            $cols = $sel['refBvbColumns'];
+                        }
+                    }
+
+                    $tFields = array_combine($sel['columns'], $sel['refColumns']);
+
+                    $join = null;
+                    foreach ( $tFields as $key => $value ) {
+                        if ( ! is_null($join) ) {
+                            $join .= ' AND ';
+                        }
+                        $join .= $cAlias . '.' . $value . ' = ' . $info['name'] . '.' . $key;
+                    }
+                    $select->joinLeft(array($cAlias => $infoNewClass['name']), $join, $cols, $infoNewClass['schema']);
+                    $tAlias[$infoNewClass['name']] ++;
+
                 } else {
-                    $cols = array($sel['columns'] => $sel['refColumns']);
-                    $select->joinLeft(array($infoNewClass['name'] . $alias => $infoNewClass['name']), $infoNewClass['name'] . $alias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols, $infoNewClass['schema']);
+                    if ( is_array($sel['refColumns']) ) {
+                        throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type.');
+                    }
+
+                    if ( array_key_exists('refBvbColumns', $sel) ) {
+                        if ( is_array($sel['refBvbColumns']) ) {
+                            $cols = $sel['refBvbColumns'];
+                        } else {
+                            $cols = array_combine((array) $sel['columns'], (array) $sel['refBvbColumns']);
+                        }
+                    } else {
+                        $cols = array($sel['columns'] => $sel['refColumns']);
+                    }
+                    $select->joinLeft(array($cAlias => $infoNewClass['name']), $cAlias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols, $infoNewClass['schema']);
+
                 }
 
                 $tAlias[$infoNewClass['name']] ++;
             }
+
         } else {
+
             $select->from($info['name'], '*', $info['schema']);
+
         }
-
-
+        //echo $select;exit;
         parent::__construct($select);
 
         return $this;
