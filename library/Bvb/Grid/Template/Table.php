@@ -171,7 +171,9 @@ class Bvb_Grid_Template_Table
     {
         $exp = '';
         foreach ($exportDeploy as $export) {
-            $caption = Bvb_Grid_Translator::getInstance()->__("Export to ".$export['caption'].' format');
+            $caption = sprintf(Bvb_Grid_Translator::getInstance()->__('Export to %s format'), $export['caption']);
+
+
 
             $export['newWindow'] = isset($export['newWindow']) ? $export['newWindow'] : true;
             $class = isset($export['cssClass']) ? 'class="' . $export['cssClass'] . '"' : '';
