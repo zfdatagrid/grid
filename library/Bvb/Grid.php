@@ -687,7 +687,7 @@ abstract class Bvb_Grid
     public function __construct ($options)
     {
         if ( ! $this instanceof Bvb_Grid_Deploy_DeployInterface ) {
-            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implment Bvb_Grid_Deploy_DeployInterface');
+            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implement Bvb_Grid_Deploy_DeployInterface');
         }
 
         if ( $options instanceof Zend_Config ) {
@@ -1201,6 +1201,7 @@ abstract class Bvb_Grid
                 }
 
                 if ( is_array($filter) ) {
+
                     $render = $this->loadFilterRender($this->_filters[$key]['render']);
 
                     $render->setFieldName($key);
@@ -3461,8 +3462,18 @@ abstract class Bvb_Grid
             $toRender = $render;
         }
 
+
+        $renderExists = $this->_filtersRenders->getPaths();
+
+
+        if(!array_key_exists('Bvb_Grid_Render_'.ucfirst($this->_deployName).'_'.ucfirst($toRender), $renderExists))
+        {
+            $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/Table', 'Bvb_Grid_Filters_Render_Table');
+        }
+
         $classname = $this->_filtersRenders
             ->load(ucfirst($toRender));
+
 
         if ( is_array($render) ) {
             $class = new $classname($render[$toRender]);
