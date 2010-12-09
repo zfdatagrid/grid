@@ -2044,6 +2044,8 @@ function urlencode(str) {
     return str.replace(new RegExp('%20','g'),'+');
 }
 
+
+
 function " . $this->getGridId() . "gridChangeFilters(event)
     {
         if(typeof(event)=='undefined')
@@ -2078,14 +2080,18 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                  " . PHP_EOL;
 
                     $script .= "
-                if(value.length>0)
-                    {";
 
-                    $script .= "         value = value.replace(/^\s+|\s+$/g,'');" . PHP_EOL;
-                    $script .= "         value = value.replace(/\//,'');" . PHP_EOL;
-                    $script .= "         filtro += urlencode(document.getElementById(fieldsArray[i]).name)+'" . $this->getGridId() . "/'+urlencode(value)+'/';
+               if ( value.length > 0 )
+                      {
+                            name = document.getElementById(fieldsArray[i]).name;
+                            if ( name == '' ) {
+                                name = dijit.byId(fieldsArray[i]).get('name');
+                            }
+                            value = value.replace(/^\s+|\s+$/g,'');
+                            value = value.replace(/\//,'');
+                            filtro += urlencode(name) + '" . $this->getGridId() . "/'+urlencode(value)+'/';
+        			}
 
-                    }
 
             }
     " . PHP_EOL;
