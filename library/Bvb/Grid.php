@@ -2653,7 +2653,7 @@ abstract class Bvb_Grid
         // add the extra right fields
         foreach ( $this->_extraFields as $value )
         {
-            if ( $value['position'] != 'left' ) {continue;}
+            if ( $value['position'] != 'right' ) {continue;}
 
             $rows = 1; $cols = 1;
             if ( isset($value['newrow']) && $value['newrow']) {$row++;}
