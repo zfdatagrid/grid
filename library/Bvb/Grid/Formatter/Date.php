@@ -60,10 +60,11 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
                         $this->date_format = $v;
                         break;
                     case 'type':
+                    case 'format_type':
                         $this->type = $v;
                         break;
                     default:
-                        throw new Bvb_Grid_Exception($this->__("Unknown option '$k'."));
+                        throw new Bvb_Grid_Exception(Bvb_Grid_Translator::getInstance()->__("Unknown option '$k'."));
                 }
             }
         } elseif ( Zend_Registry::isRegistered('Zend_Locale') ) {
@@ -84,6 +85,7 @@ class Bvb_Grid_Formatter_Date implements Bvb_Grid_Formatter_FormatterInterface
         catch (Exception $e) {
             return $value;
         }
+
         return $date->toString($this->date_format, $this->type, $this->locale);
     }
 }
