@@ -61,7 +61,7 @@ form label {
 	border: 1px solid #FFA500;
 }
 
-.paginatinExport {
+.paginationExport {
 	float: left;
 	width: 110px;
 }
@@ -126,6 +126,10 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 
 .querySupport {
 	background: #FFF url(../images/bg_helper.jpg);
+}
+
+.querySupport div {
+	text-align:right;
 }
 
 #newGrid {

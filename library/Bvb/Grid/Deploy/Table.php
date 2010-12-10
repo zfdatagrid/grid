@@ -3068,12 +3068,19 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         $ids = $this->getSource()->getMassActionsIds($this->_data['table'], $this->_massActionsFields);
 
-        $return = "<tr><td class='massActions' colspan=" . $this->_colspan . ">";
+
+        $cssClasses = $this->getTemplateParams();
+        $cssClasses = $cssClasses['cssClass'];
+        $cssClasses['massActions'] = isset($cssClasses['massActions'])?" class='{$cssClasses['massActions']}'":'';
+        $cssClasses['massSelect'] = isset($cssClasses['massSelect'])?" class='{$cssClasses['massSelect']}'":'';
+
+
+        $return = "<tr><td ".$cssClasses['massActions']." colspan=" . $this->_colspan . ">";
         $return .= '<form style="padding:0;margin:0;" method="post" action="" id="massActions_' . $this->getGridId() . '" name="massActions_' . $this->getGridId() . '">';
         $return .= $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids);
         $return .= $this->getView()->formHidden('postMassIds', '');
 
-        $return .= "<span class='massSelect'><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
+        $return .= "<span ".$cssClasses['massSelect']."><a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$this->getTotalRecords()},1);return false;'>" . $this->__('Select All') . "</a> | <a href='#' onclick='checkAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",{$currentRecords},0);return false;'>" . $this->__('Select Visible') . "</a> | <a href='#' onclick='uncheckAll_" . $this->getGridId() . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ",0); return false;'>" . $this->__('Unselect All') . "</a> | <strong><span id='massSelected_" . $this->getGridId() . "'>0</span></strong> " . $this->__('items selected') . "</span> " . $this->__('Actions') . ": $formSelect $formSubmit</form></td></tr>";
 
         return $return;
     }
