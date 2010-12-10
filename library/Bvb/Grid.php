@@ -1133,9 +1133,17 @@ abstract class Bvb_Grid
             if ( stripos($key, '[') ) {
                 $name = explode('[', $key);
 
-                if ( in_array($name[0] . $this->getGridId(), $fields) ) {
-                    $filters[$name[0] . $this->getGridId()][substr($name[1], 0, - 1)] = $value;
+                if ( strlen($this->getGridId()) > 0 ) {
+
+                    $name[0] = substr($name[0], 0, - strlen($this->getGridId()));
+
                 }
+
+                if ( in_array($name[0], $fields) ) {
+                    $filters[$name[0]][substr($name[1], 0, - 1)] = $value;
+                }
+
+
             } else {
                 if ( in_array($key, $fields) ) {
                     $filters[$key] = $value;
@@ -1157,6 +1165,8 @@ abstract class Bvb_Grid
                     $this->setParam($key, $value);
                 }
             }
+
+
 
             $fieldsRaw = $this->_data['fields'];
 
@@ -1440,14 +1450,20 @@ abstract class Bvb_Grid
             }
 
             foreach ( $params as $key => $value ) {
-                if ( stripos($key, '[') ) {
+
+
+                if ( stripos($key, '[')!==false ) {
                     $fl = explode('[', $key);
+
                     if ( in_array(rtrim($fl[0], $this->getGridId()), $fields) ) {
-                        unset($params[rtrim($fl[0], $this->getGridId()) . '[' . $fl[1]]);
+
+                        unset($params[rtrim($fl[0]) . '[' . $fl[1]]);
                     }
                 }
             }
         }
+
+
 
         foreach ( $situation as $value ) {
             if ( in_array($value, $paramsGet) ) {
@@ -3484,6 +3500,8 @@ abstract class Bvb_Grid
         if ( ! $class instanceof Bvb_Grid_Filters_Render_RenderInterface ) {
             throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
         }
+
+        $class->setGridId($this->getGridId());
 
         return $class;
     }

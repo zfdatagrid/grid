@@ -2094,7 +2094,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                             }
                             value = value.replace(/^\s+|\s+$/g,'');
                             value = value.replace(/\//,'');
-                            filtro += urlencode(name) + '" . $this->getGridId() . "/'+urlencode(value)+'/';
+                            filtro += urlencode(name) + '/'+urlencode(value)+'/';
         			}
 
 
@@ -2501,10 +2501,10 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
                 if (is_array($allFieldsIds[$value])) {
                     foreach ($allFieldsIds[$value] as $newId) {
-                        $help_javascript .= "filter_" . $this->getGridId() . $value . "_" . $newId . ',';
+                        $help_javascript .= "filter_" .  $value .$this->getGridId() . "_" . $newId . ',';
                     }
                 } else {
-                    $help_javascript .= "filter_" . $this->getGridId() . $value . ",";
+                    $help_javascript .= "filter_". $value  . $this->getGridId() . ",";
                 }
             }
         }
@@ -2536,7 +2536,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             $opcoes = $this->_filters[$field];
         }
 
-        $attr['id'] = "filter_" . $this->getGridId() . $field;
+        $attr['id'] = "filter_"  . $field. $this->getGridId();
 
         $selected = null;
 

@@ -263,7 +263,7 @@ abstract class Bvb_Grid_Filters_Render_RenderAbstract implements Bvb_Grid_Filter
      */
     public function getFieldName ()
     {
-        return $this->_fieldName;
+        return $this->_fieldName . $this->getGridId();
     }
 
 

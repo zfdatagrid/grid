@@ -131,7 +131,7 @@ class SiteController extends Zend_Controller_Action
     public function filtersAction ()
     {
 
-        $grid = $this->grid();
+        $grid = $this->grid('id');
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
@@ -532,21 +532,20 @@ $grid->setNoFilters(1);
     {
         $grid = $this->grid();
         $grid->query(new Bugs());
-        $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by'));
+        $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
-        $grid->updateColumn('date', array('format' => array('date', array('date_format' => "d-MM-Y"))));
 
         $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
 
+
         #$grid->setDetailColumns();
 
-
-
         $grid->setForm($form);
-#        $teste = $grid->getForm(1)->getElement('bug_description')->addValidator('EmailAddress');
+        $teste = $grid->getForm(1)->getElement('bug_description')->setIgnore(true);
+
 
 
         $grid->setDeleteConfirmationPage(true);
@@ -619,7 +618,7 @@ $grid->setNoFilters(1);
         if ( ! in_array($type, $allowedGraphs) ) {
             $type = 'bar_glass';
         }
-
+$type = 'area';
         $this->getRequest()->setParam('_exportTo', 'ofc');
 
         $grid = $this->grid();
