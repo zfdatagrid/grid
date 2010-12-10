@@ -245,6 +245,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _buildFormValues ()
     {
 
+        if(!isset($this->_data['schema']))
+        {
+            $this->_data['schema'] = '';
+        }
+
         if ( $this->_allowAdd == 1 || $this->_allowEdit == 1 ) {
             $opComm = $this->getParam('comm');
 
