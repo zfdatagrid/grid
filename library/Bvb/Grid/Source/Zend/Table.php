@@ -65,82 +65,89 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
             $select->from($info['name'], $columnsMainTable, $info['schema']);
 
-            $tAlias = array();
-            foreach ( $map as $sel ) {
-
-                $newClass = new $sel['refTableClass']();
-                $infoNewClass = $newClass->info();
-
-                if ( ! isset($tAlias[$infoNewClass['name']]) ) {
-                    $tAlias[$infoNewClass['name']] = 0;
-                }
-
-                $alias = $tAlias[$infoNewClass['name']] > 0 ? '_' . $tAlias[$infoNewClass['name']] : null;
-                $cAlias = $infoNewClass['name'] . $alias;
-
-                if ( is_array($sel['columns']) ) {
-
-                    if(!isset($sel['refBvbColumns']) || !is_array($sel['refBvbColumns']))
-                    {
-                        $sel['refBvbColumns'] = array();
-                    }
-
-                    if ( ! is_array($sel['refColumns']) || (count($sel['columns']) != count($sel['refColumns'])) ) {
-                        throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type. In case of arrays, they must have same length.');
-                    }
-
-                    if ( ! array_key_exists('refBvbColumns', $sel) ) {
-                        $cols = array_combine($sel['columns'], $sel['refBvbColumns']);
-                    } else {
-                        if ( ! is_array($sel['refBvbColumns']) ) {
-                            $cols = array($sel['columns'][0] => $sel['refBvbColumns']);
-                        } else {
-                            $cols = $sel['refBvbColumns'];
-                        }
-                    }
-
-                    $tFields = array_combine($sel['columns'], $sel['refColumns']);
-
-                    $join = null;
-                    foreach ( $tFields as $key => $value ) {
-                        if ( ! is_null($join) ) {
-                            $join .= ' AND ';
-                        }
-                        $join .= $cAlias . '.' . $value . ' = ' . $info['name'] . '.' . $key;
-                    }
-                    $select->joinLeft(array($cAlias => $infoNewClass['name']), $join, $cols, $infoNewClass['schema']);
-                    $tAlias[$infoNewClass['name']] ++;
-
-                } else {
-                    if ( is_array($sel['refColumns']) ) {
-                        throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type.');
-                    }
-
-                    if ( array_key_exists('refBvbColumns', $sel) ) {
-                        if ( is_array($sel['refBvbColumns']) ) {
-                            $cols = $sel['refBvbColumns'];
-                        } else {
-                            $cols = array_combine((array) $sel['columns'], (array) $sel['refBvbColumns']);
-                        }
-                    } else {
-                        $cols = array($sel['columns'] => $sel['refColumns']);
-                    }
-                    $select->joinLeft(array($cAlias => $infoNewClass['name']), $cAlias . '.' . array_shift($infoNewClass['primary']) . ' = ' . $info['name'] . '.' . $sel['columns'], $cols, $infoNewClass['schema']);
-
-                }
-
-                $tAlias[$infoNewClass['name']] ++;
-            }
+            $this->_setJoins($info['name'], $map, $select);
 
         } else {
 
             $select->from($info['name'], '*', $info['schema']);
 
         }
-        //echo $select;exit;
+
         parent::__construct($select);
 
         return $this;
+    }
+
+
+    private function _setJoins ($tName, array $map, &$select, array &$tAlias = array())
+    {
+        foreach ( $map as $sel ) {
+
+            $class = new $sel['refTableClass']();
+            $info = $class->info();
+
+            if ( ! isset($tAlias[$info['name']]) ) {
+                $tAlias[$info['name']] = 0;
+            }
+
+            $alias = $tAlias[$info['name']] > 0 ? '_' . $tAlias[$info['name']] : null;
+
+            if ( is_array($sel['columns']) ) {
+
+                if ( ! is_array($sel['refColumns']) || (count($sel['columns']) != count($sel['refColumns'])) ) {
+                    throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type. In case of arrays, they must have same length.');
+                }
+
+                if ( ! array_key_exists('refBvbColumns', $sel) ) {
+                    $cols = null;
+                } else {
+                    if ( ! is_array($sel['refBvbColumns']) ) {
+                        $cols = array($sel['columns'][0] => $sel['refBvbColumns']);
+                    } else {
+                        $cols = $sel['refBvbColumns'];
+                    }
+                }
+
+                $tFields = array_combine($sel['columns'], $sel['refColumns']);
+
+                $join = null;
+                foreach ( $tFields as $key => $value ) {
+                    if ( ! is_null($join) ) {
+                        $join .= ' AND ';
+                    }
+                    $join .= $info['name'] . $alias . '.' . $value . ' = ' . $tName . '.' . $key;
+                }
+                $select->joinLeft(array($info['name'] . $alias => $info['name']), $join, $cols, $info['schema']);
+                $tAlias[$info['name']] ++;
+
+            } else {
+                if ( is_array($sel['refColumns']) ) {
+                    throw new Bvb_Grid_Exception('Mapping of ' . $sel['refTableClass'] . ' is wrong: columns and refColumns must have same type.');
+                }
+
+                if ( array_key_exists('refBvbColumns', $sel) ) {
+                    if ( is_array($sel['refBvbColumns']) ) {
+                        $cols = $sel['refBvbColumns'];
+                    } else {
+                        $cols = array_combine((array) $sel['columns'], (array) $sel['refBvbColumns']);
+                    }
+                } else {
+                    $cols = null;
+                }
+                $select->joinLeft(array($info['name'] . $alias => $info['name']), $info['name'] . $alias . '.' . array_shift($info['primary']) . ' = ' . $tName . '.' . $sel['columns'], $cols, $info['schema']);
+
+            }
+
+            $tAlias[$info['name']] ++;
+
+            if ( ! array_key_exists('refBvbFollow', $sel) ) {
+                $sel['refBvbFollow'] = false;
+            }
+
+            if ( is_array($info['referenceMap']) && count($info['referenceMap']) > 0 && $sel['refBvbFollow'] ) {
+                $this->_setJoins($info['name'], $info['referenceMap'], $select, $tAlias);
+            }
+        }
     }
 
 
@@ -217,4 +224,5 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
         return $keys;
     }
+
 }
