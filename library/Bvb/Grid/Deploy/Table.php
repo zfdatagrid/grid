@@ -2042,14 +2042,6 @@ function uncheckAll_" . $this->getGridId() . "(field)
 
         if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail ) {
             $script .= "
-function urlencode(str) {
-    str=escape(str);
-    str = str.replace(/\/+/,'');
-    str=str.replace(new RegExp('\\\+','g'),'%2B');
-    return str.replace(new RegExp('%20','g'),'+');
-}
-
-
 
 function " . $this->getGridId() . "gridChangeFilters(event)
     {
@@ -2094,7 +2086,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                             }
                             value = value.replace(/^\s+|\s+$/g,'');
                             value = value.replace(/\//,'');
-                            filtro += urlencode(name) + '/'+urlencode(value)+'/';
+                            filtro += encodeURI(name) + '/'+encodeURI(value)+'/';
         			}
 
 
