@@ -154,15 +154,17 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     public function getRecord ($table, array $condition)
     {
 
+
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($condition));
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
-                $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+                $result = $this->getModel()->find($condition)->current();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
-            $result = $this->getModel()->fetchRow($this->buildWhereCondition($condition));
+            $result = $this->getModel()->find($condition)->current();
         }
+
 
         if ( $result === null ) {
             return false;
@@ -178,13 +180,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        $records = $this->getModel()->find($condition);
-        $delete = $records->current();
-        return $delete->delete();
-
-
-     # return $this->getModel()
-    # ->delete($this->buildWhereCondition($condition));
+        return $this->getModel()->find($condition)->current()->delete();
     }
 
 
@@ -193,7 +189,9 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->getModel()->update($post, $this->buildWhereCondition($condition));
+
+        return $this->getModel()->fetchRow($condition)->setFromArray($post)->save();
+
     }
 
 
@@ -202,7 +200,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         if ( $this->_cache['use'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->getModel()->insert($post);
+
+        return  $this->getModel()->createRow($post)->save();
     }
 
 
