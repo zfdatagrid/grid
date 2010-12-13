@@ -450,7 +450,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $tableFields = $this->getSource()->getDescribeTable($this->_crudTable);
 
                             foreach ( array_keys($post[$key]) as $field ) {
-                                if ( $tableFields[$field]['NULLABLE'] == 1 && strlen($post[$field]) == 0 ) {
+                                if ( $tableFields[$field]['NULLABLE'] == 1 && strlen($post[$key][$field]) == 0 ) {
                                     unset($post[$key][$field]);
                                 }
                             }
