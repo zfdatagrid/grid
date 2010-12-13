@@ -139,7 +139,7 @@ class Bvb_Grid_Template_Table
         } else {
             $class = $this->getClass('formMessageError');
         }
-        return "<div class\ >{{value}}</div>";
+        return "<div $class >{{value}}</div>";
     }
 
 
