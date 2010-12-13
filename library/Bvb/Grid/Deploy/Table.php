@@ -1503,7 +1503,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || $this->_allowAdd == 1) {
             $this->setAjax(false);
         }
-
+        echo  html_entity_decode($this->getParam('LocalName'), ENT_NOQUOTES, 'UTF-8');
         $this->_view = $this->getView();
 
         parent::deploy();
@@ -2043,6 +2043,28 @@ function uncheckAll_" . $this->getGridId() . "(field)
         if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail ) {
             $script .= "
 
+
+            function encodeString(str)
+            {
+                if(document.defaultCharset)
+                {
+                    encoding = document.defaultCharset;
+                }else{
+                    encoding = document.characterSet
+                }
+
+                encoding = encoding.toLowerCase();
+
+                if(encoding.indexOf('iso-8859')!=-1)
+                {
+                	str = escape(str);
+                }else{
+                	str = encodeURIComponent(str);
+                }
+
+                return str;
+		}
+
 function " . $this->getGridId() . "gridChangeFilters(event)
     {
         if(typeof(event)=='undefined')
@@ -2086,7 +2108,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
                             }
                             value = value.replace(/^\s+|\s+$/g,'');
                             value = value.replace(/\//,'');
-                            filtro += encodeURI(name) + '/'+encodeURI(value)+'/';
+                            filtro += encodeString(name) + '/'+encodeString(value)+'/';
         			}
 
 
