@@ -1503,7 +1503,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || $this->_allowAdd == 1) {
             $this->setAjax(false);
         }
-        echo  html_entity_decode($this->getParam('LocalName'), ENT_NOQUOTES, 'UTF-8');
+
         $this->_view = $this->getView();
 
         parent::deploy();
