@@ -10,7 +10,7 @@ html,body {
 
 .subForm {
 	margin-bottom: 5px;
-	width: 100% '
+	width: 100%;
 }
 
 .noRecords {
@@ -129,7 +129,7 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 }
 
 .querySupport div {
-	text-align:right;
+	text-align: right;
 }
 
 #newGrid {
@@ -147,7 +147,7 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 .addRecord {
 	text-align: center;
 	background-color: #DEDEDE;
-	float:left;
+	float: left;
 }
 
 .addRecord a {
