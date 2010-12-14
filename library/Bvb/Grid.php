@@ -2792,7 +2792,7 @@ abstract class Bvb_Grid
 
         foreach ( $extra_fields as $value ) {
             if ( ! $value instanceof Bvb_Grid_Extra_Column ) {
-                throw new Bvb_Grid_Exception($value . ' must be na instance of Bvb_Grid_Extra_Column');
+                throw new Bvb_Grid_Exception($value . ' must be a instance of Bvb_Grid_Extra_Column');
             }
 
             if ( ! isset($value->_field['name']) || ! is_string($value->_field['name']) ) {
