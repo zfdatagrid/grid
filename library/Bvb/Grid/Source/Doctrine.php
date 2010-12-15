@@ -553,6 +553,15 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         }
 
         switch (strtolower($op)) {
+            case 'isnull':
+                $this->_query->$func($field.' IS NULL ');
+                break;
+            case 'isnnotull':
+                $this->_query->$func($field.' IS NOT NULL ');
+                break;
+            case 'empty':
+                $this->_query->$func($field . " =''");
+                break;
             case 'equal':
             case '=':
                 $this->_query->$func($field . ' = ?', $filter);

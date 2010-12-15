@@ -1284,7 +1284,16 @@ abstract class Bvb_Grid
 
         $op = strtolower($this->_data['fields'][$field]['searchType']);
 
-        if ( substr(strtoupper($filter), 0, 2) == 'R:' ) {
+        if ( substr(strtolower($filter), 0, 6) == ':empty' ) {
+            $op = 'empty';
+            $filter = substr($filter, 2);
+        } elseif ( substr(strtolower($filter), 0, 10) == ':isnotnull' ) {
+            $op = 'isnotnull';
+            $filter = substr($filter, 2);
+        } elseif ( substr(strtolower($filter), 0, 7) == ':isnull' ) {
+            $op = 'isnull';
+            $filter = substr($filter, 2);
+        } elseif ( substr(strtoupper($filter), 0, 2) == 'R:' ) {
             $op = 'REGEX';
             $filter = substr($filter, 2);
         } elseif ( strpos($filter, '<>') !== false && substr($filter, 0, 2) != '<>' ) {

@@ -703,11 +703,20 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         }
 
         switch ($op) {
+            case 'empty':
+                $this->_select->where($field . " = '' ");
+                break;
+            case 'isnull':
+                $this->_select->where(new Zend_Db_Expr($field.' IS NULL '));
+                break;
+            case 'isnnotull':
+                $this->_select->where(new Zend_Db_Expr($field.' IS NOT NULL '));
+                break;
             case 'equal':
             case '=':
                 $this->_select->where($field . ' = ?', $filter);
                 break;
-            case 'REGEX':
+            case 'rege':
                 $this->_select->where($field . " REGEXP " . $this->_getDb()->quote($filter));
                 break;
             case 'rlike':
@@ -732,7 +741,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             case '<':
                 $this->_select->where($field . " < ?", $filter);
                 break;
-            case 'IN':
+            case 'in':
                 $filter = explode(',', $filter);
                 $this->_select->where($field . " IN  (?)", $filter);
                 break;
@@ -742,7 +751,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             case 'range':
             case '&':
             case 'and':
-            case 'AND':
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
                 $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
