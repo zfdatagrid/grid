@@ -48,9 +48,10 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
         $this->_model = $model;
         $info = $model->info();
-        $select = new Zend_Db_Select($model->getAdapter());
+        $select = $model->select();
 
         $map = $info['referenceMap'];
+
         if ( is_array($map) && count($map) > 0 ) {
 
             $columnsToRemove = array();
@@ -66,10 +67,6 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $select->from($info['name'], $columnsMainTable, $info['schema']);
 
             $this->_setJoins($info['name'], $map, $select);
-
-        } else {
-
-            $select->from($info['name'], '*', $info['schema']);
 
         }
 
