@@ -485,6 +485,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $i = 0;
 
         if ( is_array($this->_showFiltersInExport) || $this->_showFiltersInExport == true ) {
+
             if ( is_array($this->_showFiltersInExport) && is_array($this->_filtersValues) ) {
                 $this->_showFiltersInExport = array_merge($this->_showFiltersInExport, $this->_filtersValues);
             } elseif ( is_array($this->_showFiltersInExport) ) {
@@ -506,7 +507,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $page->drawRectangle(40, $altura - 4, $tLarg + 50, $altura + 12);
 
                 $page->setStyle($styleText);
-                $text = $this->__('Filtered by:').'     ';
+                $text = '     '.$this->__('Filtered by:').'     ';
 
                 $finalFilters = array();
 
