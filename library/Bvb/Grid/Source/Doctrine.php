@@ -553,6 +553,9 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         }
 
         switch (strtolower($op)) {
+            case 'sqlexp':
+                $this->_query->$func($filter);
+                break;
             case 'isnull':
                 $this->_query->$func($field.' IS NULL ');
                 break;

@@ -1205,6 +1205,7 @@ abstract class Bvb_Grid
 
                         $this->getSource()
                             ->addCondition($op['filter'], $op['op'], $this->_data['fields'][$key]);
+
                     }
 
                     $filtersValues[$key] = $oldFilter;
@@ -1284,7 +1285,11 @@ abstract class Bvb_Grid
 
         $op = strtolower($this->_data['fields'][$field]['searchType']);
 
-        if ( substr(strtolower($filter), 0, 6) == ':empty' ) {
+        if ($this->_data['fields'][$field]['searchType'] == 'sqlExp' && isset($this->_data['fields'][$field]['searchSqlExp']) ) {
+            $op = 'sqlExp';
+            $sqlExp = $this->_data['fields'][$field]['searchSqlExp'];
+            $filter = str_replace('{{value}}', $filter, $sqlExp);
+        } elseif ( substr(strtolower($filter), 0, 6) == ':empty' ) {
             $op = 'empty';
             $filter = substr($filter, 2);
         } elseif ( substr(strtolower($filter), 0, 10) == ':isnotnull' ) {
@@ -1332,7 +1337,6 @@ abstract class Bvb_Grid
         if ( isset($this->_data['fields']['searchTypeFixed']) && $this->_data['fields']['searchTypeFixed'] === true && $op != $this->_data['fields']['searchType'] ) {
             $op = $this->_data['fields']['searchType'];
         }
-
         return array('op' => $op, 'filter' => $filter);
     }
 

@@ -131,7 +131,7 @@ class SiteController extends Zend_Controller_Action
     public function filtersAction ()
     {
 
-        $grid = $this->grid('id');
+        $grid = $this->grid();
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
@@ -280,7 +280,6 @@ class SiteController extends Zend_Controller_Action
      */
     public function basicAction ()
     {
-
         $grid = $this->grid();
         $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
@@ -300,6 +299,8 @@ class SiteController extends Zend_Controller_Action
         #$grid->setDeployOptions(array('title'=>'My Custom Title','subtitle'=>date('Y-m-d')));
 
         $grid->saveParamsInSession(true);
+
+        #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !="{{value}}" '));
 
         $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
 

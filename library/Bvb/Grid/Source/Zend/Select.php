@@ -662,6 +662,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function addCondition ($filter, $op, $completeField)
     {
 
+
         $op = strtolower($op);
 
         $explode = explode('.', $completeField['field']);
@@ -690,6 +691,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $field = $completeField['field'];
         }
 
+
         /**
          * Reserved words from myslq dont contain any special charaters.
          * But select expressions may.
@@ -703,6 +705,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         }
 
         switch ($op) {
+            case 'sqlexp':
+                $this->_select->where(new Zend_Db_Expr($filter));
+                break;
             case 'empty':
                 $this->_select->where($field . " = '' ");
                 break;
