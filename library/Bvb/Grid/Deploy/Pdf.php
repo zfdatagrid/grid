@@ -506,14 +506,26 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $page->drawRectangle(40, $altura - 4, $tLarg + 50, $altura + 12);
 
                 $page->setStyle($styleText);
-                $text = $this->__('Filtered by:     ');
+                $text = $this->__('Filtered by:').'     ';
+
+                $finalFilters = array();
+
 
                 foreach ( $this->_showFiltersInExport as $key => $value ) {
                     if ( $keyHelper = $this->getField($key) ) {
                         $key = $keyHelper['title'];
                     }
 
-                    $text .= $this->__($key) . ': ' . $this->__($value).'    |    ';
+                    if ( is_array($value) ) {
+
+                        foreach ($value as $newName=>$newValue)
+                        {
+                                $text .= $this->__($key). ' - '. $this->__(ucfirst($newName)) . ': ' . $this->__($newValue) . '    |    ';
+                        }
+
+                    } else {
+                        $text .= $this->__($key) . ': ' . $this->__($value) . '    |    ';
+                    }
                     $i ++;
                 }
                 $page->drawText($text, $tLarg + 3, $altura, $this->getCharEncoding());
