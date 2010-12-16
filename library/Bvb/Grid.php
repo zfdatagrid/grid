@@ -1288,7 +1288,7 @@ abstract class Bvb_Grid
         if ($this->_data['fields'][$field]['searchType'] == 'sqlExp' && isset($this->_data['fields'][$field]['searchSqlExp']) ) {
             $op = 'sqlExp';
             $sqlExp = $this->_data['fields'][$field]['searchSqlExp'];
-            $filter = str_replace('{{value}}', $filter, $sqlExp);
+            $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
         } elseif ( substr(strtolower($filter), 0, 6) == ':empty' ) {
             $op = 'empty';
             $filter = substr($filter, 2);

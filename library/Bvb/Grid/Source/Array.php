@@ -56,6 +56,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         $this->_sourceName = 'array';
     }
 
+
+    public function quoteValue ($value)
+    {
+        return $value;
+    }
+
+
     public function resetOrder ()
     {
         return true;

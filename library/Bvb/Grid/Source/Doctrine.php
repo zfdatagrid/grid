@@ -699,6 +699,17 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         return $query->execute();
     }
 
+
+    /**
+     * @todo Change to Doctrine Native function
+     * @see Bvb_Grid_Source_SourceInterface::quoteValue()
+     */
+    public function quoteValue ($value)
+    {
+        return mysql_real_escape_string($value);
+    }
+
+
     /**
      * Removes any order in query
      *

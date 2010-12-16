@@ -658,6 +658,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return;
     }
 
+    public function quoteValue($value)
+    {
+        return $this->_getDb()->quote($value);
+    }
+
 
     public function addCondition ($filter, $op, $completeField)
     {

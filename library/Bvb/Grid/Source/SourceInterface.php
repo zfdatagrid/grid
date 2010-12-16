@@ -361,6 +361,16 @@ interface Bvb_Grid_Source_SourceInterface
 
 
     /**
+     *
+     * Quotes a string
+     *
+     * @param string $value
+     * @return string
+     */
+    public function quoteValue($value);
+
+
+    /**
      * Fetch pairs from a table
      *
      * @param string $table
