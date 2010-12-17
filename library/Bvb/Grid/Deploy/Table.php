@@ -3120,7 +3120,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
     }
 
 
-    public function setPlacePageAtRecord ($recordId, $rowClass = '')
+    public function placePageAtRecord ($recordId, $rowClass = '')
     {
         $this->_recordPage = array('id' => $recordId, 'class' => $rowClass);
         return $this;
