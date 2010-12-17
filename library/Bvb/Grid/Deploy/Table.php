@@ -1511,6 +1511,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_placePageAtRecord();
 
+        if(isset($this->_ctrlParams['_zfgid']) && $this->_ctrlParams['_zfgid']!=$this->getGridId())
+        return;
+
         parent::deploy();
 
 
@@ -2029,6 +2032,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
             }
         }
     }
+
      xmlhttp.open(\"GET\", '" . $this->_baseUrl . "/'+url,true);
 
     " . $this->_temp['table']->scriptOnAjaxOpen($this->getInfo('ajax')) . "
@@ -3165,6 +3169,21 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->addClassRowCondition("'{{{$fieldAlias}}}' == '{$this->_recordPage['id']}'", $this->_recordPage['class']);
 
         return $this;
+    }
 
+
+    public function setAjax ($id)
+    {
+        $this->_info['ajax'] = $id;
+        if ( ! $this->getGridId() ) {
+            $this->setGridId($id);
+        }
+
+        return $this;
+    }
+
+    public function getAjax()
+    {
+        return isset($this->_info['ajax'])?$this->_info['ajax']:false;
     }
 }

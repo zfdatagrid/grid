@@ -297,7 +297,7 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->setDeployOptions(array('title'=>'My Custom Title','subtitle'=>date('Y-m-d')));
 
-        $grid->saveParamsInSession(true);
+        #$grid->saveParamsInSession(true);
 
         $grid->placePageAtRecord('PRT','green');
         #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !={{value}} '));
@@ -462,8 +462,6 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
         $grid->setAjax('ajax_grid');
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
-        $grid->setAlwaysShowOrderArrows(false);
-$grid->setNoFilters(1);
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }

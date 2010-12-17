@@ -1491,7 +1491,11 @@ abstract class Bvb_Grid
         unset($params_clean['controller']);
         unset($params_clean['module']);
         unset($params_clean['action']);
-        unset($params_clean['gridmod']);
+        unset($params_clean['_zfgid']);
+        unset($params_clean['gridmod'.$this->getGridId()]);
+
+        $this->removeParam('gridmod');
+
 
         if ( is_array($this->_filters) ) {
             foreach ( $this->_filters as $key => $value ) {
@@ -1526,7 +1530,7 @@ abstract class Bvb_Grid
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if ( array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true ) {
-            return $finalUrl . $url . '/gridmod/ajax';
+            return $finalUrl . $url . '/gridmod'.$this->getGridId().'/ajax'. '/_zfgid/'.$this->getGridId();
         } else {
             #$ur = new Zend_View_Helper_Url();
             #return $ur->url($params_clean, null, true);
