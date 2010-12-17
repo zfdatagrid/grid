@@ -828,7 +828,15 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
     public function resetOrder ()
     {
-        $this->_select->reset('order');
+         $this->_select->reset('order');
+         return $this;
+    }
+
+    public function resetLimit ()
+    {
+         $this->_select->reset('limitcount');
+         $this->_select->reset('limitoffset');
+         return $this;
     }
 
 

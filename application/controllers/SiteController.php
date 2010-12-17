@@ -146,7 +146,6 @@ class SiteController extends Zend_Controller_Action
 
         $grid->addFilters($filters);
 
-
         $grid->addExternalFilter('new_filter', 'people');
         $grid->addExternalFilter('filter_country', 'filterContinent');
 
@@ -281,7 +280,7 @@ class SiteController extends Zend_Controller_Action
     public function basicAction ()
     {
         $grid = $this->grid();
-        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
+        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm','Code'));
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
@@ -300,10 +299,10 @@ class SiteController extends Zend_Controller_Action
 
         $grid->saveParamsInSession(true);
 
-        #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !="{{value}}" '));
+        $grid->setPlacePageAtRecord('PRT','green');
+        #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !={{value}} '));
 
         $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
-
 
         $this->view->pages = $grid->deploy();
 
@@ -390,7 +389,7 @@ class SiteController extends Zend_Controller_Action
         $grid->query($select);
 
         $grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
-        $grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
+        #$grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
 
         $grid->setRecordsPerPage(15);
@@ -535,7 +534,6 @@ $grid->setNoFilters(1);
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
-
         $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
@@ -545,8 +543,6 @@ $grid->setNoFilters(1);
         #$grid->setDetailColumns();
 
         $grid->setForm($form);
-        $teste = $grid->getForm(1)->getElement('bug_description')->setIgnore(true);
-
 
 
         $grid->setDeleteConfirmationPage(true);

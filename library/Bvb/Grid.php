@@ -746,6 +746,8 @@ abstract class Bvb_Grid
         }
 
 
+        $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+
     }
 
 
@@ -2392,9 +2394,6 @@ abstract class Bvb_Grid
             throw new Bvb_Grid_Exception('Please specify your source');
         }
 
-        if ( $this->_paramsInSession === true ) {
-            $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
-        }
 
         //Disable ajax for CRUD operations
         if ( ! is_null($this->_crud) ) {
@@ -3897,5 +3896,15 @@ abstract class Bvb_Grid
     public function getMassActionsSeparator ()
     {
         return $this->_massActionsSeparator;
+    }
+
+
+    public function getFieldAlias($field)
+    {
+        foreach ($this->getFields(true) as $alias=>$value)
+        {
+            if($value['field'] == $field)
+            return $alias;
+        }
     }
 }

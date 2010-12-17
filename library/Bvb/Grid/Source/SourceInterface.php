@@ -335,6 +335,12 @@ interface Bvb_Grid_Source_SourceInterface
 
 
     /**
+     * Removes any offset in que query
+     */
+    public function resetLimit ();
+
+
+    /**
      * Cache handler.
      *
      * @param Zend_Cache

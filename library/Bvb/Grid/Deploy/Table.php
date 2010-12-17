@@ -219,6 +219,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_showDetailColumn = true;
 
+
+    protected $_recordPage = array();
+
     /**
      * @param array $options
      */
@@ -1506,7 +1509,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_view = $this->getView();
 
+        $this->_placePageAtRecord();
+
         parent::deploy();
+
 
         $this->_applyConfigOptions(array());
 
@@ -3113,4 +3119,52 @@ function " . $this->getGridId() . "gridChangeFilters(event)
          return $this;
     }
 
+
+    public function setPlacePageAtRecord ($recordId, $rowClass = '')
+    {
+        $this->_recordPage = array('id' => $recordId, 'class' => $rowClass);
+        return $this;
+    }
+
+
+    public function getPlacePageAtRecord ()
+    {
+       return  $this->_recordPage;
+    }
+
+
+    protected function _placePageAtRecord ()
+    {
+        if($this->getParam('start') !==false || $this->getParam('order') || $this->getParam('noOrder') || !isset($this->_recordPage['id']))
+        return;
+
+        $pk = $this->getSource()->getPrimaryKey($this->_data['table']);
+        $fieldAlias =  $this->getFieldAlias($pk[0]);
+
+        $r = $this->getSource()->execute();
+        $totalRecords = count($r);
+        $i = 1;
+        foreach ( $r as $record ) {
+            if ( $record[$fieldAlias] == $this->_recordPage['id'] ) {
+                unset($r);
+                break;
+            }
+            $i ++;
+        }
+
+
+        $page = floor($i/$this->getResultsPerPage());
+        $start = $this->getResultsPerPage() * $page;
+
+        if($start>$totalRecords)
+        {
+            $start = 0;
+        }
+
+        $this->setParam('start', $start);
+        $this->addClassRowCondition("'{{{$fieldAlias}}}' == '{$this->_recordPage['id']}'", $this->_recordPage['class']);
+
+        return $this;
+
+    }
 }

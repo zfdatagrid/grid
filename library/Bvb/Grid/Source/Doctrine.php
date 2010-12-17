@@ -722,6 +722,18 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     }
 
     /**
+     * Removes any limit in query
+     *
+     * @return Bvb_Grid_Source_Doctrine
+     */
+    public function resetLimit()
+    {
+        $this->_query->removeDqlQueryPart('limit');
+        $this->_query->removeDqlQueryPart('offset');
+        return $this;
+    }
+
+    /**
      * Cache handler.
      *
      * TODO: Research what 'cache' does, might just need to look at the
