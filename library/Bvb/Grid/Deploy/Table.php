@@ -3142,6 +3142,11 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         if($this->getParam('start') !==false || $this->getParam('order') || $this->getParam('noOrder') || !isset($this->_recordPage['id']))
         return;
 
+        if(count(array_intersect(array_flip($this->getAllParams()), $this->getFields()))>0)
+        {
+            return;
+        }
+
         $pk = $this->getSource()->getPrimaryKey($this->_data['table']);
         $fieldAlias =  $this->getFieldAlias($pk[0]);
 
