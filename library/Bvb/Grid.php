@@ -526,6 +526,7 @@ abstract class Bvb_Grid
      * @param mixed $object
      *
      * @return Bvb_Grid
+     * @deprecated Use setSource()
      */
     public function query ($object)
     {
@@ -652,17 +653,6 @@ abstract class Bvb_Grid
 
 
     /**
-     * Get db instance
-     *
-     * @return Zend_Db_Adapter_Abstract
-     */
-    protected function _getDb ()
-    {
-        return $this->_db;
-    }
-
-
-    /**
      * Defines a custom Translator
      *
      * @param Zend_Translate $translator
@@ -741,6 +731,8 @@ abstract class Bvb_Grid
 
         $this->_filtersRenders = new Zend_Loader_PluginLoader();
         $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/' . $renderDir, 'Bvb_Grid_Filters_Render_' . $renderDir);
+
+
         if ( ! defined('E_USER_DEPRECATED') ) {
             define('E_USER_DEPRECATED', E_USER_WARNING);
         }
@@ -1132,23 +1124,29 @@ abstract class Bvb_Grid
             if (isset($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search'] == false)
                 continue;
 
+                //This happens when we have range filters and the url look like this:
+                // /action/field[from]/100/field[to]/500
             if ( stripos($key, '[') ) {
                 $name = explode('[', $key);
 
+                //lets check if there ir a grid id, so we can remove it
                 if ( strlen($this->getGridId()) > 0 ) {
-
                     $name[0] = substr($name[0], 0, - strlen($this->getGridId()));
-
                 }
 
+                //check if this param is in fact a field we set
                 if ( in_array($name[0], $fields) ) {
                     $filters[$name[0]][substr($name[1], 0, - 1)] = $value;
                 }
 
 
             } else {
+
+                //check if this param is in fact a field we set
                 if ( in_array($key, $fields) ) {
+
                     $filters[$key] = $value;
+                //Can have a grid id, so we also need to check for that situation
                 } elseif ( in_array(substr($key, 0, - strlen($this->getGridId())), $fields) ) {
                     if ( $this->getGridId() != ''
                         && substr($key, - strlen($this->getGridId())) == $this->getGridId()
@@ -1162,6 +1160,8 @@ abstract class Bvb_Grid
         }
 
         if ( count($filters) > 0 ) {
+
+            //let's set the range filters as an array
             foreach ( $filters as $key => $value ) {
                 if ( is_array($value) ) {
                     $this->setParam($key, $value);
@@ -1169,22 +1169,32 @@ abstract class Bvb_Grid
             }
 
 
-
             $fieldsRaw = $this->_data['fields'];
 
+            //final check for allowed fields
             foreach ( $filters as $key => $filter ) {
+
                 if ( ! is_array($filter) && (strlen($filter) == 0 || ! in_array($key, $this->_fields)) ) {
+
                     unset($filters[$key]);
+
                 } elseif ( ! is_array($filter) ) {
+
                     if ( isset($fieldsRaw[$key]['searchField']) ) {
                         $key = $fieldsRaw[$key]['searchField'];
                     }
 
+                    //Copy the current filter value so we can perform the vairous options and not loosing the
+                    //orignal value. This happens with transform, callbacks, etc,
                     $oldFilter = $filter;
+
+                    //Check fi user has defined a transform option for the value
+                    //The transform option is used to normalise vallues, like date, currency, etc
                     if ( isset($this->_filters[$key]['transform']) && is_callable($this->_filters[$key]['transform']) ) {
                         $filter = call_user_func($this->_filters[$key]['transform'], $filter);
                     }
 
+                    //A callback is set? If yes, let's call it
                     if ( isset($this->_filters[$key]['callback']) && is_array($this->_filters[$key]['callback']) ) {
                         if ( ! is_callable($this->_filters[$key]['callback']['function']) ) {
                             throw new Bvb_Grid_Exception($this->_filters[$key]['callback']['function'] . ' is not callable');
@@ -1200,9 +1210,16 @@ abstract class Bvb_Grid
                         $result = call_user_func($this->_filters[$key]['callback']['function'], $this->_filters[$key]['callback']['params']);
 
                     } elseif ( isset($this->_data['fields'][$key]['search']) && is_array($this->_data['fields'][$key]['search']) && $this->_data['fields'][$key]['search']['fulltext'] == true ) {
+
+                        //Fulltext search activated by user. Only possible in MySQL server
                         $this->getSource()
                             ->addFullTextSearch($filter, $this->_data['fields'][$key]);
                     } else {
+
+                        //Nothing "special" needs to be performed. So we continue with the normal procedure
+
+                        //Let's check if there is a special symbol in user's input
+                        //Some exaemples: =valu, >value, r:regexp
                         $op = $this->getFilterOp($key, $filter);
 
                         $this->getSource()
@@ -1210,11 +1227,14 @@ abstract class Bvb_Grid
 
                     }
 
+                    //We assign the filter value so it can be filled properlly.
+                    //Even if we perform any transform to the field, the original user's input must be showed
                     $filtersValues[$key] = $oldFilter;
                 }
 
                 if ( is_array($filter) ) {
 
+                    //Load filter render
                     $render = $this->loadFilterRender($this->_filters[$key]['render']);
 
                     $render->setFieldName($key);
@@ -1244,6 +1264,7 @@ abstract class Bvb_Grid
 
         $this->_applyExternalFilters();
 
+        //If needed put current filters values in session
         if ( count($this->_filtersValues) > 0 && $this->_paramsInSession === true ) {
             $this->_sessionParams->filters = $this->_filtersValues;
         }
@@ -1262,9 +1283,12 @@ abstract class Bvb_Grid
         if ( count($this->_externalFilters) == 0 ) return false;
 
         foreach ( $this->_externalFilters as $id => $callback ) {
-            if ( $this->getParam($id) ) call_user_func_array($callback, array($id, $this->getParam($id), $this->getSelect()));
 
-            if ( $this->getParam($id) ) $this->_filtersValues[$id] = $this->getParam($id);
+            if ( $this->getParam($id) ) {
+                call_user_func_array($callback, array($id, $this->getParam($id), $this->getSelect()));
+                $this->_filtersValues[$id] = $this->getParam($id);
+            }
+
         }
     }
 
@@ -1355,22 +1379,10 @@ abstract class Bvb_Grid
         $order1 = explode('_', $order);
         $orderf = strtoupper(end($order1));
 
-//        if ( $this->_paramsInSession === true ) {
-//            if ( $this->getParam('start') === false ) {
-//                $start = (int) $this->_sessionParams->start;
-//                $this->setParam('start' . $this->getGridId(), $start);
-//            } else {
-//                $this->_sessionParams->start = $start;
-//            }
-//        }
 
         if ( $orderf == 'DESC' || $orderf == 'ASC' || ($this->_paramsInSession === true && is_array($this->_sessionParams->order)) ) {
             array_pop($order1);
             $order_field = implode('_', $order1);
-
-            #$this->getSource()->buildQueryOrder($order_field, $orderf);
-
-
 
             if ( $this->_paramsInSession === true ) {
                 if ( $this->getParam('noOrder') ) {
@@ -1434,10 +1446,14 @@ abstract class Bvb_Grid
             }
             return $this->_recordsPerPage;
         }
+
     }
 
 
     /**
+     *
+     * @todo Use a view helper to build url
+     *
      * Returns the url, without the param(s) specified
      *
      * @param mixed $situation
@@ -1465,7 +1481,6 @@ abstract class Bvb_Grid
             }
 
             foreach ( $params as $key => $value ) {
-
 
                 if ( stripos($key, '[')!==false ) {
                     $fl = explode('[', $key);
