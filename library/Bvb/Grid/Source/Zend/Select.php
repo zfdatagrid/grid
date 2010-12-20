@@ -337,7 +337,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::ORDER);
 
         if ( count($fields) == 0 ) {
-            $pks = $this->getPrimaryKey($table);
+            $pks = $this->getIdentifierColumns($table);
         } else {
             $pks = $fields;
         }
@@ -1015,7 +1015,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      *
      * @return array
      */
-    public function getPrimaryKey ($table)
+    public function getIdentifierColumns ($table)
     {
         $pk = $this->getDescribeTable($table);
         $tb = $this->getTableList();

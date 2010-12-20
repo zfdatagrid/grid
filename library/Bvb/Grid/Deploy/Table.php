@@ -258,7 +258,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $mode = $this->getParam('edit') ? 'edit' : 'add';
 
-            $queryUrl = $this->getPkFromUrl();
+            $queryUrl = $this->getIdentifierColumnsFromUrl();
 
             if ( ! $this->getRequest()->isPost() || ($this->getParam('zfmassedit') && $this->getRequest()->isPost()) ) {
                 foreach ( $this->_form->getSubForms() as $key => $form ) {
@@ -282,12 +282,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if ( $mode == 'edit' ) {
                     $this->_willShow['form'] = true;
                     $this->_willShow['formEdit'] = true;
-                    $this->_willShow['formEditId'] = $this->getPkFromUrl();
+                    $this->_willShow['formEditId'] = $this->getIdentifierColumnsFromUrl();
 
                     $conditions = array();
                     if ( $this->getParam('postMassIds') ) {
                         $ids = explode(',', $this->getParam('postMassIds'));
-                        $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
+                        $pkParentArray = $this->getSource()->getIdentifierColumns($this->_data['table'], $this->_data['schema']);
 
                         $a = 1;
                         foreach ( $ids as $value ) {
@@ -305,7 +305,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             }
                         }
                     } else {
-                        $conditions[1] = $this->getPkFromUrl();
+                        $conditions[1] = $this->getIdentifierColumnsFromUrl();
                     }
 
                     for ( $i = 1; $i <= count($conditions); $i ++ ) {
@@ -514,7 +514,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 continue;
                             }
 
-                            $pks = $this->getSource()->getPrimaryKey($this->_data['table'], $this->_data['schema']);
+                            $pks = $this->getSource()->getIdentifierColumns($this->_data['table'], $this->_data['schema']);
 
                             if (isset($post[$key]['ZFPK'])) {
                                 if (strpos($post[$key]['ZFPK'], '-')) {
@@ -646,7 +646,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $ids = explode(',', $this->getParam('postMassIds'));
 
             //Lets get PK'/**
-            $pkParentArray = $this->getSource()->getPrimaryKey($this->_data['table']);
+            $pkParentArray = $this->getSource()->getIdentifierColumns($this->_data['table']);
             foreach ($ids as $value) {
                 $condition = array();
 
@@ -709,7 +709,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 return 0;
             }
 
-            $condition = $this->getPkFromUrl();
+            $condition = $this->getIdentifierColumnsFromUrl();
         }
 
         try {
@@ -762,7 +762,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/1";
 
         if ( $this->getSource()->hasCrud() ) {
-            if ( ($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1) && $this->getSource()->getPrimaryKey($this->_data['table']) && $this->_allowAddButton == 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
+            if ( ($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1) && $this->getSource()->getIdentifierColumns($this->_data['table']) && $this->_allowAddButton == 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
                 $addButton = "<button class='addRecord' onclick=\"window.location='" . $this->_actionsUrls['add'] . "';\">" . $this->__('Add Record') . "</button>";
             } else {
                 $addButton = '';
@@ -1158,7 +1158,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
             }
 
-            $search = $this->_resetKeys($search);
+            $search = array_values($search);
 
             $finalFields = array_combine($search, $fi);
 
@@ -1530,7 +1530,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $images = $this->_temp['table']->images($this->getImagesUrl());
 
         if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || (is_array($this->_detailColumns) && $this->_isDetail == false)) {
-            $pkUrl = $this->getSource()->getPrimaryKey($this->_data['table']);
+            $pkUrl = $this->getSource()->getIdentifierColumns($this->_data['table']);
             $urlFinal = '';
 
             $failPk = false;
@@ -1656,7 +1656,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $columns = parent::_buildGrid();
 
                 $this->_willShow['detail'] = true;
-                $this->_willShow['detailId'] = $this->getPkFromUrl();
+                $this->_willShow['detailId'] = $this->getIdentifierColumnsFromUrl();
 
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
@@ -2897,15 +2897,15 @@ function " . $this->getGridId() . "gridChangeFilters(event)
 
         if ($this->getParam('edit') == 1) {
             $this->_formSettings['mode'] = 'edit';
-            $this->_formSettings['id'] = $this->getPkFromUrl();
-            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
+            $this->_formSettings['id'] = $this->getIdentifierColumnsFromUrl();
+            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
         if ($this->getParam('delete') == 1) {
             $this->_formSettings['mode'] = 'delete';
-            $this->_formSettings['id'] = $this->getPkFromUrl();
-            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getPkFromUrl());
+            $this->_formSettings['id'] = $this->getIdentifierColumnsFromUrl();
+            $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
     }
@@ -3147,7 +3147,7 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             return;
         }
 
-        $pk = $this->getSource()->getPrimaryKey($this->_data['table']);
+        $pk = $this->getSource()->getIdentifierColumns($this->_data['table']);
         $fieldAlias =  $this->getFieldAlias($pk[0]);
 
         $r = $this->getSource()->execute();

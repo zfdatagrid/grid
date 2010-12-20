@@ -1733,7 +1733,7 @@ abstract class Bvb_Grid
                 $this->_order[$name] = strtoupper(end($explode)) == 'ASC' ? 'DESC' : 'ASC';
             }
 
-            $fieldsToOrder = $this->_resetKeys($this->_data['fields']);
+            $fieldsToOrder = array_values($this->_data['fields']);
 
             if ( isset($fieldsToOrder[$i]['orderField']) && strlen($fieldsToOrder[$i]['orderField']) > 0 ) {
                 $orderFinal = $fieldsToOrder[$i]['orderField'];
@@ -1896,6 +1896,7 @@ abstract class Bvb_Grid
         }
 
         $value = call_user_func($this->_escapeFunction, $value);
+
         return $value;
     }
 
@@ -2016,6 +2017,7 @@ abstract class Bvb_Grid
                     $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                 }
             }
+
             $this->_classRowConditionResult[$i] .= ($i % 2) ? $this->_cssClasses['even'] : $this->_cssClasses['odd'];
             if ( count($this->_classCellCondition) > 0 ) {
                 foreach ( $this->_classCellCondition as $key => $value ) {
@@ -2169,19 +2171,6 @@ abstract class Bvb_Grid
 
 
     /**
-     * Reset keys indexes
-     *
-     * @param array $array
-     *
-     * @return array
-     */
-    protected function _resetKeys (array $array)
-    {
-        return array_values($array);
-    }
-
-
-    /**
      * Apply SQL Functions
      *
      * @param array $where
@@ -2312,7 +2301,7 @@ abstract class Bvb_Grid
 
         ksort($fields_final);
 
-        $fields_final = $this->_resetKeys($fields_final);
+        $fields_final = array_values($fields_final);
 
         //Put the hidden fields on the end of the array
         foreach ( $hidden as $value ) {
@@ -2462,7 +2451,7 @@ abstract class Bvb_Grid
 
         if ( $this->_isDetail == true ) {
             $result = $this->getSource()
-                ->fetchDetail($this->getPkFromUrl());
+                ->fetchDetail($this->getIdentifierColumnsFromUrl());
             if ( $result == false ) {
                 $this->_gridSession->message = $this->__('Record Not Found');
                 $this->_gridSession->_noForm = 1;
@@ -3298,7 +3287,7 @@ abstract class Bvb_Grid
      *
      * @return array
      */
-    public function getPkFromUrl ()
+    public function getIdentifierColumnsFromUrl ()
     {
         if ( ! $this->getParam('comm') ) {
             return array();
@@ -3772,13 +3761,13 @@ abstract class Bvb_Grid
         }
 
         if ( count($fields) == 0 && count($this->getSource()
-            ->getPrimaryKey($this->_data['table'])) == 0 ) {
+            ->getIdentifierColumns($this->_data['table'])) == 0 ) {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 
         $pk = '';
         foreach ( $this->getSource()
-            ->getPrimaryKey($this->_data['table']) as $value ) {
+            ->getIdentifierColumns($this->_data['table']) as $value ) {
             $aux = explode('.', $value);
             $pk .= end($aux) . '-';
         }

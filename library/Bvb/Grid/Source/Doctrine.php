@@ -115,7 +115,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      *
      * @return array Primary Keys for specified table
      */
-    public function getPrimaryKey($table = null)
+    public function getIdentifierColumns($table = null)
     {
         $return = array();
         $table = Doctrine::getTable($this->_getModelFromTable($table));

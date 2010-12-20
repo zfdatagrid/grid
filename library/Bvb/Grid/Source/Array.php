@@ -399,7 +399,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         return $form;
     }
 
-    public function getPrimaryKey ($table)
+    public function getIdentifierColumns ($table)
     {
         if (in_array('_zfgId', $this->_fields)) {
             return array('_zfgId');
@@ -413,7 +413,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function getMassActionsIds ($table,$fields)
     {
-        if(!$pk = $this->getPrimaryKey()) {
+        if(!$pk = $this->getIdentifierColumns()) {
             throw new Bvb_Grid_Exception('No primary key found');
         }
 

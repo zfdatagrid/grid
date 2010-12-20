@@ -18,6 +18,12 @@
  * @link      http://zfdatagrid.com
  */
 
+/**
+ * This class is used to provide a deference mode to update grid columns.
+ *
+ * @author Bento Vilas Boas
+ *
+ */
 class Bvb_Grid_Column
 {
 
