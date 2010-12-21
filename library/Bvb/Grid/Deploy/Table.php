@@ -848,14 +848,21 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildFiltersTable ($filters)
     {
+
+        if(!is_array($filters))
+        {
+            $filters  = array();
+        }
+
         //There are no filters.
-        if (!is_array($filters)) {
+        if (count($filters)==0 && count($this->_externalFilters)==0) {
             $this->_temp['table']->hasFilters = 0;
             return '';
         }
 
         //Start the template
         $grid = $this->_temp['table']->filtersStart();
+
 
         foreach ($filters as $filter) {
                 // check if this goes on a new row
@@ -897,6 +904,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($filter['value'], $colspan), $this->_temp['table']->filtersLoop());
             }
         }
+
+
+        if ( count($filters) ==0) {
+
+            //Remove unwanted url params
+            $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo', 'noFilters'));
+
+            $help_javascript = '';
+            if ( count($this->_externalFilters) > 0 ) {
+                foreach ( array_keys($this->_externalFilters) as $fil ) {
+                    $help_javascript .= $fil . ',';
+                }
+            }
+            $this->_javaScriptHelper = array('js' => $help_javascript, 'url' => $url);
+        }
+
+
 
         //Close template
         $grid .= $this->_temp['table']->filtersEnd();
@@ -2050,8 +2074,9 @@ function uncheckAll_" . $this->getGridId() . "(field)
 " . PHP_EOL;
         }
 
-        if (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail ) {
-            $script .= "
+
+        if ( (!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail) || count($this->_externalFilters)>0 ) {
+          $script .= "
 
 
             function encodeString(str)
@@ -2533,11 +2558,12 @@ function " . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
-        if (count($this->_externalFilters) > 0) {
-            foreach (array_keys($this->_externalFilters) as $fil) {
+        if ( count($this->_externalFilters) > 0 ) {
+            foreach ( array_keys($this->_externalFilters) as $fil ) {
                 $help_javascript .= $fil . ',';
             }
         }
+
 
         $this->_javaScriptHelper = array('js' => $help_javascript, 'url' => $url);
 
