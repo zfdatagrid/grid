@@ -816,7 +816,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             //Replace values
-            if ($this->getInfo('noFilters') != 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
+            if (($this->getInfo('noFilters') != 1 || $this->_allowAdd ==1) && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') !=1 ) {
