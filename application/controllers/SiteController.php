@@ -612,7 +612,7 @@ class SiteController extends Zend_Controller_Action
         if ( ! in_array($type, $allowedGraphs) ) {
             $type = 'bar_glass';
         }
-$type = 'area';
+
         $this->getRequest()->setParam('_exportTo', 'ofc');
 
         $grid = $this->grid();
