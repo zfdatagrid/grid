@@ -68,6 +68,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
             $this->_setJoins($info['name'], $map, $select);
 
+        }else{
+            $select->from($info['name'], $info['cols'], $info['schema']);
         }
 
         parent::__construct($select);
