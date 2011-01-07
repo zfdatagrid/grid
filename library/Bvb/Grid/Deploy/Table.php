@@ -2100,7 +2100,7 @@ function uncheckAll_" . $this->getGridId() . "(field)
                 return str;
 		}
 
-function " . $this->getGridId() . "gridChangeFilters(event)
+function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         if(typeof(event)=='undefined')
         {
@@ -2568,9 +2568,9 @@ function " . $this->getGridId() . "gridChangeFilters(event)
         $this->_javaScriptHelper = array('js' => $help_javascript, 'url' => $url);
 
         if ($this->getUseKeyEventsOnFilters() === true) {
-            $attr['onChange'] = $this->getGridId() . "gridChangeFilters(1);";
+            $attr['onChange'] = "_".$this->getGridId() . "gridChangeFilters(1);";
         }
-        $attr['onKeyUp'] = $this->getGridId() . "gridChangeFilters(event);";
+        $attr['onKeyUp'] = "_".$this->getGridId() . "gridChangeFilters(event);";
 
         $opcoes = $this->_filters[$field];
 
