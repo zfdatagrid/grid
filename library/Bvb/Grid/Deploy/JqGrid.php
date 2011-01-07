@@ -176,7 +176,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         // track that this function was called
         $this->_ajaxFuncCalled = true;
         // if request is Ajax we should only return data
-        if (false!==$id && $this->isAjaxRequest()) {
+        if (false!==$id && $this->isAjaxRequest() && isset($_GET['q']) && $id===$_GET['q']) {
             // prepare data
             parent::deploy();
             // set data in JSON format
@@ -470,7 +470,7 @@ JS;
             $data = $this->renderPartData();
             $this->_jqgParams['datatype'] = "local";
             $this->_postCommands[] = 'jqGrid("setGridParam", {datatype:"json"})';
-            $this->_postCommands[] = 'jqGrid()[0].addJSONData(myData)';
+            $this->_postCommands[] = 'jqGrid()[0].addJSONData('.$data.')';
         }
         // combine the post commands into JavaScrip string
         if (count($this->_postCommands)) {
@@ -482,7 +482,6 @@ JS;
         $idtable = $this->jqgGetIdTable();
         $idpager = $this->jqgGetIdPager();
         $js = <<<EOF
-var myData = $data;
 jQuery("#$idtable").jqGrid(
 $options
 )
@@ -1223,7 +1222,7 @@ HTML;
 class JqGridCommand
 {
     protected $_cmds = array(0=>array());
-    protected $_cmsStack = 0;
+    protected $_cmdsStack = 0;
     protected $_grid;
 
     /**
@@ -1278,18 +1277,18 @@ class JqGridCommand
         switch ($command) {
             case "trigger":
                 // does not seam to work in new API, maybe it will change in future
-                $this->_cmds[$this->_cmsStack][] = "trigger($params)";
+                $this->_cmds[$this->_cmdsStack][] = "trigger($params)";
                 break;
             case 'setPostData':
             case 'appendPostData':
             case 'setPostDataItem':
             case 'removePostDataItem':
                 // fix non chainable jqGrid methods
-                $this->_cmds[$this->_cmsStack] = array('jqGrid("' . $command . '",' . $params . ')');
-                $this->_cmsStack++;
+                $this->_cmds[$this->_cmdsStack] = array('jqGrid("' . $command . '",' . $params . ')');
+                $this->_cmdsStack++;
                 break;
             default:
-                $this->_cmds[$this->_cmsStack][] = 'jqGrid("' . $command . '",' . $params . ')';
+                $this->_cmds[$this->_cmdsStack][] = 'jqGrid("' . $command . '",' . $params . ')';
         }
         // let us be chainable
         return $this;
