@@ -11,11 +11,11 @@
  * obtain it through the world-wide-web, please send an email
  * to geral@petala-azul.com so we can send you a copy immediately.
  *
- * @package    Bvb_Grid
- * @copyright  Copyright (c) XTmotion Limited (http://www.xtmotion.co.uk/)
- * @license    http://www.petala-azul.com/bsd.txt   New BSD License
- * @version    $Id$
- * @author     k2s (Martin Minka) <martin.minka@gmail.com>
+ * @package   Bvb_Grid
+ * @copyright Copyright (c) XTmotion Limited (http://www.xtmotion.co.uk/)
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ * @author    k2s (Martin Minka) <martin.minka@gmail.com>
  */
 
 /** Zend_Json */
@@ -24,6 +24,15 @@ require_once 'Zend/Json.php';
 /** Zend_Controller_Front */
 require_once 'Zend/Controller/Front.php';
 
+/**
+ * Deploy class to render data with jqGrid library
+ *
+ * @package   Bvb_Grid
+ * @author    k2s (Martin Minka) <martin.minka@gmail.com>
+ * @copyright Copyright (c) 2010-2011 XTmotion Limited (http://www.xtmotion.co.uk/)
+ * @license   http://www.petala-azul.com/bsd.txt   New BSD License
+ * @version   $Id$
+ */
 class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
     /**
@@ -193,6 +202,13 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         }
     }
 
+    /**
+     * Deprecated, use setAjax()
+     *
+     * @param string $id id
+     *
+     * @return void
+     */
     public function ajax($id='')
     {
         trigger_error("Bvb_Grid_Deploy_JqGrid::ajax() is deprecated, use setAjax() instead. Function will be removed in later versions.", E_USER_DEPRECATED);
@@ -608,7 +624,9 @@ HTML;
         // override with options defined on Bvb_Grid level
         $this->_jqgParams['url'] = isset($this->_jqgParams['url']) ? (empty($this->_jqgParams['url']) ? $url : $this->_jqgParams['url']) : $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
-        $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum']) : $this->_recordsPerPage;
+        $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) 
+            ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum'])
+            : $this->_recordsPerPage;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
@@ -627,8 +645,105 @@ HTML;
             // dissable sorting on columns - if set $grid->noOrder(1);
             $this->_jqgParams['viewsortcols'] = array(false,'vertical',false);
         }
+
+        if ($this->hasMassActions()) {
+            // add multiselect
+            $this->_jqgParams['multiselect'] = true;
+            $this->_jqgParams['multiboxonly'] = false;
+            $this->_jqgParams['multikey'] = "ctrlKey";
+
+            // add actions
+            $selectedValuesJs = $this->getJsFuncSelectedValues($this->getMassActionsFields());
+            // TODO render combobox and button combination
+            foreach ($this->getMassActionsOptions() as $options) {
+                if (isset($options['onsubmit'])) {
+                    $onsubmit = 'if(!function(count,data) {'.$options['onsubmit'].'}(data.count, data.postMassIds)) return false;';
+                } else {
+                    $onsubmit = "";
+                }
+                $this->jqgAddNavButton(
+                    array(
+                        'caption' => $options['caption'],
+                        'buttonicon' => isset($options['cssClass']) ? $options['cssClass'] : "ui-icon-circle-triangle-e ",
+                        'onClickButton' => new Zend_Json_Expr(<<<JS
+function(){
+    var data=$selectedValuesJs();
+    {$onsubmit}
+    if (data.count==0) {
+        return false;
+    }
+    var id = 1;
+    while ($('#_jqpost'+id).size()>0) {
+        id++;
+    }
+    id = '_jqpost'+id;
+    $('body').append('<form id="'+id+'" method="post" action="{$options['url']}"><input type="hidden" name="postMassIds"/></form>');
+    $('#'+id+' :input').val(JSON.stringify(data.postMassIds));
+    $('#'+id).submit();
+}
+JS
+                         ),
+                        'position' => "last"
+                    )
+                );
+            }
+        }
         // add export buttons
         $this->addExportButtons($this->getExports());
+    }
+
+    /**
+     * TEMPORARY should be moved to main class
+     *
+     * Should detect primary key fields if not provided by user.
+     * TODO Also action specifics fields should be considered.
+     *
+     * @return array
+     */
+    function getMassActionsFields()
+    {
+        return $this->_massActionsFields;
+    }
+
+    /**
+     * Helper to generate JS to get column data of selected rows
+     *
+     * TODO empty $colNames should cause to receive data from all columns
+     *
+     * @param array|string $colNames list of column names you want collect
+     *
+     * @return string javascript function which returns data when executed
+     */
+    public function getJsFuncSelectedValues($colNames)
+    {
+        if (is_string($colNames)) {
+            $colNames = array($colNames);
+        }
+        // build dynamic code
+        $init = $assign = "";
+        foreach ($colNames as $col) {
+            $init .= "values.$col = [];";
+            $assign .= "var v=grid.jqGrid('getCell', ids[i], '$col');values.$col.push(v);";
+        }
+        // build JS
+        $js = <<<JS
+function () {
+    var grid = jQuery('#{$this->jqgGetIdTable()}');
+    var ids = grid.jqGrid("getGridParam","selarrrow");
+    var values = new Object;
+    var ret = new Object;
+    ret.count = ids.length;
+    $init
+    if (ret.count>0) {
+        for (var i=0, il=ids.length; i<il;i++) {
+            $assign
+        }
+    }
+    ret.postMassIds = values;
+    return ret;
+}
+JS;
+        return $js;
     }
 
     /**
@@ -638,7 +753,9 @@ HTML;
      * magic key mechanism as of now.
      *
      * @param mixed $value value to encode
+     *
      * @see Zend_Json::encode
+     * 
      * @return mixed
      */
     public static function encodeJson($value)
@@ -773,7 +890,7 @@ HTML;
                 array("name" => isset($title['name'])?$title['name']:'', "label" => $title['value'])
             );
 
-            if($title['type']=='extraField') {
+            if ($title['type']=='extraField') {
                 $options['search']= false;
             }
 
@@ -1258,6 +1375,7 @@ class JqGridCommand
      * Add command to chain.
      *
      * @param string $command jqGrid command there could be any number of additional parameters
+     * 
      * @link http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods
      *
      * @return JqGridCommand
