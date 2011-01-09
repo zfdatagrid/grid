@@ -653,19 +653,63 @@ HTML;
             $this->_jqgParams['multikey'] = "ctrlKey";
 
             // add actions
-            $selectedValuesJs = $this->getJsFuncSelectedValues($this->getMassActionsFields());
             // TODO render combobox and button combination
             foreach ($this->getMassActionsOptions() as $options) {
-                if (isset($options['onsubmit'])) {
-                    $onsubmit = 'if(!function(count,data) {'.$options['onsubmit'].'}(data.count, data.postMassIds)) return false;';
-                } else {
-                    $onsubmit = "";
-                }
                 $this->jqgAddNavButton(
                     array(
                         'caption' => $options['caption'],
                         'buttonicon' => isset($options['cssClass']) ? $options['cssClass'] : "ui-icon-circle-triangle-e ",
-                        'onClickButton' => new Zend_Json_Expr(<<<JS
+                        'onClickButton' => new Zend_Json_Expr($this->getJsFuncMassAction($options)),
+                        'position' => "last"
+                    )
+                );
+            }
+        }
+        // add export buttons
+        $this->addExportButtons($this->getExports());
+    }
+
+    /**
+     * Return javascript call to post to given mass action
+     *
+     * @param array          $massAction  mass action definition to execute on selected rows
+     * @param boolean|string $useOnSubmit true will add hander defined on action, false will add nothing, string will replace action setting
+     *
+     * @return string
+     */
+    public function getJsFuncMassAction($massAction, $useOnSubmit=true)
+    {
+        $onsubmit = "";
+
+        // decide what fields to submit for given action
+        if (isset($massAction['fields'])) {
+            if (is_string($massAction['fields'])) {
+                $fields = array($massAction['fields']);
+            } else {
+                $fields = $massAction['fields'];
+            }
+        } else {
+            $fields = $this->getMassActionsFields();
+        }
+        $selectedValuesJs = $this->getJsFuncSelectedValues($fields);
+
+        if (true===$useOnSubmit) {
+            // build confirmation if requested
+            if (isset($massAction['confirm'])) {
+                $onsubmit = 'if(!confirm("'.preg_replace("/\r?\n/", "\\n", addslashes($massAction['confirm'])).'")) return false;';
+            }
+
+            // add onsubmit handler provided by
+            if (isset($massAction['onsubmit'])) {
+                $onsubmit .= 'if(!function(count,data) {'.$massAction['onsubmit'].'}(data.count, data.postMassIds)) return false;';
+            }
+        } elseif (false!==$useOnSubmit) {
+            $onsubmit .= 'if(!function(count,data) {'.$useOnSubmit.'}(data.count, data.postMassIds)) return false;';
+        }
+        
+        // render function
+        // TODO this could be more general function added with jQuery() helper and called with parameters
+        return <<<JS
 function(){
     var data=$selectedValuesJs();
     {$onsubmit}
@@ -677,19 +721,11 @@ function(){
         id++;
     }
     id = '_jqpost'+id;
-    $('body').append('<form id="'+id+'" method="post" action="{$options['url']}"><input type="hidden" name="postMassIds"/></form>');
+    $('body').append('<form id="'+id+'" method="post" action="{$massAction['url']}"><input type="hidden" name="postMassIds"/></form>');
     $('#'+id+' :input').val(JSON.stringify(data.postMassIds));
     $('#'+id).submit();
 }
-JS
-                         ),
-                        'position' => "last"
-                    )
-                );
-            }
-        }
-        // add export buttons
-        $this->addExportButtons($this->getExports());
+JS;
     }
 
     /**
@@ -704,6 +740,7 @@ JS
     {
         return $this->_massActionsFields;
     }
+
 
     /**
      * Helper to generate JS to get column data of selected rows
