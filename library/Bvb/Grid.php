@@ -2414,7 +2414,7 @@ abstract class Bvb_Grid
         }
 
         // apply additional configuration
-        $this->_runConfigCallbacks();
+        $this->runConfigCallbacks();
 
         if ( $this->getParam('gridDetail') == 1 && $this->_deployName == 'table' && (is_array($this->_detailColumns) || $this->getParam('gridRemove')) ) {
             $this->_isDetail = true;
@@ -2919,14 +2919,27 @@ abstract class Bvb_Grid
         return $grid;
     }
 
+    /**
+     * Makes shure that config callbacks will be used once
+     *
+     * @var boolean
+     */
+    protected $_runCallbacks = true;
+
 
     /**
-     * Runs callbacks
+     * Runs configuration callbacks
      *
      * @return void
      */
-    protected function _runConfigCallbacks ()
+    public function runConfigCallbacks()
     {
+        if (!$this->_runCallbacks) {
+            // makes shure that config callbacks will be used once
+            return;
+        }
+        $this->_runCallbacks = false;
+
         if ( ! is_array($this->_configCallbacks) ) {
             call_user_func($this->_configCallbacks, $this);
         } elseif ( count($this->_configCallbacks) == 0 ) {

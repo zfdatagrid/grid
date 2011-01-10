@@ -180,7 +180,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         $this->setId($id);
 
         // apply additional configuration
-        $this->_runConfigCallbacks();
+        $this->runConfigCallbacks();
 
         // track that this function was called
         $this->_ajaxFuncCalled = true;
