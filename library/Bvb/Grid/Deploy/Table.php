@@ -1332,7 +1332,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         foreach ($this->_form->getSubForms() as $form)
         {
-            $i = 10;
+            $i = 100;
             foreach($form->getElements() as $key=>$element)
             {
                 $fieldOrder = isset($fieldsOrder[$key])?$fieldsOrder[$key]:$i++;
