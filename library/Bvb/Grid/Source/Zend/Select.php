@@ -958,11 +958,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
 
             switch ($detail['DATA_TYPE']) {
-                case 'varchar':
-                case 'char':
-                    $length = $detail['LENGTH'];
-                    $return[$column] = array('type' => 'smallText', 'length' => $length, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
-                    break;
                 case 'date':
                     $return[$column] = array('type' => 'date', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
@@ -994,6 +989,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     break;
 
                 default:
+                case 'varchar':
+                case 'char':
+                    $length = $detail['LENGTH'];
+                    $return[$column] = array('type' => 'smallText', 'length' => $length, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
             }
         }
