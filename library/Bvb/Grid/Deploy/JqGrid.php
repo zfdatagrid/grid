@@ -544,7 +544,7 @@ HTML;
     {
         // clarify the values
         $page = $this->getParam('page'); // get the requested page
-        $limit = $this->_recordsPerPage; // get how many rows we want to have into the grid
+        $limit = $this->getResultsPerPage(); // get how many rows we want to have into the grid
         $count =  $this->_totalRecords;
         // decide if we should pass PK as ID to each row
         $passPk = false;
@@ -627,6 +627,7 @@ HTML;
         $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) 
             ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum'])
             : $this->_recordsPerPage;
+        $this->_jqgParams['rowList'] = isset($this->_jqgParams['rowList']) ? $this->_jqgParams['rowList'] : $this->_paginationOptions;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
@@ -1187,7 +1188,7 @@ JS;
 
         // number of rows to be shown on page, could be changed in jqGrid
         if (isset($params['rows'])) {
-            $this->setRecordsPerPage($params['rows']);
+            $this->setParam('perPage', $params['rows']);
         }
 
         // first row to display
@@ -1197,7 +1198,7 @@ JS;
             $page = 1;
         }
         $this->setParam('page', $page);
-         $this->setParam('start', $this->_recordsPerPage * ($page-1));
+        $this->setParam('start', $this->_recordsPerPage * ($page-1));
 
         // sort order
         $sidx = isset($params['sidx']) ? $params['sidx'] : "";
@@ -1359,6 +1360,21 @@ JS;
         }
         // not a domain property
         parent::__set($var, $value);
+    }
+    /**
+     * Returns the number of records to show per page
+     *
+     * Is overriden to return always the number of data requested by jqGrid ajax request.
+     *
+     * @return integer
+     */
+    public function getResultsPerPage ()
+    {
+        $perPage = $this->getParam('perPage', false);
+        if (false===$perPage) {
+            return parent::getResultsPerPage();
+        }
+        return $perPage;
     }
 
     /**
