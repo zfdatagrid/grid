@@ -452,13 +452,6 @@ abstract class Bvb_Grid
     protected $_deploy = array();
 
     /**
-     * IF user has defined mass actions operations
-     *
-     * @var bool
-     */
-    protected $_hasMassActions = false;
-
-    /**
      * Mass Actions
      *
      * @var array
@@ -2897,8 +2890,6 @@ abstract class Bvb_Grid
             // now we need to find and load the right Bvb deploy class
             $className = 'Bvb_Grid_Deploy_' . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
 
-
-
             if ( Zend_Loader_Autoloader::autoload($className) ) {
                 $grid = new $className($options);
             } else {
@@ -3431,6 +3422,19 @@ abstract class Bvb_Grid
     }
 
 
+    public function addParam($key,$value)
+    {
+        $this->_ctrlParams[$key] = $value;
+        return $this;
+    }
+
+
+    public function addParams(array $params)
+    {
+        $this->_ctrlParams = array_merge($this->_ctrlParams,$params);
+        return $this;
+    }
+
     /**
      * Defines which export options are available
      * Ex: array('word','pdf');
@@ -3443,6 +3447,11 @@ abstract class Bvb_Grid
     {
         $this->_export = $export;
         return $this;
+    }
+
+
+    public function addExport($name,$options){
+        $this->_export[$name] = $options;
     }
 
 
@@ -3734,7 +3743,7 @@ abstract class Bvb_Grid
      */
     public function hasMassActions ()
     {
-        return $this->_hasMassActions;
+        return count($this->_massActions) > 0;
     }
 
 
@@ -3745,7 +3754,7 @@ abstract class Bvb_Grid
      */
     public function getMassActionsOptions ()
     {
-        if ( ! $this->_hasMassActions ) {
+        if ( ! $this->hasMassActions() ) {
             return array();
         }
 
@@ -3763,7 +3772,6 @@ abstract class Bvb_Grid
      */
     public function setMassActions (array $options, array $fields)
     {
-        $this->_hasMassActions = true;
         $this->_massActions = $options;
         $this->_massActionsFields = $fields;
 
@@ -3799,7 +3807,7 @@ abstract class Bvb_Grid
      */
     public function addMassActions (array $options, $fields = null)
     {
-        if ( $this->_hasMassActions !== true ) {
+        if ( ! $this->hasMassActions() ) {
             return $this->setMassActions($options, (array) $fields);
         }
 
