@@ -820,7 +820,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') !=1 ) {
-                        $final1 .= "<button onclick=\"" . $this->getGridId() . "gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
+                        $final1 .= "<button onclick=\"" . $this->getGridId() . "_gridChangeFilters(1)\">" . $this->__('Apply Filter') . "</button>";
                     }
 
                     if($this->_allowAdd==true)
