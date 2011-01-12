@@ -2714,6 +2714,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->setImagesUrl($this->_deployOptions['imagesUrl']);
         }
 
+
+       if(isset($this->_deployOptions['recordsPerPage']))
+       {
+           $this->setRecordsPerPage($this->_deployOptions['recordsPerPage']);
+       }
+
+       if(isset($this->_deployOptions['paginationInterval']))
+       {
+           $this->setPaginationInterval($this->_deployOptions['paginationInterval']);
+       }
+
         if (isset($this->_deployOptions['template'])) {
             $this->setTemplate($this->_deployOptions['template'], 'table');
         }
