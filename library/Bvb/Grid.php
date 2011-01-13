@@ -3085,17 +3085,6 @@ abstract class Bvb_Grid
             }
         }
 
-
-        if(isset($this->_options['recordsPerPage']))
-        {
-            $this->setRecordsPerPage($this->_options['recordsPerPage']);
-        }
-
-       if(isset($this->_options['paginationInterval']))
-       {
-           $this->setPaginationInterval($this->_options['paginationInterval']);
-       }
-
         if ( isset($this->_options['template'][$name]) && is_array($this->_options['template'][$name]) ) {
             $this->addTemplateParams($this->_options['template'][$name]);
         }
@@ -3113,6 +3102,12 @@ abstract class Bvb_Grid
         if ( isset($this->_options['grid']['recordsPerPage']) ) {
             $this->setRecordsPerPage($this->_options['grid']['recordsPerPage']);
         }
+
+
+        if ( isset($this->_options['grid']['paginationInterval']) ) {
+            $this->setPaginationInterval($this->_options['grid']['paginationInterval']);
+        }
+
     }
 
 
