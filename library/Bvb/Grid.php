@@ -102,7 +102,7 @@ abstract class Bvb_Grid
      *
      * @var array
      */
-    protected $_paginationOptions = array();
+    protected $_paginationInterval = array();
 
     /**
      * Type of export available
@@ -1064,7 +1064,7 @@ abstract class Bvb_Grid
      */
     public function setPaginationInterval (array $pagination)
     {
-        $this->_paginationOptions = $pagination;
+        $this->_paginationInterval = $pagination;
         return $this;
     }
 
@@ -1426,7 +1426,7 @@ abstract class Bvb_Grid
             $this->setParam('perPage' . $this->getGridId(), $perPage);
         }
 
-        if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationOptions) ) {
+        if ( $perPage > 0 && array_key_exists($perPage, $this->_paginationInterval) ) {
             if ( $this->_paramsInSession === true ) {
                 $this->_sessionParams->perPage = $perPage;
             }
