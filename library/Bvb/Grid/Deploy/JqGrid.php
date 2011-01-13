@@ -627,7 +627,7 @@ HTML;
         $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) 
             ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum'])
             : $this->_recordsPerPage;
-        $this->_jqgParams['rowList'] = isset($this->_jqgParams['rowList']) ? $this->_jqgParams['rowList'] : $this->_paginationOptions;
+        $this->_jqgParams['rowList'] = isset($this->_jqgParams['rowList']) ? $this->_jqgParams['rowList'] : $this->_paginationInterval;
 
         if (!$this->getInfo('noFilters', false)) {
             // add filter toolbar to grid - if not set $grid->noFilters(1);
