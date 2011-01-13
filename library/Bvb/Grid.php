@@ -456,7 +456,7 @@ abstract class Bvb_Grid
      *
      * @var array
      */
-    protected $_massActions = false;
+    protected $_massActions = array();
 
     /**
      * Columns that should be return when submiting the form
@@ -682,16 +682,14 @@ abstract class Bvb_Grid
         $this->_options = array_merge_recursive(self::getDefaultConfig(), $options);
 
         //Get the controller params and baseurl to use with filters
-        $this->setParams(Zend_Controller_Front::getInstance()->getRequest()
-            ->getParams());
+        $this->setParams(Zend_Controller_Front::getInstance()->getRequest()->getParams());
         $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
 
         foreach ( array('massActionsAll_', 'gridAction_', 'send_') as $value ) {
             $this->removeParam($value);
         }
 
-        foreach ( Zend_Controller_Front::getInstance()->getRequest()
-            ->getParams() as $key => $value ) {
+        foreach ( Zend_Controller_Front::getInstance()->getRequest()->getParams() as $key => $value ) {
             if ( is_array($value) ) {
                 $this->removeParam($key);
             }
