@@ -793,6 +793,9 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 case 'date':
                     $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
                     break;
+                case 'time':
+                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('H:i:s'))), 'size' => 19, 'label' => $label, 'required' => (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));
+                    break;
                 case 'datetime':
                 case 'timestamp':
                     $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' =>  (array_key_exists('notnull', $detail)) ? true : false, 'value' => (! empty($detail['default']) ? $detail['default'] : "")));

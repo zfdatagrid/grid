@@ -958,6 +958,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
 
             switch ($detail['DATA_TYPE']) {
+                case 'time':
+                    $return[$column] = array('type' => 'time', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    break;
                 case 'date':
                     $return[$column] = array('type' => 'date', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
