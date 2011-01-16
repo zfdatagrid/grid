@@ -1341,8 +1341,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
         }
 
-        if($hasCustomOrder===true)
-        return;
+        if($hasCustomOrder===true) {
+            return;
+        }
 
         $fieldsOrder = array_flip($this->_fields);
 

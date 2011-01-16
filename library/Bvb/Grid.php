@@ -681,15 +681,29 @@ abstract class Bvb_Grid
 
         $this->_options = array_merge_recursive(self::getDefaultConfig(), $options);
 
-        //Get the controller params and baseurl to use with filters
-        $this->setParams(Zend_Controller_Front::getInstance()->getRequest()->getParams());
-        $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
+        // get the controller params and baseurl to use with filters
+        if (isset($this->_options['grid']['requestParams'])) {
+            // use from configuration, remove it from _options to enforce correct usage
+            $this->setParams($this->_options['grid']['requestParams']);
+            unset($this->_options['grid']['requestParams']);
+        } else {
+            // use the request parameters
+            $this->setParams($this->getRequest()->getParams());
+        }
+        if (isset($this->_options['grid']['baseUrl'])) {
+            // use from configuration, remove it from _options to enforce correct usage
+            $this->_baseUrl = $this->_options['grid']['baseUrl'];
+            unset($this->_options['grid']['baseUrl']);
+        } else {
+            // use controllers value
+            $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
+        }
 
         foreach ( array('massActionsAll_', 'gridAction_', 'send_') as $value ) {
             $this->removeParam($value);
         }
 
-        foreach ( Zend_Controller_Front::getInstance()->getRequest()->getParams() as $key => $value ) {
+        foreach ( $this->_ctrlParams as $key => $value ) {
             if ( is_array($value) ) {
                 $this->removeParam($key);
             }
@@ -2849,16 +2863,16 @@ abstract class Bvb_Grid
     /**
      * Automates export functionality
      *
-     * @param string $defaultClass
-     * @param mixed $options
-     * @param mixed $id
-     * @param array|array of array $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
-     * @param array|boolean $requestData request parameters will bu used if FALSE
+     * @param string        $defaultClass
+     * @param mixed         $options
+     * @param mixed         $id
+     * @param array|array   $classCallbacks key should be lowercase, functions to call once before deploy() and ajax() functions
+     * @param array|boolean $requestParams  request parameters will be used if FALSE
      * @static
      *
      * @return $object
      */
-    public static function factory ($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestData = false)
+    public static function factory ($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestParams = false)
     {
         if ( ! is_string($id) ) {
             $id = '';
@@ -2868,25 +2882,32 @@ abstract class Bvb_Grid
             $defaultClass = 'Bvb_Grid_Deploy_' . ucfirst(strtolower($defaultClass));
         }
 
-        if ( false === $requestData ) {
-            $requestData = Zend_Controller_Front::getInstance()->getRequest()
-                ->getParams();
+        if ( false === $requestParams ) {
+            // use request parameters
+            $requestParams = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
 
-        if ( ! isset($requestData['_exportTo' . $id]) ) {
+        // use this as request parameters
+        if (!isset($options['grid'])) {
+        $options['grid'] = array('requestParams' => $requestParams);
+        } else {
+            $options['grid']['requestParams'] = $requestParams;
+        }
+
+        if ( ! isset($requestParams['_exportTo' . $id]) ) {
             // return instance of the main Bvb object, because this is not and export request
             $grid = new $defaultClass($options);
             $lClass = $defaultClass;
         } else {
-            $lClass = strtolower($requestData['_exportTo' . $id]);
+            $lClass = strtolower($requestParams['_exportTo' . $id]);
             // support translating of parameters specifig for the export initiator class
-            if ( isset($requestData['_exportFrom']) ) {
+            if ( isset($requestParams['_exportFrom']) ) {
                 // TODO support translating of parameters specifig for the export initiator class
-                $requestData = $requestData;
+                $requestParams = $requestParams;
             }
 
             // now we need to find and load the right Bvb deploy class
-            $className = 'Bvb_Grid_Deploy_' . ucfirst($requestData['_exportTo' . $id]); // TODO support user defined classes
+            $className = 'Bvb_Grid_Deploy_' . ucfirst($requestParams['_exportTo' . $id]); // TODO support user defined classes
 
             if ( Zend_Loader_Autoloader::autoload($className) ) {
                 $grid = new $className($options);
@@ -3137,10 +3158,9 @@ abstract class Bvb_Grid
     public function getGridId ($forceId = false)
     {
         if ( $forceId === true && strlen($this->_gridId) == 0 ) {
-            return $this->getRequest()
-                ->getActionName() . '_' . $this->getRequest()
-                ->getControllerName() . '_' . $this->getRequest()
-                ->getModuleName();
+            return $this->getRequest()->getActionName() 
+                . '_' . $this->getRequest()->getControllerName()
+                . '_' . $this->getRequest()->getModuleName();
         }
         return $this->_gridId;
     }
