@@ -248,8 +248,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _buildFormValues ()
     {
 
-        if(!isset($this->_data['schema']))
-        {
+        if (!isset($this->_data['schema'])) {
             $this->_data['schema'] = '';
         }
 
@@ -341,7 +340,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     } else {
 
-                                        if ( strlen($this->getForm($i)->getElement($key)->getValue()) == 0 || $this->getForm($i)->getElement($key)->getValue() == 0 ) {
+                                        if ( strlen($this->getForm($i)->getElement($key)->getValue()) == 0
+                                            || $this->getForm($i)->getElement($key)->getValue() == 0
+                                        ) {
                                             $this->getForm($i)->getElement($key)->setValue($value);
                                         }
                                     }
@@ -431,8 +432,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 unset($post['form_reset' . $this->getGridId()]);
                 unset($post['zfg_csrf' . $this->getGridId()]);
                 unset($post['saveAndAdd' . $this->getGridId()]);
-
-                $param = Zend_Controller_Front::getInstance()->getRequest();
 
                 // Process data
                 if ($mode == 'add') {
@@ -762,8 +761,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/1";
 
         if ( $this->getSource()->hasCrud() ) {
-            if ( ($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1) && $this->getSource()->getIdentifierColumns($this->_data['table']) && $this->_allowAddButton == 1 && $this->getParam('add') != 1 && $this->getParam('edit') != 1 ) {
-                $addButton = "<button class='addRecord' onclick=\"window.location='" . $this->_actionsUrls['add'] . "';\">" . $this->__('Add Record') . "</button>";
+            if ( ($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1)
+                && $this->getSource()->getIdentifierColumns($this->_data['table'])
+                && $this->_allowAddButton == 1
+                && $this->getParam('add') != 1
+                && $this->getParam('edit') != 1
+            ) {
+                $addButton = "<button class='addRecord' onclick=\"window.location='" 
+                    . $this->_actionsUrls['add'] . "';\">"
+                    . $this->__('Add Record') . "</button>";
             } else {
                 $addButton = '';
             }
@@ -794,9 +800,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
                 if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button href=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "')\">" . $this->__('Remove Filters') . "</button><button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "')\">" . $this->__('Remove Order') . "</button><button onclick=\"gridAjax('{$this->_info['ajax']}','" . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
+                    $final1 = "<button href=\"gridAjax('{$this->getInfo("ajax")}','" 
+                        . $url . "')\">"  . $this->__('Remove Filters') . "</button><button onclick=\"gridAjax('{$this->getInfo("ajax")}','"
+                        . $url2 . "')\">" . $this->__('Remove Order') . "</button><button onclick=\"gridAjax('{$this->_info['ajax']}','"
+                        . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
                 } else {
-                    $final1 = "<button onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">" . $this->__('Remove Filters and Order') . "</button>";
+                    $final1 = "<button onclick=\"window.location='$url'\">"
+                        . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">"
+                        . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">"
+                        . $this->__('Remove Filters and Order') . "</button>";
                 }
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
@@ -849,8 +861,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _buildFiltersTable ($filters)
     {
 
-        if(!is_array($filters))
-        {
+        if (!is_array($filters)) {
             $filters  = array();
         }
 
@@ -894,14 +905,22 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ($filter['type'] == 'field') {
                     //Replace values
-                    $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($this->_formatField($filter['field']), $colspan), $this->_temp['table']->filtersLoop());
+                    $grid .= str_replace(
+                        array('{{value}}', "{{colspan}}"),
+                        array($this->_formatField($filter['field']), $colspan),
+                        $this->_temp['table']->filtersLoop()
+                    );
                 }
             }
 
             //Check extra fields from the right
             if ($filter['type'] == 'extraField' && $filter['position'] == 'right') {
                 $filter['value'] = isset($filter['value']) ? $filter['value'] : '';
-                $grid .= str_replace(array('{{value}}', "{{colspan}}"), array($filter['value'], $colspan), $this->_temp['table']->filtersLoop());
+                $grid .= str_replace(
+                    array('{{value}}', "{{colspan}}"),
+                    array($filter['value'], $colspan),
+                    $this->_temp['table']->filtersLoop()
+                );
             }
         }
 
@@ -1313,12 +1332,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     {
         $hasCustomOrder = false;
 
-        foreach ($this->_form->getSubForms() as $form)
-        {
-            foreach($form->getElements() as $key=>$element)
-            {
-                if(is_numeric($element->getOrder()))
-                {
+        foreach ($this->_form->getSubForms() as $form) {
+            foreach ($form->getElements() as $key=>$element) {
+                if (is_numeric($element->getOrder())) {
                     $hasCustomOrder = true;
                     break;
                 }
@@ -1330,11 +1346,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $fieldsOrder = array_flip($this->_fields);
 
-        foreach ($this->_form->getSubForms() as $form)
-        {
+        foreach ($this->_form->getSubForms() as $form) {
             $i = 100;
-            foreach($form->getElements() as $key=>$element)
-            {
+            foreach ($form->getElements() as $key=>$element) {
                 $fieldOrder = isset($fieldsOrder[$key])?$fieldsOrder[$key]:$i++;
                 $element->setOrder($fieldOrder);
             }
@@ -1567,8 +1581,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
                 }
 
-               # throw new Bvb_Grid_Exception("You don't have your primary key in your query.
-               # So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
+                // throw new Bvb_Grid_Exception("You don't have your primary key in your query.
+                // So it's not possible to perform CRUD operations. Change your select object to include your Primary Key: " . implode(';', $pkUrl2));
             }
 
             foreach ($pkUrl as $value) {
@@ -3079,8 +3093,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         $pk = parent::setMassActions($options, $fields);
 
-        if(count($fields)==0)
-        {
+        if (count($fields)==0) {
             $fields = explode('-',$pk);
         }
 
@@ -3159,7 +3172,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
     public function getPlacePageAtRecord ()
     {
-       return  $this->_recordPage;
+        return  $this->_recordPage;
     }
 
 
@@ -3168,8 +3181,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         if($this->getParam('start') !==false || $this->getParam('order') || $this->getParam('noOrder') || !isset($this->_recordPage['id']))
         return;
 
-        if(count(array_intersect(array_flip($this->getAllParams()), $this->getFields()))>0)
-        {
+        if (count(array_intersect(array_flip($this->getAllParams()), $this->getFields()))>0) {
             return;
         }
 
@@ -3191,8 +3203,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $page = floor($i/$this->getResultsPerPage());
         $start = $this->getResultsPerPage() * $page;
 
-        if($start>$totalRecords)
-        {
+        if ($start>$totalRecords) {
             $start = 0;
         }
 
