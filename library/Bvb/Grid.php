@@ -2887,6 +2887,10 @@ abstract class Bvb_Grid
             $requestParams = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         }
 
+        if ( $options instanceof Zend_Config ) {
+            $options = $options->toArray();
+        }
+
         // use this as request parameters
         if (!isset($options['grid'])) {
         $options['grid'] = array('requestParams' => $requestParams);
@@ -3158,7 +3162,7 @@ abstract class Bvb_Grid
     public function getGridId ($forceId = false)
     {
         if ( $forceId === true && strlen($this->_gridId) == 0 ) {
-            return $this->getRequest()->getActionName() 
+            return $this->getRequest()->getActionName()
                 . '_' . $this->getRequest()->getControllerName()
                 . '_' . $this->getRequest()->getModuleName();
         }
