@@ -19,6 +19,7 @@
  */
 
 /**
+ *
  * This class will abstract results from a data source for descendants
  *
  *
@@ -27,6 +28,7 @@
  * @copyright 2010 ZFDatagrid
  * @license   http://www.petala-azul.com/bsd.txt   New BSD License
  * @version   Release: @package_version@
+ * @category  Bvb_Grid
  */
 abstract class Bvb_Grid {
     /**
@@ -454,6 +456,13 @@ abstract class Bvb_Grid {
     protected $_allowDelete = false;
 
     /**
+     * Makes shure that config callbacks will be used once
+     *
+     * @var boolean
+     */
+    protected $_runCallbacks = true;
+
+    /**
      * Backwards compatibility
      *
      * @param mixed $object A Zend_Db object
@@ -795,11 +804,11 @@ abstract class Bvb_Grid {
     /**
      * Check if a string is available
      *
-     * @param string $message
+     * @param string $message Message to check if it's translated
      *
      * @return bool
      */
-    protected function is__($message)
+    protected function isTranslated($message)
     {
         return Bvb_Grid_Translator::getInstance()->isTranslated($message);
     }
@@ -807,8 +816,8 @@ abstract class Bvb_Grid {
     /**
      * Use the overload function so we can return an object
      *
-     * @param string $name
-     * @param string $value
+     * @param string $name  Mehtod name
+     * @param string $value Mehtod args
      *
      * @return Bvb_Grid
      */
@@ -861,8 +870,8 @@ abstract class Bvb_Grid {
     /**
      * Magic function handling
      *
-     * @param string $var
-     * @param string $value
+     * @param string $var   Variable name
+     * @param string $value Variable value
      *
      * @return Bvb_Grid
      */
@@ -876,15 +885,15 @@ abstract class Bvb_Grid {
     /**
      * Update data from a column
      *
-     * @param string $field
-     * @param array $options
+     * @param string $field   Field Name
+     * @param array  $options Associative array of options to be applyied to the field
      *
      * @return Bvb_Grid
      */
     public function updateColumn($field, array $options = array())
     {
         if (null == $this->getSource()
-                || ($this->_allFieldsAdded == true && !array_key_exists($field, $this->_data['fields']))
+            || ($this->_allFieldsAdded == true && !array_key_exists($field, $this->_data['fields']))
         ) {
             /**
              * Add to the queue and call it from the getFieldsFromQuery() method
@@ -917,7 +926,7 @@ abstract class Bvb_Grid {
     /**
      * Set option hidden=1 on several columns
      *
-     * @param array $columns
+     * @param array $columns Array of columns that will be hidden
      *
      * @return Bvb_Grid
      */
@@ -932,8 +941,8 @@ abstract class Bvb_Grid {
     /**
      * Add a new dir to look for when formating a field
      *
-     * @param string $dir
-     * @param string $prefix
+     * @param string $dir    Classes Location
+     * @param string $prefix Classes prefix
      *
      * @return Bvb_Grid
      */
@@ -946,8 +955,8 @@ abstract class Bvb_Grid {
     /**
      * Format a field
      *
-     * @param string $value
-     * @param mixed $formatter
+     * @param string $value     Value to be formatted
+     * @param mixed  $formatter Formatter to be used
      *
      * @return mixed
      */
@@ -979,7 +988,7 @@ abstract class Bvb_Grid {
     /**
      * Number of records to show per page
      *
-     * @param array $pagination
+     * @param array $pagination key=>pair array of possible values of records per page for user to choose from
      *
      * @return Bvb_Grid
      */
@@ -992,7 +1001,7 @@ abstract class Bvb_Grid {
     /**
      * Number of records to show per page
      *
-     * @param int $number
+     * @param int $number Records to show
      *
      * @return Bvb_Grid
      */
@@ -1006,7 +1015,7 @@ abstract class Bvb_Grid {
      * Default values for filters.
      * This will be applied before displaying. However the user can still remove them.
      *
-     * @param array $filters
+     * @param array $filters Associative array with fields=>Values to define default filters values
      *
      * @return Bvb_Grid
      */
@@ -1056,7 +1065,7 @@ abstract class Bvb_Grid {
                     //Can have a grid id, so we also need to check for that situation
                 } elseif (in_array(substr($key, 0, - strlen($this->getGridId())), $fields)) {
                     if ($this->getGridId() != ''
-                            && substr($key, - strlen($this->getGridId())) == $this->getGridId()
+                        && substr($key, - strlen($this->getGridId())) == $this->getGridId()
                     ) {
                         $key = substr($key, 0, - strlen($this->getGridId()));
                     }
@@ -1108,21 +1117,24 @@ abstract class Bvb_Grid {
                         }
 
                         if (!isset($this->_filters[$key]['callback']['params'])
-                                || !is_array($this->_filters[$key]['callback']['params'])) {
+                            || !is_array($this->_filters[$key]['callback']['params'])
+                        ) {
                             $this->_filters[$key]['callback']['params'] = array();
                         }
 
                         $this->_filters[$key]['callback']['params'] = array_merge(
-                                $this->_filters[$key]['callback']['params'],
-                                array('field' => $key,
-                                      'value' => $filter,
-                                      'select' => $this->getSource()->getSelectObject()));
+                            $this->_filters[$key]['callback']['params'],
+                            array('field' => $key,
+                                  'value' => $filter,
+                                  'select' => $this->getSource()->getSelectObject())
+                        );
 
                         $result = call_user_func($this->_filters[$key]['callback']['function'],
-                                $this->_filters[$key]['callback']['params']);
-                    } elseif (isset($this->_data['fields'][$key]['search'])
-                            && is_array($this->_data['fields'][$key]['search'])
-                            && $this->_data['fields'][$key]['search']['fulltext'] == true
+                            $this->_filters[$key]['callback']['params']
+                        );
+                        } elseif (isset($this->_data['fields'][$key]['search'])
+                          && is_array($this->_data['fields'][$key]['search'])
+                          && $this->_data['fields'][$key]['search']['fulltext'] == true
                              ){
 
                         //Fulltext search activated by user. Only possible in MySQL server
@@ -1204,8 +1216,8 @@ abstract class Bvb_Grid {
      * This value comes from the user input
      * but can be override
      *
-     * @param string $field
-     * @param string $filter
+     * @param string $field  Field name
+     * @param string $filter Filter to apply to the field
      *
      * @return array
      */
@@ -1219,8 +1231,8 @@ abstract class Bvb_Grid {
 
         if ($this->_data['fields'][$field]['searchType'] == 'sqlExp'
             && isset($this->_data['fields'][$field]['searchSqlExp'])
-           ){
-            
+        ) {
+
             $op = 'sqlExp';
             $sqlExp = $this->_data['fields'][$field]['searchSqlExp'];
             $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
@@ -1272,8 +1284,8 @@ abstract class Bvb_Grid {
         if (isset($this->_data['fields']['searchTypeFixed'])
             && $this->_data['fields']['searchTypeFixed'] === true
             && $op != $this->_data['fields']['searchType']
-           ) {
-            
+        ) {
+
             $op = $this->_data['fields']['searchType'];
         }
         return array('op' => $op, 'filter' => $filter);
@@ -1296,7 +1308,7 @@ abstract class Bvb_Grid {
             || $orderf == 'ASC'
             || ($this->_paramsInSession === true
             && is_array($this->_sessionParams->order))
-           ) {
+        ) {
 
             array_pop($order1);
             $orderField = implode('_', $order1);
@@ -1361,13 +1373,12 @@ abstract class Bvb_Grid {
     }
 
     /**
-     *
-     * @todo Use a view helper to build url
-     *
      * Returns the url, without the param(s) specified
      *
-     * @param mixed $situation
-     * @param bool $allowAjax
+     * @param mixed $situation Array of params to be removed
+     * @param bool  $allowAjax If this URL will be called using ajax
+     *
+     * @todo Use a view helper to build url
      *
      * @return string
      */
@@ -1448,7 +1459,7 @@ abstract class Bvb_Grid {
                 || ($key == 'perPage' && $this->_recordsPerPage == $param)
                 || ($key == 'perPage' && (int) $param == 0)
                 || ($key == 'start' && (int) $param == 0)
-               ) {
+            ) {
                 continue;
             }
 
@@ -1479,8 +1490,8 @@ abstract class Bvb_Grid {
     /**
      * Return variable stored in info. Return default if value is not stored.
      *
-     * @param string $param
-     * @param mixed  $default
+     * @param string $param   Param to look for in the info var
+     * @param mixed  $default Return this value if param does not exist
      *
      * @return string
      */
@@ -1531,7 +1542,7 @@ abstract class Bvb_Grid {
                 $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
                 $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
 
-                $return[$key] = array('type' => 'extraField', 
+                $return[$key] = array('type' => 'extraField',
                                       'position' => 'left',
                                       'newrow' => $value['newrow'],
                                       'rowspan' => $value['rowspan'],
@@ -1547,7 +1558,7 @@ abstract class Bvb_Grid {
             }
 
             if ($this->_displayField($nf)) {
-                
+
                 if (!isset($this->_data['fields'][$nf]['newrow'])) {
                     $newrow = false;
                 } else {
@@ -1572,18 +1583,18 @@ abstract class Bvb_Grid {
                 if (is_array($this->_filters)
                     && array_key_exists($data[$i], $this->_filters)
                     && $this->_data['fields'][$nf]['search'] != false
-                   ) {
+                ) {
 
 
                     $filterValue = isset($this->_filtersValues[$data[$i]]) ? $this->_filtersValues[$data[$i]] : '';
-                    $return[] = array('type' => 'field', 
+                    $return[] = array('type' => 'field',
                                       'value' => $filterValue,
                                       'field' => $data[$i],
                                       'newrow' => $newrow,
                                       'rowspan' => $rowspan,
                                       'colspan' => $colspan);
                 } else {
-                    $return[] = array('type' => 'field', 
+                    $return[] = array('type' => 'field',
                                       'field' => $data[$i],
                                       'newrow' => $newrow,
                                       'rowspan' => $rowspan,
@@ -1599,7 +1610,7 @@ abstract class Bvb_Grid {
                 $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
                 $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
 
-                $return[$key] = array('type' => 'extraField', 
+                $return[$key] = array('type' => 'extraField',
                                       'position' => 'right',
                                       'newrow' => $value['newrow'],
                                       'rowspan' => $value['rowspan'],
@@ -1613,7 +1624,7 @@ abstract class Bvb_Grid {
     /**
      * Checks if a field should be displayed or is setted as 'remove'
      *
-     * @param string $field
+     * @param string $field Field Name
      *
      * @return bool
      */
@@ -1629,7 +1640,7 @@ abstract class Bvb_Grid {
         if ($this->_data['fields'][$field]['remove'] == 0
             && (($this->_data['fields'][$field]['hidden'] == 0)
             || ($this->_data['fields'][$field]['hidden'] == 1 && $this->_removeHiddenFields !== true))
-           ) {
+        ) {
             return true;
         }
 
@@ -1639,7 +1650,7 @@ abstract class Bvb_Grid {
     /**
      * Replaces the brackets in fields
      *
-     * @param array $fields
+     * @param array $fields Array of fields
      *
      * @return array
      */
@@ -1649,7 +1660,7 @@ abstract class Bvb_Grid {
         $map = array_map(create_function('$value', 'return "{{{$value}}}";'), $fields);
         if (isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders'])
             && $this->_options['grid']['enableUnmodifiedFieldPlaceholders'] == true
-           ) {
+        ) {
             // Enable placeholders for unmodified fields: Make an array of field names in format {{=$fieldname}}
             $map2 = array_map(create_function('$value', 'return "{{={$value}}}";'), $fields);
             $map = array_merge($map, $map2);
@@ -1743,7 +1754,7 @@ abstract class Bvb_Grid {
 
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
-                if ($this->is__($titles[$i]) === true) {
+                if ($this->isTranslated($titles[$i]) === true) {
                     $fieldTitle = $this->__($titles[$i]);
                 } else {
                     $fieldTitle = $this->__($this->_titles[$titles[$i]]);
@@ -1796,9 +1807,9 @@ abstract class Bvb_Grid {
     /**
      * Replaces {{field}} for the actual field value
      *
-     * @param string &$item
-     * @param string $key
-     * @param string $text
+     * @param string &$item Item to apply function
+     * @param string $key   Value to search
+     * @param string $text  Value to replace
      *
      * @return void
      */
@@ -1810,10 +1821,10 @@ abstract class Bvb_Grid {
     /**
      * Applies the format option to a field
      *
-     * @param string $newValue
-     * @param string $value
-     * @param array $search
-     * @param array $replace
+     * @param string $newValue Value generated
+     * @param string $value    Field Name
+     * @param array  $search   Variables to search for
+     * @param array  $replace  Replace variable with these values
      *
      * @return mixed
      */
@@ -1829,10 +1840,10 @@ abstract class Bvb_Grid {
     /**
      * Applies the callback option to a field
      *
-     * @param string $newValue
-     * @param string $value
-     * @param array $search
-     * @param array $replace
+     * @param string $newValue Value generated
+     * @param string $value    Field Name
+     * @param array  $search   Variables to search for
+     * @param array  $replace  Replace variable with these values
      *
      * @return mixed
      */
@@ -1859,9 +1870,11 @@ abstract class Bvb_Grid {
         }
 
         if (is_array($toReplace)) {
-            array_walk($toReplaceArray,
-                       array($this, '_replaceSpecialTags'),
-                       array('find' => $search,'replace' => $replace));
+                array_walk(
+                    $toReplaceArray,
+                    array($this, '_replaceSpecialTags'),
+                    array('find' => $search,'replace' => $replace)
+                );
         }
 
         for ($i = 0; $i <= count($toReplace); $i++) {
@@ -1878,9 +1891,9 @@ abstract class Bvb_Grid {
     /**
      * Applies the decorator to a fields
      *
-     * @param array $find
-     * @param array $replace
-     * @param string $value
+     * @param array  $find    Variables to search for
+     * @param array  $replace Replace variable with these values
+     * @param string $value   Field Name
      *
      * @return string
      */
@@ -1892,7 +1905,7 @@ abstract class Bvb_Grid {
     /**
      * Applies escape functions to a field
      *
-     * @param string $value
+     * @param string $value Field Value
      *
      * @return string
      */
@@ -1914,8 +1927,8 @@ abstract class Bvb_Grid {
     /**
      * Apply escape functions to column
      *
-     * @param string $field
-     * @param string $value
+     * @param string $field Field Name
+     * @param string $value Field Value
      *
      * @return mixed
      */
@@ -1943,10 +1956,10 @@ abstract class Bvb_Grid {
     /**
      * Applies the view helper to the field
      *
-     * @param string $newValue
-     * @param string $value
-     * @param array $search
-     * @param array $replace
+     * @param string $newValue Value generated
+     * @param string $value    Field Name
+     * @param array  $search   Variables to search for
+     * @param array  $replace  Replace variable with these values
      *
      * @return string
      */
@@ -1997,9 +2010,11 @@ abstract class Bvb_Grid {
             }
 
             if (isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders'])
-                    && $this->_options['grid']['enableUnmodifiedFieldPlaceholders'] == true) {
+                && $this->_options['grid']['enableUnmodifiedFieldPlaceholders'] == true
+            ) {
                 // Enable placeholders for unmodified fields:
-                // Append a second set of fields to the replacement map, with field names prefixed by '=' (ex. {{=field_name}})
+                // Append a second set of fields to the replacement map, with field names prefixed by '='
+                // (ex. {{=field_name}})
                 // These will allow access to the original field values unmodified by formatters, etc.
                 foreach ($fields as $field) {
                     $row[$field] = isset($row[$field]) ? $row[$field] : null;
@@ -2062,10 +2077,12 @@ abstract class Bvb_Grid {
                 $newValue = $this->_escapeField($field, $row[$field]);
 
                 if (isset($this->_data['fields'][$field]['callback']['function'])) {
-                    $newValue = $this->_applyFieldCallback($newValue,
-                                                           $this->_data['fields'][$field]['callback'],
-                                                           $search,
-                                                           $replace);
+                    $newValue = $this->_applyFieldCallback(
+                        $newValue,
+                        $this->_data['fields'][$field]['callback'],
+                        $search,
+                        $replace
+                    );
                     $replace[$field] = $newValue;
 
                     $search[] = '{{callback}}';
@@ -2073,10 +2090,12 @@ abstract class Bvb_Grid {
                 }
 
                 if (isset($this->_data['fields'][$field]['format'])) {
-                    $newValue = $this->_applyFieldFormat($newValue,
-                                                         $this->_data['fields'][$field]['format'],
-                                                         $search,
-                                                         $replace);
+                    $newValue = $this->_applyFieldFormat(
+                        $newValue,
+                        $this->_data['fields'][$field]['format'],
+                        $search,
+                        $replace
+                    );
                     $replace[$field] = $newValue;
 
                     $search[] = '{{format}}';
@@ -2084,10 +2103,12 @@ abstract class Bvb_Grid {
                 }
 
                 if (isset($this->_data['fields'][$field]['helper'])) {
-                    $newValue = $this->_applyFieldHelper($newValue,
-                                                         $this->_data['fields'][$field]['helper'],
-                                                         $search,
-                                                         $replace);
+                    $newValue = $this->_applyFieldHelper(
+                        $newValue,
+                        $this->_data['fields'][$field]['helper'],
+                        $search,
+                        $replace
+                    );
                     $replace[$field] = $newValue;
 
                     $search[] = '{{helper}}';
@@ -2095,15 +2116,17 @@ abstract class Bvb_Grid {
                 }
 
                 if (isset($this->_data['fields'][$field]['decorator'])) {
-                    $newValue = $this->_applyFieldDecorator($search, 
-                                                            $replace,
-                                                            $this->_data['fields'][$field]['decorator']);
+                    $newValue = $this->_applyFieldDecorator(
+                        $search,
+                        $replace,
+                        $this->_data['fields'][$field]['decorator']
+                    );
                 }
 
                 if ($this->_displayField($field)) {
                     if (isset($this->_data['fields'][$field]['translate'])
                         && $this->_data['fields'][$field]['translate'] == true
-                       ) {
+                    ) {
                         $newValue = $this->__($newValue);
                     }
 
@@ -2169,7 +2192,7 @@ abstract class Bvb_Grid {
     /**
      * Get the extra fields for a give position
      *
-     * @param string $position
+     * @param string $position Postion name
      *
      * @return array
      */
@@ -2193,9 +2216,9 @@ abstract class Bvb_Grid {
     /**
      * Build extra fields (apply callbacks, helpers, etc)
      *
-     * @param string $field
-     * @param array $search
-     * @param array $replace
+     * @param string $field   Field Name
+     * @param array  $search  Variables to search for
+     * @param array  $replace Replace variable with these values
      *
      * @return array
      */
@@ -2239,7 +2262,7 @@ abstract class Bvb_Grid {
     /**
      * Apply SQL Functions
      *
-     * @param array $where
+     * @param array $where Where condition to be applied
      *
      * @return array
      */
@@ -2299,7 +2322,7 @@ abstract class Bvb_Grid {
     /**
      * Make sure the fields exists on the database, if not remove them from the array
      *
-     * @param array $fields
+     * @param array $fields Array of fields to be validated
      *
      * @return void
      */
@@ -2389,8 +2412,6 @@ abstract class Bvb_Grid {
      * If we get an empty array, we then create a new one with all the fields specified
      * in $this->_fields method
      *
-     * @param string $filters
-     *
      * @return array
      */
     protected function _validateFilters()
@@ -2431,8 +2452,10 @@ abstract class Bvb_Grid {
         }
 
         if ((is_array($this->_defaultFilters) || $this->_paramsInSession === true)
-                && !$this->hasFilters()
-                && !$this->getParam('noFilters')) {
+            && !$this->hasFilters()
+            && !$this->getParam('noFilters')
+        ) {
+
             foreach ($this->_data['fields'] as $key => $value) {
                 if (!$this->_displayField($key)) {
                     continue;
@@ -2491,7 +2514,7 @@ abstract class Bvb_Grid {
             && $this->_deployName == 'table'
             && (is_array($this->_detailColumns)
             || $this->getParam('gridRemove'))
-           ) {
+        ) {
             $this->_isDetail = true;
         }
 
@@ -2582,7 +2605,7 @@ abstract class Bvb_Grid {
     /**
      * Get details about a column
      *
-     * @param string $column
+     * @param string $column Column name to be returned
      *
      * @return mixed
      */
@@ -2594,7 +2617,7 @@ abstract class Bvb_Grid {
     /**
      * Convert Object to Array
      *
-     * @param object $data
+     * @param object $data Obejct to be converted to array
      *
      * @return array
      */
@@ -2612,9 +2635,9 @@ abstract class Bvb_Grid {
     /**
      * set template locations
      *
-     * @param string $dir
-     * @param string $prefix
-     * @param string $type
+     * @param string $dir    Classes Location
+     * @param string $prefix Classes Prefix
+     * @param string $type   Template Type
      *
      * @return Bvb_Grid
      */
@@ -2631,9 +2654,9 @@ abstract class Bvb_Grid {
     /**
      * Define the template to be used
      *
-     * @param string $template
-     * @param string $output
-     * @param array $options
+     * @param string $template Template Name
+     * @param string $output   Outpute type. It's the deploy class name
+     * @param array  $options  Template Options
      *
      * @return void
      */
@@ -2791,7 +2814,6 @@ abstract class Bvb_Grid {
         }
 
 
-
         if ($this->_allowDelete == 1) {
             $totalFields[$row]++;
         }
@@ -2812,7 +2834,7 @@ abstract class Bvb_Grid {
     /**
      * Returns a field and its options
      *
-     * @param string $field
+     * @param string $field Field Name
      *
      * @return mixed
      */
@@ -2825,7 +2847,7 @@ abstract class Bvb_Grid {
      * Return fields list.
      * Optional param returns also fields options
      *
-     * @param bool $returnOptions
+     * @param bool $returnOptions If grid should return all options or only fields names
      *
      * @return array
      */
@@ -2840,7 +2862,8 @@ abstract class Bvb_Grid {
 
     /**
      * Add filters
-     * @param object $filters
+     *
+     * @param object $filters Filters object to be added to the grid
      *
      * @return Bvb_Grid
      */
@@ -3007,12 +3030,6 @@ abstract class Bvb_Grid {
         return $grid;
     }
 
-    /**
-     * Makes shure that config callbacks will be used once
-     *
-     * @var boolean
-     */
-    protected $_runCallbacks = true;
 
     /**
      * Runs configuration callbacks
@@ -3092,7 +3109,7 @@ abstract class Bvb_Grid {
     /**
      * This is useful if the deploy class has no intention of using hidden fields
      *
-     * @param bool $value
+     * @param bool $value Field Name
      *
      * @return Bvb_Grid
      */
@@ -3105,7 +3122,7 @@ abstract class Bvb_Grid {
     /**
      * Adds more options to the grid
      *
-     * @param mixed $options
+     * @param mixed $options Associative array of options to be applied
      *
      * @return Bvb_Grid
      */
@@ -3124,7 +3141,7 @@ abstract class Bvb_Grid {
     /**
      * Defines options to the grid
      *
-     * @param array $options
+     * @param array $options Associative array of options to be applied
      *
      * @return Bvb_Grid
      */
@@ -3207,7 +3224,7 @@ abstract class Bvb_Grid {
     /**
      * Sets the grid id, to allow multiples instances per page
      *
-     * @param string $id
+     * @param string $id Grid to be used in grid
      *
      * @return Bvb_Grid
      */
@@ -3222,7 +3239,7 @@ abstract class Bvb_Grid {
      *
      * ""=>emty string is a valid value
      *
-     * @param bool $forceId
+     * @param bool $forceId If we should force an id to be returned in case no one is set
      *
      * @return string
      */
@@ -3239,7 +3256,7 @@ abstract class Bvb_Grid {
     /**
      * Set user defined params for templates.
      *
-     * @param array $options
+     * @param array $options Associative array o options to pass to template
      *
      * @return Bvb_Grid
      */
@@ -3252,8 +3269,8 @@ abstract class Bvb_Grid {
     /**
      * Set user defined params for templates.
      *
-     * @param string $name
-     * @param mixed $value
+     * @param string $name  Name of the variable
+     * @param mixed  $value value of the variable
      *
      * @return Bvb_Grid
      */
@@ -3266,7 +3283,7 @@ abstract class Bvb_Grid {
     /**
      * Adds user defined params for templates.
      *
-     * @param array $options
+     * @param array $options Options to be passed to the template
      *
      * @return Bvb_Grid
      */
@@ -3289,7 +3306,7 @@ abstract class Bvb_Grid {
     /**
      * Reset options for column
      *
-     * @param string $column
+     * @param string $column Column which should have options reseted
      *
      * @return Bvb_Grid
      */
@@ -3305,7 +3322,7 @@ abstract class Bvb_Grid {
     /**
      * Reset options for several columns
      *
-     * @param array $columns
+     * @param array $columns Columns which should have options reseted
      *
      * @return Bvb_Grid
      */
@@ -3321,7 +3338,7 @@ abstract class Bvb_Grid {
     /**
      * Defines which columns will be available to user
      *
-     * @param array $columns
+     * @param array $columns Columns to be showed
      *
      * @return Bvb_Grid
      */
@@ -3334,7 +3351,7 @@ abstract class Bvb_Grid {
     /**
      * Adds more columns to be showed
      *
-     * @param array $columns
+     * @param array $columns Columns to be showed
      *
      * @return Bvb_Grid
      */
@@ -3347,7 +3364,7 @@ abstract class Bvb_Grid {
     /**
      * Defines which columns will be available on detail view
      *
-     * @param array $columns
+     * @param array $columns Columns to be showed
      *
      * @return Bvb_Grid
      */
@@ -3360,7 +3377,7 @@ abstract class Bvb_Grid {
     /**
      * Adds more columns that will be available on detail view
      *
-     * @param array $columns
+     * @param array $columns Array of columns to be showed within detail view
      *
      * @return Bvb_Grid
      */
@@ -3410,8 +3427,8 @@ abstract class Bvb_Grid {
     /**
      * Get a param from the $this->_ctrlParams appending the grid id
      *
-     * @param string $param
-     * @param mixed $default
+     * @param string $param   Param Name
+     * @param mixed  $default Default value to be returned if param does not exists
      *
      * @return mixed
      */
@@ -3434,8 +3451,8 @@ abstract class Bvb_Grid {
     /**
      * Redirects a user to a give URL and exits
      *
-     * @param string $url
-     * @param int $code
+     * @param string $url  URL to redirect
+     * @param int    $code URL Response code
      *
      * @return void
      */
@@ -3450,8 +3467,8 @@ abstract class Bvb_Grid {
     /**
      * Set a param to be used by controller.
      *
-     * @param string $param
-     * @param mixed $value
+     * @param string $param Param Name
+     * @param mixed  $value Param value
      *
      * @return Bvb_Grid
      */
@@ -3464,7 +3481,7 @@ abstract class Bvb_Grid {
     /**
      * Remove a param
      *
-     * @param string $param
+     * @param string $param Param Name
      *
      * @return Bvb_Grid
      */
@@ -3488,7 +3505,7 @@ abstract class Bvb_Grid {
     /**
      * Defines a new set of params
      *
-     * @param array $params
+     * @param array $params Associative array of params to use
      *
      * @return Bvb_Grid
      */
@@ -3498,12 +3515,27 @@ abstract class Bvb_Grid {
         return $this;
     }
 
+    /**
+     * Add one more para to the grid
+     *
+     * @param string $key   Param name
+     * @param string $value Param Value
+     *
+     * @return Bvb_Grid
+     */
     public function addParam($key, $value)
     {
         $this->_ctrlParams[$key] = $value;
         return $this;
     }
 
+    /**
+     * Use this method to add more params to the grid.
+     *
+     * @param array $params Associative array of params to be added
+     *
+     * @return Bvb_Grid
+     */
     public function addParams(array $params)
     {
         $this->_ctrlParams = array_merge($this->_ctrlParams, $params);
@@ -3514,7 +3546,7 @@ abstract class Bvb_Grid {
      * Defines which export options are available
      * Ex: array('word','pdf');
      *
-     * @param array $export
+     * @param array $export Array of key/pairs to be available when exporting
      *
      * @return Bvb_Grid
      */
@@ -3524,9 +3556,18 @@ abstract class Bvb_Grid {
         return $this;
     }
 
+    /**
+     * Adds a new export option
+     *
+     * @param string $name    Deploy classe name to be available when exporting
+     * @param array  $options Options to be applyied
+     *
+     * @return Bvb_Grid
+     */
     public function addExport($name, $options)
     {
         $this->_export[$name] = $options;
+        return $this;
     }
 
     /**
@@ -3542,7 +3583,7 @@ abstract class Bvb_Grid {
     /**
      * Defines SQL expressions
      *
-     * @param array $exp
+     * @param array $exp Array of experessions to be built
      *
      * @return Bvb_Grid
      */
@@ -3555,7 +3596,7 @@ abstract class Bvb_Grid {
     /**
      * Defines the route URL to be applied
      *
-     * @param string $url
+     * @param string $url string to be prefixed on every URL
      *
      * @return Bvb_Grid
      */
@@ -3578,7 +3619,7 @@ abstract class Bvb_Grid {
     /**
      * Loads the filter to be rendered
      *
-     * @param mixed $render
+     * @param mixed $render Type of render to be used
      *
      * @return mixed
      */
@@ -3620,8 +3661,8 @@ abstract class Bvb_Grid {
     /**
      * Adds a new dir to check for filters
      *
-     * @param string $dir
-     * @param string $prefix
+     * @param string $dir    Class Name
+     * @param string $prefix Dir where classes are located
      *
      * @return Bvb_Grid
      */
@@ -3651,13 +3692,14 @@ abstract class Bvb_Grid {
         return $this->getSource()->getSelectObject();
     }
 
+
     /**
      * Adds a new external filters
      *
-     * @param string $fieldId
-     * @param string $callback
-     * @throws Bvb_Grid_Exception
+     * @param string $fieldId  Field id to be used
+     * @param string $callback Callback to be called. Will receive. $id,$value,$select
      *
+     * @throws Bvb_Grid_Exception
      * @return Bvb_Grid
      */
     public function addExternalFilter($fieldId, $callback)
@@ -3685,7 +3727,7 @@ abstract class Bvb_Grid {
     /**
      * Removes a specified filter
      *
-     * @param string $fieldId
+     * @param string $fieldId Field to be removed
      *
      * @return Bvb_Grid
      */
@@ -3701,7 +3743,7 @@ abstract class Bvb_Grid {
     /**
      * Defines if filters should be showned in export
      *
-     * @param bool $show
+     * @param bool $show If we should show filters or not when exporting
      *
      * @return Bvb_Grid
      */
@@ -3716,7 +3758,7 @@ abstract class Bvb_Grid {
      * Whetever to save or not in session filters and order
      * This is based on gridId, if not provided, action_controller_module
      *
-     * @param bool $status
+     * @param bool $status The status to be setted
      *
      * @return Bvb_Grid
      */
@@ -3729,7 +3771,7 @@ abstract class Bvb_Grid {
     /**
      * Defines options for deployment
      *
-     * @param array $options
+     * @param array $options Asociative array with options for deploy
      *
      * @return Bvb_Grid
      */
@@ -3744,8 +3786,8 @@ abstract class Bvb_Grid {
     /**
      * Defines option for deployment
      *
-     * @param string $option
-     * @param string $value
+     * @param string $option Options name
+     * @param string $value  Option value
      *
      * @return Bvb_Grid
      */
@@ -3758,8 +3800,8 @@ abstract class Bvb_Grid {
     /**
      * Retrieve a value and return $default if there is no element set.
      *
-     * @param string $name
-     * @param mixed $default
+     * @param string $name    The key name to de fetched
+     * @param mixed  $default The value to be returned if key does not exist
      *
      * @return mixed
      */
@@ -3816,8 +3858,8 @@ abstract class Bvb_Grid {
     /**
      * Defines mass actions, overriden any previous
      *
-     * @param array $options
-     * @param array $fields
+     * @param array $options Options to be made available to user
+     * @param array $fields  Fields to be used instead field identifier
      *
      * @return string
      */
@@ -3848,8 +3890,8 @@ abstract class Bvb_Grid {
     /**
      * Adds a new mass action option
      *
-     * @param array $options
-     * @param mixed $fields
+     * @param array $options Options to be made available to user
+     * @param mixed $fields  Fields to be used instead field identifier
      *
      * @return Bvb_Grid
      */
@@ -3891,9 +3933,10 @@ abstract class Bvb_Grid {
     /**
      * Build an array based on the given key name (why this never made it to PHP core I'll never know).
      *
+     * @param array  $array Array to be used
+     * @param string $key   Key to be
+     *
      * @see http://www.php.net/manual/en/function.array-map.php#96269
-     * @param array $array
-     * @param string $key
      *
      * @return array
      */
@@ -3914,7 +3957,8 @@ abstract class Bvb_Grid {
     /**
      * Defines the default grid configuration
      *
-     * @param Zend_Config|array $options
+     * @param Zend_Config|array $options Config Options
+     *
      * @throws Bvb_Grid_Exception
      * @static
      *
@@ -3944,7 +3988,7 @@ abstract class Bvb_Grid {
     /**
      * Defines the separator for primary keys or fields for mass actions post values
      *
-     * @param string $separator
+     * @param string $separator Separator to be used in post fields
      *
      * @return Bvb_Grid
      */
@@ -3962,7 +4006,6 @@ abstract class Bvb_Grid {
 
     /**
      * Returns the current Mass Action separator for post values
-     * Enter description here ...
      *
      * @return string
      */
@@ -3971,6 +4014,13 @@ abstract class Bvb_Grid {
         return $this->_massActionsSeparator;
     }
 
+    /**
+     * Reutrns fields alias
+     *
+     * @param string $field Field alias
+     *
+     * @return string
+     */
     public function getFieldAlias($field)
     {
         foreach ($this->getFields(true) as $alias => $value) {
