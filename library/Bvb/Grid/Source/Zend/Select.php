@@ -18,25 +18,52 @@
  * @link      http://zfdatagrid.com
  */
 
-class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_SourceInterface
+class Bvb_Grid_Source_Zend_Select
+    extends Bvb_Grid_Source_Db_DbAbstract
+        implements Bvb_Grid_Source_SourceInterface
 {
 
+    /**
+     *
+     * @var Zend_Db_Select
+     */
     protected $_select;
-
+    /**
+     *
+     * @var string
+     */
     protected $_server;
-
+    /**
+     *
+     * @var array
+     */
     protected $_describeTables;
-
+    /**
+     *
+     * @var Zend_Cache
+     */
     protected $_cache;
-
+    /**
+     *
+     * @var array
+     */
     protected $_fields;
-
+    /**
+     *
+     * @var mixed
+     */
     protected $_totalRecords = null;
 
-
-    public function __construct (Zend_Db_Select $select)
+    /**
+     * Class construct.
+     *
+     * @param Zend_Db_Select $select Select instance
+     *
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function __construct(Zend_Db_Select $select)
     {
-        if ( count($select->getPart('UNION')) > 0 ) {
+        if (count($select->getPart('UNION')) > 0) {
             throw new Bvb_Grid_Exception('UNION queries not supported yet');
         }
 
@@ -45,20 +72,20 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $this;
     }
 
-
     /**
      * Define the query using Zend_Db_Select instance
      *
-     * @param Zend_Db_Select $select
+     * @param Zend_Db_Select $select Zend_Db_Select instance
+     *
      * @return $this
      */
-    public function init (Zend_Db_Select $select)
+    public function init(Zend_Db_Select $select)
     {
         $this->_setDb($select->getAdapter());
         $adapter = get_class($select->getAdapter());
         $adapter = str_replace("Zend_Db_Adapter_", "", $adapter);
 
-        if ( stripos($adapter, 'mysql') !== false ) {
+        if (stripos($adapter, 'mysql') !== false) {
             $this->_server = 'mysql';
         } else {
             $adapter = str_replace('Pdo_', '', $adapter);
@@ -68,40 +95,53 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $this;
     }
 
-
     /**
      * Set db
-     * @param Zend_Db_Adapter_Abstract $db
+     *
+     * @param Zend_Db_Adapter_Abstract $db DB instance
+     *
+     * @return Bvb_Grid_Source_Zend_Select
      */
-    protected function _setDb (Zend_Db_Adapter_Abstract $db)
+    protected function _setDb(Zend_Db_Adapter_Abstract $db)
     {
         $this->_db = $db;
         return $this;
     }
 
-
-    public function hasCrud ()
+    /**
+     * Checks id this data source supports CRUD operations
+     *
+     * @return true
+     */
+    public function hasCrud()
     {
         return true;
     }
 
-
-    public function getRecord ($table, array $condition)
+    /**
+     * Returns a specified record
+     *
+     * @param string $table     Table Name
+     * @param array  $condition Conditions to build query
+     *
+     * @return false|array
+     */
+    public function getRecord($table, array $condition)
     {
         $select = new Zend_Db_Select($this->_getDb());
         $select->from($table);
 
-        foreach ( $condition as $field => $value ) {
-            if ( stripos($field, '.') !== false ) {
+        foreach ($condition as $field => $value) {
+            if (stripos($field, '.') !== false) {
                 $field = substr($field, stripos($field, '.') + 1);
             }
 
             $select->where($field . '=?', $value);
         }
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $select->query(Zend_Db::FETCH_ASSOC);
                 $return = $final->fetchAll();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -113,49 +153,48 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $final = array();
 
-        foreach ( $return[0] as $key => $value ) {
+        foreach ($return[0] as $key => $value) {
             $final[$key] = $value;
         }
 
-        if ( count($final) == 0 ) {
+        if (count($final) == 0) {
             return false;
         }
 
         return $final;
     }
 
-
     /**
      * Build the fields based on Zend_Db_Select
-     * @param $fields
-     * @param $tables
+     *
+     * @return array
      */
-    public function buildFields ()
+    public function buildFields()
     {
         $fields = $this->_select->getPart(Zend_Db_Select::COLUMNS);
         $tables = $this->_select->getPart(Zend_Db_Select::FROM);
 
         $returnFields = array();
 
-        foreach ( $fields as $field => $value ) {
+        foreach ($fields as $field => $value) {
             /**
              * Select all fields from the table
              */
-            if ( (string) $value[1] == '*' ) {
-                if ( array_key_exists($value[0], $tables) ) {
+            if ((string) $value[1] == '*') {
+                if (array_key_exists($value[0], $tables)) {
                     $tableFields = $this->getDescribeTable($tables[$value[0]]['tableName']);
                 }
                 $tableFields = array_keys($tableFields);
 
-                foreach ( $tableFields as $field ) {
+                foreach ($tableFields as $field) {
                     $title = ucwords(str_replace('_', ' ', $field));
                     $returnFields[$field] = array('title' => $title, 'field' => $value[0] . '.' . $field);
                 }
             } else {
-                if ( is_object($value[1]) ) {
+                if (is_object($value[1])) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
                     $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[2]);
-                } elseif ( strlen($value[2]) > 0 ) {
+                } elseif (strlen($value[2]) > 0) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
                     $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[1]);
                 } else {
@@ -170,19 +209,18 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $returnFields;
     }
 
-
     /**
      * Get table description and then save it to a array.
      *
-     * @param array|string $table
+     * @param array|string $table Table Name
      * @return array
      */
-    public function getDescribeTable ($table)
+    public function getDescribeTable($table)
     {
-        if ( ! isset($this->_describeTables[$table]) || ! is_array($this->_describeTables[$table]) ) {
-            if ( $this->_cache['use'] == 1 ) {
+        if (!isset($this->_describeTables[$table]) || !is_array($this->_describeTables[$table])) {
+            if ($this->_cache['use'] == 1) {
                 $hash = 'Bvb_Grid' . md5($table);
-                if ( ! $result = $this->_cache['instance']->load($hash) ) {
+                if (!$result = $this->_cache['instance']->load($hash)) {
                     $result = $this->_getDb()->describeTable($table);
                     $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
                 }
@@ -195,28 +233,36 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $this->_describeTables[$table];
     }
 
-
-    public function _getDb ()
+    /**
+     * Returns current db information
+     *
+     * @return Zend_Db_Select
+     */
+    protected function _getDb()
     {
         return $this->_db;
     }
 
-
-    public function execute ()
+    /**
+     * Executes the current query and returns an associative array of results
+     *
+     * @return array
+     */
+    public function execute()
     {
-        if ( $this->_server == 'mysql' ) {
+        if ($this->_server == 'mysql') {
             $ghostColumn = $this->getColumns();
 
             $this->_select->reset('columns');
 
             $this->_select->columns(array('ZFG_GHOST' => new Zend_Db_Expr("SQL_CALC_FOUND_ROWS 1+1")));
 
-            foreach ( $ghostColumn as $value ) {
-                if ( $value[2] == 'ZFG_GHOST' ) continue;
+            foreach ($ghostColumn as $value) {
+                if ($value[2] == 'ZFG_GHOST') continue;
 
-                if ( is_object($value[1]) ) {
+                if (is_object($value[1])) {
                     $this->_select->columns(array($value[2] => $value[1]), $value[0]);
-                } elseif ( $value[2] != '' ) {
+                } elseif ($value[2] != '') {
                     $this->_select->columns(array($value[2] => $value[1]), $value[0]);
                 } else {
                     $this->_select->columns($value[1], $value[0]);
@@ -224,9 +270,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
         }
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
                 $result = $final->fetchAll();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -236,7 +282,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
 
-            if ( $this->_server == 'mysql' ) {
+            if ($this->_server == 'mysql') {
                 $this->_totalRecords = $this->_select->getAdapter()->fetchOne('select FOUND_ROWS()');
             }
         }
@@ -244,11 +290,17 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $result;
     }
 
-
-    public function fetchDetail (array $where)
+    /**
+     * Get full details for a given record
+     *
+     * @param array $where Conditions to build query
+     *
+     * @return false|array
+     */
+    public function fetchDetail(array $where)
     {
-        foreach ( $where as $field => $value ) {
-            if ( array_key_exists($field, $this->_fields) ) {
+        foreach ($where as $field => $value) {
+            if (array_key_exists($field, $this->_fields)) {
                 $field = $this->_fields[$field]['field'];
             }
             $this->_select->where($field . '=?', $value);
@@ -257,9 +309,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
         $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
                 $result = $final->fetchAll();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -269,22 +321,21 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $result = $final->fetchAll();
         }
 
-        if ( ! isset($result[0]) ) {
+        if (!isset($result[0])) {
             return false;
         }
 
         return $result[0];
     }
 
-
     /**
      * Count the rows total without the limit
      *
-     * @return void
+     * @return int
      */
-    public function getTotalRecords ()
+    public function getTotalRecords()
     {
-        if ( ! is_null($this->_totalRecords) ) {
+        if (!is_null($this->_totalRecords)) {
             return $this->_totalRecords;
         }
 
@@ -292,14 +343,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $selectCount = clone $this->_select;
 
-        foreach ( $selectCount->getPart('columns') as $value ) {
-            if ( $value[1] instanceof Zend_Db_Expr ) {
+        foreach ($selectCount->getPart('columns') as $value) {
+            if ($value[1] instanceof Zend_Db_Expr) {
                 $hasExp = true;
                 break;
             }
         }
 
-        if ( $hasExp == false ) {
+        if ($hasExp == false) {
             $selectCount->reset(Zend_Db_Select::COLUMNS);
             $selectCount->columns(new Zend_Db_Expr('COUNT(*) AS TOTAL'));
         }
@@ -308,9 +359,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
                 $result = array_change_key_case($final->fetch(), CASE_UPPER);
                 $count = (int) $result['TOTAL'];
@@ -325,9 +376,16 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $count;
     }
 
-
-
-    public function getMassActionsIds ($table, $fields)
+    /**
+     * This method will fetch fields and return there values.
+     * Those values will be used to build mass actions id's
+     *
+     * @param string $table  Table Name
+     * @param string $fields Fields to fetch
+     *
+     * @return string
+     */
+    public function getMassActionsIds($table, $fields)
     {
         $select = clone $this->_select;
 
@@ -336,15 +394,15 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::LIMIT_COUNT);
         $select->reset(Zend_Db_Select::ORDER);
 
-        if ( count($fields) == 0 ) {
+        if (count($fields) == 0) {
             $pks = $this->getIdentifierColumns($table);
         } else {
             $pks = $fields;
         }
 
-        if ( count($pks) > 1 ) {
+        if (count($pks) > 1) {
             $concat = '';
-            foreach ( $pks as $conc ) {
+            foreach ($pks as $conc) {
                 $concat .= $this->_getDb()->quoteIdentifier($conc) . " ,'-' ,";
             }
             $concat = rtrim($concat, "'-' ,");
@@ -358,21 +416,32 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $result = $final->fetchAll();
 
         $return = array();
-        foreach ( $result as $value ) {
+        foreach ($result as $value) {
             $return[] = $value['ids'];
         }
 
         return implode(',', $return);
     }
 
-
-    public function getTableList ()
+    /**
+     * Returns the current table list
+     *
+     * @return Zend_Db_Select
+     */
+    public function getTableList()
     {
         return $this->_select->getPart(Zend_Db_Select::FROM);
     }
 
-
-    public function getFilterValuesBasedOnFieldDefinition ($field)
+    /**
+     * This method will check field type and, if possible,
+     * build an array of possible values for filtering
+     *
+     * @param string $field Field Name
+     *
+     * @return array
+     */
+    public function getFilterValuesBasedOnFieldDefinition($field)
     {
         $tableList = $this->getTableList();
 
@@ -380,21 +449,21 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $tableName = reset($explode);
         $field = end($explode);
 
-        if ( array_key_exists($tableName, $tableList) ) {
+        if (array_key_exists($tableName, $tableList)) {
             $schema = $tableList[$tableName]['schema'];
             $tableName = $tableList[$tableName]['tableName'];
         }
 
         $table = $this->getDescribeTable($tableName, $schema);
 
-        if ( ! isset($table[$field]) ) {
+        if (!isset($table[$field])) {
             return 'text';
         }
         $type = $table[$field]['DATA_TYPE'];
 
         $return = 'text';
 
-        if ( substr($type, 0, 4) == 'enum' ) {
+        if (substr($type, 0, 4) == 'enum') {
             preg_match_all('/\'(.*?)\'/', $type, $result);
 
             $return = array_combine($result[1], $result[1]);
@@ -403,8 +472,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $return;
     }
 
-
-    public function getFieldType ($field)
+    /**
+     * Returns field type
+     *
+     * @param string $field Field name
+     *
+     * @return string
+     */
+    public function getFieldType($field)
     {
         $tableList = $this->getTableList();
 
@@ -412,9 +487,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $tableName = reset($explode);
         $field = end($explode);
 
-        if ( array_key_exists($tableName, $tableList) ) {
+        if (array_key_exists($tableName, $tableList)) {
 
-            if ( $tableList[$tableName]['schema'] != NULL ) {
+            if ($tableList[$tableName]['schema'] != null) {
                 $tableName = $tableList[$tableName]['schema'] . "." . $tableList[$tableName]['tableName'];
             } else {
                 $tableName = $tableList[$tableName]['tableName'];
@@ -426,30 +501,34 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $table = $this->getDescribeTable($tableName, $schema);
         $type = $table[$field]['DATA_TYPE'];
 
-        if ( substr($type, 0, 3) == 'set' ) {
+        if (substr($type, 0, 3) == 'set') {
             return 'set';
         }
 
         return $type;
     }
 
-
-    public function getMainTable ()
+    /**
+     * Returns a list of current tables used in queries
+     *
+     * @return array
+     */
+    public function getMainTable()
     {
         $return = array();
 
         $from = $this->_select->getPart(Zend_Db_Select::FROM);
 
-        foreach ( $from as $key => $tables ) {
+        foreach ($from as $key => $tables) {
 
-            if ( $tables['joinType'] == 'from' || count($from) == 1 ) {
+            if ($tables['joinType'] == 'from' || count($from) == 1) {
                 $return['table'] = $tables['tableName'];
                 $return['schema'] = $tables['schema'];
                 break;
             }
         }
 
-        if ( count($return) == 0 ) {
+        if (count($return) == 0) {
             $table = reset($from);
             $return['table'] = $table['tableName'];
         }
@@ -457,20 +536,28 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $return;
     }
 
-
-    public function buildQueryOrder ($field, $order, $reset = false)
+    /**
+     * Builds query order
+     *
+     * @param string $field Field name
+     * @param string $order Query Sort Order
+     * @param bool   $reset If we should reset the current order
+     *
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function buildQueryOrder($field, $order, $reset = false)
     {
-        if ( ! array_key_exists($field, $this->_fields) ) {
+        if (!array_key_exists($field, $this->_fields)) {
             return $this;
         }
 
-        foreach ( $this->_select->getPart(Zend_Db_Select::COLUMNS) as $col ) {
-            if ( ($col[0] . '.' . $col[2] == $field) && is_object($col[1]) ) {
+        foreach ($this->_select->getPart(Zend_Db_Select::COLUMNS) as $col) {
+            if (($col[0] . '.' . $col[2] == $field) && is_object($col[1])) {
                 $field = $col[2];
             }
         }
 
-        if ( $reset === true ) {
+        if ($reset === true) {
             $this->_select->reset('order');
         }
 
@@ -478,32 +565,57 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $this;
     }
 
-
-    public function buildQueryLimit ($start, $offset)
+    /**
+     * Set's the query limit
+     *
+     * @param int $start  Offset Start
+     * @param int $offset Offset End
+     *
+     * @return Zend_Db_Select
+     */
+    public function buildQueryLimit($start, $offset)
     {
         $this->_select->limit($start, $offset);
+        return $this;
     }
 
-
-    public function getSelectObject ()
+    /**
+     * Returns Zend_Db_Select instance
+     *
+     * @return Zend_Db_Select
+     */
+    public function getSelectObject()
     {
         return $this->_select;
     }
 
-
-    public function getSelectOrder ()
+    /**
+     * Returns current query order
+     *
+     * @return mixed
+     */
+    public function getSelectOrder()
     {
         $result = $this->_select->getPart(Zend_Db_Select::ORDER);
 
-        if ( count($result) == 0 ) {
+        if (count($result) == 0) {
             return array();
         }
 
         return $result[0];
     }
 
-
-    public function getDistinctValuesForFilters ($field, $fieldValue, $order = 'name ASC')
+    /**
+     * This method will return an associative array
+     * for use in filters
+     *
+     * @param string $field      Field Name
+     * @param string $fieldValue Field Value
+     * @param string $order      Query Sort Order
+     *
+     * @return array
+     */
+    public function getDistinctValuesForFilters($field, $fieldValue, $order = 'name ASC')
     {
         $distinct = clone $this->_select;
 
@@ -516,9 +628,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $distinct->columns(array('value' => $fieldValue));
         $distinct->order($order);
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($distinct->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $result = $distinct->query(Zend_Db::FETCH_ASSOC);
                 $result = $result->fetchAll();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -530,22 +642,35 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $final = array();
 
-        foreach ( $result as $value ) {
+        foreach ($result as $value) {
             $final[$value['field']] = $value['value'];
         }
 
         return $final;
     }
 
-
-    public function getValuesForFiltersFromTable ($table, $field, $fieldValue, $order = 'name ASC')
+    /**
+     * This method will return a associative array for building filters
+     * based on a table query
+     *
+     * @param string $table      Table Name
+     * @param string $field      Field's Name
+     * @param string $fieldValue Field's value
+     * @param string $order      Query Order
+     *
+     * @return array
+     */
+    public function getValuesForFiltersFromTable($table, $field, $fieldValue, $order = 'name ASC')
     {
 
-        $select = $this->_getDb()->select()->from($table, array('field' => $field, 'value' => $fieldValue))->order($order);
+        $select = $this->_getDb()
+            ->select()
+            ->from($table, array('field' => $field, 'value' => $fieldValue))
+            ->order($order);
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $result = $select->query(Zend_Db::FETCH_ASSOC);
                 $result = $result->fetchAll();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -557,29 +682,36 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $final = array();
 
-        foreach ( $result as $value ) {
+        foreach ($result as $value) {
             $final[$value['field']] = $value['value'];
         }
 
         return $final;
     }
 
-
-    public function getSqlExp (array $value, $where = array())
+    /**
+     * Returns Sql expressions
+     *
+     * @param array $value SQL options
+     * @param array $where Additional where condition
+     *
+     * @return int
+     */
+    public function getSqlExp(array $value, $where = array())
     {
         $cols = array();
-        foreach ( $this->_select->getPart('columns') as $col ) {
-            if ( $col[1] instanceof Zend_Db_Expr ) {
+        foreach ($this->_select->getPart('columns') as $col) {
+            if ($col[1] instanceof Zend_Db_Expr) {
                 $cols[$col[2]] = $col[1]->__toString();
             }
         }
 
-        if ( array_key_exists($value['value'], $cols) ) {
+        if (array_key_exists($value['value'], $cols)) {
             $value['value'] = $cols[$value['value']];
         }
 
         $valor = '';
-        foreach ( $value['functions'] as $final ) {
+        foreach ($value['functions'] as $final) {
             $valor .= $final . '(';
         }
         $valor .= $value['value'] . str_repeat(')', count($value['functions']));
@@ -592,16 +724,16 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $select->reset(Zend_Db_Select::GROUP);
         $select->columns(new Zend_Db_Expr($valor . ' AS TOTAL'));
 
-        foreach ( $where as $key => $value ) {
-            if ( strlen(trim($value)) < 1 ) {
+        foreach ($where as $key => $value) {
+            if (strlen(trim($value)) < 1) {
                 continue;
             }
             $select->where($key . '=?', $value);
         }
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
-            if ( ! $result = $this->_cache['instance']->load($hash) ) {
+            if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $select->query(Zend_Db::FETCH_ASSOC);
                 $result = $final->fetchColumn();
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
@@ -615,40 +747,51 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $result;
     }
 
-
-    public function getColumns ()
+    /**
+     * Returns current columns in use
+     *
+     * @return Zend_Db_Select
+     */
+    public function getColumns()
     {
         return $this->_select->getPart('columns');
     }
 
-
-    public function addFullTextSearch ($filter, $field)
+    /**
+     * Adds a full-text search to the query
+     *
+     * @param string $filter Filter type to be applyed
+     * @param string $field  Field Name
+     *
+     * @return void
+     */
+    public function addFullTextSearch($filter, $field)
     {
         $full = $field['search'];
 
-        if ( ! isset($full['indexes']) ) {
+        if (!isset($full['indexes'])) {
             $indexes = $field['field'];
-        } elseif ( is_array($full['indexes']) ) {
+        } elseif (is_array($full['indexes'])) {
             $indexes = implode(',', array_values($full['indexes']));
-        } elseif ( is_string($full['indexes']) ) {
+        } elseif (is_string($full['indexes'])) {
             $indexes = $full['indexes'];
         }
 
         $extra = isset($full['extra']) ? $full['extra'] : 'boolean';
 
-        if ( ! in_array($extra, array('boolean', 'queryExpansion', false)) ) {
+        if (!in_array($extra, array('boolean', 'queryExpansion', false))) {
             throw new Bvb_Grid_Exception('Unrecognized value in extra key');
         }
 
-        if ( $extra == 'boolean' ) {
+        if ($extra == 'boolean') {
             $extra = 'IN BOOLEAN MODE';
-        } elseif ( $extra == 'queryExpansion' ) {
+        } elseif ($extra == 'queryExpansion') {
             $extra = ' WITH QUERY EXPANSION ';
         } else {
             $extra = '';
         }
 
-        if ( $extra == 'IN BOOLEAN MODE' ) {
+        if ($extra == 'IN BOOLEAN MODE') {
             $filter = preg_replace("/\s+/", " +", $this->_getDb()->quote(' ' . $filter));
         } else {
             $filter = $this->_getDb()->quote($filter);
@@ -658,13 +801,28 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return;
     }
 
+    /**
+     * Returns a quoted value
+     *
+     * @param string $value Value to be quoted
+     *
+     * @return string
+     */
     public function quoteValue($value)
     {
         return $this->_getDb()->quote($value);
     }
 
-
-    public function addCondition ($filter, $op, $completeField)
+    /**
+     * Add's a new condition to the curretn query
+     *
+     * @param string $filter        Filter to apply
+     * @param string $op            Condition option
+     * @param array  $completeField All fields options
+     *
+     * @return void
+     */
+    public function addCondition($filter, $op, $completeField)
     {
 
 
@@ -677,22 +835,22 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $columns = $this->getColumns();
 
-        foreach ( $columns as $value ) {
-            if ( $field == $value[2] ) {
-                if ( is_object($value[1]) ) {
+        foreach ($columns as $value) {
+            if ($field == $value[2]) {
+                if (is_object($value[1])) {
                     $field = $value[1]->__toString();
                     $simpleField = true;
                 } else {
                     $field = $value[0] . '.' . $value[1];
                 }
                 break;
-            } elseif ( $field == $value[0] ) {
+            } elseif ($field == $value[0]) {
                 $field = $value[0] . '.' . $value[1];
                 break;
             }
         }
 
-        if ( strpos($field, '.') === false && $simpleField === false ) {
+        if (strpos($field, '.') === false && $simpleField === false) {
             $field = $completeField['field'];
         }
 
@@ -704,8 +862,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
          * SELECT IF(City.Population>500000,1,0)....
          *
          * We can not quoteIdentifier this fields...
+         *
          */
-        if ( preg_match("/^[a-z_]$/i", $field) ) {
+        if (preg_match("/^[a-z_]$/i", $field)) {
             $field = $this->_getDb()->quoteIdentifier($field);
         }
 
@@ -717,10 +876,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_select->where($field . " = '' ");
                 break;
             case 'isnull':
-                $this->_select->where(new Zend_Db_Expr($field.' IS NULL '));
+                $this->_select->where(new Zend_Db_Expr($field . ' IS NULL '));
                 break;
             case 'isnnotull':
-                $this->_select->where(new Zend_Db_Expr($field.' IS NOT NULL '));
+                $this->_select->where(new Zend_Db_Expr($field . ' IS NOT NULL '));
                 break;
             case 'equal':
             case '=':
@@ -763,60 +922,92 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             case 'and':
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
-                $this->_select->where($field . " between " . $this->_getDb()->quote($start) . " and " . $this->_getDb()->quote($end));
+                $this->_select->where(
+                    $field . " between " . $this->_getDb()
+                        ->quote($start) . " and " . $this->_getDb()
+                        ->quote($end)
+                );
                 break;
             case 'like':
             default:
                 $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
                 break;
         }
-
     }
 
-
     /**
-     * Returns server name (mysql|pgsql|etc)
+     * Get's current source name
+     *
+     * @return string
      */
-    public function getSourceName ()
+    public function getSourceName()
     {
         return $this->_server;
     }
 
-
-    public function insert ($table, array $post)
+    /**
+     * Inserts a new record in the database
+     *
+     * @param string $table Table Name
+     * @param array  $post  Values to insert
+     *
+     * @return mixed
+     */
+    public function insert($table, array $post)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         $this->_getDb()->insert($table, $post);
         return $this->_getDb()->lastInsertId();
     }
 
-
-    public function update ($table, array $post, array $condition)
+    /**
+     * Updates a given record
+     *
+     * @param string $table     Table Name
+     * @param array  $post      Values to be inserted in the database
+     * @param array  $condition Condition to add to the query for the update method
+     *
+     * @return mixed
+     */
+    public function update($table, array $post, array $condition)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         return $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
     }
 
-
-    public function delete ($table, array $condition)
+    /**
+     * Deletes a record from the database
+     *
+     * @param string $table     Table Name
+     * @param array  $condition Conditions to add
+     *
+     * @return mixed
+     */
+    public function delete($table, array $condition)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ($this->_cache['use'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         return $this->_getDb()->delete($table, $this->buildWhereCondition($condition));
     }
 
-
-    public function buildWhereCondition (array $condition)
+    /**
+     * Buils query where condition
+     *
+     * @param array $condition Conditions to add to the query
+     *
+     * @return string
+     */
+    public function buildWhereCondition(array $condition)
     {
         $where = '';
-        foreach ( $condition as $field => $value ) {
+        foreach ($condition as $field => $value) {
 
-            if ( stripos($field, '.') !== false ) {
+            if (stripos($field, '.') !== false) {
                 $field = substr($field, stripos($field, '.') + 1);
             }
 
@@ -825,28 +1016,43 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return " (" . substr($where, 3) . ")";
     }
 
-
-    public function resetOrder ()
+    /**
+     * Resets current query order
+     *
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function resetOrder()
     {
-         $this->_select->reset('order');
-         return $this;
+        $this->_select->reset('order');
+        return $this;
     }
 
-    public function resetLimit ()
+    /**
+     * Resets query limit
+     *
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function resetLimit()
     {
-         $this->_select->reset('limitcount');
-         $this->_select->reset('limitoffset');
-         return $this;
+        $this->_select->reset('limitcount');
+        $this->_select->reset('limitoffset');
+        return $this;
     }
 
-
-    public function setCache ($cache)
+    /**
+     * Defines cache options
+     *
+     * @param array $cache Cache options
+     *
+     * @return array
+     */
+    public function setCache($cache)
     {
-        if ( ! is_array($cache) ) {
+        if (!is_array($cache)) {
             $cache = array('use' => 0);
         }
 
-        if ( isset($cache['use']['db']) && $cache['use']['db'] == 1 ) {
+        if (isset($cache['use']['db']) && $cache['use']['db'] == 1) {
             $cache['use'] = 1;
         } else {
             $cache['use'] = 0;
@@ -855,8 +1061,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $this->_cache = $cache;
     }
 
-
-    public function buildForm ( $inputsType = array())
+    /**
+     * Builds form
+     *
+     * @param array $inputsType Inputs type
+     *
+     * @return array
+     */
+    public function buildForm($inputsType = array())
     {
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table'], $table['schema']);
@@ -864,33 +1076,41 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         return $this->buildFormElements($cols, array(), $inputsType);
     }
 
-
-    public function buildFormElements ($cols, $info = array(), $inputsType = array())
+    /**
+     * Builds form elements
+     *
+     * @param type  $cols       Columns to build
+     * @param array $info       Optional - Model Info
+     * @param type  $inputsType Elements type (password, text, select...)
+     *
+     * @return Bvb_Grid_Source_Zend_Select
+     */
+    public function buildFormElements($cols, $info = array(), $inputsType = array())
     {
         $final = array();
         $form = array();
 
         $return = array();
 
-        foreach ( $cols as $column => $detail ) {
+        foreach ($cols as $column => $detail) {
 
             $label = ucwords(str_replace('_', ' ', $column));
 
             $next = false;
 
-            if ( $detail['PRIMARY'] == 1 ) {
+            if ($detail['PRIMARY'] == 1) {
                 continue;
             }
 
-            if ( ! isset($info['referenceMap']) ) {
+            if (!isset($info['referenceMap'])) {
                 $info['referenceMap'] = array();
             }
 
-            if ( count($info['referenceMap']) > 0 ) {
-                foreach ( $info['referenceMap'] as $dep ) {
-                    if ( is_array($dep['columns']) && in_array($column, $dep['columns']) ) {
+            if (count($info['referenceMap']) > 0) {
+                foreach ($info['referenceMap'] as $dep) {
+                    if (is_array($dep['columns']) && in_array($column, $dep['columns'])) {
                         $refColumn = $dep['refColumns'][array_search($column, $dep['columns'])];
-                    } elseif ( is_string($dep['columns']) && $column == $dep['columns'] ) {
+                    } elseif (is_string($dep['columns']) && $column == $dep['columns']) {
                         $refColumn = $dep['refColumns'];
                     } else {
                         continue;
@@ -900,11 +1120,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
                     $in = $t->info();
 
-                    if ( (count($in['cols']) == 1 && count($in['primary']) == 0) || count($in['primary']) > 1 ) {
+                    if ((count($in['cols']) == 1 && count($in['primary']) == 0) || count($in['primary']) > 1) {
                         throw new Exception('Columns:' . count($in['cols']) . ' Keys:' . count($in['primary']));
                     }
 
-                    if ( count($in['primary']) == 1 ) {
+                    if (count($in['primary']) == 1) {
                         $field1 = array_shift($in['primary']);
                         $field2 = $refColumn;
                     }
@@ -912,68 +1132,86 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     $final['values'][$column] = array();
                     $r = $t->fetchAll()->toArray();
 
-                    if ( $detail['NULLABLE'] == 1 ) {
+                    if ($detail['NULLABLE'] == 1) {
                         $final['values'][$column][""] = "-- Empty --";
                     }
 
-                    foreach ( $r as $field ) {
+                    foreach ($r as $field) {
                         $final['values'][$column][$field[$field1]] = $field[$field2];
                     }
 
-                    $return[$column] = array('type' => 'select', 'label' => $label, 'default' => $final['values'][$column]);
+                    $return[$column] = array('type' => 'select',
+                                             'label' => $label,
+                                             'default' => $final['values'][$column]);
 
                     $next = true;
-
                 }
-
             }
 
-            if ( $next === true ) {
+            if ($next === true) {
                 continue;
             }
 
-            if ( stripos($detail['DATA_TYPE'], 'enum') !== false ) {
+            if (stripos($detail['DATA_TYPE'], 'enum') !== false) {
                 preg_match_all('/\'(.*?)\'/', $detail['DATA_TYPE'], $result);
 
                 $options = array();
-                foreach ( $result[1] as $match ) {
+                foreach ($result[1] as $match) {
                     $options[$match] = ucfirst($match);
                 }
 
-                $return[$column] = array('type' => 'select', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => $options);
+                $return[$column] = array('type' => 'select',
+                                         'label' => $label,
+                                         'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                         'default' => $options);
 
                 continue;
             }
 
-            if ( stripos($detail['DATA_TYPE'], 'set') !== false ) {
+            if (stripos($detail['DATA_TYPE'], 'set') !== false) {
                 preg_match_all('/\'(.*?)\'/', $detail['DATA_TYPE'], $result);
 
                 $options = array();
-                foreach ( $result[1] as $match ) {
+                foreach ($result[1] as $match) {
                     $options[$match] = ucfirst($match);
                 }
 
-                $return[$column] = array('type' => 'multiSelect', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => $options);
+                $return[$column] = array('type' => 'multiSelect',
+                                         'label' => $label,
+                                         'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                         'default' => $options);
                 continue;
             }
 
             switch ($detail['DATA_TYPE']) {
                 case 'time':
-                    $return[$column] = array('type' => 'time', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'time',
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
                 case 'date':
-                    $return[$column] = array('type' => 'date', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'date',
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
                 case 'datetime':
                 case 'timestamp':
-                    $return[$column] = array('type' => 'datetime', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'datetime',
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'text':
                 case 'mediumtext':
                 case 'longtext':
                 case 'smalltext':
-                    $return[$column] = array('type' => 'longtext', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'longtext',
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'int':
@@ -981,43 +1219,54 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 case 'mediumint':
                 case 'smallint':
                 case 'tinyint':
-                    $isZero = (! is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
-                    $return[$column] = array('type' => 'number', 'label' => $label, 'required' => ($isZero == false && $detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $zero = (!is_null($detail['DEFAULT']) && $detail['DEFAULT'] == "0") ? true : false;
+                    $return[$column] = array('type' => 'number',
+                                             'label' => $label,
+                                             'required' => ($zero == false && $detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 case 'float':
                 case 'decimal':
                 case 'double':
-                    $return[$column] = array('type' => 'decimal', 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'decimal',
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
 
                 default:
                 case 'varchar':
                 case 'char':
                     $length = $detail['LENGTH'];
-                    $return[$column] = array('type' => 'smallText', 'length' => $length, 'label' => $label, 'required' => ($detail['NULLABLE'] == 1) ? false : true, 'default' => (! is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
+                    $return[$column] = array('type' => 'smallText',
+                                             'length' => $length,
+                                             'label' => $label,
+                                             'required' => ($detail['NULLABLE'] == 1) ? false : true,
+                                             'default' => (!is_null($detail['DEFAULT']) ? $detail['DEFAULT'] : ""));
                     break;
             }
         }
 
         $form = $this->buildFormElementsFromArray($return);
 
-        foreach ( $inputsType as $field => $type ) {
+        foreach ($inputsType as $field => $type) {
             $form['elements'][$field][0] = strtolower($type);
         }
 
         return $form;
     }
 
-
     /**
      * Get the primary table key
      * This is important because we only allow edit, add or remove records
      * From tables that have on primary key
      *
+     * @var string $table Source table to fecth column identifiers
+     *
      * @return array
      */
-    public function getIdentifierColumns ($table)
+    public function getIdentifierColumns($table)
     {
         $pk = $this->getDescribeTable($table);
         $tb = $this->getTableList();
@@ -1026,13 +1275,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $hasSerial = false;
 
-        if ( is_array($pk) ) {
-            foreach ( $pk as $pkk => $primary ) {
-                if ( $primary['IDENTITY'] == 1 ) {
+        if (is_array($pk)) {
+            foreach ($pk as $pkk => $primary) {
+                if ($primary['IDENTITY'] == 1) {
                     $hasSerial = true;
 
-                    foreach ( $tb as $key => $value ) {
-                        if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+                    foreach ($tb as $key => $value) {
+                        if ($value['tableName'] == $primary['TABLE_NAME']) {
                             $prefix = $key . '.';
                             break;
                         }
@@ -1041,11 +1290,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 }
             }
 
-            if ( $hasSerial === false ) {
-                foreach ( $pk as $pkk => $primary ) {
-                    if ( $primary['PRIMARY'] == 1 ) {
-                        foreach ( $tb as $key => $value ) {
-                            if ( $value['tableName'] == $primary['TABLE_NAME'] ) {
+            if ($hasSerial === false) {
+                foreach ($pk as $pkk => $primary) {
+                    if ($primary['PRIMARY'] == 1) {
+                        foreach ($tb as $key => $value) {
+                            if ($value['tableName'] == $primary['TABLE_NAME']) {
                                 $prefix = $key . '.';
                                 break;
                             }
@@ -1058,4 +1307,5 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         return $keys;
     }
+
 }
