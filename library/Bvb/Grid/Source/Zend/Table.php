@@ -48,7 +48,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
         $this->_model = $model;
         $info = $model->info();
-        $select = $model->select();
+        $select = new Zend_Db_Select($model->getAdapter());
 
         $map = $info['referenceMap'];
 
