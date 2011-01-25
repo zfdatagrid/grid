@@ -1588,11 +1588,10 @@ abstract class Bvb_Grid {
                 }
 
 
-
-
                 if (is_array($this->_filters)
                     && array_key_exists($data[$i], $this->_filters)
                     && $this->_data['fields'][$nf]['search'] != false
+
                 ) {
 
 
@@ -1976,7 +1975,7 @@ abstract class Bvb_Grid {
     protected function _applyFieldHelper($newValue, $value, array $search, array $replace)
     {
         if (is_array($value)) {
-            array_walk($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         $name = $value['name'];
