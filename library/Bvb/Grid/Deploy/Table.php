@@ -1500,7 +1500,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     {
         $pageSelect = '';
         if (count($this->_paginationInterval) > 0 && $this->getTotalRecords() > 0) {
-            if (!array_key_exists($this->_recordsPerPage, $this->_paginationInterval) && !$this->getParam('perPage')) {
+            if (!array_key_exists($this->_recordsPerPage, $this->_paginationInterval) ) {
                 $this->_paginationOptions[0] = $this->__('Select');
             }
             ksort($this->_paginationInterval);
