@@ -1840,7 +1840,7 @@ abstract class Bvb_Grid {
     protected function _applyFieldFormat($newValue, $value, $search, $replace)
     {
         if (is_array($value)) {
-            array_walk($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
+            array_walk_recursive($value, array($this, '_replaceSpecialTags'), array('find' => $search, 'replace' => $replace));
         }
 
         return $this->_applyFormat($newValue, $value);
@@ -1879,7 +1879,7 @@ abstract class Bvb_Grid {
         }
 
         if (is_array($toReplace)) {
-                array_walk(
+                array_walk_recursive(
                     $toReplaceArray,
                     array($this, '_replaceSpecialTags'),
                     array('find' => $search,'replace' => $replace)
