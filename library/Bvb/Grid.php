@@ -2966,7 +2966,7 @@ abstract class Bvb_Grid {
      * @param array|boolean $requestParams  request parameters will be used if FALSE
      * @static
      *
-     * @return $object
+     * @return Bvb_Grid
      */
     public static function factory($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestParams = false)
     {
