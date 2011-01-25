@@ -864,58 +864,64 @@ class Bvb_Grid_Source_Zend_Select
          * We can not quoteIdentifier this fields...
          *
          */
-        if (preg_match("/^[a-z_]$/i", $field)) {
+        if (strpos($field, '(') !== false) {
             $field = $this->_getDb()->quoteIdentifier($field);
+        }
+
+        $func = 'where';
+
+        if (strpos($field, '(') !== false) {
+            $func = 'having';
         }
 
         switch ($op) {
             case 'sqlexp':
-                $this->_select->where(new Zend_Db_Expr($filter));
+                $this->_select->$func(new Zend_Db_Expr($filter));
                 break;
             case 'empty':
-                $this->_select->where($field . " = '' ");
+                $this->_select->$func($field . " = '' ");
                 break;
             case 'isnull':
-                $this->_select->where(new Zend_Db_Expr($field . ' IS NULL '));
+                $this->_select->$func(new Zend_Db_Expr($field . ' IS NULL '));
                 break;
             case 'isnnotull':
-                $this->_select->where(new Zend_Db_Expr($field . ' IS NOT NULL '));
+                $this->_select->$func(new Zend_Db_Expr($field . ' IS NOT NULL '));
                 break;
             case 'equal':
             case '=':
-                $this->_select->where($field . ' = ?', $filter);
+                $this->_select->$func($field . ' = ?', $filter);
                 break;
             case 'rege':
-                $this->_select->where($field . " REGEXP " . $this->_getDb()->quote($filter));
+                $this->_select->$func($field . " REGEXP " . $this->_getDb()->quote($filter));
                 break;
             case 'rlike':
-                $this->_select->where($field . " LIKE " . $this->_getDb()->quote($filter . "%"));
+                $this->_select->$func($field . " LIKE " . $this->_getDb()->quote($filter . "%"));
                 break;
             case 'llike':
-                $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter));
+                $this->_select->$func($field . " LIKE " . $this->_getDb()->quote("%" . $filter));
                 break;
             case '>=':
-                $this->_select->where($field . " >= ?", $filter);
+                $this->_select->$func($field . " >= ?", $filter);
                 break;
             case '>':
-                $this->_select->where($field . " > ?", $filter);
+                $this->_select->$func($field . " > ?", $filter);
                 break;
             case '<>':
             case '!=':
-                $this->_select->where($field . " <> ?", $filter);
+                $this->_select->$func($field . " <> ?", $filter);
                 break;
             case '<=':
-                $this->_select->where($field . " <= ?", $filter);
+                $this->_select->$func($field . " <= ?", $filter);
                 break;
             case '<':
-                $this->_select->where($field . " < ?", $filter);
+                $this->_select->$func($field . " < ?", $filter);
                 break;
             case 'in':
                 $filter = explode(',', $filter);
-                $this->_select->where($field . " IN  (?)", $filter);
+                $this->_select->$func($field . " IN  (?)", $filter);
                 break;
             case 'flag':
-                $this->_select->where($field . " & ? <> 0", $filter);
+                $this->_select->$func($field . " & ? <> 0", $filter);
                 break;
             case '||':
                 $this->_select->orWhere($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
@@ -925,7 +931,7 @@ class Bvb_Grid_Source_Zend_Select
             case 'and':
                 $start = substr($filter, 0, strpos($filter, '<>'));
                 $end = substr($filter, strpos($filter, '<>') + 2);
-                $this->_select->where(
+                $this->_select->$func(
                     $field . " between " . $this->_getDb()
                         ->quote($start) . " and " . $this->_getDb()
                         ->quote($end)
@@ -933,7 +939,7 @@ class Bvb_Grid_Source_Zend_Select
                 break;
             case 'like':
             default:
-                $this->_select->where($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
+                $this->_select->$func($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
                 break;
         }
     }
