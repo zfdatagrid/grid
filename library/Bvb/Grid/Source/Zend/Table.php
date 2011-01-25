@@ -245,7 +245,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        return $this->getModel()->fetchRow($condition)->setFromArray($post)->save();
+        return $this->getModel()->find($condition)->current()->setFromArray($post)->save();
 
     }
 
