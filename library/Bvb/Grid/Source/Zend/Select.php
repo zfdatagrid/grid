@@ -917,6 +917,9 @@ class Bvb_Grid_Source_Zend_Select
             case 'flag':
                 $this->_select->where($field . " & ? <> 0", $filter);
                 break;
+            case '||':
+                $this->_select->orWhere($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
+                break;
             case 'range':
             case '&':
             case 'and':

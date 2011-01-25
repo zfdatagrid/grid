@@ -610,7 +610,9 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
                 $end = substr($filter, strpos($filter, '<>') + 2);
                 $this->_query->$func($field . " between ? and ?", array($start, $end));
                 break;
-            case 'like':
+            case '||':
+                $this->_query->orWhere($field . " LIKE ?", "%" . $filter . "%");
+                break;case 'like':
             default:
                 $this->_query->$func($field . " LIKE ?", "%" . $filter . "%");
                 break;

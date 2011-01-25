@@ -17,9 +17,8 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
+abstract class Bvb_Grid_Source_Db_DbAbstract {
 
-abstract class Bvb_Grid_Source_Db_DbAbstract
-{
     /**
      * Builds form elements based on field definition
      *
@@ -27,7 +26,7 @@ abstract class Bvb_Grid_Source_Db_DbAbstract
      *
      * @return array
      */
-    public function buildFormElementsFromArray (array $elements)
+    public function buildFormElementsFromArray(array $elements)
     {
         $form = array();
 
@@ -39,37 +38,78 @@ abstract class Bvb_Grid_Source_Db_DbAbstract
 
             switch ($detail['type']) {
                 case 'select':
-                    $form['elements'][$column] = array('select', array('multiOptions' => $default, 'required' => $required, 'label' => $label));
+                    $form['elements'][$column] = array('select', array('multiOptions' => $default,
+                            'required' => $required,
+                            'label' => $label));
                     break;
 
                 case 'multiSelect':
-                    $form['elements'][$column] = array('select', array('multiOptions' => $default, 'required' => $required, 'label' => $label));
+                    $form['elements'][$column] = array('select',
+                                                        array('multiOptions' => $default,
+                                                              'required' => $required,
+                                                              'label' => $label));
                     break;
 
                 case 'smallText':
-                    $form['elements'][$column] = array('text', array('validators' => array(array('stringLength', false, array(0, $length))), 'size' => 40, 'label' => $label, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array(array('stringLength',
+                                                                                         false,
+                                                                                         array(0, $length))),
+                                                       'size' => 40,
+                                                       'label' => $label,
+                                                       'required' => $required,
+                                                       'value' => $default));
                     break;
 
                 case 'date':
-                    $form['elements'][$column] = array('text', array('validators' => array(array('Date')), 'size' => 10, 'label' => $label, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array(array('Date')),
+                                                       'size' => 10,
+                                                       'label' => $label,
+                                                       'required' => $required,
+                                                       'value' => $default));
                     break;
                 case 'time':
-                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('H:i:s'))), 'size' => 19, 'label' => $label, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array(
+                                                                array(new Zend_Validate_Date('H:i:s'))),
+                                                       'size' => 19,
+                                                       'label' => $label,
+                                                       'required' => $required,
+                                                       'value' => $default));
                     break;
                 case 'datetime':
-                    $form['elements'][$column] = array('text', array('validators' => array(array(new Zend_Validate_Date('Y-m-d H:i:s'))), 'size' => 19, 'label' => $label, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array(
+                                                                array(new Zend_Validate_Date('Y-m-d H:i:s'))),
+                                                       'size' => 19,
+                                                       'label' => $label,
+                                                       'required' => $required,
+                                                       'value' => $default));
                     break;
 
                 case 'longtext':
-                    $form['elements'][$column] = array('textarea', array('label' => $label, 'required' => $required));
+                    $form['elements'][$column] = array('textarea',
+                                                       array('label' => $label,
+                                                       'required' => $required));
                     break;
 
                 case 'number':
-                    $form['elements'][$column] = array('text', array('validators' => array('Digits'), 'label' => $label, 'size' => 10, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array('Digits'),
+                                                       'label' => $label,
+                                                       'size' => 10,
+                                                       'required' => $required,
+                                                       'value' => $default));
                     break;
 
                 case 'decimal':
-                    $form['elements'][$column] = array('text', array('validators' => array('Float'), 'size' => 10, 'label' => $label, 'required' => $required, 'value' => $default));
+                    $form['elements'][$column] = array('text',
+                                                       array('validators' => array('Float'),
+                                                             'size' => 10,
+                                                             'label' => $label,
+                                                             'required' => $required,
+                                                             'value' => $default));
                     break;
 
                 default:
@@ -79,4 +119,5 @@ abstract class Bvb_Grid_Source_Db_DbAbstract
 
         return $form;
     }
+
 }

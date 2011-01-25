@@ -370,8 +370,7 @@ interface Bvb_Grid_Source_SourceInterface
      *
      * Quotes a string
      *
-     * @param string $value
-     * @return string
+     * @param string $value Field Value
      */
     public function quoteValue($value);
 
@@ -379,10 +378,11 @@ interface Bvb_Grid_Source_SourceInterface
     /**
      * Fetch pairs from a table
      *
-     * @param string $table
-     * @param string $field
-     * @param string $fieldValue
-     * @param string $order
+     * @param string $table      Table Name
+     * @param string $field      Field Name
+     * @param string $fieldValue Field Value
+     * @param string $order      Query Order
+     *
      */
     public function getValuesForFiltersFromTable ($table, $field, $fieldValue, $order = 'name ASC');
 }

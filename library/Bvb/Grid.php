@@ -1232,7 +1232,6 @@ abstract class Bvb_Grid {
         if ($this->_data['fields'][$field]['searchType'] == 'sqlExp'
             && isset($this->_data['fields'][$field]['searchSqlExp'])
         ) {
-
             $op = 'sqlExp';
             $sqlExp = $this->_data['fields'][$field]['searchSqlExp'];
             $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
@@ -1279,7 +1278,11 @@ abstract class Bvb_Grid {
             $filter = substr($filter, 0, - 1);
         } elseif (stripos($filter, ',') !== false) {
             $op = 'IN';
+        }elseif ( substr($filter, 0, 2) == '||' ) {
+            $op = '||';
+            $filter = substr($filter, 2);
         }
+
 
         if (isset($this->_data['fields']['searchTypeFixed'])
             && $this->_data['fields']['searchTypeFixed'] === true
