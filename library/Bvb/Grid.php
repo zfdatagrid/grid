@@ -1474,7 +1474,14 @@ abstract class Bvb_Grid {
         if ($this->getRouteUrl() !== false) {
             $finalUrl = $this->getRouteUrl();
         } else {
-            $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
+
+            if(Zend_Controller_Front::getInstance()->getDefaultModule() == $params['module'])
+            {
+                $finalUrl =  $params['controller'] . $action;
+            }else{
+                $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
+            }
+
         }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
