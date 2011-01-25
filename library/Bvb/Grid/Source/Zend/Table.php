@@ -23,14 +23,28 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     private $_model;
 
+    /**
+     *
+     * @var array
+     */
     protected $_relationMap = array();
 
+    /**
+     * Returns current model
+     *
+     * @return Zend_Db_Table
+     */
 
     public function getModel ()
     {
         return $this->_model;
     }
 
+    /**
+     * Returns current relationmap
+     *
+     * @return array
+     */
 
     public function getRelationMap()
     {
@@ -38,6 +52,13 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
+    /**
+     * Builds form input types
+     *
+     * @param array $inputsType Elements input types
+     *
+     * @return array
+     */
     public function buildForm ($inputsType = array())
     {
         $info = $this->getModel()->info();
@@ -49,7 +70,10 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     /**
      * Creating a query using a Model.
+     *
      * @param Zend_Db_Table_Abstract $model
+     * @param array                  $relationmap Relation map for joins
+     *
      * @return $this
      */
     public function __construct (Zend_Db_Table_Abstract $model,array $relationMap = array())
