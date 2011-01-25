@@ -3138,10 +3138,10 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $selected = null;
 
         if (isset($this->_filters[$field]['values']) && is_array($this->_filters[$field]['values'])) {
+            $hasValues = $this->_filters[$field]['values'];
+        } else {
             $hasValues = $this->getSource()
                 ->getFilterValuesBasedOnFieldDefinition($this->_data['fields'][$field]['field']);
-        } else {
-            $hasValues = false;
         }
 
         if (is_array($hasValues)) {
