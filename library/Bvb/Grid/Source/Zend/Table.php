@@ -23,10 +23,18 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     private $_model;
 
+    protected $_relationMap = array();
+
 
     public function getModel ()
     {
         return $this->_model;
+    }
+
+
+    public function getRelationMap()
+    {
+        return $this->_relationMap;
     }
 
 
@@ -44,13 +52,17 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
      * @param Zend_Db_Table_Abstract $model
      * @return $this
      */
-    public function __construct (Zend_Db_Table_Abstract $model)
+    public function __construct (Zend_Db_Table_Abstract $model,array $relationMap = array())
     {
         $this->_model = $model;
+        $this->_relationMap = $relationMap;
         $info = $model->info();
         $select = new Zend_Db_Select($model->getAdapter());
 
         $map = $info['referenceMap'];
+
+        $map = array_merge_recursive($map,$this->_relationMap);
+
 
         if ( is_array($map) && count($map) > 0 ) {
 
@@ -66,7 +78,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
             $select->from($info['name'], $columnsMainTable, $info['schema']);
 
-            $this->_setJoins($info['name'], $map, $select);
+            $tAlias = array($info['name'] => 1);
+            $this->_setJoins($info['name'], $map, $select, $tAlias);
 
         }else{
             $select->from($info['name'], $info['cols'], $info['schema']);
