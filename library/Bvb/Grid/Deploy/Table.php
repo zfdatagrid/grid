@@ -238,7 +238,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $queryUrl = $this->getIdentifierColumnsFromUrl();
 
-            if (!$this->getRequest()->isPost() || ($this->getParam('zfmassedit')
+            if (!$this->getRequest()->isPost()
+                || ($this->getParam('zfmassedit')
                 && $this->getRequest()->isPost())
             ) {
                 foreach ($this->_form->getSubForms() as $key => $form) {
