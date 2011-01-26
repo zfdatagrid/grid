@@ -4008,6 +4008,20 @@ abstract class Bvb_Grid {
         return $this;
     }
 
+
+    /**
+     * Defines which fields should be posted.
+     *
+     * @param mixed $fields Fields to be used as post ids
+     * @return Bvb_Grid
+     */
+    public function setMassActionsFields($fields)
+    {
+        $this->_massActionsFields = (array)$fields;
+
+        return $this;
+    }
+
     /**
      * Checks if the user has the right to export for the defined format
      *
