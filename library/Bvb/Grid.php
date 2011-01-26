@@ -417,6 +417,12 @@ abstract class Bvb_Grid {
      */
     protected $_massActionsSeparator = ',';
     /**
+     *
+     * @var string|bool
+     */
+    protected $_massActionsDecorator = false;
+
+    /**
      * Contains URL's for edit and delete records
      * Can be called from a decorator using
      * {{detailUrl}}
@@ -2836,6 +2842,10 @@ abstract class Bvb_Grid {
             $totalFields[$row]++;
         }
 
+        if ($this->hasMassActions()) {
+            $totalFields[$row]++;
+        }
+
         $this->_colspan = max($totalFields);
 
         return $this->_colspan;
@@ -3871,39 +3881,56 @@ abstract class Bvb_Grid {
      * @param array $options Options to be made available to user
      * @param array $fields  Fields to be used instead field identifier
      *
+     * @return Bvb_Grid
+     */
+    public function setMassActions(array $options, array $fields = array())
+    {
+
+        $this->clearMassActions();
+
+        $this->addMassActions($options,$fields);
+
+        return $this;
+    }
+
+    /**
+     * Returns mass actions decorator so the deploy class can build
+     * the extra column
+     *
      * @return string
      */
-    public function setMassActions(array $options, array $fields)
+
+    protected function _getMassActionsDecorator()
     {
-        $this->_massActions = $options;
-        $this->_massActionsFields = $fields;
 
-        foreach ($options as $value) {
-            if (!isset($value['url']) || !isset($value['caption'])) {
-                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
-            }
-        }
+        if($this->_massActionsDecorator)
+            return $this->_massActionsDecorator;
 
-        if (count($fields) == 0 && count($this->getSource()->getIdentifierColumns($this->_data['table'])) == 0) {
+        $fieldIdentifier = $this->getSource()->getIdentifierColumns($this->_data['table']);
+
+        if (count($this->_massActionsFields) == 0 && count($fieldIdentifier) == 0) {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 
-       if (count($fields) == 0) {
+
+
+       if (count($this->_massActionsFields) == 0) {
             $pk = '';
-            foreach ($this->getSource()->getIdentifierColumns($this->_data['table']) as $value) {
+            foreach ($fieldIdentifier as $value) {
                 $aux = explode('.', $value);
                 $pk .= end($aux) . '-';
             }
 
             $pk = rtrim($pk, '-');
-        } else {
-            $pk = implode('-', $fields);
+
+            $pk = explode('-',$pk);
         }
 
-        $pk = "{{" . implode('}}' . $this->_massActionsSeparator . '{{', $this->_massActionsFields) . "}}";
+        $pk = "{{" . implode('}}' . $this->_massActionsSeparator . '{{', $pk) . "}}";
 
+        $this->_massActionsDecorator = $pk;
 
-        return $pk;
+        return $this->_massActionsDecorator;
     }
 
     /**
@@ -3918,6 +3945,44 @@ abstract class Bvb_Grid {
     }
 
     /**
+     * Adds a new mass action and clears all previous
+     *
+     * @param type $url     Url to post the results
+     * @param type $caption Caption for the select option
+     * @param type $confirm Confirmation message when submiting
+     * @param type $fields  Fields to be used
+     *
+     * @return Bvb_Grid
+     */
+    public function setMassAction($url, $caption, $confirm='', $fields=array())
+    {
+        $options = array('url' => $url, 'caption' => $caption, 'confirm' => $confirm);
+
+        $this->setMassActions($options, $fields);
+
+        return $this;
+    }
+
+    /**
+     * Adds a new mass action
+     *
+     * @param type $url     Url to post the results
+     * @param type $caption Caption for the select option
+     * @param type $confirm Confirmation message when submiting
+     * @param type $fields  Fields to be used
+     *
+     * @return Bvb_Grid
+     */
+    public function addMassAction($url, $caption, $confirm='', $fields=array())
+    {
+        $options = array('url' => $url, 'caption' => $caption, 'confirm' => $confirm);
+
+        $this->addMassActions($options, $fields);
+
+        return $this;
+    }
+
+    /**
      * Adds a new mass action option
      *
      * @param array $options Options to be made available to user
@@ -3927,9 +3992,6 @@ abstract class Bvb_Grid {
      */
     public function addMassActions(array $options, $fields = null)
     {
-        if (!$this->hasMassActions()) {
-            return $this->setMassActions($options, (array) $fields);
-        }
 
         foreach ($options as $value) {
             if (!isset($value['url']) || !isset($value['caption'])) {

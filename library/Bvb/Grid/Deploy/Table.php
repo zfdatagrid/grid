@@ -3622,19 +3622,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     }
 
     /**
-     * Sets mass actions
+     * Builds Mass Actions
      *
-     * @param array $options Options for rendet the masse action
-     * @param array $fields  Optional field(s) to be used instead of table column identifier
-     *
-     * @see library/Bvb/Bvb_Grid::setMassActions()
-     * @return void
+     * @return string
      */
-    public function setMassActions(array $options, array $fields = array())
+    protected function _buildMassActions()
     {
-        $pk = parent::setMassActions($options, $fields);
+        if (!$this->hasMassActions())
+            return false;
 
-        
+        $pk = $this->_getMassActionsDecorator();
+
         $left = new Bvb_Grid_Extra_Column();
 
         $decorator = "<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' "
@@ -3646,17 +3644,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             ->decorator($decorator);
 
         $this->addExtraColumns($left);
-    }
-
-    /**
-     * Builds Mass Actions
-     *
-     * @return string
-     */
-    protected function _buildMassActions()
-    {
-        if (!$this->hasMassActions())
-            return false;
 
         $select = array();
         foreach ($this->getMassActionsOptions() as $value) {
