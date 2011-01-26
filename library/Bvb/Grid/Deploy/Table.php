@@ -304,7 +304,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             foreach ($r as $key => $value) {
                                 $pk = explode('.', key($conditions[$i]));
                                 if ($key == end($pk)) {
-                                    $this->getForm($i)->getElement('ZFPK')->setValue($value);
+                                    $this->getForm($i)->getElement('ZFPK')->setValue(implode('-',$conditions[$i]));
                                 }
 
                                 $isField = $this->getForm($i)->getElement($key);

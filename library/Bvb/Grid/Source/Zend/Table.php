@@ -194,19 +194,16 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($condition));
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
-                $result = $this->getModel()->find($condition)->current();
+                $result = call_user_func_array(array($this->getModel(),'find'), $condition);
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
-            $result = $this->getModel()->find($condition)->current();
+
+            $result = call_user_func_array(array($this->getModel(),'find'), $condition);
         }
 
 
-        if ( $result === null ) {
-            return false;
-        }
-
-        return $result->toArray();
+        return $result->current()->toArray();
     }
 
 
@@ -246,11 +243,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         if ( $this->_cache['use'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($where));
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
-                $result = $this->getModel()->find($where)->current();
+                $result = call_user_func_array(array($this->getModel(),'find'), $where);
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
-            $result = $this->getModel()->find($where)->current();
+            $result = call_user_func_array(array($this->getModel(),'find'), $where);
         }
 
         if ( $result === null ) {
@@ -267,7 +264,9 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        return $this->getModel()->find($condition)->current()->delete();
+        $result = call_user_func_array(array($this->getModel(),'find'), $condition);
+
+        return $result->current()->delete();
     }
 
 
@@ -277,7 +276,9 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        return $this->getModel()->find($condition)->current()->setFromArray($post)->save();
+        $result = call_user_func_array(array($this->getModel(),'find'), $condition);
+
+        return $result->current()->setFromArray($post)->save();
 
     }
 
