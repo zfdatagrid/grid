@@ -628,6 +628,7 @@ abstract class Bvb_Grid {
             // use the request parameters
             $this->setParams($this->getRequest()->getParams());
         }
+
         if (isset($this->_options['grid']['baseUrl'])) {
             // use from configuration, remove it from _options to enforce correct usage
             $this->_baseUrl = $this->_options['grid']['baseUrl'];
@@ -3887,13 +3888,19 @@ abstract class Bvb_Grid {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 
-        $pk = '';
-        foreach ($this->getSource()->getIdentifierColumns($this->_data['table']) as $value) {
-            $aux = explode('.', $value);
-            $pk .= end($aux) . '-';
+       if (count($fields) == 0) {
+            $pk = '';
+            foreach ($this->getSource()->getIdentifierColumns($this->_data['table']) as $value) {
+                $aux = explode('.', $value);
+                $pk .= end($aux) . '-';
+            }
+
+            $pk = rtrim($pk, '-');
+        } else {
+            $pk = implode('-', $fields);
         }
 
-        return rtrim($pk, '-');
+        return $pk;
     }
 
     /**
