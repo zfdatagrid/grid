@@ -243,12 +243,8 @@ class Bvb_Grid_Source_Zend_Select
         return $this->_db;
     }
 
-    /**
-     * Executes the current query and returns an associative array of results
-     *
-     * @return array
-     */
-    public function execute()
+
+    protected function _prepareExecute()
     {
         if ($this->_server == 'mysql') {
             $ghostColumn = $this->getColumns();
@@ -269,6 +265,17 @@ class Bvb_Grid_Source_Zend_Select
                 }
             }
         }
+    }
+
+    /**
+     * Executes the current query and returns an associative array of results
+     *
+     * @return array
+     */
+    public function execute()
+    {
+
+        $this->_prepareExecute();
 
         if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());

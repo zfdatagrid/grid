@@ -81,7 +81,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         $this->_model = $model;
         $this->_relationMap = $relationMap;
         $info = $model->info();
-        $select = new Zend_Db_Select($model->getAdapter());
+        $select = $model->select();
 
         $map = $info['referenceMap'];
 
@@ -210,6 +210,37 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     }
 
 
+    /**
+     * Executes the current query and returns an associative array of results
+     *
+     * @return array
+     */
+    public function execute()
+    {
+
+        $this->_prepareExecute();
+
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($this->_select->__toString());
+            if (!$result = $this->_cache['instance']->load($hash)) {
+                $result = $this->getModel()->fetchAll($this->_select);
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+
+            $result = $this->getModel()->fetchAll($this->_select);
+
+            if ($this->_server == 'mysql') {
+                $this->_totalRecords = $this->_select->getAdapter()->fetchOne('select FOUND_ROWS()');
+            }
+        }
+
+        return $result;
+    }
+
+
+
     public function fetchDetail ( array $where)
     {
         if ( $this->_cache['use'] == 1 ) {
@@ -221,6 +252,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         } else {
             $result = $this->getModel()->find($where)->current();
         }
+
         if ( $result === null ) {
             return false;
         }
