@@ -3634,12 +3634,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         $pk = parent::setMassActions($options, $fields);
 
-        if (count($fields) == 0) {
-            $fields = explode('-', $pk);
-        }
-
-        $pk = "{{" . implode('}}' . $this->_massActionsSeparator . '{{', $fields) . "}}";
-
+        
         $left = new Bvb_Grid_Extra_Column();
 
         $decorator = "<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' "

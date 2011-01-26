@@ -3900,7 +3900,21 @@ abstract class Bvb_Grid {
             $pk = implode('-', $fields);
         }
 
+        $pk = "{{" . implode('}}' . $this->_massActionsSeparator . '{{', $this->_massActionsFields) . "}}";
+
+
         return $pk;
+    }
+
+    /**
+     * Clears all mass actions previously defined
+     *
+     * @return Bvb_Grid
+     */
+    public function clearMassActions()
+    {
+        $this->_massActions = array();
+        return $this;
     }
 
     /**
