@@ -1322,6 +1322,7 @@ abstract class Bvb_Grid {
 
             array_pop($order1);
             $orderField = implode('_', $order1);
+            $orderField = $this->_fieldsOrder[$orderField];
 
             if ($this->_paramsInSession === true) {
                 if ($this->getParam('noOrder')) {
