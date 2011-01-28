@@ -90,6 +90,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
         if ( is_array($map) && count($map) > 0 ) {
 
+            $select->setIntegrityCheck(false);
+
             $columnsToRemove = array();
             foreach ( $map as $sel ) {
                 if ( is_array($sel['columns']) ) {
