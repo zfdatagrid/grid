@@ -1700,7 +1700,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     $pageSelect = $this->getView()->formSelect(
                         'idf' . $this->getGridId(),
-                        ($pa - 1) * $this->getResultsPerPage(),
+                        ($pa - 1) * $this->getRecordsPerPage(),
                         array('onChange' => "javascript:gridAjax('{$this->getInfo("ajax")}',"
                                             ."'{$url}/start{$this->getGridId()}/'+this.value)"),
                         $pageSelectOptions
@@ -1711,7 +1711,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     $pageSelect = $this->getView()->formSelect(
                         'idf' . $this->getGridId(),
-                        ($pa - 1) * $this->getResultsPerPage(),
+                        ($pa - 1) * $this->getRecordsPerPage(),
                         array('onChange' => "window.location='{$url}/start{$this->getGridId()}/'+this.value"),
                         $pageSelectOptions
                     );
@@ -1725,7 +1725,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $pa,
                     array('style' => 'width:30px !important; ',
                            'onChange' => "window.location='{$url}/start{$this->getGridId()}/'+(this.value - 1)*"
-                                       . $this->getResultsPerPage())
+                                       . $this->getRecordsPerPage())
                 );
             }
 
@@ -3657,8 +3657,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()")
         );
 
-        if ($this->getResultsPerPage() < $this->getTotalRecords()) {
-            $currentRecords = $this->getResultsPerPage();
+        if ($this->getRecordsPerPage() < $this->getTotalRecords()) {
+            $currentRecords = $this->getRecordsPerPage();
         } else {
             $currentRecords = $this->getTotalRecords();
         }
@@ -3766,8 +3766,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         }
 
 
-        $page = floor($i / $this->getResultsPerPage());
-        $start = $this->getResultsPerPage() * $page;
+        $page = floor($i / $this->getRecordsPerPage());
+        $start = $this->getRecordsPerPage() * $page;
 
         if ($start > $totalRecords) {
             $start = 0;

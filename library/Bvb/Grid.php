@@ -99,15 +99,15 @@ abstract class Bvb_Grid {
      * @var array
      */
     protected $_export = array('pdf',
-        'word',
-        'wordx',
-        'excel',
-        'print',
-        'xml',
-        'csv',
-        'ods',
-        'odt',
-        'json');
+                               'word',
+                               'wordx',
+                               'excel',
+                               'print',
+                               'xml',
+                               'csv',
+                               'ods',
+                               'odt',
+                               'json');
     /**
      * All info that is not directly related to the database
      */
@@ -1350,7 +1350,7 @@ abstract class Bvb_Grid {
         }
 
         if (false === $this->_forceLimit) {
-            $this->getSource()->buildQueryLimit($this->getResultsPerPage(), $start);
+            $this->getSource()->buildQueryLimit($this->getRecordsPerPage(), $start);
         }
 
         return true;
@@ -1361,7 +1361,7 @@ abstract class Bvb_Grid {
      *
      * @return integer
      */
-    public function getResultsPerPage()
+    public function getRecordsPerPage()
     {
         $perPage = (int) $this->getParam('perPage', 0);
 

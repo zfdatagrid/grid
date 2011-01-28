@@ -35,7 +35,7 @@ class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
      *
      * @return void
      */
-    public function __construct (array $options = array())
+    public function __construct ( $options = array())
     {
         $this->_options = $options;
 

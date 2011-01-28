@@ -544,7 +544,7 @@ HTML;
     {
         // clarify the values
         $page = $this->getParam('page'); // get the requested page
-        $limit = $this->getResultsPerPage(); // get how many rows we want to have into the grid
+        $limit = $this->getRecordsPerPage(); // get how many rows we want to have into the grid
         $count =  $this->_totalRecords;
         // decide if we should pass PK as ID to each row
         $passPk = false;
@@ -624,7 +624,7 @@ HTML;
         // override with options defined on Bvb_Grid level
         $this->_jqgParams['url'] = isset($this->_jqgParams['url']) ? (empty($this->_jqgParams['url']) ? $url : $this->_jqgParams['url']) : $url;
         $this->_jqgParams['pager'] = new Zend_Json_Expr(sprintf("'#%s'", $this->jqgGetIdPager()));
-        $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum']) 
+        $this->_jqgParams['rowNum'] = isset($this->_jqgParams['rowNum'])
             ? (empty($this->_jqgParams['rowNum']) ? $this->_recordsPerPage : $this->_jqgParams['rowNum'])
             : $this->_recordsPerPage;
         $this->_jqgParams['rowList'] = isset($this->_jqgParams['rowList']) ? $this->_jqgParams['rowList'] : $this->_paginationInterval;
@@ -707,7 +707,7 @@ HTML;
         } elseif (false!==$useOnSubmit) {
             $onsubmit .= 'if(!function(count,data) {'.$useOnSubmit.'}(data.count, data.postMassIds)) return false;';
         }
-        
+
         // render function
         // TODO this could be more general function added with jQuery() helper and called with parameters
         return <<<JS
@@ -793,7 +793,7 @@ JS;
      * @param mixed $value value to encode
      *
      * @see Zend_Json::encode
-     * 
+     *
      * @return mixed
      */
     public static function encodeJson($value)
@@ -1368,11 +1368,11 @@ JS;
      *
      * @return integer
      */
-    public function getResultsPerPage ()
+    public function getRecordsPerPage ()
     {
         $perPage = $this->getParam('perPage', false);
         if (false===$perPage) {
-            return parent::getResultsPerPage();
+            return parent::getRecordsPerPage();
         }
         return $perPage;
     }
@@ -1428,7 +1428,7 @@ class JqGridCommand
      * Add command to chain.
      *
      * @param string $command jqGrid command there could be any number of additional parameters
-     * 
+     *
      * @link http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods
      *
      * @return JqGridCommand
