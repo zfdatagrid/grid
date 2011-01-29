@@ -2097,7 +2097,7 @@ abstract class Bvb_Grid {
                 foreach ($this->_classRowCondition as $value) {
                     $cond = str_replace($search, $replace, $value['condition']);
                     $final = call_user_func(create_function('', "if($cond){return true;}else{return false;}"));
-                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . '';
+                    $this->_classRowConditionResult[$i] .= $final == true ? $value['class'] . ' ' : $value['else'] . ' ';
                 }
             }
 
