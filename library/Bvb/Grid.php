@@ -36,8 +36,6 @@ abstract class Bvb_Grid {
      * @var string
      */
     const VERSION = '$Rev$';
-
-
     /**
      * Default Configuration to be applied to all grids
      *
@@ -469,6 +467,121 @@ abstract class Bvb_Grid {
     protected $_runCallbacks = true;
 
     /**
+     * The __construct function receives the db adapter. All information related to the
+     * URL is also processed here
+     *
+     * @param array $options An Array or Zend_Config object.
+     *
+     * @return void
+     */
+    public function __construct($options)
+    {
+        if (!$this instanceof Bvb_Grid_Deploy_DeployInterface) {
+            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implement Bvb_Grid_Deploy_DeployInterface');
+        }
+
+        if ($options instanceof Zend_Config) {
+            $options = $options->toArray();
+        } else if (!is_array($options)) {
+            throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
+        }
+
+        $this->_options = array_merge_recursive(self::getDefaultConfig(), $options);
+
+        // get the controller params and baseurl to use with filters
+        if (isset($this->_options['grid']['requestParams'])) {
+            // use from configuration, remove it from _options to enforce correct usage
+            $this->setParams($this->_options['grid']['requestParams']);
+            unset($this->_options['grid']['requestParams']);
+        } else {
+            // use the request parameters
+            $this->setParams($this->getRequest()->getParams());
+        }
+
+        if (isset($this->_options['grid']['baseUrl'])) {
+            // use from configuration, remove it from _options to enforce correct usage
+            $this->_baseUrl = $this->_options['grid']['baseUrl'];
+            unset($this->_options['grid']['baseUrl']);
+        } else {
+            // use controllers value
+            $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
+        }
+
+        foreach (array('massActionsAll_', 'gridAction_', 'send_') as $value) {
+            $this->removeParam($value);
+        }
+
+        foreach ($this->_ctrlParams as $key => $value) {
+            if (is_array($value)) {
+                $this->removeParam($key);
+            }
+        }
+
+        /**
+         * plugins loaders
+         */
+        $this->_formatter = new Zend_Loader_PluginLoader();
+
+        //Templates loading
+        if (is_array($this->_export)) {
+            foreach ($this->_export as $key => $temp) {
+                if (is_array($temp)) {
+                    $export = $key;
+                } else {
+                    $export = $temp;
+                }
+                $this->_templates[$export] = new Zend_Loader_PluginLoader(array());
+            }
+        }
+
+        // Add the formatter fir for fields content
+        $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
+
+        $deploy = explode('_', get_class($this));
+        $this->_deployName = strtolower(end($deploy));
+
+        $renderDir = ucfirst($this->_deployName);
+
+        $this->_filtersRenders = new Zend_Loader_PluginLoader();
+        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/' . $renderDir, 'Bvb_Grid_Filters_Render_' . $renderDir);
+
+
+        if (!defined('E_USER_DEPRECATED')) {
+            define('E_USER_DEPRECATED', E_USER_WARNING);
+        }
+
+
+        $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+    }
+
+    /**
+     * Defines controller
+     *
+     * @param Zend_Controller_Front $controller
+     * @return Bvb_Grid
+     */
+    public function setController(Zend_Controller_Front $controller)
+    {
+        $this->_controller = $controller;
+        return $this;
+    }
+
+    /**
+     * Returns current controller instance
+     *
+     * @return Zend_Contrller_Front
+     */
+    public function getController()
+    {
+        if(is_null($this->_controller))
+        {
+            $this->_controller = Zend_Controller_Front::getInstance();
+        }
+
+        return $this->_controller;
+    }
+
+    /**
      * Backwards compatibility
      *
      * @param mixed $object A Zend_Db object
@@ -601,94 +714,6 @@ abstract class Bvb_Grid {
     {
         Bvb_Grid_Translator::getInstance()->setTranslator($translator);
         return $this;
-    }
-
-    /**
-     * The __construct function receives the db adapter. All information related to the
-     * URL is also processed here
-     *
-     * @param array $options An Array or Zend_Config object.
-     *
-     * @return void
-     */
-    public function __construct($options)
-    {
-        if (!$this instanceof Bvb_Grid_Deploy_DeployInterface) {
-            throw new Bvb_Grid_Exception(get_class($this) . ' needs to implement Bvb_Grid_Deploy_DeployInterface');
-        }
-
-        if ($options instanceof Zend_Config) {
-            $options = $options->toArray();
-        } else if (!is_array($options)) {
-            throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
-        }
-
-        $this->_options = array_merge_recursive(self::getDefaultConfig(), $options);
-
-        // get the controller params and baseurl to use with filters
-        if (isset($this->_options['grid']['requestParams'])) {
-            // use from configuration, remove it from _options to enforce correct usage
-            $this->setParams($this->_options['grid']['requestParams']);
-            unset($this->_options['grid']['requestParams']);
-        } else {
-            // use the request parameters
-            $this->setParams($this->getRequest()->getParams());
-        }
-
-        if (isset($this->_options['grid']['baseUrl'])) {
-            // use from configuration, remove it from _options to enforce correct usage
-            $this->_baseUrl = $this->_options['grid']['baseUrl'];
-            unset($this->_options['grid']['baseUrl']);
-        } else {
-            // use controllers value
-            $this->_baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
-        }
-
-        foreach (array('massActionsAll_', 'gridAction_', 'send_') as $value) {
-            $this->removeParam($value);
-        }
-
-        foreach ($this->_ctrlParams as $key => $value) {
-            if (is_array($value)) {
-                $this->removeParam($key);
-            }
-        }
-
-        /**
-         * plugins loaders
-         */
-        $this->_formatter = new Zend_Loader_PluginLoader();
-
-        //Templates loading
-        if (is_array($this->_export)) {
-            foreach ($this->_export as $key => $temp) {
-                if (is_array($temp)) {
-                    $export = $key;
-                } else {
-                    $export = $temp;
-                }
-                $this->_templates[$export] = new Zend_Loader_PluginLoader(array());
-            }
-        }
-
-        // Add the formatter fir for fields content
-        $this->addFormatterDir('Bvb/Grid/Formatter', 'Bvb_Grid_Formatter');
-
-        $deploy = explode('_', get_class($this));
-        $this->_deployName = strtolower(end($deploy));
-
-        $renderDir = ucfirst($this->_deployName);
-
-        $this->_filtersRenders = new Zend_Loader_PluginLoader();
-        $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/' . $renderDir, 'Bvb_Grid_Filters_Render_' . $renderDir);
-
-
-        if (!defined('E_USER_DEPRECATED')) {
-            define('E_USER_DEPRECATED', E_USER_WARNING);
-        }
-
-
-        $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
     }
 
     /**
@@ -1003,6 +1028,16 @@ abstract class Bvb_Grid {
     {
         $this->_paginationInterval = $pagination;
         return $this;
+    }
+
+    /**
+     * Returns current pagination interval configurations
+     *
+     * @return array
+     */
+    public function getPaginationInterval()
+    {
+        return $this->_paginationInterval;
     }
 
     /**
@@ -2947,6 +2982,10 @@ abstract class Bvb_Grid {
 
             if (isset($value->_field['title']) && !is_string($value->_field['title'])) {
                 throw new Bvb_Grid_Exception('title option must be a string');
+            }
+
+            if (!isset($value->_field['position']) || !in_array($value->_field['position'],array('left','right'))) {
+                throw new Bvb_Grid_Exception('Please define column position (left|right)');
             }
 
             $final[$value->_field['name']] = $value->_field;
