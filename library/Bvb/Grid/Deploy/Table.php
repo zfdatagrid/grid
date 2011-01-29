@@ -525,7 +525,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
                             $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
 
-                            $sendCall = array(&$post[$key], $this->getSource(), &$queryUrl);
+                            $oldFieldValues = $this->getSource()->getRecord($this->_data['table'],
+                                                                            $this->getIdentifierColumnsFromUrl()
+                            );
+
+                            foreach($oldFieldValues as $field=>$value)
+                            {
+                                if(!isset($post[$key][$field]))
+                                {
+                                    unset($oldFieldValues[$field]);
+                                }
+                            }
+
+                            $sendCall = array(&$post[$key], $oldFieldValues, $this->getSource(), &$queryUrl);
+
 
                             if (null !== $this->_callbackBeforeUpdate) {
                                 call_user_func_array(
@@ -3321,6 +3334,18 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         return $this;
     }
 
+
+    /**
+     * Returns current clss conditions for a given field
+     *
+     * @param string $column Field to obtain condition
+     * @return mixed
+     */
+    public function getClassCellCondition($column)
+    {
+        return isset($this->_classCellCondition[$column])?$this->_classCellCondition[$column]:false;
+    }
+
     /**
      * Sets a row class based on a condition
      *
@@ -3335,6 +3360,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $this->clearClassRowConditions();
         $this->addClassRowCondition($condition, $class, $else);
         return $this;
+    }
+
+
+    /**
+     * Returns current row class conditions
+     *
+     * @return array
+     */
+    public function getClassRowCondition()
+    {
+        return $this->_classRowCondition;
     }
 
     /**
@@ -3462,6 +3498,16 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         $this->_cssClasses = array('odd' => $odd, 'even' => $even);
         return $this;
+    }
+
+    /**
+     * Returns current classes for odd and even rows
+     *
+     * @return array
+     */
+    public function getRowAltClasses()
+    {
+        return $this->_cssClasses;
     }
 
     /**
