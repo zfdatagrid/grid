@@ -2014,7 +2014,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['message'] = $this->_render['message'];
         }
 
-        if ((($this->getParam('edit') == 1) || $this->getParam('add') == 1) || $this->getInfo("doubleTables") == 1) {
+        if ((($this->getParam('edit') == 1) && $this->_allowEdit==1)
+            || ($this->getParam('add') == 1  && $this->_allowAdd==1) || $this->getInfo("doubleTables") == 1) {
 
             if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
 
