@@ -351,8 +351,8 @@ class Bvb_Grid_Source_Zend_Select
     public function getTotalRecords()
     {
         if (!is_null($this->_totalRecords)) {
-            if($this->_totalRecords>$this->_limit && $this->_limit>0)
-            {
+
+            if ($this->_totalRecords > $this->_limit && $this->_limit > 0) {
                 return $this->_limit;
             }
             return $this->_totalRecords;
@@ -393,7 +393,7 @@ class Bvb_Grid_Source_Zend_Select
         }
 
 
-        if ($count > $this->_limit && $this->_limit>0) {
+        if ($count > $this->_limit && $this->_limit > 0) {
             return $this->_limit;
         }
 
