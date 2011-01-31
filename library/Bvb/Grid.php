@@ -940,6 +940,7 @@ abstract class Bvb_Grid {
 
             if (isset($options['hRow']) && $options['hRow'] == 1) {
                 $this->_fieldHorizontalRow = $field;
+                $options['title'] = isset($options['title'])?$options['title']:$this->_data['fields'][$field]['field'];
                 $this->_info['hRow'] = array('field' => $field, 'title' => $options['title']);
             }
 
