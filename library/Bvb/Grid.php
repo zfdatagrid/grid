@@ -3368,9 +3368,11 @@ abstract class Bvb_Grid {
     public function resetColumn($column)
     {
         $support = array();
-        $support[] = $this->_data['fields']['title'];
-        $support[] = $this->_data['fields']['field'];
-        $this->updateColumn($column, $support);
+        $support['title'] = isset($this->_data['fields']['title'])?$this->_data['fields']['title']:'';
+        $support['field'] = isset($this->_data['fields']['field'])?$this->_data['fields']['field']:'';
+
+        $this->_data['fields'][$column] = $support;
+
         return $this;
     }
 
