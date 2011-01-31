@@ -223,12 +223,6 @@ abstract class Bvb_Grid {
      */
     private $_allFieldsAdded = false;
     /**
-     * If the user manually sets the query limit
-     *
-     * @var int|bool
-     */
-    protected $_forceLimit = false;
-    /**
      * Default filters to be applied
      *
      * @var array
@@ -1384,9 +1378,7 @@ abstract class Bvb_Grid {
             $this->getSource()->buildQueryOrder($this->_fieldHorizontalRow, 'ASC', true);
         }
 
-        if (false === $this->_forceLimit) {
-            $this->getSource()->buildQueryLimit($this->getRecordsPerPage(), $start);
-        }
+        $this->getSource()->buildQueryLimit($this->getRecordsPerPage(), $start);
 
         return true;
     }
@@ -2638,14 +2630,7 @@ abstract class Bvb_Grid {
 
         $result = $this->getSource()->execute();
 
-        if ($this->_forceLimit === false) {
-            $resultCount = $this->getSource()->getTotalRecords();
-        } else {
-            $resultCount = $this->_forceLimit;
-            if (count($result) < $resultCount) {
-                $resultCount = count($result);
-            }
-        }
+        $resultCount = $this->getSource()->getTotalRecords();
 
         $this->_totalRecords = $resultCount;
         $this->_result = $result;
@@ -3196,6 +3181,16 @@ abstract class Bvb_Grid {
 
         $this->_options = array_merge($this->options, $options);
         return $this;
+    }
+
+    /**
+     * Return current config options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->_options;
     }
 
     /**
