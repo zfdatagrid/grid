@@ -20,14 +20,6 @@
 
 class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
 {
-
-    /**
-     * Options to be aplied
-     * @var array
-     */
-    protected $_options = array('border' => 0);
-
-
     /**
      * Constructor
      *
@@ -53,12 +45,12 @@ class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
         $attrs = '';
         if ( count($this->_options) > 0 ) {
 
-            foreach ( $this->_options as $key => $value ) {
-                $attrs .= " {$key} = \"$value\" ";
+            foreach ( $this->_options as $key => $name ) {
+                $attrs .= "{$key}=\"$name\" ";
             }
 
         }
 
-        return "<img  src=\"$value\" $attrs>";
+        return "<img src=\"$value\" $attrs>";
     }
 }
