@@ -77,8 +77,8 @@ class Bvb_GridTest extends Zend_Test_PHPUnit_ControllerTestCase
     {
         $this->assertEquals($this->grid->getRecordsPerPage(), 15); //Default is 15
         $this->assertEquals($this->grid->setRecordsPerPage(12)->getRecordsPerPage(), 12);
-        $this->assertInternalType('array',$this->grid->getPaginationInterval());
-        $this->assertEquals(count($this->grid->getPaginationInterval()),0);
+        $this->assertInternalType('array', $this->grid->getPaginationInterval());
+        $this->assertEquals(count($this->grid->getPaginationInterval()), 0);
         $this->assertEquals($this->grid->setPaginationInterval(array(10 => 10))->getPaginationInterval(), array('10' => 10));
     }
 
@@ -92,18 +92,118 @@ class Bvb_GridTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->assertInternalType('array', $field);
     }
 
-   public function testCharEncoding()
-   {
-       $this->grid->setcharEncoding('UTF8');
-       $this->assertEquals($this->grid->getCharEncoding(),'UTF8');
-   }
+    public function testCharEncoding()
+    {
+        $this->grid->setcharEncoding('UTF8');
+        $this->assertEquals($this->grid->getCharEncoding(), 'UTF8');
+    }
 
-   public function testAddObjectColumns()
-   {
-       $name = new Bvb_Grid_Column('Name');
-       $name->title('teste');
-       $this->grid->updateColumns($name);
-       $this->assertInternalType('array',$this->grid->getField('Name'));
-   }
+    public function testLibraryDir()
+    {
+        $this->grid->setLibraryDir('library');
+        $this->assertEquals($this->grid->getLibraryDir(), 'library');
+    }
+
+    public function testAddObjectColumns()
+    {
+        $name = new Bvb_Grid_Column('Name');
+        $name->title('teste');
+        $this->grid->updateColumns($name);
+        $this->assertInternalType('array', $this->grid->getField('Name'));
+    }
+
+    public function testSetTranslator()
+    {
+        $english = array(
+            'Name_of' => 'Barcelos',
+            'message2' => 'message2',
+            'message3' => 'message3');
+
+        $german = array(
+            'Fmessage1' => 'Nachricht1',
+            'message2' => 'Nachricht2',
+            'message3' => 'Nachricht3');
+
+        $translate = new Zend_Translate('array', $english, 'en');
+        Zend_Registry::set('Zend_Translate', $translate);
+        $this->grid->setTranslator($translate);
+        $this->assertInstanceOf('Zend_Translate', $this->grid->getTranslator());
+    }
+
+    public function testSetTranslatorFromBvbTranslator()
+    {
+        $english = array(
+            'Name_of' => 'Barcelos',
+            'message2' => 'message2',
+            'message3' => 'message3');
+
+        $german = array(
+            'Fmessage1' => 'Nachricht1',
+            'message2' => 'Nachricht2',
+            'message3' => 'Nachricht3');
+
+        $translate = new Zend_Translate('array', $english, 'en');
+        Bvb_Grid_Translator::getInstance()->setTranslator($translate);
+        $this->grid->setTranslator($translate);
+        $this->assertInstanceOf('Zend_Translate', $this->grid->getTranslator());
+    }
+
+    public function testView()
+    {
+        $this->assertInstanceOf('Zend_View', $this->grid->setView(new Zend_View())->getView());
+    }
+
+    public function testDefaultEscapeFunction()
+    {
+        $this->grid->setDefaultEscapeFunction('htmlspeacialchars');
+        $this->assertEquals('htmlspeacialchars', $this->grid->getDefaultEscapeFunction());
+    }
+
+    public function testUpdateOptions()
+    {
+        $options = array('title'=>'Test');
+        $this->grid->setOptions(array());
+        $this->grid->updateOptions($options);
+        $this->assertEquals($options, $this->grid->getOptions());
+    }
+
+    public function testGetTotalRecords()
+    {
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')->limit(50)));
+        $this->grid->deploy();
+        $this->grid->getSelect();
+        $this->assertEquals($this->grid->getTotalRecords(), 50);
+    }
+
+    public function testResetColumns()
+    {
+        $this->grid->updateColumn('Name',array('hidden'=>true));
+        $this->grid->resetColumn('Name');
+        $this->assertEquals(count($this->grid->getField('Name')), 2);
+
+        $this->grid->updateColumn('Name',array('hidden'=>true));
+        $this->grid->updateColumn('Continent',array('hidden'=>true));
+        $this->grid->resetColumns(array('Name','Continent'));
+        $this->assertEquals(count($this->grid->getField('Name')), 2);
+        $this->assertEquals(count($this->grid->getField('Continent')), 2);
+
+    }
+
+    public function testDeployOptions()
+    {
+        $this->grid->clearDeployOptions();
+        $this->assertEquals(count($this->grid->getDeployOptions()), 0);
+
+        $this->grid->setDeployOption('title', 'Test');
+        $this->assertEquals($this->grid->getDeployOption('title'),'Test');
+        $this->assertEquals(count($this->grid->getDeployOptions()), 1);
+        $this->grid->clearDeployOptions();
+
+        $this->grid->setDeployOptions(array('title'=> 'Test','download'=>true));
+
+        $this->assertEquals(count($this->grid->getDeployOptions()), 2);
+
+
+    }
 
 }
