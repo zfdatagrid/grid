@@ -143,7 +143,7 @@ class GridTableTest extends Bvb_GridTest
         $this->assertInternalType('array', $this->grid->getPlacePageAtRecord());
         $this->assertQueryContentContains('td', 'Portugal');
         $this->assertNotQueryContentContains('td', 'Brazil');
-        $this->assertEquals($this->grid->getParam('start'),150);
+        $this->assertEquals($this->grid->getParam('start'), 150);
     }
 
     public function testDisplayAddForm()
@@ -181,7 +181,7 @@ class GridTableTest extends Bvb_GridTest
         $select = $this->db->select()->from('unit');
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $this->grid->setParam('edit', 1);
-        $this->grid->setParam('comm','mode:edit;[Name:Portugal]');
+        $this->grid->setParam('comm', 'mode:edit;[Name:Portugal]');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -200,7 +200,7 @@ class GridTableTest extends Bvb_GridTest
         $select = $this->db->select()->from('unit');
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $this->grid->setParam('edit', 1);
-        $this->grid->setParam('comm','mode:edit;[Name:Portugal]');
+        $this->grid->setParam('comm', 'mode:edit;[Name:Portugal]');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -210,7 +210,6 @@ class GridTableTest extends Bvb_GridTest
         $this->controller->getResponse()->setBody($grid);
         $this->assertNotQuery("form");
     }
-
 
     public function testGetForm()
     {
@@ -225,14 +224,13 @@ class GridTableTest extends Bvb_GridTest
         $this->assertTrue($this->grid->getForm() instanceof Zend_Form);
     }
 
-
     public function testDisplayDeleteWithNoPermissions()
     {
         $select = $this->db->select()->from('unit');
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $this->grid->setParam('gridDetail', 1);
         $this->grid->setParam('gridRemove', 1);
-        $this->grid->setParam('comm','mode:delete;[Name:Afghanistan]');
+        $this->grid->setParam('comm', 'mode:delete;[Name:Afghanistan]');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -260,8 +258,7 @@ class GridTableTest extends Bvb_GridTest
     {
         $this->grid->setClassRowCondition("'{{Population}}' > 20000", "green", 'red');
 
-        $this->assertInternalType('array',$this->grid->getClassRowCondition());
-
+        $this->assertInternalType('array', $this->grid->getClassRowCondition());
     }
 
     public function testCellConditions()
@@ -275,7 +272,6 @@ class GridTableTest extends Bvb_GridTest
 
         $this->assertQueryContentRegex(".green", "/68000/si");
         $this->assertQueryContentRegex(".red", "/22720000/si");
-
     }
 
     public function testCellConditionsStatus()
@@ -283,14 +279,14 @@ class GridTableTest extends Bvb_GridTest
         $this->grid->setClassCellCondition('Population', "'{{Population}}' > 200000", "red", 'green');
 
         $this->assertFalse($this->grid->getClassCellCondition('nonExistingField'));
-        $this->assertInternalType('array',$this->grid->getClassCellCondition('Population'));
+        $this->assertInternalType('array', $this->grid->getClassCellCondition('Population'));
     }
 
     public function testAjax()
     {
         $this->assertFalse($this->grid->getAjax());
         $this->grid->setAjax('id');
-        $this->assertInternalType('string',$this->grid->getAjax());
+        $this->assertInternalType('string', $this->grid->getAjax());
     }
 
     public function testSqlxpressions()
@@ -302,14 +298,14 @@ class GridTableTest extends Bvb_GridTest
         $grid = $this->grid->deploy();
         $this->controller->getResponse()->setBody($grid);
 
-        $this->assertQueryContentContains('td','6062668450');
+        $this->assertQueryContentContains('td', '6062668450');
     }
 
     public function testRowAltClasses()
     {
-        $this->grid->setRowAltClasses(array('odd'=>'red','even'=>'green'));
+        $this->grid->setRowAltClasses(array('odd' => 'red', 'even' => 'green'));
 
-        $this->assertInternalType('array',$this->grid->getRowAltClasses());
+        $this->assertInternalType('array', $this->grid->getRowAltClasses());
     }
 
     public function testImagesUrl()
@@ -318,6 +314,97 @@ class GridTableTest extends Bvb_GridTest
 
         $this->grid->setImagesUrl($url);
 
-        $this->assertEquals($this->grid->getImagesUrl(),$url);
+        $this->assertEquals($this->grid->getImagesUrl(), $url);
     }
+
+    public function testDecorators()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+
+        $this->grid->updateColumn('Name', array('decorator' => 'Barcelos - Decorator test'));
+
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", 'Barcelos - Decorator test');
+    }
+
+    public function testFormat()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+
+        $this->grid->updateColumn('Name', array('format' => 'image'));
+
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", '<img src="Afghanistan"');
+    }
+
+    public function testFormatWithOptions()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+
+        $this->grid->updateColumn('Name', array('format' => array('image', array('border' => '2'))));
+
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", '<img src="Afghanistan" border="2"');
+    }
+
+    public function testCallback()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+
+        $this->grid->updateColumn('Code', array('callback' => array('function' => array($this, 'callbackTest')), 'decorator' => '{{callback}}'));
+
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", 'callbacktest');
+    }
+
+    public function callbackTest()
+    {
+        return 'callbacktest';
+    }
+
+    public function testCallbackWithParams()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+
+        $this->grid->updateColumn('Code', array('callback' => array('function' => array($this, 'callbackTestParams'), 'params' => array('{{Name}}')), 'decorator' => '{{callback}}'));
+
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", 'UNIT - Afghanistan');
+    }
+
+    public function callbackTestParams($name)
+    {
+        return 'UNIT - ' . $name;
+    }
+
+    public function testHelper()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+        $this->grid->updateColumn('Code', array('helper' =>array('name'=>'formSelect','params'=>array('test'))));
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", '<select name="test" id="test"');
+    }
+
+    public function testHrow()
+    {
+        $select = $this->db->select()->from('unit');
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select))->setNoFilters(true)->setNoOrder(true);
+        $this->grid->updateColumn('Continent', array('hRow' =>true));
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQueryContentContains("td", '<div>Asia</div>');
+    }
+
 }

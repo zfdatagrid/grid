@@ -200,10 +200,7 @@ class Bvb_GridTest extends Zend_Test_PHPUnit_ControllerTestCase
         $this->grid->clearDeployOptions();
 
         $this->grid->setDeployOptions(array('title'=> 'Test','download'=>true));
-
         $this->assertEquals(count($this->grid->getDeployOptions()), 2);
-
-
     }
 
 }
