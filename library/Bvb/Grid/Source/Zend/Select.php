@@ -55,6 +55,13 @@ class Bvb_Grid_Source_Zend_Select
     protected $_totalRecords = null;
 
     /**
+     * Default limit offset
+     *
+     * @var mixed
+     */
+    protected $_limit = null;
+
+    /**
      * Class construct.
      *
      * @param Zend_Db_Select $select Select instance
@@ -68,6 +75,7 @@ class Bvb_Grid_Source_Zend_Select
         }
 
         $this->_select = $select;
+        $this->_limit = $this->_select->getPart(Zend_Db_Select::LIMIT_COUNT);
         $this->init($this->_select);
         return $this;
     }
@@ -343,6 +351,10 @@ class Bvb_Grid_Source_Zend_Select
     public function getTotalRecords()
     {
         if (!is_null($this->_totalRecords)) {
+            if($this->_totalRecords>$this->_limit)
+            {
+                return $this->_limit;
+            }
             return $this->_totalRecords;
         }
 
@@ -378,6 +390,11 @@ class Bvb_Grid_Source_Zend_Select
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
             $result = array_change_key_case($final->fetch(), CASE_UPPER);
             $count = (int) $result['TOTAL'];
+        }
+
+
+        if ($count > $this->_limit) {
+            return $this->_limit;
         }
 
         return $count;
