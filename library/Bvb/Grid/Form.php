@@ -51,12 +51,26 @@ class Bvb_Grid_Form
      * Decorators for subform Groups
      * @var array
      */
-    protected $_subformGroupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '90', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    protected $_subformGroupDecorator = array('FormElements',
+                                              array('HtmlTag',
+                                                    array('tag' => 'td',
+                                                          'colspan' => '90',
+                                                          'class' => 'buttons')),
+                                              array(array('row' => 'HtmlTag'),
+                                                    array('tag' => 'tr')));
     /**
      * Decorators for subform elements
      * @var array
      */
-    protected $_subformElementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td', 'class' => 'elementTitle')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    protected $_subformElementDecorator = array('ViewHelper',
+                                                'Description',
+                                                'Errors',
+                                                array(array('data' => 'HtmlTag'),
+                                                      array('tag' => 'td', 'class' => 'element')),
+                                                array(array('label' => 'Label'),
+                                                      array('tag' => 'td', 'class' => 'elementTitle')),
+                                                array(array('row' => 'HtmlTag'),
+                                                      array('tag' => 'tr')));
     /**
      * Decorators for subform Element Titles
      * @var array
@@ -66,12 +80,24 @@ class Bvb_Grid_Form
      * Decorators for subform vertical inputs elements
      * @var array
      */
-    protected $_subformElementDecoratorVertical = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')));
+    protected $_subformElementDecoratorVertical = array('ViewHelper',
+                                                        'Description',
+                                                        'Errors',
+                                                        array(array('data' => 'HtmlTag'),
+                                                              array('tag' => 'td', 'class' => 'element')));
     /**
      * Decorators for subform file decorators
      * @var array
      */
-    protected $_fileDecorator = array('File', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
+    protected $_fileDecorator = array('File',
+                                      'Description',
+                                      'Errors',
+                                      array(array('data' => 'HtmlTag'),
+                                            array('tag' => 'td', 'class' => 'element')),
+                                      array(array('label' => 'Label'),
+                                            array('tag' => 'td')),
+                                      array(array('row' => 'HtmlTag'),
+                                            array('tag' => 'tr')));
     /**
      * Decorators for subform hidden elements
      * @var array
@@ -81,7 +107,10 @@ class Bvb_Grid_Form
      * Decorators for form
      * @var array
      */
-    protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'class' => 'formTable')), 'Form');
+    protected $_formDecorator = array('FormElements',
+                                      array('HtmlTag',
+                                      array('tag' => 'table', 'class' => 'formTable')),
+                                      'Form');
     /**
      * Decorators for Form
      * @var array
@@ -96,12 +125,17 @@ class Bvb_Grid_Form
      * Decorators for subform
      * @var array
      */
-    protected $_subFormDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'class' => 'borders subForm')));
+    protected $_subFormDecorator = array('FormElements',
+                                         array('HtmlTag',
+                                               array('tag' => 'table',
+                                                     'class' => 'borders subForm')));
     /**
      * Decorators for vertical subform
      * @var array
      */
-    protected $_subFormDecoratorVertical = array('FormElements', array('HtmlTag', array('tag' => 'tr')));
+    protected $_subFormDecoratorVertical = array('FormElements',
+                                                 array('HtmlTag',
+                                                       array('tag' => 'tr')));
     /**
      * Number of subform to show when performing bulk aditions
      * @var int
