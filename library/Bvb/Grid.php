@@ -2336,7 +2336,7 @@ abstract class Bvb_Grid {
 
             if (!isset($value['format']) && isset($this->_data['fields'][$key]['format'])) {
                 $resultExp = $this->_applyFormat($resultExp, $this->_data['fields'][$key]['format']);
-            } elseif (isset($value['format']) && strlen(isset($value['format'])) > 2 && false !== $value['format']) {
+            } elseif (isset($value['format'])  && false !== $value['format']) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
 
