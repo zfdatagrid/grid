@@ -4,7 +4,7 @@
  * @author mascker
  */
 
-include 'application/models/Model.php';
+include APPLICATION_PATH.'/application/models/Model.php';
 
 
 function people ($id, $value, $select)
@@ -113,7 +113,7 @@ class SiteController extends Zend_Controller_Action
     {
         $view = new Zend_View();
         $view->setEncoding('ISO-8859-1');
-        $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
+        $config = new Zend_Config_Ini(APPLICATION_PATH.'/application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
         $grid->setExport(array('pdf', 'csv','excel','wordx'));
@@ -153,24 +153,6 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
-
-
-    public function dateAction ()
-    {
-
-        $grid = $this->grid();
-
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs', array('bug_status', 'status', 'date', 'time'))));
-
-        $filters = new Bvb_Grid_Filters();
-        $filters->addFilter('date', array('render' => 'date'));
-
-        $grid->addFilters($filters);
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
 
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
@@ -259,20 +241,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-
-    /**
-     * The 'most' basic example.
-     */
-    public function openAction ()
-    {
-        $grid = $this->grid();
-
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
-
     /**
      * The 'most' basic example.
      */
@@ -307,23 +275,6 @@ class SiteController extends Zend_Controller_Action
 
         $this->render('index');
     }
-
-
-    public function referenceAction ()
-    {
-
-        $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Products()));
-
-        $form = new Bvb_Grid_Form();
-        $form->setAdd(true)->setEdit(true)->setDelete(true);
-        $grid->setForm($form);
-
-        $this->view->pages = $grid->deploy();
-
-        $this->render('index');
-    }
-
 
     public function multiAction ()
     {
@@ -483,31 +434,6 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-
-    public function unionAction ()
-    {
-
-        $grid = $this->grid();
-
-        $sql1 = $this->_db->select()->from('Country', array('Continent', 'Code'))->limit(12);
-        $sql2 = $this->_db->select()->from('City', array('Name', 'District'))->limit(12);
-
-        $select = $this->_db->select()->union(array($sql1, $sql2))->order('Name DESC');
-
-        $t = $select->query()->fetchAll();
-
-        echo "<pre>";
-        print_r($t);
-        die();
-
-
-        $grid->query($select);
-
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-    }
-
-
     /**
      * Using a model
      */
@@ -520,7 +446,6 @@ class SiteController extends Zend_Controller_Action
         $form = new Bvb_Grid_Form();
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
-
 
 
         #$grid->setDetailColumns();
