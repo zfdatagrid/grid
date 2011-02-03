@@ -4,7 +4,7 @@
  * @author mascker
  */
 
-include APPLICATION_PATH.'/application/models/Model.php';
+include 'application/models/Model.php';
 
 
 function people ($id, $value, $select)
@@ -113,10 +113,10 @@ class SiteController extends Zend_Controller_Action
     {
         $view = new Zend_View();
         $view->setEncoding('ISO-8859-1');
-        $config = new Zend_Config_Ini(APPLICATION_PATH.'/application/grids/grid.ini', 'production');
+        $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->setExport(array('pdf', 'csv','excel','wordx'));
+        $grid->setExport(array( 'csv','excel'));
         $grid->setView($view);
         #$grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
@@ -153,6 +153,24 @@ class SiteController extends Zend_Controller_Action
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
+
+
+    public function dateAction ()
+    {
+
+        $grid = $this->grid();
+
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('bugs', array('bug_status', 'status', 'date', 'time'))));
+
+        $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('date', array('render' => 'date'));
+
+        $grid->addFilters($filters);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
 
     /**
      * Adding extra columns to a datagrid. They can be at left or right.
@@ -241,6 +259,20 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
+    /**
+     * The 'most' basic example.
+     */
+    public function openAction ()
+    {
+        $grid = $this->grid();
+
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
     /**
      * The 'most' basic example.
      */
@@ -269,12 +301,37 @@ class SiteController extends Zend_Controller_Action
         #$grid->placePageAtRecord('PRT','green');
         #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !={{value}} '));
 
-        $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
+
+        $script = "$(document).ready(function() {";
+        foreach($grid->getVisibleFields() as $name)
+        {
+            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
+        }
+        $script .= "});";
+        $grid->getView()->headScript()->appendScript($script);
+
+        $this->view->pages = $grid->deploy();
+
+
+        $this->render('index');
+    }
+
+
+    public function referenceAction ()
+    {
+
+        $grid = $this->grid();
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table(new Products()));
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(true)->setEdit(true)->setDelete(true);
+        $grid->setForm($form);
 
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
     }
+
 
     public function multiAction ()
     {
@@ -351,6 +408,15 @@ class SiteController extends Zend_Controller_Action
 
         $this->view->pages = $grid->deploy();
 
+
+        $script = "$(document).ready(function() {";
+        foreach($grid->getVisibleFields() as $name)
+        {
+            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
+        }
+        $script .= "});";
+        $grid->getView()->headScript()->appendScript($script);
+
         $this->render('index');
     }
 
@@ -417,6 +483,20 @@ class SiteController extends Zend_Controller_Action
     }
 
 
+    /**
+     * The 'most' basic example.
+     */
+    public function excelAction ()
+    {
+        $grid = $this->grid();
+
+        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd() . '/1.xlsx', 'Sheet1'));
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+
+    }
+
+
     public function joinsAction ()
     {
 
@@ -434,6 +514,31 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+
+    public function unionAction ()
+    {
+
+        $grid = $this->grid();
+
+        $sql1 = $this->_db->select()->from('Country', array('Continent', 'Code'))->limit(12);
+        $sql2 = $this->_db->select()->from('City', array('Name', 'District'))->limit(12);
+
+        $select = $this->_db->select()->union(array($sql1, $sql2))->order('Name DESC');
+
+        $t = $select->query()->fetchAll();
+
+        echo "<pre>";
+        print_r($t);
+        die();
+
+
+        $grid->query($select);
+
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+
     /**
      * Using a model
      */
@@ -443,9 +548,10 @@ class SiteController extends Zend_Controller_Action
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
-        $form = new Bvb_Grid_Form();
+        $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
+
 
 
         #$grid->setDetailColumns();
@@ -482,11 +588,11 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(10)));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(1000)));
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
-        #$grid->setRecordsPerPage(1200);
+        $grid->setRecordsPerPage(1200);
 
         $grid->updateColumn('Name', array('title' => 'Country'));
         $grid->updateColumn('Continent', array('title' => 'Continent', 'hRow' => 1));

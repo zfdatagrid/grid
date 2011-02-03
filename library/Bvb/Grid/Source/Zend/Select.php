@@ -1341,4 +1341,69 @@ class Bvb_Grid_Source_Zend_Select
         return $keys;
     }
 
+    /**
+     * Returns a JSON encoded array of options to be used by auto-complete operations
+     *
+     * @var string $term       Term to search
+     * @var string $field      Field to search
+     * @var string $specialKey Key used by user to improve search (>, <>, *, etc, etc)
+     * @var string $output     Output format. Default json
+     *
+     * @return json
+     *
+     */
+    public function getAutoCompleteForFilter( $term, $field, $specialKey='', $output = 'json')
+    {
+
+          $filterSelect = clone $this->_select;
+          $filterSelect->reset('columns');
+
+          $filterSelect->columns($field)->distinct();
+
+          $oldWhere = $filterSelect->getPart('where');
+          $filterSelect->order($field);
+
+          foreach ($oldWhere as $key=>$newWhere) {
+
+              if(stripos($newWhere,$field)!==false)
+              {
+                   unset($oldWhere[$key]);
+              }
+          }
+
+          $filterSelect->reset('where');
+
+          foreach ($oldWhere as $value) {
+              $filterSelect->where($value);
+          }
+
+
+         $filterSelect->where($field . " LIKE " . $this->_getDb()->quote("%" . $term . "%"));
+
+        if ($this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($filterSelect->__toString());
+            if (!$result = $this->_cache['instance']->load($hash)) {
+                $final = $filterSelect->query(Zend_Db::FETCH_ASSOC);
+                $result = $final->fetchAll();
+                $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
+            }
+        } else {
+
+            $final = $filterSelect->query(Zend_Db::FETCH_ASSOC);
+            $result = $final->fetchAll();
+        }
+
+
+        $json = array();
+
+        foreach ($result as $row)
+        {
+            $json[] = $specialKey.$row[$field];
+        }
+
+
+        echo Zend_Json::encode($json);
+        die();
+
+    }
 }

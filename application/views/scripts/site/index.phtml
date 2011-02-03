@@ -1,6 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/humanity/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>P&eacute;tala Azul - DataGrid Examples</title>
 <link type="text/css" rel="stylesheet" href="<?php echo $this->url; ?>public/styles/styles.css">
 <?php echo $this->headScript();?>
@@ -44,7 +50,7 @@ li a, li a:VISITED {
 <div style="background-image:url(<?php echo $this->url; ?>public/images/grid.jpg); height:250px;width:900px; background-repeat:none;">
 <div style="height:37px;"><a href="/"><img border="0" width="220" height="30" src="<?php echo $this->url; ?>public/images/blank.gif"></img></a></div>
 <ul>
-    <li>.:<a href="<?php echo $this->baseUrl('default/site/basic')?>">Basic Example</a><span>What happens when you just pass the Zend_Db_Select instance</span></li>
+    <li>.:<a href="<?php echo $this->baseUrl('default/site/basic')?>">Basic Example with auto-complete</a><span>What happens when you just pass the Zend_Db_Select instance</span></li>
     <li>.:<a href="<?php echo $this->baseUrl('default/site/mass')?>">Mass Actions</a><span>Use mass actions to perform the same action on multiple records.</span></li>
     <li>.:<a href="<?php echo $this->baseUrl('default/site/extra')?>">Extra Columns</a><span>Add extra fields with content from records to your grid</span></li>
     <li>.:<a href="<?php echo $this->baseUrl('default/site/columns')?>">Extra Rows</a><span>Insert extra columns in a variety of positions in your grid</span></li>
@@ -68,7 +74,9 @@ li a, li a:VISITED {
 
 <tr>
 <td style="background-color:#F2F2F2; border:0px;">
-
+<?php if($this->action =='basic'){?>
+    <span style="font-size:10px; border:1px solid #AAA; display:block; margin-bottom:10px; padding:5px; background-color:#DEDEDE;"><strong>NEW</strong>: Try the auto-complete filtering.</span>
+    <?php }?>
 <?php if($this->action=='ofc'){?>
 
     <div style="border:1px solid #111; padding:5px;margin:5px; font-size:12px; background-color:#DEDEDE;">Bar Types:
