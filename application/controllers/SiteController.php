@@ -468,9 +468,6 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    /**
-     * The 'most' basic example.
-     */
     public function ajaxAction ()
     {
         $grid = $this->grid();
@@ -480,20 +477,6 @@ class SiteController extends Zend_Controller_Action
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $this->view->pages = $grid->deploy();
         $this->render('index');
-    }
-
-
-    /**
-     * The 'most' basic example.
-     */
-    public function excelAction ()
-    {
-        $grid = $this->grid();
-
-        $grid->setSource(new Bvb_Grid_Source_PHPExcel_Reader_Excel2007(getcwd() . '/1.xlsx', 'Sheet1'));
-        $this->view->pages = $grid->deploy();
-        $this->render('index');
-
     }
 
 
