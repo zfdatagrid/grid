@@ -2557,8 +2557,7 @@ abstract class Bvb_Grid {
 
         if ($this->getParam('gridDetail') == 1
             && $this->_deployName == 'table'
-            && (is_array($this->_detailColumns)
-            || $this->getParam('gridRemove'))
+            && (is_array($this->_detailColumns) || $this->getParam('gridRemove'))
         ) {
             $this->_isDetail = true;
         }
@@ -2572,7 +2571,14 @@ abstract class Bvb_Grid {
                         $this->updateColumn($key, array('remove' => 1));
                     }
                 }
+            }else{
+                
+                foreach($this->getHiddenFields() as $field)
+                {
+                    $this->updateColumn($field,array('hidden'=>false));
+                }
             }
+
         }
 
         if ($this->_isDetail === false && is_array($this->_gridColumns)) {
@@ -2945,6 +2951,27 @@ abstract class Bvb_Grid {
         }
 
         return array_keys($this->_data['fields']);
+    }
+
+    /**
+     * Returns all hidden fields
+     *
+     * @return array
+     */
+    public function getHiddenFields()
+    {
+
+        $returnFields = array();
+        foreach($this->getFields() as $value)
+        {
+
+            if(!$this->_displayField($value))
+                $returnFields[] = $value;
+
+        }
+
+        return $returnFields;
+
     }
 
     /**
