@@ -116,7 +116,7 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->setExport(array('pdf', 'csv','excel','wordx'));
+        $grid->setExport(array( 'csv','excel'));
         $grid->setView($view);
         #$grid->saveParamsInSession(true);
         #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
@@ -301,9 +301,17 @@ class SiteController extends Zend_Controller_Action
         #$grid->placePageAtRecord('PRT','green');
         #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !={{value}} '));
 
-        $grid->setExport(array('print', 'csv', 'excel', 'pdf'));
+
+        $script = "$(document).ready(function() {";
+        foreach($grid->getVisibleFields() as $name)
+        {
+            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
+        }
+        $script .= "});";
+        $grid->getView()->headScript()->appendScript($script);
 
         $this->view->pages = $grid->deploy();
+
 
         $this->render('index');
     }
@@ -400,6 +408,15 @@ class SiteController extends Zend_Controller_Action
 
         $this->view->pages = $grid->deploy();
 
+
+        $script = "$(document).ready(function() {";
+        foreach($grid->getVisibleFields() as $name)
+        {
+            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
+        }
+        $script .= "});";
+        $grid->getView()->headScript()->appendScript($script);
+
         $this->render('index');
     }
 
@@ -451,9 +468,6 @@ class SiteController extends Zend_Controller_Action
     }
 
 
-    /**
-     * The 'most' basic example.
-     */
     public function ajaxAction ()
     {
         $grid = $this->grid();
@@ -517,7 +531,7 @@ class SiteController extends Zend_Controller_Action
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
-        $form = new Bvb_Grid_Form();
+        $form = new Bvb_Grid_Form('My_Form');
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
@@ -557,11 +571,11 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(10)));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(1000)));
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
-        #$grid->setRecordsPerPage(1200);
+        $grid->setRecordsPerPage(1200);
 
         $grid->updateColumn('Name', array('title' => 'Country'));
         $grid->updateColumn('Continent', array('title' => 'Continent', 'hRow' => 1));

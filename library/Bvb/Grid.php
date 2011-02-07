@@ -2336,7 +2336,7 @@ abstract class Bvb_Grid {
 
             if (!isset($value['format']) && isset($this->_data['fields'][$key]['format'])) {
                 $resultExp = $this->_applyFormat($resultExp, $this->_data['fields'][$key]['format']);
-            } elseif (isset($value['format']) && strlen(isset($value['format'])) > 2 && false !== $value['format']) {
+            } elseif (isset($value['format'])  && false !== $value['format']) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
 
@@ -2557,8 +2557,7 @@ abstract class Bvb_Grid {
 
         if ($this->getParam('gridDetail') == 1
             && $this->_deployName == 'table'
-            && (is_array($this->_detailColumns)
-            || $this->getParam('gridRemove'))
+            && (is_array($this->_detailColumns) || $this->getParam('gridRemove'))
         ) {
             $this->_isDetail = true;
         }
@@ -2572,7 +2571,14 @@ abstract class Bvb_Grid {
                         $this->updateColumn($key, array('remove' => 1));
                     }
                 }
+            }else{
+                
+                foreach($this->getHiddenFields() as $field)
+                {
+                    $this->updateColumn($field,array('hidden'=>false));
+                }
             }
+
         }
 
         if ($this->_isDetail === false && is_array($this->_gridColumns)) {
@@ -2637,6 +2643,51 @@ abstract class Bvb_Grid {
         $this->_result = $result;
 
         $this->_colspan();
+
+
+        if ($this->getParam('_option') == 'autocomplete' && $this->getParam('_gridId') == $this->getGridId(true)) {
+            $field = $this->getParam('field');
+            if (!$this->getField($field)) {
+                throw new Bvb_Grid_Exception('Field not found');
+            }
+            $term = $this->getParam('term');
+
+
+            $specialKeys = array('sqlexp',
+                                 ':empty',
+                                 'isnull',
+                                 'isnnotull',
+                                 'equal',
+                                 '=',
+                                 'rege',
+                                 'rlike',
+                                 '*',
+                                 '>=',
+                                 '>',
+                                 '<>',
+                                 '!=',
+                                 '<=',
+                                 '<',
+                                 'in',
+                                 'flag',
+                                 '||',
+                                 'range',
+                                 '&',
+                                 'and',
+                                 'like');
+
+            $specialKey = '';
+            foreach ($specialKeys as $value) {
+                if (substr($term, 0, strlen($value)) == $value) {
+                    $specialKey = substr($term, 0, strlen($value));
+                    $term = substr($term, strlen($value));
+                    break;
+                }
+            }
+
+            return $this->getSource()->getAutoCompleteForFilter($term, $field, $specialKey);
+        }
+
         return $this;
     }
 
@@ -2900,6 +2951,48 @@ abstract class Bvb_Grid {
         }
 
         return array_keys($this->_data['fields']);
+    }
+
+    /**
+     * Returns all hidden fields
+     *
+     * @return array
+     */
+    public function getHiddenFields()
+    {
+
+        $returnFields = array();
+        foreach($this->getFields() as $value)
+        {
+
+            if(!$this->_displayField($value))
+                $returnFields[] = $value;
+
+        }
+
+        return $returnFields;
+
+    }
+
+    /**
+     * Returns all visible fields
+     *
+     * @return array
+     */
+    public function getVisibleFields()
+    {
+
+        $returnFields = array();
+        foreach($this->getFields() as $value)
+        {
+
+            if($this->_displayField($value))
+                $returnFields[] = $value;
+
+        }
+
+        return $returnFields;
+
     }
 
     /**
@@ -4171,6 +4264,19 @@ abstract class Bvb_Grid {
             if ($value['field'] == $field)
                 return $alias;
         }
+    }
+
+    public function getAutoCompleteUrlForFilter($field)
+    {
+
+        if(!$this->getField($field))
+        {
+            throw new Bvb_Grid_Exception('Field not found');
+        }
+
+
+        return $this->getUrl(array('order')).'/_gridId/'.$this->getGridId(true).'/field/'.$field.'/_option/autocomplete';
+
     }
 
 }

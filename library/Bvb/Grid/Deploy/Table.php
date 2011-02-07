@@ -1609,8 +1609,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     if ($i == $actual) {
                         $pag .= "<strong> $i </strong>";
                     } else {
-                        $pag .= " <a href=javascript:gridAjax('{$this->getInfo("ajax")}' , "
-                              . "'$url/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "')> $i </a>";
+                        $pag .= " <a href=javascript:gridAjax('{$this->getInfo("ajax")}','"
+                              . $url."/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "')> $i </a>";
                     }
 
                 } else {

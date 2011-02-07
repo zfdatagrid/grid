@@ -17,7 +17,6 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
-
 class Bvb_Grid_Form
 {
 
@@ -26,183 +25,187 @@ class Bvb_Grid_Form
      * @var Zend_Form
      */
     protected $_form;
-
     /**
      * input types (text, select, etc, etc) for every form input
      *
      * @var array
      */
     protected $_inputsType = array();
-
     /**
      * Form options
      *
      * @var array
      */
     public $options;
-
     /**
      * Form fields
      * @var array
      */
     public $fields;
-
     /**
      * If the form to be showed is built with fields from query
      * @var bool
      */
     protected $_fieldsBasedOnQuery = false;
-
     /**
      * Decorators for subform Groups
      * @var array
      */
-    protected $_subformGroupDecorator = array('FormElements', array('HtmlTag', array('tag' => 'td', 'colspan' => '90', 'class' => 'buttons')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
+    protected $_subformGroupDecorator = array('FormElements',
+                                              array('HtmlTag',
+                                                    array('tag' => 'td',
+                                                          'colspan' => '90',
+                                                          'class' => 'buttons')),
+                                              array(array('row' => 'HtmlTag'),
+                                                    array('tag' => 'tr')));
     /**
      * Decorators for subform elements
      * @var array
      */
-    protected $_subformElementDecorator = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td', 'class' => 'elementTitle')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
+    protected $_subformElementDecorator = array('ViewHelper',
+                                                'Description',
+                                                'Errors',
+                                                array(array('data' => 'HtmlTag'),
+                                                      array('tag' => 'td', 'class' => 'element')),
+                                                array(array('label' => 'Label'),
+                                                      array('tag' => 'td', 'class' => 'elementTitle')),
+                                                array(array('row' => 'HtmlTag'),
+                                                      array('tag' => 'tr')));
     /**
      * Decorators for subform Element Titles
      * @var array
      */
     protected $_subformElementTitle = array(array('Label', array('tag' => 'th')));
-
     /**
      * Decorators for subform vertical inputs elements
      * @var array
      */
-    protected $_subformElementDecoratorVertical = array('ViewHelper', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')));
-
+    protected $_subformElementDecoratorVertical = array('ViewHelper',
+                                                        'Description',
+                                                        'Errors',
+                                                        array(array('data' => 'HtmlTag'),
+                                                              array('tag' => 'td', 'class' => 'element')));
     /**
      * Decorators for subform file decorators
      * @var array
      */
-    protected $_fileDecorator = array('File', 'Description', 'Errors', array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'element')), array(array('label' => 'Label'), array('tag' => 'td')), array(array('row' => 'HtmlTag'), array('tag' => 'tr')));
-
+    protected $_fileDecorator = array('File',
+                                      'Description',
+                                      'Errors',
+                                      array(array('data' => 'HtmlTag'),
+                                            array('tag' => 'td', 'class' => 'element')),
+                                      array(array('label' => 'Label'),
+                                            array('tag' => 'td')),
+                                      array(array('row' => 'HtmlTag'),
+                                            array('tag' => 'tr')));
     /**
      * Decorators for subform hidden elements
      * @var array
      */
     protected $_buttonHiddenDecorator = array('ViewHelper');
-
     /**
      * Decorators for form
      * @var array
      */
-    protected $_formDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'class' => 'formTable')), 'Form');
-
+    protected $_formDecorator = array('FormElements',
+                                      array('HtmlTag',
+                                      array('tag' => 'table', 'class' => 'formTable')),
+                                      'Form');
     /**
      * Decorators for Form
      * @var array
      */
     protected $_formDecoratorSimple = array('FormElements', 'Form');
-
     /**
      * Decorators for Groups
      * @var array
      */
     protected $_displayGroupsDecorator = array();
-
     /**
      * Decorators for subform
      * @var array
      */
-    protected $_subFormDecorator = array('FormElements', array('HtmlTag', array('tag' => 'table', 'class' => 'borders subForm')));
-
+    protected $_subFormDecorator = array('FormElements',
+                                         array('HtmlTag',
+                                               array('tag' => 'table',
+                                                     'class' => 'borders subForm')));
     /**
      * Decorators for vertical subform
      * @var array
      */
-    protected $_subFormDecoratorVertical = array('FormElements', array('HtmlTag', array('tag' => 'tr')));
-
+    protected $_subFormDecoratorVertical = array('FormElements',
+                                                 array('HtmlTag',
+                                                       array('tag' => 'tr')));
     /**
      * Number of subform to show when performing bulk aditions
      * @var int
      */
     protected $_bulkAdd = 1;
-
     /**
      * Allow bulk Deletion
      * @var bool
      */
     protected $_bulkDelete = false;
-
     /**
      * Allow bulk Edition
      * @var bool
      */
     protected $_bulkEdit = false;
-
     /**
      * use vertical inputs, instead horizontal
      * @var bool
      */
     protected $_useVerticalInputs = true;
-
     /**
      * Use CSRF element to prevent atacks
      * @var bool
      */
     protected $_useCSRF = true;
-
     /**
      * Use decorators. If false it will assume you have your own in your form class
      * @var bool
      */
     protected $_useDecorators = true;
-
     /**
      * Fields allowed to be processd
      * @var array
      */
     protected $_allowedFields = array();
-
     /**
      * Fields not allowed to be processed
      * @var array
      */
     protected $_disallowedFields = array();
-
     /**
      * When adding force some input to have the value specified
      * @var array
      */
     protected $_onAddForce = array();
-
     /**
      * When editing force some inputs to have the value specified
      * @var array
      */
     protected $_onEditForce = array();
-
     /**
      * When editing, add extra condition to the existing ones
      * @var array
      */
     protected $_onEditAddCondition = array();
-
     /**
      * When deleting records, add extra condition to the existing ones
      * @var array
      */
     protected $_onDeleteAddCondition = array();
-
     /**
      * If we should show the delete column
      * @var bool
      */
     protected $_deleteColumn = true;
-
     /**
      * If we should show the edit column
      * @var bool
      */
     protected $_editColumn = true;
-
 
     /**
      * Instantiates a new form, using Zend_Form
@@ -213,11 +216,10 @@ class Bvb_Grid_Form
      *
      * @return void
      */
-    public function __construct ($formClass = 'Zend_Form', $formOptions = array())
+    public function __construct($formClass = 'Zend_Form', $formOptions = array())
     {
         $this->_form = new $formClass($formOptions);
     }
-
 
     /**
      * Returns the current form or subform if a number is specified
@@ -226,14 +228,14 @@ class Bvb_Grid_Form
      *
      * @return Zend_Form
      */
-    public function getForm ($subForm = null)
+    public function getForm($subForm = null)
     {
-        if ( ! is_null($subForm) ) return $this->_form
-            ->getSubForm($subForm);
+        if (!is_null($subForm))
+            return $this->_form
+                ->getSubForm($subForm);
 
         return $this->_form;
     }
-
 
     /**
      * sets the protected properties of this class, of the method does not exists
@@ -244,40 +246,20 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function __call ($name, $args)
+    public function __call($name, $args)
     {
-        if ( method_exists($this->getForm(), $name) ) {
+        if (method_exists($this->getForm(), $name)) {
             return call_user_func_array(array($this->getForm(), $name), $args);
         }
 
-        if ( substr(strtolower($name), 0, 3) == 'set' ) {
+        if (substr(strtolower($name), 0, 3) == 'set') {
             $name = substr($name, 3);
             $name[0] = strtolower($name[0]);
-
-            $decorator = '_' . $name;
-            if ( isset($this->$decorator) && gettype($this->$decorator) == gettype($args[0]) ) {
-                $this->$decorator = $args[0];
-                return $this;
-            }
 
             $this->options[$name] = $args[0];
             return $this;
         }
-
-        if ( substr(strtolower($name), 0, 3) == 'get' ) {
-            $name = substr($name, 3);
-            $name[0] = strtolower($name[0]);
-
-            $decorator = '_' . $name;
-
-            if ( isset($this->$decorator) ) {
-                return $this->$decorator;
-            }
-
-            return $this;
-        }
     }
-
 
     /**
      * Defines the callback to be called before deleting a record
@@ -286,16 +268,15 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackBeforeDelete ($callback)
+    public function setCallbackBeforeDelete($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
         $this->options['callbackBeforeDelete'] = $callback;
 
         return $this;
     }
-
 
     /**
      * Defines the callback to be called before updating a record
@@ -304,9 +285,9 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackBeforeUpdate ($callback)
+    public function setCallbackBeforeUpdate($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -315,7 +296,6 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
     /**
      * Defines the callback to be called before inserting a record
      *
@@ -323,9 +303,9 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackBeforeInsert ($callback)
+    public function setCallbackBeforeInsert($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -334,7 +314,6 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
     /**
      * Defines the callback to be called after deleting a record
      *
@@ -342,9 +321,9 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackAfterDelete ($callback)
+    public function setCallbackAfterDelete($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -353,7 +332,6 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
     /**
      * Defines the callback to be called after updating a record
      *
@@ -361,9 +339,9 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackAfterUpdate ($callback)
+    public function setCallbackAfterUpdate($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -372,7 +350,6 @@ class Bvb_Grid_Form
         return $this;
     }
 
-
     /**
      * Defines the callback to be called after inserting a record
      *
@@ -380,9 +357,9 @@ class Bvb_Grid_Form
      *
      * @return Bvb_Grid_Form
      */
-    public function setCallbackAfterInsert ($callback)
+    public function setCallbackAfterInsert($callback)
     {
-        if ( ! is_callable($callback) ) {
+        if (!is_callable($callback)) {
             throw new Exception($callback . ' not callable');
         }
 
@@ -390,4 +367,508 @@ class Bvb_Grid_Form
 
         return $this;
     }
+
+    /**
+     * @param Zend_Form $_form
+     */
+    public function setForm($_form)
+    {
+        $this->_form = $_form;
+        return $this;
+    }
+
+    /**
+     * @return the $_inputsType
+     */
+    public function getInputsType()
+    {
+        return $this->_inputsType;
+    }
+
+    /**
+     * @param array $_inputsType
+     */
+    public function setInputsType($_inputsType)
+    {
+        $this->_inputsType = $_inputsType;
+        return $this;
+    }
+
+    /**
+     * @return the $options
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     */
+    public function setOptions($options)
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    /**
+     * @return the $fields
+     */
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
+    /**
+     * @param array $fields
+     */
+    public function setFields($fields)
+    {
+        $this->fields = $fields;
+        return $this;
+    }
+
+    /**
+     * @return the $_fieldsBasedOnQuery
+     */
+    public function getFieldsBasedOnQuery()
+    {
+        return $this->_fieldsBasedOnQuery;
+    }
+
+    /**
+     * @param bool $_fieldsBasedOnQuery
+     */
+    public function setFieldsBasedOnQuery($_fieldsBasedOnQuery)
+    {
+        $this->_fieldsBasedOnQuery = $_fieldsBasedOnQuery;
+        return $this;
+    }
+
+    /**
+     * @return the $_subformGroupDecorator
+     */
+    public function getSubformGroupDecorator()
+    {
+        return $this->_subformGroupDecorator;
+    }
+
+    /**
+     * @param array $_subformGroupDecorator
+     */
+    public function setSubformGroupDecorator($_subformGroupDecorator)
+    {
+        $this->_subformGroupDecorator = $_subformGroupDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_subformElementDecorator
+     */
+    public function getSubformElementDecorator()
+    {
+        return $this->_subformElementDecorator;
+    }
+
+    /**
+     * @param array $_subformElementDecorator
+     */
+    public function setSubformElementDecorator($_subformElementDecorator)
+    {
+        $this->_subformElementDecorator = $_subformElementDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_subformElementTitle
+     */
+    public function getSubformElementTitle()
+    {
+        return $this->_subformElementTitle;
+    }
+
+    /**
+     * @param array $_subformElementTitle
+     */
+    public function setSubformElementTitle($_subformElementTitle)
+    {
+        $this->_subformElementTitle = $_subformElementTitle;
+        return $this;
+    }
+
+    /**
+     * @return the $_subformElementDecoratorVertical
+     */
+    public function getSubformElementDecoratorVertical()
+    {
+        return $this->_subformElementDecoratorVertical;
+    }
+
+    /**
+     * @param array $_subformElementDecoratorVertical
+     */
+    public function setSubformElementDecoratorVertical(
+    $_subformElementDecoratorVertical)
+    {
+        $this->_subformElementDecoratorVertical = $_subformElementDecoratorVertical;
+        return $this;
+    }
+
+    /**
+     * @return the $_fileDecorator
+     */
+    public function getFileDecorator()
+    {
+        return $this->_fileDecorator;
+    }
+
+    /**
+     * @param array $_fileDecorator
+     */
+    public function setFileDecorator($_fileDecorator)
+    {
+        $this->_fileDecorator = $_fileDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_buttonHiddenDecorator
+     */
+    public function getButtonHiddenDecorator()
+    {
+        return $this->_buttonHiddenDecorator;
+    }
+
+    /**
+     * @param array $_buttonHiddenDecorator
+     */
+    public function setButtonHiddenDecorator($_buttonHiddenDecorator)
+    {
+        $this->_buttonHiddenDecorator = $_buttonHiddenDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_formDecorator
+     */
+    public function getFormDecorator()
+    {
+        return $this->_formDecorator;
+    }
+
+    /**
+     * @param array $_formDecorator
+     */
+    public function setFormDecorator($_formDecorator)
+    {
+        $this->_formDecorator = $_formDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_formDecoratorSimple
+     */
+    public function getFormDecoratorSimple()
+    {
+        return $this->_formDecoratorSimple;
+    }
+
+    /**
+     * @param array $_formDecoratorSimple
+     */
+    public function setFormDecoratorSimple($_formDecoratorSimple)
+    {
+        $this->_formDecoratorSimple = $_formDecoratorSimple;
+        return $this;
+    }
+
+    /**
+     * @return the $_displayGroupsDecorator
+     */
+    public function getDisplayGroupsDecorator()
+    {
+        return $this->_displayGroupsDecorator;
+    }
+
+    /**
+     * @param array $_displayGroupsDecorator
+     */
+    public function setDisplayGroupsDecorator($_displayGroupsDecorator)
+    {
+        $this->_displayGroupsDecorator = $_displayGroupsDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_subFormDecorator
+     */
+    public function getSubFormDecorator()
+    {
+        return $this->_subFormDecorator;
+    }
+
+    /**
+     * @param array $_subFormDecorator
+     */
+    public function setSubFormDecorator($_subFormDecorator)
+    {
+        $this->_subFormDecorator = $_subFormDecorator;
+        return $this;
+    }
+
+    /**
+     * @return the $_subFormDecoratorVertical
+     */
+    public function getSubFormDecoratorVertical()
+    {
+        return $this->_subFormDecoratorVertical;
+    }
+
+    /**
+     * @param array $_subFormDecoratorVertical
+     */
+    public function setSubFormDecoratorVertical($_subFormDecoratorVertical)
+    {
+        $this->_subFormDecoratorVertical = $_subFormDecoratorVertical;
+        return $this;
+    }
+
+    /**
+     * @return the $_bulkAdd
+     */
+    public function getBulkAdd()
+    {
+        return $this->_bulkAdd;
+    }
+
+    /**
+     * @param int $_bulkAdd
+     */
+    public function setBulkAdd($_bulkAdd)
+    {
+        $this->_bulkAdd = $_bulkAdd;
+        return $this;
+    }
+
+    /**
+     * @return the $_bulkDelete
+     */
+    public function getBulkDelete()
+    {
+        return $this->_bulkDelete;
+    }
+
+    /**
+     * @param bool $_bulkDelete
+     */
+    public function setBulkDelete($_bulkDelete)
+    {
+        $this->_bulkDelete = $_bulkDelete;
+        return $this;
+    }
+
+    /**
+     * @return the $_bulkEdit
+     */
+    public function getBulkEdit()
+    {
+        return $this->_bulkEdit;
+    }
+
+    /**
+     * @param bool $_bulkEdit
+     */
+    public function setBulkEdit($_bulkEdit)
+    {
+        $this->_bulkEdit = $_bulkEdit;
+        return $this;
+    }
+
+    /**
+     * @return the $_useVerticalInputs
+     */
+    public function getUseVerticalInputs()
+    {
+        return $this->_useVerticalInputs;
+    }
+
+    /**
+     * @param bool $_useVerticalInputs
+     */
+    public function setUseVerticalInputs($_useVerticalInputs)
+    {
+        $this->_useVerticalInputs = $_useVerticalInputs;
+        return $this;
+    }
+
+    /**
+     * @return the $_useCSRF
+     */
+    public function getUseCSRF()
+    {
+        return $this->_useCSRF;
+    }
+
+    /**
+     * @param bool $_useCSRF
+     */
+    public function setUseCSRF($_useCSRF)
+    {
+        $this->_useCSRF = $_useCSRF;
+        return $this;
+    }
+
+    /**
+     * @return the $_useDecorators
+     */
+    public function getUseDecorators()
+    {
+        return $this->_useDecorators;
+    }
+
+    /**
+     * @param bool $_useDecorators
+     */
+    public function setUseDecorators($_useDecorators)
+    {
+        $this->_useDecorators = $_useDecorators;
+        return $this;
+    }
+
+    /**
+     * @return the $_allowedFields
+     */
+    public function getAllowedFields()
+    {
+        return $this->_allowedFields;
+    }
+
+    /**
+     * @param array $_allowedFields
+     */
+    public function setAllowedFields($_allowedFields)
+    {
+        $this->_allowedFields = $_allowedFields;
+        return $this;
+    }
+
+    /**
+     * @return the $_disallowedFields
+     */
+    public function getDisallowedFields()
+    {
+        return $this->_disallowedFields;
+    }
+
+    /**
+     * @param array $_disallowedFields
+     */
+    public function setDisallowedFields($_disallowedFields)
+    {
+        $this->_disallowedFields = $_disallowedFields;
+        return $this;
+    }
+
+    /**
+     * @return the $_onAddForce
+     */
+    public function getOnAddForce()
+    {
+        return $this->_onAddForce;
+    }
+
+    /**
+     * @param array $_onAddForce
+     */
+    public function setOnAddForce($_onAddForce)
+    {
+        $this->_onAddForce = $_onAddForce;
+        return $this;
+    }
+
+    /**
+     * @return the $_onEditForce
+     */
+    public function getOnEditForce()
+    {
+        return $this->_onEditForce;
+    }
+
+    /**
+     * @param array $_onEditForce
+     */
+    public function setOnEditForce($_onEditForce)
+    {
+        $this->_onEditForce = $_onEditForce;
+        return $this;
+    }
+
+    /**
+     * @return the $_onEditAddCondition
+     */
+    public function getOnEditAddCondition()
+    {
+        return $this->_onEditAddCondition;
+    }
+
+    /**
+     * @param array $_onEditAddCondition
+     */
+    public function setOnEditAddCondition($_onEditAddCondition)
+    {
+        $this->_onEditAddCondition = $_onEditAddCondition;
+        return $this;
+    }
+
+    /**
+     * @return the $_onDeleteAddCondition
+     */
+    public function getOnDeleteAddCondition()
+    {
+        return $this->_onDeleteAddCondition;
+    }
+
+    /**
+     * @param array $_onDeleteAddCondition
+     */
+    public function setOnDeleteAddCondition($_onDeleteAddCondition)
+    {
+        $this->_onDeleteAddCondition = $_onDeleteAddCondition;
+        return $this;
+    }
+
+    /**
+     * @return the $_deleteColumn
+     */
+    public function getDeleteColumn()
+    {
+        return $this->_deleteColumn;
+    }
+
+    /**
+     * @param bool $_deleteColumn
+     */
+    public function setDeleteColumn($_deleteColumn)
+    {
+        $this->_deleteColumn = $_deleteColumn;
+        return $this;
+    }
+
+    /**
+     * @return the $_editColumn
+     */
+    public function getEditColumn()
+    {
+        return $this->_editColumn;
+    }
+
+    /**
+     * @param bool $_editColumn
+     */
+    public function setEditColumn($_editColumn)
+    {
+        $this->_editColumn = $_editColumn;
+        return $this;
+    }
+
 }

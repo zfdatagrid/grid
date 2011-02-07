@@ -17,6 +17,9 @@ $autoloader->registerNamespace('My_');
 $autoloader->suppressNotFoundWarnings(false);
 $autoloader->setFallbackAutoloader(true);
 
+
+define('APPLICATION_PATH',  getcwd());
+
 Zend_Session::start();
 
 // Load Config
@@ -60,18 +63,6 @@ $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');
 $frontController->setDefaultControllerName('site');
 
-/*
-  $route = new Zend_Controller_Router_Route(
-  'grid/*',
-  array(
-  'controller' => 'site',
-  'action'     => 'basic'
-  )
-  );
-
-  $router = $frontController->getRouter();
-  $router->addRoute('user', $route);
- */
 // Leave 'Database' options empty to rely on Zend_Db_Table default adapter
 $options = array(
     'jquery_path' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
