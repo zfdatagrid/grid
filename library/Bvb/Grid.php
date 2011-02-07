@@ -2339,6 +2339,11 @@ abstract class Bvb_Grid {
             } elseif (isset($value['format'])  && false !== $value['format']) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
+            
+            if(isset($value['decorator']))
+            {
+                $resultExp = $this->_applyFieldDecorator( array('{{result}}'),  array($resultExp), $value['decorator']);
+            }
 
             $result[$key] = $resultExp;
         }
