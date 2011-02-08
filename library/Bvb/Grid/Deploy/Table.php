@@ -537,7 +537,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 }
                             }
 
-                            $sendCall = array($oldFieldValues, $this->getSource(), &$queryUrl);
+                            $sendCall = array(&$post[$key], $this->getSource(), &$queryUrl, $oldFieldValues);
 
 
                             if (null !== $this->_callbackBeforeUpdate) {
@@ -554,7 +554,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                             if (null !== $this->_callbackAfterUpdate) {
 
-                                $sendCall = array(&$post[$key],  $this->getSource(), &$queryUrl);
+                                $sendCall = array(&$post[$key],  $this->getSource(), &$queryUrl, $oldFieldValues);
 
                                 call_user_func_array(
                                     $this->_callbackAfterUpdate, $sendCall
