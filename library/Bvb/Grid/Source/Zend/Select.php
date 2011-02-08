@@ -297,8 +297,8 @@ class Bvb_Grid_Source_Zend_Select
             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
 
-            if ($this->_server == 'mysql') {
-                $this->_totalRecords = $this->_select->getAdapter()->fetchOne('select FOUND_ROWS()');
+            if ($this->_server == 'mysql' && (int)$this->_totalRecords ===0 ) {
+                $this->setTotalRecords($this->_select->getAdapter()->fetchOne('select FOUND_ROWS()'));
             }
         }
 
@@ -1406,4 +1406,16 @@ class Bvb_Grid_Source_Zend_Select
         die();
 
     }
+
+    /**
+     * Defines total records
+     *
+     * @param int $total Total records found
+     */
+
+    public function setTotalRecords($total)
+    {
+        $this->_totalRecords = (int) $total;
+    }
+
 }

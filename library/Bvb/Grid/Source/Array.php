@@ -198,7 +198,10 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function execute ()
     {
-        $this->_totalRecords = count($this->_rawResult);
+        if((int)$this->_totalRecords===0)
+        {
+            $this->setTotalRecords(count($this->_rawResult));
+        }
 
         if ($this->_offset == 0) {
             return array_slice($this->_rawResult, $this->_start);
@@ -432,4 +435,18 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         throw new Exception('Not possible');
 
     }
+
+
+    /**
+     * Defines total records
+     *
+     * @param int $total Total records found
+     */
+
+    public function setTotalRecords($total)
+    {
+        $this->_totalRecords = (int) $total;
+    }
+
+
 }

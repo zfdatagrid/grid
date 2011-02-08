@@ -398,4 +398,11 @@ interface Bvb_Grid_Source_SourceInterface
      *
      */
     public function getAutoCompleteForFilter( $term, $field, $specialKey='', $output = 'json');
+
+    /**
+     * Defines total records found
+     *
+     * @var $total Total records
+     */
+    public function setTotalRecords($total);
 }

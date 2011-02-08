@@ -10,6 +10,9 @@
 
 class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
 {
+
+    protected $_totalRecords;
+
     /**
      * Stores the supplied Doctrine_Query
      *
@@ -220,6 +223,10 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     public function getTotalRecords()
     {
+        if($this->_totalRecords>0)
+            return $this->_totalRecords;
+        
+
         return (int) $this->_query->count();
     }
 
@@ -1223,4 +1230,17 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     {
         throw new Exception('Not yet Implemented');
     }
+
+    /**
+     * Defines total records
+     *
+     * @param int $total Total records found
+     */
+
+    public function setTotalRecords($total)
+    {
+        $this->_totalRecords = (int) $total;
+    }
+
+
 }
