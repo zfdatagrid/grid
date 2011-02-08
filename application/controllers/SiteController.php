@@ -404,7 +404,7 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
-        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'))));
+        $grid->setSqlExp(array('Population' => array('functions' => array('SUM'),'decorator'=>'Total: {{result}}')));
 
         $this->view->pages = $grid->deploy();
 
@@ -531,7 +531,7 @@ class SiteController extends Zend_Controller_Action
         $grid->query(new Bugs());
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
-        $form = new Bvb_Grid_Form('My_Form');
+        $form = new Bvb_Grid_Form();
 
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
