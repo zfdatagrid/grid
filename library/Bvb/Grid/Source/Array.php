@@ -449,4 +449,21 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     }
 
 
+
+    /**
+     * Returns a JSON encoded array of options to be used by auto-complete operations
+     *
+     * @var string $term       Term to search
+     * @var string $field      Field to search
+     * @var string $specialKey Key used by user to improve search (>, <>, *, etc, etc)
+     * @var string $output     Output format. Default json
+     *
+     * @return json
+     *
+     */
+    public function getAutoCompleteForFilter( $term, $field, $specialKey='', $output = 'json')
+    {
+        throw new Exception('Not possible');
+    }
+
 }
