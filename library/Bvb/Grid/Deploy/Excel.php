@@ -46,6 +46,10 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     public function deploy ()
     {
         $this->setRecordsPerPage(0);
+        header("Expires: 0");
+        header("Cache-Control: maxage=1"); //In seconds
+        header("Pragma: public");
+
 
         parent::deploy();
 
