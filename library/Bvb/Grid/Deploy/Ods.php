@@ -122,7 +122,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $this->_deploy['dir'] = rtrim($this->_deploy['dir'], '/') . '/' . ucfirst($this->_deploy['name']) . '/';
 
-        if ( ! defined('APPLICATION_PATH') ) {
+        if ( ! defined(APPLICATION_PATH) ) {
             $pathTemplate = substr($this->templateInfo['dir'], 0, - 4) . '/';
         } else {
             $pathTemplate = APPLICATION_PATH . '/../' . rtrim($this->getLibraryDir(), '/') . '/' . substr($this->templateInfo['dir'], 0, - 4) . '/';
