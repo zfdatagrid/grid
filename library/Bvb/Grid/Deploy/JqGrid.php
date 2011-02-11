@@ -1189,6 +1189,7 @@ JS;
         // number of rows to be shown on page, could be changed in jqGrid
         if (isset($params['rows'])) {
             $this->setParam('perPage', $params['rows']);
+            $this->_recordsPerPage = $params['rows'];
         }
 
         // first row to display
