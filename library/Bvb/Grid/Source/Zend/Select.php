@@ -424,24 +424,17 @@ class Bvb_Grid_Source_Zend_Select
             $pks = $fields;
         }
 
-        if (count($pks) > 1) {
-            $concat = '';
-            foreach ($pks as $conc) {
-                $concat .= $this->_getDb()->quoteIdentifier($conc) . " ,'-' ,";
-            }
-            $concat = rtrim($concat, "'-' ,");
-        } else {
-            $concat = $pks[0];
-        }
-
-        $select->columns(array('ids' => new Zend_Db_Expr("CONCAT($concat)")));
-
+        $select->columns($pks);
         $final = $select->query(Zend_Db::FETCH_ASSOC);
         $result = $final->fetchAll();
 
         $return = array();
-        foreach ($result as $value) {
-            $return[] = $value['ids'];
+        foreach ($result as $tab) {
+            $id = null;
+            foreach ($tab as $key => $value) {
+                $id .= $value . '-';
+            }
+            $return[] = substr($id, 0, -1);
         }
 
         return implode(',', $return);
