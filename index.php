@@ -40,24 +40,26 @@ $backendOptions = array('cache_dir' => './data/cache/');
 $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
 Zend_Registry::set('cache', $cache);
 
+/*
 //Locale
 $locale = new Zend_Locale('en_US');
 Zend_Registry::set('locale', $locale);
-/*
   $english = array(
   'Name_of' => 'Barcelos',
-  'message2 => 'message2',
+  'message2' => 'message2',
   'message3' => 'message3');
 
   $german = array(
-  'Fmessage1 => 'Nachricht1',
+  'Fmessage1' => 'Nachricht1',
   'message2' => 'Nachricht2',
   'message3' => 'Nachricht3');
 
   $translate = new Zend_Translate('array', $english, 'en');
 
   Zend_Registry::set('Zend_Translate',$translate);
- */
+*/
+
+
 $frontController = Zend_Controller_Front::getInstance();
 $frontController->throwExceptions(true);
 $frontController->setControllerDirectory('./application/controllers');
