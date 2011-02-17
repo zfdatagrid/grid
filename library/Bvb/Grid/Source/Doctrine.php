@@ -225,7 +225,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
     {
         if($this->_totalRecords>0)
             return $this->_totalRecords;
-        
+
 
         return (int) $this->_query->count();
     }
@@ -1210,8 +1210,50 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     public function getMassActionsIds($table, $fields)
     {
-        throw new Exception('Not yet Implemented');
+        $q = clone $this->_query;
+
+        $q->removeDqlQueryPart('limit');
+        $q->removeDqlQueryPart('offset');
+        $q->removeDqlQueryPart('orderby');
+
+        $q->removeSqlQueryPart('limit');
+        $q->removeSqlQueryPart('offset');
+        $q->removeSqlQueryPart('orderby');
+
+        if ( count($fields) == 0 ) {
+            $pks = Doctrine::getTable($this->_getModelFromTable($table))->getIdentifier();
+        } else {
+            $pks = $fields;
+        }
+
+        if ($pks && !is_array($pks))
+        {
+            $pks= array($pks);
+        }
+
+        if ( count($pks) > 1 ) {
+            $concat = '';
+            foreach ( $pks as $conc ) {
+                $concat .= $table.'.'.$conc . " ,'-' ,";
+            }
+            $concat = rtrim($concat, "'-' ,");
+
+            $q->select('CONCAT('.$concat.', "_") as ids');
+        } else {
+            $concat = $pks[0];
+            $q->select($table.'.'.$concat.' as ids');
+        }
+
+        $result= $q->getConnection()->fetchAssoc($q->getSqlQuery(), $q->getFlattenedParams());
+
+        $return = array();
+        foreach ( $result as $value ) {
+            $return[] = current($value);
+        }
+
+        return implode(',', $return);
     }
+
 
     /**
      * @todo Implement
