@@ -33,7 +33,6 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
-        $this->checkExportRights();
     }
 
 
@@ -45,6 +44,8 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     public function deploy ()
     {
+
+        $this->checkExportRights();
         $this->setRecordsPerPage(0);
         header("Expires: 0");
         header("Cache-Control: maxage=1"); //In seconds
