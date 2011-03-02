@@ -242,6 +242,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 || ($this->getParam('zfmassedit')
                 && $this->getRequest()->isPost())
             ) {
+
                 foreach ($this->_form->getSubForms() as $key => $form) {
                     foreach (array_keys($form->getElements()) as $element) {
                         if ($this->_gridSession->noErrors !== true) {
@@ -325,12 +326,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                                 ->setValue($this->_gridSession->post[$i][$key]);
                                         }
                                     } else {
-
-                                        if (strlen($this->getForm($i)->getElement($key)->getValue()) == 0
-                                            || $this->getForm($i)->getElement($key)->getValue() == 0
-                                        ) {
                                             $this->getForm($i)->getElement($key)->setValue($value);
-                                        }
                                     }
                                 }
                             }
