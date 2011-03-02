@@ -2066,27 +2066,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ($this->_isDetail == true
                 || ($this->_deleteConfirmationPage == true && $this->getParam('gridRemove') == 1)
             ) {
-                $columns = parent::_buildGrid();
+                $columns = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
 
                 $this->_willShow['detail'] = true;
                 $this->_willShow['detailId'] = $this->getIdentifierColumnsFromUrl();
 
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
-                foreach ($columns[0] as $value) {
-                    if (!isset($value['field'])) {
-                        continue;
-                    }
+                foreach ($columns[0] as $field=>$value) {
 
-                    if (isset($this->_data['fields'][$value['field']]['title'])) {
-                        $value['field'] = $this->__($this->_data['fields'][$value['field']]['title']);
+                    if (isset($this->_data['fields'][$field]['title'])) {
+                        $field = $this->__($this->_data['fields'][$field]['title']);
                     } else {
-                        $value['field'] = $this->__(ucwords(str_replace('_', ' ', $value['field'])));
+                        $field = $this->__(ucwords(str_replace('_', ' ',$field)));
                     }
 
                     $this->_render['detail'] .= str_replace(
                         array('{{field}}', '{{value}}'),
-                        array($value['field'], $value['value']),
+                        array($field, $value),
                         $this->_temp['table']->detail()
                     );
                 }
