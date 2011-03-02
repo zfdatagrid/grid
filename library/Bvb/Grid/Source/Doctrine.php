@@ -776,7 +776,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      * @param array $info
      * @return array
      */
-    public function buildFormElements(array $cols, $info = array())
+    public function buildFormElements(array $cols, $info = array(), $inputsType= array())
     {
         $form = array();
 
@@ -1210,7 +1210,8 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
      */
     public function getMassActionsIds($table, $fields)
     {
-        $q = clone $this->_query;
+        $q= clone $this->_query;
+        $alias = $this->_queryParts['from']['alias'];
 
         $q->removeDqlQueryPart('limit');
         $q->removeDqlQueryPart('offset');
@@ -1234,14 +1235,13 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         if ( count($pks) > 1 ) {
             $concat = '';
             foreach ( $pks as $conc ) {
-                $concat .= $table.'.'.$conc . " ,'-' ,";
+                $concat .= $alias.'.'.$conc . " ,'-' ,";
             }
             $concat = rtrim($concat, "'-' ,");
-
             $q->select('CONCAT('.$concat.', "_") as ids');
         } else {
             $concat = $pks[0];
-            $q->select($table.'.'.$concat.' as ids');
+            $q->select($alias.'.'.$concat.' as ids');
         }
 
         $result= $q->getConnection()->fetchAssoc($q->getSqlQuery(), $q->getFlattenedParams());
