@@ -477,7 +477,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_redirect($this->getUrl() . $finalUrl);
 
                         die();
-                    } catch (Zend_Exception $e) {
+                    } catch (Exception $e) {
                         $this->_gridSession->messageOk = false;
                         $this->_gridSession->message = $this->__('Error saving record: ') . $e->getMessage();
                         $this->_gridSession->formSuccess = 0;
@@ -574,7 +574,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         );
 
                         $this->_redirect($this->getUrl());
-                    } catch (Zend_Exception $e) {
+                    } catch (Exception $e) {
                         $this->_gridSession->messageOk = false;
                         $this->_gridSession->message = $this->__('Error updating record: ') . $e->getMessage();
                         $this->_gridSession->formSuccess = 0;
