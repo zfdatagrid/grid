@@ -57,7 +57,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         }
 
         $this->_query = $q;
-        $this->_setFromParts();
+        $this->_setFromParts(); // called here
         $this->_setSelectParts();
     }
 
@@ -995,7 +995,7 @@ class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
         $return = array();
 
         //Make sure we have the FROM set
-        $this->_setFromParts();
+        // $this->_setFromParts(); // second call, if commented works
 
         $fromTableModel = $this->_queryParts['from']['tableModel'];
         $fromClass = Doctrine::getTable($fromTableModel);
