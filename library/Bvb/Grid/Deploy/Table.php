@@ -2150,9 +2150,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $response = Zend_Controller_Front::getInstance()->getResponse();
-            $response->clearBody();
-            $response->setBody(implode($this->_renderDeploy));
-            $response->sendResponse();
+            $response->clearBody()
+                ->setBody(implode($this->_renderDeploy))
+                ->sendHeaders()
+                ->sendResponse();
             die();
         }
 
