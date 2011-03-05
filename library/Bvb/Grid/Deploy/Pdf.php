@@ -65,11 +65,15 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         $i = 0;
 
+
+        $larg = array();
+        $fix = array();
+
         foreach ($titles as $titles) {
             if ((@$titles['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '')
                 || $this->getInfo('hRow,title') == ''
             ) {
-                $larg[$i] = $this->widthForStringUsingFontSize($titles['value'], $this->_font, 8);
+                $fix[$i] = ceil($this->widthForStringUsingFontSize($titles['value'], $this->_font, 14));
                 $i++;
             }
         }
@@ -81,8 +85,8 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 if (($sql['field'] != $this->getInfo('hRow,field') && $this->getInfo('hRow,title') != '')
                     || $this->getInfo('hRow,title') == ''
                 ) {
-                    if ($larg[$i] < strlen($sql['value'])) {
-                        $larg[$i] = strlen($sql['value']);
+                    if ($fix[$i] < $this->widthForStringUsingFontSize($sql['value'], $this->_font)) {
+                        $fix[$i] = ceil($this->widthForStringUsingFontSize($sql['value'], $this->_font));
                     }
                     $i++;
                 }
@@ -118,7 +122,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                     || $this->getInfo('hRow,title') == ''
                 ) {
 
-                    if ($larg[$i] < strlen($value['value'])) {
+                    if (!isset($larg[$i]) || $larg[$i] < strlen($value['value'])) {
                         $larg[$i] = strlen($value['value']);
                     }
                     $i++;
@@ -128,7 +132,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
             $i++;
         }
 
-        return $larg;
+        return array('larg'=>$larg,'fix'=>$fix);
     }
 
 
@@ -283,7 +287,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $sqlExp = parent::_buildSqlExp();
 
         $larg = $this->calculateCellSize($titles,$sqlExp,$grid);
-        $lengthTotal = array_sum($larg);
+        $lengthTotal = array_sum($larg['larg']);
 
         $this->_cellFontSize = 8;
 
@@ -342,12 +346,52 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->buildPageStructure($titles,true);
 
 
-        $pl = $this->_page->getWidth() - 80;
+        $pageWidth = $this->_page->getWidth() - 80;
+
 
         $i = 0;
-        foreach ($larg as $final) {
-            $this->_cell[$i] = round($final * $pl / $lengthTotal);
+        foreach ($larg['larg'] as $final) {
+            $this->_cell[$i] = ceil($final * $pageWidth / $lengthTotal);
             $i++;
+        }
+
+        $needed = 0;
+        $fix = $larg['fix'];
+        $larg = $larg['larg'];
+
+        $perc = array();
+        $i = 0;
+        foreach ($this->_cell as $key => $value) {
+
+            $perc[$key] = $value - $fix[$key];
+            $i++;
+        }
+
+
+        $perc = array();
+        foreach ($this->_cell as $key => $value) {
+
+            if ($value + 2 < $fix[$key]) {
+
+                $needed = ceil($fix[$key] - $value);
+                $this->_cell[$key] = $fix[$key];
+            }
+
+            if ($value > $fix[$key] + 2 + $needed) {
+                $this->_cell[$key] = $this->_cell[$key] - $needed;
+                $needed = 0;
+                $perc[$key] = $this->_cell[$key] - $fix[$key];
+
+            }
+        }
+
+
+        if (array_sum($this->_cell) > $pageWidth) {
+            $totalToRemove = array_sum($this->_cell) - $pageWidth;
+
+            foreach ($perc as $key => $value) {
+                $this->_cell[$key] = $this->_cell[$key] - round($totalToRemove * $value / array_sum($perc));
+            }
         }
 
         $cellsCount = count($titles);
@@ -551,7 +595,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
                 $i = 0;
                 $this->_page->setStyle($this->_styles['styleFiltersBox']);
-                $this->_page->drawRectangle(40, $this->_height - 4, $tLarg + 50, $this->_height + 12);
+                $this->_page->drawRectangle(40, $this->_height - 4, $tLarg + 60, $this->_height + 12);
 
                 $this->_page->setStyle($this->_styles['styleText']);
                 $text = '     ' . $this->__('Filtered by:') . '     ';
