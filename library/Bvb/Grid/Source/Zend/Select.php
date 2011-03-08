@@ -223,17 +223,17 @@ class Bvb_Grid_Source_Zend_Select
      * @param array|string $table Table Name
      * @return array
      */
-    public function getDescribeTable($table)
+    public function getDescribeTable($table, $schemaName = null)
     {
         if (!isset($this->_describeTables[$table]) || !is_array($this->_describeTables[$table])) {
             if ($this->_cache['use'] == 1) {
                 $hash = 'Bvb_Grid' . md5($table);
                 if (!$result = $this->_cache['instance']->load($hash)) {
-                    $result = $this->_getDb()->describeTable($table);
+                    $result = $this->_getDb()->describeTable($table, $schemaName);
                     $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
                 }
             } else {
-                $result = $this->_getDb()->describeTable($table);
+                $result = $this->_getDb()->describeTable($table, $schemaName);
             }
             $this->_describeTables[$table] = $result;
         }
