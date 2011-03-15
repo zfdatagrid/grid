@@ -236,7 +236,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
                 if ( $this->_type == 'Pie' ) {
                     foreach ( $value as $key => $title ) {
-                        $pie[] = new OFC_Charts_Pie_Value($title, $this->_xLabels[$key]);
+                        $pie[] = array('value'=>$title,'label'=> $this->_xLabels[$key]);
                     }
                     $bar->set_values($pie);
                 } else {
@@ -273,7 +273,7 @@ class Bvb_Grid_Deploy_Ofc extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
                 $pie = array();
                 if ( $this->_type == 'OFC_Charts_Pie' ) {
                     foreach ( $value as $key => $title ) {
-                        $pie[] = new OFC_Charts_Pie_Value($title, $this->_xLabels[$key]);
+                        $pie[] = array('value'=>$title,'label'=> $this->_xLabels[$key]);
                     }
                     $bar->set_values($pie);
                 } else {
