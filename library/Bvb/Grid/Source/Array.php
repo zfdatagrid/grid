@@ -20,6 +20,8 @@
 class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 {
 
+    protected $_eventDispatcher;
+
     protected $_fields;
     protected $_rawResult;
     protected $_offset;
@@ -456,6 +458,18 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     public function getAutoCompleteForFilter($term, $field, $specialKey='', $output = 'json')
     {
         throw new Exception('Not possible');
+    }
+
+    /**
+     * Registers a new event dispatcher
+     *
+     * @var $dispatcher Event Dispatcher
+     *
+     */
+    public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher)
+    {
+        $this->_eventDispatcher = $dispatcher;
+        return $this;
     }
 
 }

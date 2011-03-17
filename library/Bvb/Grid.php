@@ -461,6 +461,13 @@ abstract class Bvb_Grid {
     protected $_runCallbacks = true;
 
     /**
+     * Events manager class
+     *
+     * @var Bvb_Grid_Events
+     */
+
+    protected $_eventDispatcher = false;
+    /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
@@ -546,6 +553,8 @@ abstract class Bvb_Grid {
 
 
         $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
+
+        $this->setEventDispatcher(new Bvb_Grid_Event_Dispatcher());
     }
 
     /**
@@ -607,7 +616,13 @@ abstract class Bvb_Grid {
      */
     public function setSource(Bvb_Grid_Source_SourceInterface $source)
     {
+
         $this->_source = $source;
+
+        $event = new Bvb_Grid_Event('grid.set_source', $this, array('source'=>$this->getSource()));
+        $this->_eventDispatcher->emit($event);
+
+        $this->getSource()->setEventDispatcher($this->_eventDispatcher);
 
         $this->getSource()->setCache($this->getCache());
 
@@ -625,6 +640,10 @@ abstract class Bvb_Grid {
         }
 
         $this->_allFieldsAdded = true;
+
+        $event = new Bvb_Grid_Event('grid.all_fields_added', $this, array('fields'=>&$this->_data['fields']));
+        $this->_eventDispatcher->emit($event);
+
         //Apply options to the fields
         $this->_applyOptionsToFields();
 
@@ -2339,7 +2358,7 @@ abstract class Bvb_Grid {
             } elseif (isset($value['format'])  && false !== $value['format']) {
                 $resultExp = $this->_applyFormat($resultExp, $value['format']);
             }
-            
+
             if(isset($value['decorator']))
             {
                 $resultExp = $this->_applyFieldDecorator( array('{{result}}'),  array($resultExp), $value['decorator']);
@@ -2546,6 +2565,8 @@ abstract class Bvb_Grid {
             throw new Bvb_Grid_Exception('Please specify your source');
         }
 
+        $event = new Bvb_Grid_Event('init_deploy', $this, array());
+        $this->_eventDispatcher->emit($event);
 
         //Disable ajax for CRUD operations
         if (!is_null($this->_crud)) {
@@ -2577,7 +2598,7 @@ abstract class Bvb_Grid {
                     }
                 }
             }else{
-                
+
                 foreach($this->getHiddenFields() as $field)
                 {
                     $this->updateColumn($field,array('hidden'=>false));
@@ -4257,7 +4278,7 @@ abstract class Bvb_Grid {
     }
 
     /**
-     * Reutrns fields alias
+     * Reutrns field alias
      *
      * @param string $field Field alias
      *
@@ -4271,6 +4292,13 @@ abstract class Bvb_Grid {
         }
     }
 
+    /**
+     * Returns a url to be used to get a list of possible values from DB.
+     *
+     * @param string $field A valid field from query
+     *
+     * @return string
+     */
     public function getAutoCompleteUrlForFilter($field)
     {
 
@@ -4282,6 +4310,13 @@ abstract class Bvb_Grid {
 
         return $this->getUrl(array('order')).'/_gridId/'.$this->getGridId(true).'/field/'.$field.'/_option/autocomplete';
 
+    }
+
+
+    public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher)
+    {
+        $this->_eventDispatcher = $dispatcher;
+        return $this;
     }
 
 }

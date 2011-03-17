@@ -405,4 +405,13 @@ interface Bvb_Grid_Source_SourceInterface
      * @var $total Total records
      */
     public function setTotalRecords($total);
+
+
+    /**
+     * Registers a new event dispatcher
+     *
+     * @var $dispatcher Event Dispatcher
+     *
+     */
+    public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher);
 }

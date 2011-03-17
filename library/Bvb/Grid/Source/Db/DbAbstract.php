@@ -19,6 +19,8 @@
  */
 abstract class Bvb_Grid_Source_Db_DbAbstract {
 
+    protected $_eventDispatcher;
+
     /**
      * Builds form elements based on field definition
      *
@@ -118,6 +120,18 @@ abstract class Bvb_Grid_Source_Db_DbAbstract {
         }
 
         return $form;
+    }
+
+    /**
+     * Registers a new event dispatcher
+     *
+     * @var $dispatcher Event Dispatcher
+     *
+     */
+    public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher)
+    {
+        $this->_eventDispatcher = $dispatcher;
+        return $this;
     }
 
 }
