@@ -14,7 +14,7 @@
  * @author    Bento Vilas Boas <geral@petala-azul.com>
  * @copyright 2010 ZFDatagrid
  * @license   http://www.petala-azul.com/bsd.txt   New BSD License
- * @version   $Id: Select.php 1645 2011-03-08 20:08:43Z bento.vilas.boas@gmail.com $
+ * @version   $Id$
  * @link      http://zfdatagrid.com
  */
 class Bvb_Grid_Event_Dispatcher
