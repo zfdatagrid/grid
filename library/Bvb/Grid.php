@@ -1339,14 +1339,13 @@ abstract class Bvb_Grid {
             $filter = substr($filter, 2);
         }
 
-
-        if (isset($this->_data['fields']['searchTypeFixed'])
-            && $this->_data['fields']['searchTypeFixed'] === true
-            && $op != $this->_data['fields']['searchType']
+        if (isset($this->_data['fields'][$field]['searchTypeFixed'])
+            && $this->_data['fields'][$field]['searchTypeFixed'] === true
+            && $op != $this->_data['fields'][$field]['searchType']
         ) {
-
-            $op = $this->_data['fields']['searchType'];
+            $op = $this->_data['fields'][$field]['searchType'];
         }
+
         return array('op' => $op, 'filter' => $filter);
     }
 
