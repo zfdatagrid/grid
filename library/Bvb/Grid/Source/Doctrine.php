@@ -8,7 +8,9 @@
  * @author James Solomon <labs@clickbooth.com>
  */
 
-class Bvb_Grid_Source_Doctrine implements Bvb_Grid_Source_SourceInterface
+class Bvb_Grid_Source_Doctrine
+    extends Bvb_Grid_Source_Db_DbAbstract
+        implements Bvb_Grid_Source_SourceInterface
 {
 
     protected $_totalRecords;
