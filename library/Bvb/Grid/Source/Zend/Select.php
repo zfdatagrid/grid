@@ -404,12 +404,13 @@ class Bvb_Grid_Source_Zend_Select
      * This method will fetch fields and return there values.
      * Those values will be used to build mass actions id's
      *
-     * @param string $table  Table Name
-     * @param string $fields Fields to fetch
+     * @param string $table     table to get records from
+     * @param array  $fields    Fields to fetch
+     * @param string $separator Separator for multiple PK's
      *
      * @return string
      */
-    public function getMassActionsIds($table, $fields)
+    public function getMassActionsIds ($table, $fields, $separator = '-')
     {
         $select = clone $this->_select;
 
@@ -432,7 +433,7 @@ class Bvb_Grid_Source_Zend_Select
         foreach ($result as $tab) {
             $id = null;
             foreach ($tab as $key => $value) {
-                $id .= $value . '-';
+                $id .= $value . $separator;
             }
             $return[] = substr($id, 0, -1);
         }

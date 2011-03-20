@@ -1210,7 +1210,7 @@ class Bvb_Grid_Source_Doctrine
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getMassActionsIds()
      */
-    public function getMassActionsIds($table, $fields)
+    public function getMassActionsIds ($table, $fields, $separator = '-')
     {
         $q= clone $this->_query;
         $alias = $this->_queryParts['from']['alias'];
@@ -1237,7 +1237,7 @@ class Bvb_Grid_Source_Doctrine
         if ( count($pks) > 1 ) {
             $concat = '';
             foreach ( $pks as $conc ) {
-                $concat .= $alias.'.'.$conc . " ,'-' ,";
+                $concat .= $alias.'.'.$conc . " ,'$separator' ,";
             }
             $concat = rtrim($concat, "'-' ,");
             $q->select('CONCAT('.$concat.', "_") as ids');

@@ -415,7 +415,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         return false;
     }
 
-    public function getMassActionsIds($table, $fields)
+    public function getMassActionsIds ($table, $fields, $separator = '-')
     {
         if (!$pk = $this->getIdentifierColumns()) {
             throw new Bvb_Grid_Exception('No primary key found');

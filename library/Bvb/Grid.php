@@ -391,28 +391,6 @@ abstract class Bvb_Grid {
      * @var array
      */
     protected $_deploy = array();
-    /**
-     * Mass Actions
-     *
-     * @var array
-     */
-    protected $_massActions = array();
-    /**
-     * Columns that should be return when submiting the form
-     *
-     * @var array
-     */
-    protected $_massActionsFields = array();
-    /**
-     * The defaulf separator for mass actions post values
-     * @var string
-     */
-    protected $_massActionsSeparator = ',';
-    /**
-     *
-     * @var string|bool
-     */
-    protected $_massActionsDecorator = false;
 
     /**
      * Contains URL's for edit and delete records
@@ -467,6 +445,14 @@ abstract class Bvb_Grid {
      */
 
     protected $_eventDispatcher = false;
+    
+    
+    /**
+     * Mass Actions instance holder
+     * 
+     * @var Bvb_Grid_Mass_Actions
+     */
+    protected $_massActions = null;
     /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
@@ -555,6 +541,7 @@ abstract class Bvb_Grid {
         $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
 
         $this->setEventDispatcher(new Bvb_Grid_Event_Dispatcher());
+        $this->setMassActions(new Bvb_Grid_Mass_Actions());
     }
 
     /**
@@ -2940,7 +2927,7 @@ abstract class Bvb_Grid {
             $totalFields[$row]++;
         }
 
-        if ($this->hasMassActions()) {
+        if ($this->_massActions->hasMassActions()) {
             $totalFields[$row]++;
         }
 
@@ -4008,177 +3995,6 @@ abstract class Bvb_Grid {
     }
 
     /**
-     * Checks if there are any mass actions registered
-     *
-     * @return bool
-     */
-    public function hasMassActions()
-    {
-        return count($this->_massActions) > 0;
-    }
-
-    /**
-     * Returns the active mass options
-     *
-     * @return array
-     */
-    public function getMassActionsOptions()
-    {
-        if (!$this->hasMassActions()) {
-            return array();
-        }
-
-        return (array) $this->_massActions;
-    }
-
-    /**
-     * Defines mass actions, overriden any previous
-     *
-     * @param array $options Options to be made available to user
-     * @param array $fields  Fields to be used instead field identifier
-     *
-     * @return Bvb_Grid
-     */
-    public function setMassActions(array $options, array $fields = array())
-    {
-
-        $this->clearMassActions();
-
-        $this->addMassActions($options,$fields);
-
-        return $this;
-    }
-
-    /**
-     * Returns mass actions decorator so the deploy class can build
-     * the extra column
-     *
-     * @return string
-     */
-
-    protected function _getMassActionsDecorator()
-    {
-
-        if($this->_massActionsDecorator)
-            return $this->_massActionsDecorator;
-
-        $fieldIdentifier = $this->getSource()->getIdentifierColumns($this->_data['table']);
-
-        if (count($this->_massActionsFields) == 0 && count($fieldIdentifier) == 0) {
-            throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
-        }
-
-
-
-       if (count($this->_massActionsFields) == 0) {
-            $pk = '';
-            foreach ($fieldIdentifier as $value) {
-                $aux = explode('.', $value);
-                $pk .= end($aux) . '-';
-            }
-
-            $pk = rtrim($pk, '-');
-
-            $pk = explode('-',$pk);
-        }
-
-        $pk = "{{" . implode('}}' . $this->_massActionsSeparator . '{{', $pk) . "}}";
-
-        $this->_massActionsDecorator = $pk;
-
-        return $this->_massActionsDecorator;
-    }
-
-    /**
-     * Clears all mass actions previously defined
-     *
-     * @return Bvb_Grid
-     */
-    public function clearMassActions()
-    {
-        $this->_massActions = array();
-        return $this;
-    }
-
-    /**
-     * Adds a new mass action and clears all previous
-     *
-     * @param type $url     Url to post the results
-     * @param type $caption Caption for the select option
-     * @param type $confirm Confirmation message when submiting
-     * @param type $fields  Fields to be used
-     *
-     * @return Bvb_Grid
-     */
-    public function setMassAction($url, $caption, $confirm='', $fields=array())
-    {
-        $options = array('url' => $url, 'caption' => $caption, 'confirm' => $confirm);
-
-        $this->setMassActions($options, $fields);
-
-        return $this;
-    }
-
-    /**
-     * Adds a new mass action
-     *
-     * @param type $url     Url to post the results
-     * @param type $caption Caption for the select option
-     * @param type $confirm Confirmation message when submiting
-     * @param type $fields  Fields to be used
-     *
-     * @return Bvb_Grid
-     */
-    public function addMassAction($url, $caption, $confirm='', $fields=array())
-    {
-        $options = array('url' => $url, 'caption' => $caption, 'confirm' => $confirm);
-
-        $this->addMassActions($options, $fields);
-
-        return $this;
-    }
-
-    /**
-     * Adds a new mass action option
-     *
-     * @param array $options Options to be made available to user
-     * @param mixed $fields  Fields to be used instead field identifier
-     *
-     * @return Bvb_Grid
-     */
-    public function addMassActions(array $options, $fields = null)
-    {
-
-        foreach ($options as $value) {
-            if (!isset($value['url']) || !isset($value['caption'])) {
-                throw new Bvb_Grid_Exception('Options url and caption are required for each action');
-            }
-        }
-
-        $this->_massActions = array_merge($options, $this->_massActions);
-
-        if (is_array($fields)) {
-            $this->_massActionsFields = $fields;
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * Defines which fields should be posted.
-     *
-     * @param mixed $fields Fields to be used as post ids
-     * @return Bvb_Grid
-     */
-    public function setMassActionsFields($fields)
-    {
-        $this->_massActionsFields = (array)$fields;
-
-        return $this;
-    }
-
-    /**
      * Checks if the user has the right to export for the defined format
      *
      * @throws Bvb_Grid_Exception
@@ -4248,35 +4064,6 @@ abstract class Bvb_Grid {
     }
 
     /**
-     * Defines the separator for primary keys or fields for mass actions post values
-     *
-     * @param string $separator Separator to be used in post fields
-     *
-     * @return Bvb_Grid
-     */
-    public function setMassActionsSeparator($separator)
-    {
-
-        if (0 == strlen($separator)) {
-            throw new Bvb_Grid_Exception('Please provide a Mass Actions separator');
-        }
-
-        $this->_massActionsSeparator = (string) $separator;
-
-        return $this;
-    }
-
-    /**
-     * Returns the current Mass Action separator for post values
-     *
-     * @return string
-     */
-    public function getMassActionsSeparator()
-    {
-        return $this->_massActionsSeparator;
-    }
-
-    /**
      * Reutrns field alias
      *
      * @param string $field Field alias
@@ -4311,11 +4098,70 @@ abstract class Bvb_Grid {
 
     }
 
-
+    /**
+     * Sets dispatcher instance
+     *
+     * @param Bvb_Grid_Event_Dispatcher $dispatcher Dispatcher instance
+     * @return Bvb_Grid 
+     */
     public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher)
     {
         $this->_eventDispatcher = $dispatcher;
         return $this;
+    }
+    
+    public function setMassActions(Bvb_Grid_Mass_Actions $actions)
+    {
+        $this->_massActions = $actions;
+        return $this;
+    }
+
+    /**
+     * Returns Mass Actions instance
+     *
+     * @return Bvb_Grid_Mass_Actions
+     */
+    public function getMassActions()
+    {
+        return $this->_massActions;
+    }
+    
+    
+    /**
+     * Returns mass actions decorator so the deploy class can build
+     * the extra column
+     *
+     * @return string
+     */
+    protected function _getMassActionsDecorator()
+    {
+
+        if ($this->getMassActions()->getDecorator())
+            return $this->getMassActions()->getDecorator();
+
+        $fieldIdentifier = $this->getSource()->getIdentifierColumns($this->_data['table']);
+
+        if (count($this->getMassActions()->getFields()) == 0 && count($fieldIdentifier) == 0) {
+            throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
+        }
+
+        if (count($this->getMassActions()->getFields()) == 0) {
+            $pk = '';
+            foreach ($fieldIdentifier as $value) {
+                $aux = explode('.', $value);
+                $pk .= end($aux) . '-';
+            }
+
+            $pk = rtrim($pk, $this->getMassActions()->getMultipleFieldsSeparator());
+
+            $pk = explode($this->getMassActions()->getMultipleFieldsSeparator(), $pk);
+        }
+        
+        $pk = "{{" . implode('}}' . $this->getMassActions()->getMultipleFieldsSeparator() . '{{', $pk) . "}}";
+
+        $this->getMassActions()->setDecorator($pk);
+
+        return $this->getMassActions()->getDecorator();
     }
 
 }

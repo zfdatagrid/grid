@@ -2288,11 +2288,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $script = "";
 
-        if ($this->hasMassActions()) {
+        if ($this->getMassActions()->hasMassActions()) {
             $script .= " var confirmMessages_" . $this->getGridId() . " = new Array();" . PHP_EOL;
 
-            foreach ($this->getMassActionsOptions() as $value) {
-                if (isset($value['confirm'])) {
+            foreach ($this->getMassActions()->getMassActionsOptions() as $value) {
+                if (isset($value['confirm']) && strlen($value['confirm'])>0) {
                     $script .= " confirmMessages_" . $this->getGridId() . "['{$value['url']}']='{$value['confirm']}';";
                     $script .= PHP_EOL;
                 }
@@ -2307,9 +2307,9 @@ function convertArrayToInput_" . $this->getGridId() . "()
 {
     if(postMassIds_" . $this->getGridId() . ".length==0)
     {
-          tempArray_" . $this->getGridId() . " = new Array();
+        tempArray_" . $this->getGridId() . " = new Array();
 
-           var campos = document.getElementsByTagName('input');
+            var campos = document.getElementsByTagName('input');
 
             for (i=0; i < campos.length; i++)
             {
@@ -2321,12 +2321,12 @@ function convertArrayToInput_" . $this->getGridId() . "()
                 }
             }
 
-         recordsSelected_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ".length;
-         updateRecords_" . $this->getGridId() . "();
-         postMassIds_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ";
+        recordsSelected_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ".length;
+        updateRecords_" . $this->getGridId() . "();
+        postMassIds_" . $this->getGridId() . " = tempArray_" . $this->getGridId() . ";
 
-         if(tempArray_" . $this->getGridId() . ".length ==0)
-         {
+        if(tempArray_" . $this->getGridId() . ".length ==0)
+        {
             alert('" . $this->__('No records selected') . "');
             return false;
         }
@@ -2346,7 +2346,7 @@ function convertArrayToInput_" . $this->getGridId() . "()
     document.forms.massActions_" . $this->getGridId() . ".action = input_" . $this->getGridId() . ";
 
     document.getElementById('postMassIds').value = postMassIds_" . $this->getGridId() . "
-        .join('" . $this->_massActionsSeparator . "');
+        .join('" . $this->getMassActions()->getRecordSeparator() . "');
 }
 
 function updateRecords_" . $this->getGridId() . "()
@@ -3672,16 +3672,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      */
     protected function _buildMassActions()
     {
-        if (!$this->hasMassActions())
+        if (!$this->getMassActions()->hasMassActions())
             return false;
 
         $pk = $this->_getMassActionsDecorator();
+        
 
         $left = new Bvb_Grid_Extra_Column();
 
         $decorator = "<input type='checkbox' onclick='observeCheckBox_" . $this->getGridId() . "(this)' "
                    . "id='massCheckBox_" . $this->getGridId() . "' value='" . $pk . "' />";
-
+        
         $left->position('left')
             ->title('')
             ->name('ZFG_MASS_ACTIONS')
@@ -3690,15 +3691,20 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $this->addExtraColumns($left);
 
         $select = array();
-        foreach ($this->getMassActionsOptions() as $value) {
+        foreach ($this->getMassActions()->getMassActionsOptions() as $value) {
             $select[$value['url']] = $value['caption'];
         }
 
+        
+        $formSubmitOptions = array_merge(array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()"),
+                $this->getMassActions()->getSumitAttributes());
+        
+        
         $formSelect = $this->getView()->formSelect("gridAction_" . $this->getGridId(), null, array(), $select);
         $formSubmit = $this->getView()->formSubmit(
             "send_" . $this->getGridId(),
             $this->__('Submit'),
-            array('onClick' => "return convertArrayToInput_" . $this->getGridId() . "()")
+            $formSubmitOptions
         );
 
         if ($this->getRecordsPerPage() < $this->getTotalRecords()) {
@@ -3707,7 +3713,10 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $currentRecords = $this->getTotalRecords();
         }
 
-        $ids = $this->getSource()->getMassActionsIds($this->_data['table'], $this->_massActionsFields);
+        $ids = $this->getSource()->getMassActionsIds(
+                $this->_data['table'], 
+                $this->getMassActions()->getFields(),
+                $this->getMassActions()->getMultipleFieldsSeparator());
 
 
         $cssClasses = $this->getTemplateParams();

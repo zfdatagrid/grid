@@ -360,10 +360,11 @@ interface Bvb_Grid_Source_SourceInterface
      * Returns tables primary keys separeted by commas ","
      * This is necessary for mass actions
      *
-     * @param string $table
-     * @param array $fields
+     * @param string $table     table to get records from
+     * @param array  $fields    Fields to fetch
+     * @param string $separator Separator for multiple PK's
      */
-    public function getMassActionsIds ($table, $fields);
+    public function getMassActionsIds ($table, $fields, $separator = '-');
 
 
     /**

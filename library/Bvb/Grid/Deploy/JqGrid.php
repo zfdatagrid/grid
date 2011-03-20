@@ -690,7 +690,7 @@ HTML;
                 $fields = $massAction['fields'];
             }
         } else {
-            $fields = $this->getMassActionsFields();
+            $fields = $this->getMassActions()->getFields();
         }
         $selectedValuesJs = $this->getJsFuncSelectedValues($fields);
 
@@ -727,19 +727,6 @@ function(){
     $('#'+id).submit();
 }
 JS;
-    }
-
-    /**
-     * TEMPORARY should be moved to main class
-     *
-     * Should detect primary key fields if not provided by user.
-     * TODO Also action specifics fields should be considered.
-     *
-     * @return array
-     */
-    function getMassActionsFields()
-    {
-        return $this->_massActionsFields;
     }
 
 
