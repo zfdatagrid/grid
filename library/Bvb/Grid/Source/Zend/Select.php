@@ -593,6 +593,9 @@ class Bvb_Grid_Source_Zend_Select
      */
     public function buildQueryLimit($start, $offset)
     {
+        if ($this->_limit > 0 && $this->_limit < $start) {
+            $start = $this->_limit;
+        }
         $this->_select->limit($start, $offset);
         return $this;
     }
