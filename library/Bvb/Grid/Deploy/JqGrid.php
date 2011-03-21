@@ -647,7 +647,7 @@ HTML;
             $this->_jqgParams['viewsortcols'] = array(false,'vertical',false);
         }
 
-        if ($this->hasMassActions()) {
+        if ($this->getMassActions()->hasMassActions()) {
             // add multiselect
             $this->_jqgParams['multiselect'] = true;
             $this->_jqgParams['multiboxonly'] = false;
@@ -655,7 +655,7 @@ HTML;
 
             // add actions
             // TODO render combobox and button combination
-            foreach ($this->getMassActionsOptions() as $options) {
+            foreach ($this->getMassActions()->getMassActionsOptions() as $options) {
                 $this->jqgAddNavButton(
                     array(
                         'caption' => $options['caption'],
