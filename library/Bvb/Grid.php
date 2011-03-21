@@ -2792,23 +2792,25 @@ abstract class Bvb_Grid {
     /**
      * Add multiple columns at once
      *
-     * @return void
+     * @return Bvb_Grid
      */
     public function updateColumns()
     {
         $fields = func_get_args();
 
-        foreach ($fields as $value) {
-            if (!$value instanceof Bvb_Grid_Column) {
+        foreach ($fields as $field) {
+            if (!$field instanceof Bvb_Grid_Column) {
                 throw new Bvb_Grid_Exception('Instance of Bvb_Grid_Column must be provided');
             }
 
-            foreach ($value as $field) {
-                $finalField = $field['field'];
-                unset($field['field']);
-                $this->updateColumn($finalField, $field);
+            foreach ($field->getField() as $fieldName=>$options) {
+                
+                $this->updateColumn($fieldName, $options);
+                
             }
         }
+        
+      return $this;
     }
 
     /**

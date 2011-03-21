@@ -28,6 +28,7 @@ class Bvb_Grid_Column
 {
 
     public $_field;
+    public $_fieldName;
 
 
     /**
@@ -37,7 +38,7 @@ class Bvb_Grid_Column
      */
     public function __construct ($field)
     {
-        $this->_field['field'] = trim($field);
+        $this->_fieldName = trim($field);
     }
 
 
@@ -56,5 +57,10 @@ class Bvb_Grid_Column
 
         $this->_field[$name] = $args[0];
         return $this;
+    }
+    
+    public function getField()
+    {
+        return array($this->_fieldName=>$this->_field);
     }
 }
