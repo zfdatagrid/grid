@@ -2621,7 +2621,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         }
 
         if ($crud->getBulkDelete() == true) {
-            $this->addMassActions(
+            $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $this->getUrl() . '/zfmassremove' . $this->getGridId() . '/1/',
                         'caption' => 'Remove Selected Records',
@@ -2634,7 +2634,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         if ($crud->getBulkEdit() == true) {
 
             $editMassUrl = $this->getUrl() . '/zfmassedit' . $this->getGridId() . '/1/edit' . $this->getGridId() . '/1';
-            $this->addMassActions(
+            $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $editMassUrl,
                         'caption' => 'Edit Selected Records'
