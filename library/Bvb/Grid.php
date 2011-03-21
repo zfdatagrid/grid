@@ -540,7 +540,10 @@ abstract class Bvb_Grid {
 
         $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
 
+        //Set an empty event dispatcher
         $this->setEventDispatcher(new Bvb_Grid_Event_Dispatcher());
+        
+        //set an empty mass action
         $this->setMassActions(new Bvb_Grid_Mass_Actions());
     }
 
@@ -3016,12 +3019,10 @@ abstract class Bvb_Grid {
      */
     public function addFilters($filters)
     {
-        $filtersObj = $filters;
 
-        $filters = $this->_object2array($filters);
-        $filters = $filters['_filters'];
+        $filters = $filters->getFilters();
 
-        foreach ($filtersObj->_filters as $key => $value) {
+        foreach ($filters as $key => $value) {
             if (isset($filters[$key]['callback'])) {
                 $filters[$key]['callback'] = $value['callback'];
             }

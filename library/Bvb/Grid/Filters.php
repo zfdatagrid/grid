@@ -21,7 +21,7 @@
 class Bvb_Grid_Filters
 {
 
-    public $_filters = array();
+    protected $_filters = array();
 
 
     /**
@@ -36,5 +36,15 @@ class Bvb_Grid_Filters
     {
         $this->_filters[$field] = $options;
         return $this;
+    }
+    
+    /**
+     * Returns current filters
+     *
+     * @return array
+     */
+    public function getFilters()
+    {
+        return $this->_filters;
     }
 }
