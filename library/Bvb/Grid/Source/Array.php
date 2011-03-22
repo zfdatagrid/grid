@@ -389,7 +389,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     public function setCache($cache)
     {
         if (!is_array($cache)) {
-            $cache = array('use' => 0);
+            $cache = array('enable' => 0);
         }
 
         $this->_cache = $cache;

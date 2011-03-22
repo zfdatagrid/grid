@@ -123,7 +123,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setExport(array( 'csv','excel','pdf'));
         $grid->setView($view);
         #$grid->saveParamsInSession(true);
-        #$grid->setCache(array('use' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
+        #$grid->setCache(array('enable' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
     }
 

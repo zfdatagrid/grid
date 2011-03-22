@@ -1152,13 +1152,13 @@ class Bvb_Grid_Source_Zend_Select
     public function setCache($cache)
     {
         if (!is_array($cache)) {
-            $cache = array('use' => 0);
+            $cache = array('enable' => 0);
         }
 
-        if (isset($cache['use']['db']) && $cache['use']['db'] == 1) {
-            $cache['use'] = 1;
+        if (isset($cache['enable']['db']) && $cache['enable']['db'] == 1) {
+            $cache['enable'] = 1;
         } else {
-            $cache['use'] = 0;
+            $cache['enable'] = 0;
         }
 
         $this->_cache = $cache;

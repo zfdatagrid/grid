@@ -679,12 +679,12 @@ abstract class Bvb_Grid {
      */
     public function setCache($cache)
     {
-        if ($cache == false || (is_array($cache) && isset($cache['use']) && $cache['use'] == 0)) {
-            $this->_cache = array('use' => 0);
+        if ($cache == false || (is_array($cache) && isset($cache['enable']) && $cache['enable'] == 0)) {
+            $this->_cache = array('enable' => 0);
             return $this;
         }
 
-        if (is_array($cache) && isset($cache['use']) && isset($cache['instance']) && isset($cache['tag'])) {
+        if (is_array($cache) && isset($cache['enable']) && isset($cache['instance']) && isset($cache['tag'])) {
             $this->_cache = $cache;
             return $this;
         }
