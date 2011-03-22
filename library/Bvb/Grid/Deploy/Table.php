@@ -50,42 +50,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_imagesUrl;
     /**
-     * Callback to be called after crud operation update
-     *
-     * @var mixed
-     */
-    protected $_callbackAfterUpdate = null;
-    /**
-     * Callback to be called after crud operation delete
-     *
-     * @var mixed
-     */
-    protected $_callbackAfterDelete = null;
-    /**
-     * Callback to be called after crud operation insert
-     *
-     * @var mixed
-     */
-    protected $_callbackAfterInsert = null;
-    /**
-     * Callback to be called Before crud operation update
-     *
-     * @var mixed
-     */
-    protected $_callbackBeforeUpdate = null;
-    /**
-     * Callback to be called Before crud operation delete
-     *
-     * @var mixed
-     */
-    protected $_callbackBeforeDelete = null;
-    /**
-     * Callback to be called Before crud operation insert
-     *
-     * @var mixed
-     */
-    protected $_callbackBeforeInsert = null;
-    /**
      * Contains result of deploy() function.
      *
      * @var string
@@ -134,12 +98,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @var bool
      */
     protected $_useKeyEventsOnFilters = false;
-    /**
-     * Extra Rows
-     *
-     * @var array
-     */
-    protected $_extraRows = array();
     /**
      * An array with all the parts that can be rendered
      * even
@@ -426,11 +384,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 continue;
                             }
 
-                            $sendCall = array(&$post[$key], $this->getSource());
-
-                            if (null !== $this->_callbackBeforeInsert) {
-                                call_user_func_array($this->_callbackBeforeInsert, $sendCall);
-                            }
 
                             //Let's see if the field is nullable and empty
                             //If so, we need to remove it from the array
@@ -445,11 +398,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                             if ($this->_crudTableOptions['add'] == true) {
                                 $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
-                                $sendCall[] = $this->getSource()->insert($this->_crudTable, $post[$key]);
-                            }
-
-                            if (null !== $this->_callbackAfterInsert) {
-                                call_user_func_array($this->_callbackAfterInsert, $sendCall);
+                                $this->getSource()->insert($this->_crudTable, $post[$key]);
                             }
 
                             unset($this->_gridSession->post[$key]);
@@ -521,41 +470,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $post[$key] = array_merge($post[$key], $this->_crudOptions['editForce']);
                             $queryUrl = array_merge($queryUrl, $this->_crudOptions['editAddCondition']);
 
-                            $oldFieldValues = $this->getSource()->getRecord($this->_data['table'],
-                                                                            $this->getIdentifierColumnsFromUrl()
-                            );
-
-                            foreach($oldFieldValues as $field=>$value)
-                            {
-                                if(!isset($post[$key][$field]))
-                                {
-                                    unset($oldFieldValues[$field]);
-                                }
-                            }
-
-                            $sendCall = array(&$post[$key], $this->getSource(), &$queryUrl, $oldFieldValues);
-
-
-                            if (null !== $this->_callbackBeforeUpdate) {
-                                call_user_func_array(
-                                    $this->_callbackBeforeUpdate, $sendCall
-                                );
-                            }
-
+                            
                             if ($this->_crudTableOptions['edit'] == true) {
                                 $this->getSource()->update(
                                     $this->_crudTable, $post[$key], $queryUrl
                                 );
                             }
 
-                            if (null !== $this->_callbackAfterUpdate) {
-
-                                $sendCall = array(&$post[$key],  $this->getSource(), &$queryUrl, $oldFieldValues);
-
-                                call_user_func_array(
-                                    $this->_callbackAfterUpdate, $sendCall
-                                );
-                            }
                         }
 
                         $this->_gridSession->message = $this->__('Record saved');
@@ -676,22 +597,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
 
                 try {
-                    $sendCall = array(&$condition, $this->getSource());
-
-                    if (null !== $this->_callbackBeforeDelete) {
-                        call_user_func_array($this->_callbackBeforeDelete, $sendCall);
-                    }
-
                     if ($this->_crudTableOptions['delete'] == true) {
                         $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
                         $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
                     }
 
-                    if ($resultDelete == 1) {
-                        if (null !== $this->_callbackAfterDelete) {
-                            call_user_func_array($this->_callbackAfterDelete, $sendCall);
-                        }
-                    }
                 } catch (Exception $e) {
                     $this->_gridSession->correct = 1;
                     $this->_gridSession->messageOk = false;
@@ -726,22 +636,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         try {
-            $sendCall = array(&$condition, $this->getSource());
-
-            if (null !== $this->_callbackBeforeDelete) {
-                call_user_func_array($this->_callbackBeforeDelete, $sendCall);
-            }
-
             if ($this->_crudTableOptions['delete'] == true) {
 
                 $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
-            }
-
-            if ($resultDelete == 1) {
-                if (null !== $this->_callbackAfterDelete) {
-                    call_user_func_array($this->_callbackAfterDelete, $sendCall);
-                }
             }
 
             $this->_gridSession->messageOk = true;
@@ -2594,6 +2492,11 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      */
     public function setForm(Bvb_Grid_Form $crud)
     {
+        
+        $event = new Bvb_Grid_Event('crud.set_form', $this, array('form'=>$crud));
+        $this->_eventDispatcher->emit($event);
+
+
         $this->setAjax(false);
 
         $oldElements = $crud->getElements();
@@ -2624,8 +2527,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $this->getUrl() . '/zfmassremove' . $this->getGridId() . '/1/',
-                        'caption' => 'Remove Selected Records',
-                        'confirm' => 'Are you sure?'
+                          'caption' => 'Remove Selected Records',
+                          'confirm' => 'Are you sure?'
                     )
                 )
             );
@@ -2637,7 +2540,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $editMassUrl,
-                        'caption' => 'Edit Selected Records'
+                          'caption' => 'Edit Selected Records'
                     )
                 )
             );
@@ -2897,29 +2800,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
         $this->_form = $crud->getForm();
 
-        if (isset($crud->options['callbackBeforeDelete'])) {
-            $this->_callbackBeforeDelete = $crud->options['callbackBeforeDelete'];
-        }
-
-        if (isset($crud->options['callbackBeforeInsert'])) {
-            $this->_callbackBeforeInsert = $crud->options['callbackBeforeInsert'];
-        }
-
-        if (isset($crud->options['callbackBeforeUpdate'])) {
-            $this->_callbackBeforeUpdate = $crud->options['callbackBeforeUpdate'];
-        }
-
-        if (isset($crud->options['callbackAfterDelete'])) {
-            $this->_callbackAfterDelete = $crud->options['callbackAfterDelete'];
-        }
-
-        if (isset($crud->options['callbackAfterInsert'])) {
-            $this->_callbackAfterInsert = $crud->options['callbackAfterInsert'];
-        }
-
-        if (isset($crud->options['callbackAfterUpdate'])) {
-            $this->_callbackAfterUpdate = $crud->options['callbackAfterUpdate'];
-        }
 
         $crud = $this->_object2array($crud);
 
@@ -3422,21 +3302,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $this->_classCellCondition[$column][] = array('condition' => $condition,
                                                       'class' => $class,
                                                       'else' => $else);
-        return $this;
-    }
-
-    /**
-     * Adds extra rows to the grid.
-     *
-     * @param Bvb_Grid_Extra_Rows $rows Rowset of columns to add
-     *
-     * @return Bvb_Grid_Deploy_Table
-     */
-    public function addExtraRows(Bvb_Grid_Extra_Rows $rows)
-    {
-        $rows = $this->_object2array($rows);
-        $this->_extraRows = array_merge($this->_extraRows, $rows['_rows']);
-
         return $this;
     }
 

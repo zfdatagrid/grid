@@ -147,7 +147,7 @@ class Bvb_Grid_Source_Zend_Select
             $select->where($field . '=?', $value);
         }
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $select->query(Zend_Db::FETCH_ASSOC);
@@ -212,6 +212,11 @@ class Bvb_Grid_Source_Zend_Select
             }
         }
 
+        
+        $event = new Bvb_Grid_Event('source.build_fields', $this, array('fields'=>&$returnFields));
+        $this->_eventDispatcher->emit($event);
+
+
         $this->_fields = $returnFields;
 
         return $returnFields;
@@ -226,7 +231,7 @@ class Bvb_Grid_Source_Zend_Select
     public function getDescribeTable($table, $schemaName = null)
     {
         if (!isset($this->_describeTables[$table]) || !is_array($this->_describeTables[$table])) {
-            if ($this->_cache['use'] == 1) {
+            if ($this->_cache['enable'] == 1) {
                 $hash = 'Bvb_Grid' . md5($table);
                 if (!$result = $this->_cache['instance']->load($hash)) {
                     $result = $this->_getDb()->describeTable($table, $schemaName);
@@ -285,7 +290,7 @@ class Bvb_Grid_Source_Zend_Select
 
         $this->_prepareExecute();
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
@@ -324,7 +329,7 @@ class Bvb_Grid_Source_Zend_Select
         $this->_select->reset(Zend_Db_Select::LIMIT_COUNT);
         $this->_select->reset(Zend_Db_Select::LIMIT_OFFSET);
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
@@ -378,7 +383,7 @@ class Bvb_Grid_Source_Zend_Select
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
@@ -649,7 +654,7 @@ class Bvb_Grid_Source_Zend_Select
         $distinct->columns(array('value' => $fieldValue));
         $distinct->order($order);
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($distinct->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $result = $distinct->query(Zend_Db::FETCH_ASSOC);
@@ -689,7 +694,7 @@ class Bvb_Grid_Source_Zend_Select
             ->from($table, array('field' => $field, 'value' => $fieldValue))
             ->order($order);
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $result = $select->query(Zend_Db::FETCH_ASSOC);
@@ -752,7 +757,7 @@ class Bvb_Grid_Source_Zend_Select
             $select->where($key . '=?', $value);
         }
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $select->query(Zend_Db::FETCH_ASSOC);
@@ -845,6 +850,13 @@ class Bvb_Grid_Source_Zend_Select
      */
     public function addCondition($filter, $op, $completeField)
     {
+
+        
+        $event = new Bvb_Grid_Event('source.add_condition', 
+                                    $this, 
+                                    array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
+        $this->_eventDispatcher->emit($event);
+
 
 
         $op = strtolower($op);
@@ -985,11 +997,29 @@ class Bvb_Grid_Source_Zend_Select
      */
     public function insert($table, array $post)
     {
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
+        
+        $event = new Bvb_Grid_Event('crud.before_insert',
+                                    $this,
+                                    array('table' => &$table, 'values' => &$post));
+
+        $this->_eventDispatcher->emit($event);
+
+
         $this->_getDb()->insert($table, $post);
-        return $this->_getDb()->lastInsertId();
+        
+        $insertId = $this->_getDb()->lastInsertId();
+                
+        $event = new Bvb_Grid_Event('crud.after_insert',
+                                    $this,
+                                    array('table' => &$table, 'values' => &$post,'insertId'=>$insertId));
+
+        $this->_eventDispatcher->emit($event);
+
+        
+        return $insertId ;
     }
 
     /**
@@ -1003,10 +1033,36 @@ class Bvb_Grid_Source_Zend_Select
      */
     public function update($table, array $post, array $condition)
     {
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
+        
+        $oldValues = $this->getRecord($table, $condition);
+        
+        $event = new Bvb_Grid_Event('crud.before_update',
+                                    $this,
+                                    array('table' => &$table, 
+                                          'newValues' => &$post,
+                                          'oldValues' => &$oldValues,
+                                          'condition'=> &$condition));
+
+        $this->_eventDispatcher->emit($event);
+        
+        $return = $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
+        
+        
+        $event = new Bvb_Grid_Event('crud.before_update',
+                                    $this,
+                                    array('table' => &$table, 
+                                          'newValues' => &$post,
+                                          'oldValues' => &$oldValues,
+                                          'condition'=> &$condition));
+
+        $this->_eventDispatcher->emit($event);
+        
+        
+        return $return;
+        
     }
 
     /**
@@ -1019,10 +1075,27 @@ class Bvb_Grid_Source_Zend_Select
      */
     public function delete($table, array $condition)
     {
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
-        return $this->_getDb()->delete($table, $this->buildWhereCondition($condition));
+        
+        $event = new Bvb_Grid_Event('crud.before_delete',
+                                    $this,
+                                    array('table' => &$table, 'condition' => &$condition));
+        $this->_eventDispatcher->emit($event);
+
+
+        $return = $this->_getDb()->delete($table, $this->buildWhereCondition($condition));
+
+
+        $event = new Bvb_Grid_Event('crud.after_delete',
+                                    $this,
+                                    array('table' => &$table, 'condition' => &$condition));
+
+        $this->_eventDispatcher->emit($event);
+
+
+        return $return;
     }
 
     /**
@@ -1283,7 +1356,7 @@ class Bvb_Grid_Source_Zend_Select
         foreach ($inputsType as $field => $type) {
             $form['elements'][$field][0] = strtolower($type);
         }
-
+        
         return $form;
     }
 
@@ -1377,7 +1450,7 @@ class Bvb_Grid_Source_Zend_Select
 
          $filterSelect->where($field . " LIKE " . $this->_getDb()->quote("%" . $term . "%"));
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($filterSelect->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $filterSelect->query(Zend_Db::FETCH_ASSOC);

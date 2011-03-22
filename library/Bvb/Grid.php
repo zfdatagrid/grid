@@ -164,6 +164,12 @@ abstract class Bvb_Grid {
      */
     protected $_externalFilters = array();
     /**
+     * Extra Rows
+     *
+     * @var array
+     */
+    protected $_extraRows = array();
+    /**
      * Filters values inserted by the user
      *
      * @var array
@@ -927,6 +933,10 @@ abstract class Bvb_Grid {
      */
     public function updateColumn($field, array $options = array())
     {
+        $event = new Bvb_Grid_Event('grid.update_column', $this, array('field'=>$field,'options'=>$options));
+        $this->_eventDispatcher->emit($event);
+
+        
         if (null == $this->getSource()
             || ($this->_allFieldsAdded == true && !array_key_exists($field, $this->_data['fields']))
         ) {
@@ -3023,6 +3033,12 @@ abstract class Bvb_Grid {
     {
 
         $filters = $filters->getFilters();
+        
+        
+        $event = new Bvb_Grid_Event('grid.add_extra_filters', $this, array('filters'=>$filters));
+        $this->_eventDispatcher->emit($event);
+
+        
 
         foreach ($filters as $key => $value) {
             if (isset($filters[$key]['callback'])) {
@@ -3058,6 +3074,11 @@ abstract class Bvb_Grid {
     public function addExtraColumns()
     {
         $extraFields = func_get_args();
+        
+        $event = new Bvb_Grid_Event('grid.add_extra_columns', $this, array('columns'=>$extraFields));
+        $this->_eventDispatcher->emit($event);
+
+        
 
         if (is_array($this->_extraFields)) {
             $final = $this->_extraFields;
@@ -3858,7 +3879,26 @@ abstract class Bvb_Grid {
         return $this->getSource()->getSelectObject();
     }
 
+    /**
+     * Adds extra rows to the grid.
+     *
+     * @param Bvb_Grid_Extra_Rows $rows Rowset of columns to add
+     *
+     * @return Bvb_Grid_Deploy_Table
+     */
+    public function addExtraRows(Bvb_Grid_Extra_Rows $rows)
+    {
+        $event = new Bvb_Grid_Event('grid.add_extra_rows', $this, array('rows'=>$rows));
+        $this->_eventDispatcher->emit($event);
 
+        
+        $rows = $this->_object2array($rows);
+        $this->_extraRows = array_merge($this->_extraRows, $rows['_rows']);
+
+        return $this;
+    }
+
+    
     /**
      * Adds a new external filters
      *
@@ -4115,6 +4155,11 @@ abstract class Bvb_Grid {
     
     public function setMassActions(Bvb_Grid_Mass_Actions $actions)
     {
+        
+        $event = new Bvb_Grid_Event('grid.set_mass_actions', $this, array('source'=>$actions));
+        $this->_eventDispatcher->emit($event);
+
+
         $this->_massActions = $actions;
         return $this;
     }

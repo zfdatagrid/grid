@@ -104,6 +104,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function addCondition($filter, $op, $completeField)
     {
+        
+        $event = new Bvb_Grid_Event('source.add_condition', 
+                                    $this, 
+                                    array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
+        $this->_eventDispatcher->emit($event);
+
+        
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -399,6 +406,9 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
             $label = ucwords(str_replace('_', ' ', $elements));
             $form['elements'][$elements] = array('text', array('size' => 10, 'label' => $label));
         }
+        
+        $event = new Bvb_Grid_Event('crud.elements_build', $this, array('elments'=>&$form));
+        $this->_eventDispatcher->emit($event);
 
         return $form;
     }

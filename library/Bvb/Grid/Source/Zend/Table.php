@@ -193,7 +193,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
 
 
-        if ( $this->_cache['use'] == 1 ) {
+        if ( $this->_cache['enable'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($condition));
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $result = call_user_func_array(array($this->getModel(),'find'), $condition);
@@ -220,7 +220,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         $this->_prepareExecute();
 
 
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($this->_select->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $result = $this->getModel()->fetchAll($this->_select);
@@ -242,7 +242,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     public function fetchDetail ( array $where)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ( $this->_cache['enable'] == 1 ) {
             $hash = 'Bvb_Grid_Model' . md5($this->buildWhereCondition($where));
             if ( ! $result = $this->_cache['instance']->load($hash) ) {
                 $result = call_user_func_array(array($this->getModel(),'find'), $where);
@@ -262,36 +262,99 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
     public function delete ($table, array $condition)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ( $this->_cache['enable'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
+        $event = new Bvb_Grid_Event('crud.before_delete',
+                                    $this,
+                                    array('table' => &$table, 'condition' => &$condition));
+
+        $this->_eventDispatcher->emit($event);
+
+
         $result = call_user_func_array(array($this->getModel(),'find'), $condition);
 
-        return $result->current()->delete();
+        $return = $result->current()->delete();
+        
+
+        $event = new Bvb_Grid_Event('crud.after_delete',
+                                    $this,
+                                    array('table' => &$table, 'condition' => &$condition));
+
+        $this->_eventDispatcher->emit($event);
+
+        return $return;
+        
     }
 
 
     public function update ($table, array $post, array $condition)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ( $this->_cache['enable'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
+        
+        $oldValues = $this->getRecord($table, $condition);
+        
+        $event = new Bvb_Grid_Event('crud.before_update',
+                                    $this,
+                                    array('table' => &$table, 
+                                          'newValues' => &$post,
+                                          'oldValues' => &$oldValues,
+                                          'condition'=> &$condition));
+
+        $this->_eventDispatcher->emit($event);
+        
+
         $result = call_user_func_array(array($this->getModel(),'find'), $condition);
 
-        return $result->current()->setFromArray($post)->save();
+        $return = $result->current()->setFromArray($post)->save();
+        
+        
+        $oldValues = $this->getRecord($table, $condition);
+        
+        $event = new Bvb_Grid_Event('crud.after_update',
+                                    $this,
+                                    array('table' => &$table, 
+                                          'newValues' => &$post,
+                                          'oldValues' => &$oldValues,
+                                          'condition'=> &$condition));
 
+        $this->_eventDispatcher->emit($event);
+        
+        
+        return $return;
     }
 
 
     public function insert ($table, array $post)
     {
-        if ( $this->_cache['use'] == 1 ) {
+        if ( $this->_cache['enable'] == 1 ) {
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
+        
+        
+        $event = new Bvb_Grid_Event('crud.before_insert',
+                                    $this,
+                                    array('table' => &$table, 'values' => &$post));
 
-        return  $this->getModel()->createRow($post)->save();
+        $this->_eventDispatcher->emit($event);
+
+
+
+        $return = $this->getModel()->createRow($post)->save();
+        
+        
+        $event = new Bvb_Grid_Event('crud.after_insert',
+                                    $this,
+                                    array('table' => &$table, 'values' => &$post));
+
+        $this->_eventDispatcher->emit($event);
+
+        return $return;
+
     }
 
 

@@ -456,7 +456,12 @@ class SiteController extends Zend_Controller_Action
 
 
         $actions = new Bvb_Grid_Mass_Actions();
-        #$actions->setMassActions(array(array('url' => $grid->getUrl(), 'caption' => 'Remove (Nothing will happen)', 'confirm' => 'Are you sure?'), array('url' => $grid->getUrl() . '/nothing/happens', 'caption' => 'Some other action', 'confirm' => 'Another confirmation message?')));
+//        $actions->setMassActions(array(array('url' => $grid->getUrl(), 
+//                                             'caption' => 'Remove (Nothing will happen)', 
+//                                             'confirm' => 'Are you sure?'), 
+//                                       array('url' => $grid->getUrl() . '/nothing/happens', 
+//                                             'caption' => 'Some other action', 
+//                                             'confirm' => 'Another confirmation message?')));
 
         $actions->addMassAction($grid->getUrl().'/option/delete', 'Delete', 'Are you sure?');
         $actions->addMassAction($grid->getUrl(), 'Print');

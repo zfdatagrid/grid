@@ -33,13 +33,13 @@ class Bvb_Grid_Event
      *
      * @var mixed Event Args
      */
-    protected $_params = null;
+    protected $_args = null;
 
     public function __construct($name, $object, $params)
     {
         $this->_name = $name;
         $this->_object = $object;
-        $this->_params = $params;
+        $this->_args = $params;
     }
 
     /**
@@ -57,9 +57,9 @@ class Bvb_Grid_Event
      *
      * @return mixed Event Params
      */
-    public function getParams()
+    public function getArgs()
     {
-        return $this->_params;
+        return $this->_args;
     }
 
     /**
@@ -67,9 +67,9 @@ class Bvb_Grid_Event
      *
      * @return mixed Event Params
      */
-    public function getParam($name)
+    public function getArg($name)
     {
-        return isset($this->_params['$name']) ? $this->_params[$name] : null;
+        return isset($this->_args['$name']) ? $this->_args[$name] : null;
     }
 
     /**
