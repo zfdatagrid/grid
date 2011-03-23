@@ -69,7 +69,7 @@ class Bvb_Grid_Event
      */
     public function getParam($name)
     {
-        return isset($this->_params['$name']) ? $this->_params[$name] : null;
+        return isset($this->_params[$name]) ? $this->_params[$name] : null;
     }
 
     /**

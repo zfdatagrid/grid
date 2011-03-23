@@ -614,7 +614,7 @@ abstract class Bvb_Grid {
     {
 
         $this->_source = $source;
-
+        
         $event = new Bvb_Grid_Event('grid.set_source', $this, array('source'=>$this->getSource()));
         $this->_eventDispatcher->emit($event);
 
@@ -2563,6 +2563,8 @@ abstract class Bvb_Grid {
         if ($this->getSource() === null) {
             throw new Bvb_Grid_Exception('Please specify your source');
         }
+        
+        $this->getSource()->setEventDispatcher($this->_eventDispatcher);
 
         $event = new Bvb_Grid_Event('init_deploy', $this, array());
         $this->_eventDispatcher->emit($event);
