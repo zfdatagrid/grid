@@ -39,7 +39,7 @@ class Bvb_Grid_Event_Dispatcher
     {
 
         if (!is_callable($callback)) {
-            throw new Bvb_Grid_Exception($callback . " not callable");
+            throw new Bvb_Grid_Exception((string) $callback . " not callable");
         }
 
         if (!isset($this->_listeners[$event])) {
