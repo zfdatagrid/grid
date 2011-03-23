@@ -2566,7 +2566,7 @@ abstract class Bvb_Grid {
         
         $this->getSource()->setEventDispatcher($this->_eventDispatcher);
 
-        $event = new Bvb_Grid_Event('init_deploy', $this, array());
+        $event = new Bvb_Grid_Event('grid.init_deploy', $this, array());
         $this->_eventDispatcher->emit($event);
 
         //Disable ajax for CRUD operations
