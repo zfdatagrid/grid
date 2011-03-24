@@ -364,12 +364,16 @@ class Bvb_Grid_Source_Zend_Select
         }
 
         $hasExp = false;
+        $hasExpWithoutTotal= false;
 
         $selectCount = clone $this->_select;
 
         foreach ($selectCount->getPart('columns') as $value) {
             if ($value[1] instanceof Zend_Db_Expr) {
                 $hasExp = true;
+                if (!empty($value[2]) && $value[2] !== 'TOTAL'){
+                    $hasExpWithoutTotal = true;
+                }
                 break;
             }
         }
@@ -383,7 +387,22 @@ class Bvb_Grid_Source_Zend_Select
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        if ($this->_cache['enable'] == 1) {
+        if ($hasExpWithoutTotal == true && $this->_cache['use'] == 1) {
+            $hash = 'Bvb_Grid' . md5($selectCount->__toString());
+            if (!$result = $this->_cache['instance']->load($hash)) {
+                $final = $selectCount->query();
+                $count =count( $final->fetchAll());
+                $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
+            }
+        } elseif($hasExpWithoutTotal == true) {
+            $final = $selectCount->query();
+            $result = $final->fetchAll();
+            return count($result);
+        }
+        
+        
+        
+        if ($this->_cache['use'] == 1) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
