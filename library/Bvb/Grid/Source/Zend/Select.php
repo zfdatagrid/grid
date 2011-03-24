@@ -387,7 +387,7 @@ class Bvb_Grid_Source_Zend_Select
         $selectCount->reset(Zend_Db_Select::LIMIT_COUNT);
         $selectCount->reset(Zend_Db_Select::ORDER);
 
-        if ($hasExpWithoutTotal == true && $this->_cache['use'] == 1) {
+        if ($hasExpWithoutTotal == true && $this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $selectCount->query();
@@ -402,7 +402,7 @@ class Bvb_Grid_Source_Zend_Select
         
         
         
-        if ($this->_cache['use'] == 1) {
+        if ($this->_cache['enable'] == 1) {
             $hash = 'Bvb_Grid' . md5($selectCount->__toString());
             if (!$result = $this->_cache['instance']->load($hash)) {
                 $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
