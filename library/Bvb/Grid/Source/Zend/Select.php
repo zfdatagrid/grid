@@ -509,18 +509,13 @@ class Bvb_Grid_Source_Zend_Select
         $explode = explode('.', $field);
         $tableName = reset($explode);
         $field = end($explode);
+        $schema = '';
 
         if (array_key_exists($tableName, $tableList)) {
-
-            if ($tableList[$tableName]['schema'] != null) {
-                $tableName = $tableList[$tableName]['schema'] . "." . $tableList[$tableName]['tableName'];
-            } else {
-                $tableName = $tableList[$tableName]['tableName'];
-            }
-
             $schema = $tableList[$tableName]['schema'];
+            $tableName = $tableList[$tableName]['tableName'];
         }
-
+        
         $table = $this->getDescribeTable($tableName, $schema);
         $type = $table[$field]['DATA_TYPE'];
 
