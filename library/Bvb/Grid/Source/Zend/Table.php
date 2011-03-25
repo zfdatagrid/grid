@@ -312,13 +312,12 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
         $return = $result->current()->setFromArray($post)->save();
         
-        
-        $oldValues = $this->getRecord($table, $condition);
+        $newValues = $this->getRecord($table, $condition);
         
         $event = new Bvb_Grid_Event('crud.after_update',
                                     $this,
                                     array('table' => &$table, 
-                                          'newValues' => &$post,
+                                          'newValues' => &$newValues,
                                           'oldValues' => &$oldValues,
                                           'condition'=> &$condition));
 

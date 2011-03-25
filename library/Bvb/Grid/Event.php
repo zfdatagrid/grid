@@ -81,5 +81,26 @@ class Bvb_Grid_Event
     {
         return $this->_object;
     }
+    
+    /**
+     * Set's a param
+     *
+     * @param string $name
+     * @param mixed $value 
+     */
+    public function setParam($name,$value)
+    {
+        $this->_params[$name] = $value;
+    }
+    
+    /**
+     * Sets all params at once
+     *
+     * @param array $params 
+     */
+    public function setParams(array $params)
+    {
+        $this->_params = $params;
+    }
 
 }
