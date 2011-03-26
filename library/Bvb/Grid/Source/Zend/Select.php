@@ -1093,9 +1093,11 @@ class Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         
+        $values = $this->getRecord($table, $condition);
+        
         $event = new Bvb_Grid_Event('crud.before_delete',
                                     $this,
-                                    array('table' => &$table, 'condition' => &$condition));
+                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
         $this->_eventDispatcher->emit($event);
 
 
@@ -1104,7 +1106,7 @@ class Bvb_Grid_Source_Zend_Select
 
         $event = new Bvb_Grid_Event('crud.after_delete',
                                     $this,
-                                    array('table' => &$table, 'condition' => &$condition));
+                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
 
         $this->_eventDispatcher->emit($event);
 
