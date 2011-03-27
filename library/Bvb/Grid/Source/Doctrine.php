@@ -751,9 +751,11 @@ class Bvb_Grid_Source_Doctrine
     public function delete($table, array $condition)
     {
         
+        $valkues = $this->getRecord($table, $condition);
+        
         $event = new Bvb_Grid_Event('crud.before_delete',
                                     $this,
-                                    array('table' => &$table, 'condition' => &$condition));
+                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
 
         $this->_eventDispatcher->emit($event);
 
@@ -770,7 +772,7 @@ class Bvb_Grid_Source_Doctrine
         
         $event = new Bvb_Grid_Event('crud.after_delete',
                                     $this,
-                                    array('table' => &$table, 'condition' => &$condition));
+                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
 
         $this->_eventDispatcher->emit($event);
 

@@ -607,9 +607,11 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function delete($table, array $condition)
     {
+        $values = $this->getRecord($table, $condition);
+        
         $event = new Bvb_Grid_Event('crud.before_delete',
                         $this,
-                        array('table' => &$table, 'condition' => &$condition));
+                        array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
 
         $this->_eventDispatcher->emit($event);
 
@@ -632,7 +634,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $event = new Bvb_Grid_Event('crud.after_delete',
                         $this,
-                        array('table' => &$table, 'condition' => &$condition));
+                        array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
 
         $this->_eventDispatcher->emit($event);
 
