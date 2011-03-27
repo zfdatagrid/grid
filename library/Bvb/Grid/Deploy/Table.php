@@ -1967,7 +1967,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
-                foreach ($columns[0] as $field=>$value) {
+                foreach ($columns as $field=>$value) {
 
                     if (isset($this->_data['fields'][$field]['title'])) {
                         $field = $this->__($this->_data['fields'][$field]['title']);
