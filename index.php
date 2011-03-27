@@ -12,10 +12,13 @@ set_include_path('.' . PATH_SEPARATOR . './library/'
 include "Zend/Loader/Autoloader.php";
 
 $autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('Bvb_');
-$autoloader->registerNamespace('My_');
-$autoloader->suppressNotFoundWarnings(false);
-$autoloader->setFallbackAutoloader(true);
+$autoloader->registerNamespace('ZFDebug');
+$autoloader->registerNamespace('Bvb');
+$autoloader->registerNamespace('My');
+$autoloader->registerNamespace('OFC');
+$autoloader->registerNamespace('Zendx');
+#$autoloader->suppressNotFoundWarnings(false);
+#$autoloader->setFallbackAutoloader(true);
 
 
 define('APPLICATION_PATH',  getcwd());
