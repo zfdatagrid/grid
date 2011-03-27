@@ -217,12 +217,6 @@ abstract class Bvb_Grid {
      */
     protected $_temp;
     /**
-     * Result untouched
-     *
-     * @var array
-     */
-    private $_resultRaw;
-    /**
      * Check if all columns have been added by ->query()
      *
      * @var bool
