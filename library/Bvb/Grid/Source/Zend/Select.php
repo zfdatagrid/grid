@@ -1065,7 +1065,7 @@ class Bvb_Grid_Source_Zend_Select
         $return = $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
         
         
-        $event = new Bvb_Grid_Event('crud.before_update',
+        $event = new Bvb_Grid_Event('crud.after_update',
                                     $this,
                                     array('table' => &$table, 
                                           'newValues' => &$post,
