@@ -23,7 +23,7 @@ class Bvb_Grid_Event
     /**
      * @var mixed Object Name
      */
-    protected $_object = null;
+    protected $_subject = null;
     /**
      *
      * @var string
@@ -38,7 +38,7 @@ class Bvb_Grid_Event
     public function __construct($name, $object, $params)
     {
         $this->_name = $name;
-        $this->_object = $object;
+        $this->_subject = $object;
         $this->_params = $params;
     }
 
@@ -77,9 +77,9 @@ class Bvb_Grid_Event
      *
      * @return mixed Class where event was called
      */
-    public function getObject()
+    public function getSubject()
     {
-        return $this->_object;
+        return $this->_subject;
     }
     
     /**
