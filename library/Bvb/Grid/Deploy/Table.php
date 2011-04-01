@@ -714,14 +714,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
                 if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button href=\"gridAjax('{$this->getInfo("ajax")}','"
+                    $final1 = "<button id='remove_filters' href=\"gridAjax('{$this->getInfo("ajax")}','"
                             . $url . "')\">" . $this->__('Remove Filters') . "</button>"
-                            . "<button onclick=\"gridAjax('{$this->getInfo("ajax")}','"
+                            . "<button id='remove_order' onclick=\"gridAjax('{$this->getInfo("ajax")}','"
                             . $url2 . "')\">" . $this->__('Remove Order') . "</button>"
-                            . "<button onclick=\"gridAjax('{$this->_info['ajax']}','"
+                            . "<button id='remove_filters_order' onclick=\"gridAjax('{$this->_info['ajax']}','"
                             . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
                 } else {
-                    $final1 = "<button onclick=\"window.location='$url'\">"
+                    $final1 = "<button id='remove_filters_order' onclick=\"window.location='$url'\">"
                             . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">"
                             . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">"
                             . $this->__('Remove Filters and Order') . "</button>";
@@ -729,10 +729,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
                 if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "') \">"
+                    $final1 = "<button id='remove_filters' onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "') \">"
                             . $this->__('Remove Filters') . "</button>";
                 } else {
-                    $final1 = "<button onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button>";
+                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button>";
                 }
 
                 //Only order
@@ -742,10 +742,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && $this->getInfo('noOrder') != 1)
             ) {
                 if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "') \">"
+                    $final1 = "<button id='remove_order' onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "') \">"
                             . $this->__('Remove Order') . "</button>";
                 } else {
-                    $final1 = "<button onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button>";
+                    $final1 = "<button id='remove_order' onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button>";
                 }
             }
 
@@ -756,7 +756,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') != 1) {
-                        $final1 .= "<button onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">"
+                        $final1 .= "<button id='apply_filters' onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">"
                                  . $this->__('Apply Filter') . "</button>";
                     }
 
