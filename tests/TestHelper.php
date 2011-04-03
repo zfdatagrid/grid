@@ -67,6 +67,10 @@ unset($zfRoot, $zfCoreLibrary, $zfCoreTests, $path);
 class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
 {
 
+    /**
+     *
+     * @var Bvb_Grid
+     */
     protected $grid;
     protected $controller;
     protected $db;
@@ -74,6 +78,9 @@ class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
     
     public function setUp()
     {
+        date_default_timezone_set('Europe/Lisbon');
+        
+        include_once APPLICATION_PATH.'/models/Model.php';
         // Assign and instantiate in one step:
         $this->bootstrap = new Zend_Application(
                 'general',
@@ -92,8 +99,6 @@ class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
         $this->grid->setParam('module', 'default');
         $this->grid->setParam('controller', 'site');
         $this->grid->setView(new Zend_View(array()));
-
-        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')));
 
         parent::setUp();
     }

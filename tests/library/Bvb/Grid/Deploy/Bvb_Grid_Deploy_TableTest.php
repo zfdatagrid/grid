@@ -141,6 +141,7 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
 
     public function testPlaceAtRecordPage()
     {
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')));
         $this->grid->placePageAtRecord('PRT', 'green');
         $grid = $this->grid->deploy();
         $this->controller->getResponse()->setBody($grid);
@@ -186,7 +187,6 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $select = $this->db->select()->from('unit');
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $this->grid->setParam('edit', 1);
-        $this->grid->setParam('comm', 'mode:edit;[Name:Portugal]');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -411,7 +411,24 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $this->controller->getResponse()->setBody($grid);
         $this->assertQueryContentContains("td", '<div>Asia</div>');
     }
+    
+    
+    public function testFormWithModel()
+    {
+        
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
+        $this->grid->setParam('add', 1);
+        
+        $form = new Bvb_Grid_Form();
+        $form->setView(new Zend_View());
+        $form->setAdd(true)->setEdit(true)->setDelete(true);
+        $this->grid->setForm($form);
+        $grid = $this->grid->deploy();
+
+        $this->controller->getResponse()->setBody($grid);
+        $this->assertQuery("form");
+        $this->assertQuery("[@id='1-bug_description']");
+    }
+    
+  
 }
-
-
-?>

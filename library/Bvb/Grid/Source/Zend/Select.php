@@ -490,6 +490,7 @@ class Bvb_Grid_Source_Zend_Select
         $explode = explode('.', $field);
         $tableName = reset($explode);
         $field = end($explode);
+        $schema = '';
 
         if (array_key_exists($tableName, $tableList)) {
             $schema = $tableList[$tableName]['schema'];

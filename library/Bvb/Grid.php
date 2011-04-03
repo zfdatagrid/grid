@@ -446,6 +446,12 @@ abstract class Bvb_Grid {
 
     protected $_eventDispatcher = false;
     
+    /**
+     * Request Instance
+     *
+     * @var Zend_Controller_Request_Abstract
+     */
+    protected $_request = null;
     
     /**
      * Mass Actions instance holder
@@ -606,6 +612,11 @@ abstract class Bvb_Grid {
      */
     public function setSource(Bvb_Grid_Source_SourceInterface $source)
     {
+        
+        if($this->getSource())
+        {
+            throw new Bvb_Grid_Exception('You can not set source twice');
+        }
 
         $this->_source = $source;
         
@@ -726,8 +737,27 @@ abstract class Bvb_Grid {
      */
     public function getRequest()
     {
-        return Zend_Controller_Front::getInstance()->getRequest();
+        if(!$this->_request)
+        {
+            $this->_request = Zend_Controller_Front::getInstance()->getRequest();
+        }
+        
+        return $this->_request;
     }
+    
+    /**
+     * Defines request instance
+     *
+     * @param Zend_Controller_Request_Abstract $request
+     * @return Bvb_Grid 
+     */
+    public function setRequest(Zend_Controller_Request_Abstract $request)
+    {
+        $this->_request = $request;
+        
+        return $this;
+    }
+    
 
     /**
      * Set view object

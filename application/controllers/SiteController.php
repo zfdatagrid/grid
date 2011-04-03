@@ -1,7 +1,16 @@
 <?php
 
-function teste($event)
+function my_callback(Bvb_Grid_Event $event)
 {
+    /*
+    $subject = $event->getSubject();
+
+    $dateFieldName_to = $subject->getParam('dateFieldName_to');
+    $subject->setParam('dateFieldName[to]',$dateFieldName_to);
+    $subject->removeParam('dateFieldName_to');//This line is optional. You may need this value. I don't know you code.
+*/
+    #Others here....
+
 }
 
 /**
@@ -316,7 +325,8 @@ class SiteController extends Zend_Controller_Action
 
 
         $event = new Bvb_Grid_Event_Dispatcher();
-        $event->connect('init_deploy', 'teste');
+        #$event->connect('grid.init_deploy', create_function('$event', 'echo "It works!!!!".$event->getName();die();'));
+        $event->connect('grid.init_deploy', 'my_callback');
         $grid->setEventDispatcher($event);
 
         $script = "$(document).ready(function() {";
@@ -588,7 +598,7 @@ class SiteController extends Zend_Controller_Action
         #$grid->setDetailColumns();
 
         $grid->setForm($form);
-
+        
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
 
@@ -702,7 +712,7 @@ class SiteController extends Zend_Controller_Action
         $cap->title('Country (Capital)')->class('width_150')->decorator('{{Country}} <em>({{Capital}})</em>');
 
         $name = new Bvb_Grid_Column('Name');
-        $name->title('Capital')->hide(1);
+        $name->title('Capital')->hidden(1);
 
         $continent = new Bvb_Grid_Column('Continent');
         $continent->title('Continent');
