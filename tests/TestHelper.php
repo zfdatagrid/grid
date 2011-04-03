@@ -63,3 +63,53 @@ $c->setRequest(new Zend_Controller_Request_Http());
 $c->setResponse(new Zend_Controller_Response_Cli());
 
 unset($zfRoot, $zfCoreLibrary, $zfCoreTests, $path);
+
+class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
+{
+
+    protected $grid;
+    protected $controller;
+    protected $db;
+    
+    
+    public function setUp()
+    {
+        // Assign and instantiate in one step:
+        $this->bootstrap = new Zend_Application(
+                'general',
+                APPLICATION_PATH . '/config.ini'
+        );
+
+        $this->controller = Zend_Controller_Front::getInstance();
+        $this->db = $this->bootstrap->getBootstrap()->getPluginResource('db')->getDbAdapter();
+
+        $this->controller->setControllerDirectory(APPLICATION_PATH . '/application/controllers');
+        $this->controller->setDefaultModule('defualt');
+        $this->controller->setDefaultControllerName('site');
+
+
+        $this->grid = Bvb_Grid::factory('Table');
+        $this->grid->setParam('module', 'default');
+        $this->grid->setParam('controller', 'site');
+        $this->grid->setView(new Zend_View(array()));
+
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')));
+
+        parent::setUp();
+    }
+    
+    
+    public function deployGrid($select = null)
+    {
+        if ($select === null) {
+            $select = $this->db->select()->from('unit');
+        }
+
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+
+        return $grid;
+    }
+
+}
