@@ -3585,6 +3585,12 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
 
         $cssClasses = $this->getTemplateParams();
+        
+        if(!isset($cssClasses['cssClass']))
+        {
+            $cssClasses['cssClass']='';
+        }
+        
         $cssClasses = $cssClasses['cssClass'];
         $cssClasses['massActions'] = isset($cssClasses['massActions']) ? " class='{$cssClasses['massActions']}'" : '';
         $cssClasses['massSelect'] = isset($cssClasses['massSelect']) ? " class='{$cssClasses['massSelect']}'" : '';
