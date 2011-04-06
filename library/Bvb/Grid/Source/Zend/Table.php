@@ -255,8 +255,10 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         if ( $result === null ) {
             return false;
         }
+        
+        $result = $result->toArray();
 
-        return $result->toArray();
+        return $result[0];
     }
 
 
