@@ -325,7 +325,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             $ast = $this->getQueryBuilder()->getQuery()->getAST();
 
             $returnFields = array();
-
             foreach($ast->selectClause->selectExpressions as $selectExpression) {
                 $expression = $selectExpression->expression;
 
@@ -342,14 +341,23 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                         $returnFields[$key]['field'] = $alias . '.' . $key;
                         $returnFields[$key]['type'] = $details['type'];
                     }
-                    //the expression itself is a pathexpression, where we can directly
-                    //fetch the title and field
+                //the expression itself is a pathexpression, where we can directly
+                //fetch the title and field
                 } elseif($expression instanceof Query\AST\PathExpression) {
                     $field = ($selectExpression->fieldIdentificationVariable != null) ? $selectExpression->fieldIdentificationVariable : $expression->field;
                     $returnFields[$field]['title'] = ucwords(str_replace('_', ' ', $field));
                     $returnFields[$field]['field'] = $expression->identificationVariable . '.' . $expression->field;
 
-                    //the expression is aggregate expression
+                //handle subselects. we only need the identification variable for the field
+                } elseif($expression instanceof Query\AST\Subselect) {
+                    $field = $selectExpression->fieldIdentificationVariable;
+
+                    $title = ucwords(str_replace('_', ' ', $field));
+
+                    $returnFields[$field]['title'] = $title;
+                    $returnFields[$field]['field'] = $field;
+
+                //the expression is aggregate expression
                 } else {
                     $field = $selectExpression->fieldIdentificationVariable;
                     $pathExpression = $expression->pathExpression;
@@ -608,7 +616,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     public function delete($table, array $condition)
     {
         $values = $this->getRecord($table, $condition);
-        
+
         $event = new Bvb_Grid_Event('crud.before_delete',
                         $this,
                         array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
