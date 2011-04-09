@@ -205,12 +205,6 @@ abstract class Bvb_Grid {
      */
     protected $_cache = false;
     /**
-     * The field to set order by, if we have a horizontal row
-     *
-     * @var string
-     */
-    private $_fieldHorizontalRow;
-    /**
      * Template instance
      *
      * @var object
@@ -452,6 +446,13 @@ abstract class Bvb_Grid {
      * @var Zend_Controller_Request_Abstract
      */
     protected $_request = null;
+    
+    /**
+     * Response Instance
+     *
+     * @var Zend_Controller_Response_Abstract
+     */
+    protected $_response = null;
     
     /**
      * Mass Actions instance holder
@@ -982,7 +983,6 @@ abstract class Bvb_Grid {
         } elseif (array_key_exists($field, $this->_data['fields'])) {
 
             if (isset($options['hRow']) && $options['hRow'] == 1) {
-                $this->_fieldHorizontalRow = $field;
                 $options['title'] = isset($options['title'])?$options['title']:$this->_data['fields'][$field]['field'];
                 $this->_info['hRow'] = array('field' => $field, 'title' => $options['title']);
             }
@@ -1415,10 +1415,6 @@ abstract class Bvb_Grid {
                     $this->_sessionParams->order = array('field' => $orderField, 'order' => $orderf);
                 }
             }
-        }
-
-        if (strlen($this->_fieldHorizontalRow) > 0) {
-            $this->getSource()->buildQueryOrder($this->_fieldHorizontalRow, 'ASC', true);
         }
 
         $this->getSource()->buildQueryLimit($this->getRecordsPerPage(), $start);
@@ -2805,7 +2801,7 @@ abstract class Bvb_Grid {
         $tmp = $options;
         $options['userDefined'] = $tmp;
 
-        $class = $this->_templates[$output]->load($template, $output);
+        $class = $this->_templates[$output]->load($template);
 
         if (isset($this->_options['template'][$output][$template])) {
             $tpOptions = array_merge($this->_options['template'][$output][$template], $options);
@@ -2815,8 +2811,8 @@ abstract class Bvb_Grid {
 
         $tpInfo = array('colspan' => $this->_colspan,
             'charEncoding' => $this->getCharEncoding(),
-            'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template, $output),
-            'class' => $this->_templates[$output]->getClassName($template, $output));
+            'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template),
+            'class' => $this->_templates[$output]->getClassName($template));
 
         $this->_temp[$output] = new $class();
 
@@ -3671,7 +3667,7 @@ abstract class Bvb_Grid {
      */
     protected function _redirect($url, $code = 302)
     {
-        $response = Zend_Controller_Front::getInstance()->getResponse();
+        $response = $this->getResponse();
         $response->setRedirect($url, $code);
         $response->sendResponse();
         die();
@@ -4238,4 +4234,31 @@ abstract class Bvb_Grid {
         return $this->getMassActions()->getDecorator();
     }
 
+    /**
+     * Sets response object
+     *
+     * @param Zend_Controller_Response_Abstract $response
+     * @return Bvb_Grid 
+     */
+    public function setResponse(Zend_Controller_Response_Abstract $response)
+    {
+        $this->_response = $response;
+        return $this;
+    }
+    
+    /**
+     * Returns reponse instance
+     *
+     * @return Zend_Controller_Response_Abstract
+     */
+    public function getResponse()
+    {
+        if(!isset ($this->_response))
+        {
+            $this->_response = Zend_Controller_Front::getInstance()->getResponse();
+        }
+        
+        return $this->_response;
+    }
+    
 }
