@@ -3191,12 +3191,21 @@ abstract class Bvb_Grid {
             $options['grid']['requestParams'] = $requestParams;
         }
 
-        if (!isset($requestParams['_exportTo' . $id])) {
+        // handle _exportTo parameter compatible with calling with grid id and without
+        if (isset($requestParams['_exportTo' . $id])) {
+            $exportTo = $requestParams['_exportTo' . $id];
+        } elseif (isset($requestParams['_exportTo'])) {
+            $exportTo = $requestParams['_exportTo'];
+        } else {
+            $exportTo = false;
+        }
+
+        if (false===$exportTo) {
             // return instance of the main Bvb object, because this is not and export request
             $grid = new $defaultClass($options);
             $lClass = $defaultClass;
         } else {
-            $lClass = strtolower($requestParams['_exportTo' . $id]);
+            $lClass = strtolower($exportTo);
             // support translating of parameters specifig for the export initiator class
             if (isset($requestParams['_exportFrom'])) {
                 // TODO support translating of parameters specifig for the export initiator class
@@ -3205,7 +3214,7 @@ abstract class Bvb_Grid {
 
             // now we need to find and load the right Bvb deploy class
             // TODO support user defined classes
-            $className = 'Bvb_Grid_Deploy_' . ucfirst($requestParams['_exportTo' . $id]);
+            $className = 'Bvb_Grid_Deploy_' . ucfirst($exportTo);
 
             if (Zend_Loader_Autoloader::autoload($className)) {
                 $grid = new $className($options);
