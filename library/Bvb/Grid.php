@@ -4174,6 +4174,16 @@ abstract class Bvb_Grid {
         $this->_eventDispatcher = $dispatcher;
         return $this;
     }
+
+    /**
+     * Gets dispatcher instance
+     *
+     * @return Bvb_Grid_Event_Dispatcher $dispatcher Dispatcher instance
+     */
+    public function getEventDispatcher()
+    {
+        return $this->_eventDispatcher;
+    }
     
     public function setMassActions(Bvb_Grid_Mass_Actions $actions)
     {
