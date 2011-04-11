@@ -298,7 +298,6 @@ class Bvb_Grid_Source_Zend_Select
                 $this->_cache['instance']->save($result, $hash, array($this->_cache['tag']));
             }
         } else {
-
             $final = $this->_select->query(Zend_Db::FETCH_ASSOC);
             $result = $final->fetchAll();
 
@@ -880,12 +879,17 @@ class Bvb_Grid_Source_Zend_Select
         $field = end($explode);
 
         $simpleField = false;
+        // mark the value as Zend_Db_Expr
+        $sqlExpr = false;
 
         $columns = $this->getColumns();
 
         foreach ($columns as $value) {
             if ($field == $value[2]) {
-                if (is_object($value[1])) {
+                if ($value[1] instanceof Zend_Db_Expr) {
+                    $sqlExpr = true;
+                    $field = $value[1]->__toString();
+                } elseif (is_object($value[1])) {
                     $field = $value[1]->__toString();
                     $simpleField = true;
                 } else {
@@ -898,7 +902,7 @@ class Bvb_Grid_Source_Zend_Select
             }
         }
 
-        if (strpos($field, '.') === false && $simpleField === false) {
+        if (!$sqlExpr && strpos($field, '.') === false && $simpleField === false) {
             $field = $completeField['field'];
         }
 
@@ -912,13 +916,13 @@ class Bvb_Grid_Source_Zend_Select
          * We can not quoteIdentifier this fields...
          *
          */
-        if (strpos($field, '(') !== false) {
+        if (!$sqlExpr && strpos($field, '(') !== false) {
             $field = $this->_getDb()->quoteIdentifier($field);
         }
 
         $func = 'where';
 
-        if (strpos($field, '(') !== false) {
+        if (!$sqlExpr && strpos($field, '(') !== false) {
             $func = 'having';
         }
 
