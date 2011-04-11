@@ -122,7 +122,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function buildGrid()
     {
-        return implode('', array_map(array($this, 'formatLine'), $this->_buildGrid()));
+        return implode("\n", array_map(array($this, 'formatLine'), $this->_buildGrid()));
     }
 
     /**
@@ -133,7 +133,8 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected function formatLine($row)
     {
         // TODO: _buildGrid should be refactored so we don't have to call arrayPluck here
-        return implode(',', array_map(array($this, 'formatCell'), $this->arrayPluck($row))) . "\n";
+        $s = implode(',', array_map(array($this, 'formatCell'), $this->arrayPluck($row)));
+        return $s;
     }
 
     /**
@@ -156,15 +157,18 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     protected function csvAddData($data)
     {
+        if (0==strlen($data)) {
+            return;
+        }
         if ($this->getDeployOption('download')) {
             // send first headers
-            echo $data;
+            echo $data."\n";
             flush();
             ob_flush();
         }
         if ($this->getDeployOption('store')) {
             // open file handler
-            fwrite($this->_outFile, $data);
+            fwrite($this->_outFile, $data."\n");
         }
     }
 
