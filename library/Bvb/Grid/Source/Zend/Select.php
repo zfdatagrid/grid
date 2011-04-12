@@ -605,17 +605,17 @@ class Bvb_Grid_Source_Zend_Select
     /**
      * Set's the query limit
      *
-     * @param int $start  Offset Start
+     * @param int $count  Offset Start
      * @param int $offset Offset End
      *
      * @return Zend_Db_Select
      */
-    public function buildQueryLimit($start, $offset)
+    public function buildQueryLimit($count, $offset)
     {
-        if ($this->_limit > 0 && $this->_limit < $start) {
-            $start = $this->_limit;
+        if ($this->_limit > 0 && $this->_limit < $count) {
+            $count = $this->_limit;
         }
-        $this->_select->limit($start, $offset);
+        $this->_select->limit($count, $offset);
         return $this;
     }
 

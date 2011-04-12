@@ -33,6 +33,13 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $_removeHiddenFields = true;
 
     /**
+     * Set to true if setForceRecordsPerPage was called with number
+     *
+     * @var boolean
+     */
+    protected $_isRecordsPerPageForced = false;
+
+    /**
      * Optimize performance by setting best value for $this->setPagination(?);
      *
      * Options (deploy.csv.<option>):
@@ -54,7 +61,7 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         parent::__construct($options);
 
         // default pagination, should be adjusted based on data processed to improve speed
-        $this->setRecordsPerPage(5000);
+        $this->setForceRecordsPerPage(5000);
 
         // fix configuration options
         $deploy = $this->getDeployOption($this->_deployName, array());
@@ -77,7 +84,41 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $this->_deploy = $this->getDeployOption($this->_deployName);
         $this->checkExportRights();
     }
+    /**
+     * Force to use given value as records per page
+     *
+     * Csv should work with as high number of rows as possible to deliver good export speed. On the otherside high number could reach PHP memory limit.
+     *
+     * @param int|boolean $number will not accept any other changes made by setRecordsPerPage if not FALSE
+     *
+     * @return Bvb_Grid
+     */
+    public function setForceRecordsPerPage($number)
+    {
+        if (false===$number) {
+            $this->_isRecordsPerPageForced = false;
+        } else {
+            $this->_isRecordsPerPageForced = true;
+            $this->_recordsPerPage = (int) $number;
+        }
 
+        return $this;
+    }
+    /**
+     * Number of records to show per page
+     *
+     * @param int $number Records to show
+     *
+     * @return Bvb_Grid
+     */
+    public function setRecordsPerPage($number = 15)
+    {
+        if (!$this->_isRecordsPerPageForced) {
+            // will be ignore if setForceRecordsPerPage was used to set value
+            return parent::setRecordsPerPage($number);
+        }
+        return $this;
+    }
     /**
      * Return name of file
      *
