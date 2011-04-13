@@ -120,7 +120,7 @@ abstract class Bvb_Grid_Source_Db_DbAbstract {
         }
 
         
-        $event = new Bvb_Grid_Event('crud.elements_build', $this, array('elments'=>&$form));
+        $event = new Bvb_Grid_Event('crud.elements_loaded', $this, array('elements'=>&$form));
         $this->_eventDispatcher->emit($event);
 
 
