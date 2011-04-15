@@ -159,14 +159,14 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         {
             return;
         }
-
+        
         $this->_page->setStyle($this->_styles['style']);
         $this->_pdf->pages[] = $this->_page;
         $this->_currentPage++;
 
         $this->_font = Zend_Pdf_Font::fontWithName(Zend_Pdf_Font::FONT_HELVETICA);
 
-        $this->_page->setFont($this->_font, 14);
+        $this->_page->setFont($this->_font, $this->getDeployOption('headerFontSize',14));
 
         if (file_exists($this->_deploy['logo'])) {
             $image = Zend_Pdf_Image::imageWithPath($this->_deploy['logo']);
@@ -289,7 +289,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         $larg = $this->calculateCellSize($titles,$sqlExp,$grid);
         $lengthTotal = array_sum($larg['larg']);
 
-        $this->_cellFontSize = 8;
+        $this->_cellFontSize = $this->getDeployOption('cellFontSize', 8);
 
 
         if (!$this->getInfo('hRow,field')) {
