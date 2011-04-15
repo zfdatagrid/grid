@@ -53,9 +53,9 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
         parent::deploy();
-
-        if ( ! isset($this->options['title']) ) {
-            $this->options['title'] = 'ZFDatagrid';
+        
+        if ( ! isset($this->_deploy['title']) ) {
+            $this->_deploy['title'] = 'ZFDatagrid';
         }
 
         $titles = parent::_buildTitles();
@@ -71,7 +71,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
   xmlns="urn:schemas-microsoft-com:office:spreadsheet"
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">';
 
-        $xml .= '<Worksheet ss:Name="' . $this->options['title'] . '" ss:Description="' . $this->options['title'] . '"><ss:Table>';
+        $xml .= '<Worksheet ss:Name="' . $this->_deploy['title'] . '" ss:Description="' . $this->_deploy['title'] . '"><ss:Table>';
 
         $xml .= '<ss:Row>';
         foreach ( $titles as $value ) {
