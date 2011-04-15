@@ -2558,7 +2558,9 @@ abstract class Bvb_Grid {
                                 }
                             }
                         } else {
-                            $this->_ctrlParams[$key . $this->getGridId()] = $this->_sessionParams->filters[$key];
+                            if (!isset($this->_ctrlParams[$key . $this->getGridId()])) {
+                                $this->_ctrlParams[$key . $this->getGridId()] = $this->_sessionParams->filters[$key];
+                            }
                         }
                         continue;
                     }
