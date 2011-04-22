@@ -1475,8 +1475,8 @@ abstract class Bvb_Grid {
                            'edit',
                            'noOrder',
                            'comm',
-                           'gridDetail',
-                           'gridRemove');
+                           'detail',
+                           'delete');
 
         $params = $this->getAllParams();
 
@@ -2604,9 +2604,9 @@ abstract class Bvb_Grid {
         // apply additional configuration
         $this->runConfigCallbacks();
 
-        if ($this->getParam('gridDetail') == 1
+        if ($this->getParam('detail')
             && $this->_deployName == 'table'
-            && (is_array($this->_detailColumns) || $this->getParam('gridRemove'))
+            && (is_array($this->_detailColumns) || $this->getParam('delete'))
         ) {
             $this->_isDetail = true;
         }
@@ -2654,7 +2654,7 @@ abstract class Bvb_Grid {
                 $this->_gridSession->message = $this->__('Record Not Found');
                 $this->_gridSession->_noForm = 1;
                 $this->_gridSession->correct = 1;
-                $this->_redirect($this->getUrl(array('comm', 'gridDetail', 'gridRemove')));
+                $this->_redirect($this->getUrl(array('comm', 'detail', 'delete')));
             }
         }
 
@@ -3614,24 +3614,32 @@ abstract class Bvb_Grid {
      */
     public function getIdentifierColumnsFromUrl()
     {
-        if (!$this->getParam('comm')) {
+        $par = '';
+        
+        if ($this->getParam('edit')) {
+            $par = $this->getParam('edit');
+        } elseif ($this->getParam('delete')) {
+            $par = $this->getParam('delete');
+        } elseif ($this->getParam('detail')) {
+            $par = $this->getParam('detail');
+        }
+        
+        
+        if(strlen($par)==0)
+            return array();
+
+        $par = explode('-',$par);
+        
+        $primaryKeys = $this->getSource()->getIdentifierColumns($this->_data['table']);
+
+        if(count($par) != count($primaryKeys))
+        {
             return array();
         }
 
-        $param = $this->getParam('comm');
-        $explode = explode(';', $param);
-        $param = end($explode);
-        $param = substr($param, 1, - 1);
-
-        $paramF = explode('-', $param);
-        $param = '';
-
-        $returnArray = array();
-        foreach ($paramF as $value) {
-            $f = explode(':', $value);
-            $returnArray[$f[0]] = $f[1];
-        }
-        return $returnArray;
+        $primaryKeys = array_combine($primaryKeys,$par);
+        
+        return $primaryKeys;
     }
 
     /**

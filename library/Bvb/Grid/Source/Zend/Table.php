@@ -205,6 +205,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         }
 
 
+        if($result->current() === null)
+        {
+            return array();
+        }
+        
         return $result->current()->toArray();
     }
 
@@ -258,6 +263,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         
         $result = $result->toArray();
 
+        
+        if (isset($result[0]['ZFG_GHOST'])) {
+            unset($result[0]['ZFG_GHOST']);
+        }
+        
         return $result[0];
     }
 
@@ -279,6 +289,11 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
         $result = call_user_func_array(array($this->getModel(),'find'), $condition);
 
+         if($result->current() === null)
+        {
+            return array();
+        }
+        
         $return = $result->current()->delete();
         
 

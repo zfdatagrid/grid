@@ -415,4 +415,15 @@ interface Bvb_Grid_Source_SourceInterface
      *
      */
     public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher);
+    
+    /**
+     * Returns an array of table identifier columns or PK's
+     * 
+     * @param string $table Table where to fetch fields
+     * 
+     * @return array
+     * 
+     */
+    public function getIdentifierColumns($table);
+    
 }

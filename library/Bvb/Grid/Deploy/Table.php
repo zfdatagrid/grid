@@ -190,7 +190,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
-            $opComm = $this->getParam('comm');
 
             $mode = $this->getParam('edit') ? 'edit' : 'add';
 
@@ -256,7 +255,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $this->_gridSession->message = $this->__('Record Not Found');
                             $this->_gridSession->_noForm = 1;
                             $this->_gridSession->correct = 1;
-                            $this->_redirect($this->getUrl(array('comm', 'gridRemove', 'gridDetail', 'edit')));
+                            $this->_redirect($this->getUrl(array('comm', 'delete', 'detail', 'edit')));
                         }
 
                         if (is_array($r)) {
@@ -307,7 +306,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if (!$this->getSource()->hasCrud()) {
             return false;
         }
-
         if ($this->getInfo("add,allow") == 1) {
             $this->_allowAdd = 1;
         }
@@ -320,18 +318,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_allowEdit = 1;
         }
 
-        if ($this->_allowEdit == 1 || $this->_allowDelete == 1) {
-            $dec = $this->getParam('comm');
-        }
-
         /**
          * Remove if there is something to remove
          */
-        if ($this->_allowDelete == 1) {
-            self::_deleteRecord($dec);
+        if (($this->_allowDelete == 1 && $this->getParam('delete')) && !$this->getParam('detail')) {
+            self::_deleteRecord();
         }
-
-        $opComm = $this->getParam('comm');
 
         $mode = $this->getParam('edit') ? 'edit' : 'add';
 
@@ -481,16 +473,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                         $this->_gridSession->message = $this->__('Record saved');
                         $this->_gridSession->messageOk = true;
-
                         $this->_gridSession->_noForm = 1;
-
                         $this->_gridSession->correct = 1;
 
                         unset($this->_gridSession->post);
 
                         $this->_removeFormParams(
-                            array('comm' . $this->getGridId() => '',
-                                  'edit' . $this->getGridId() => '', '
+                            array('edit' . $this->getGridId() => '', '
                                   zfmassedit' => '')
                         );
 
@@ -574,7 +563,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @return string
      *
      */
-    protected function _deleteRecord($sql)
+    protected function _deleteRecord()
     {
         if ($this->getParam('postMassIds') && $this->getParam('zfmassremove' . $this->getGridId()) == 1) {
             //ID's to remove
@@ -615,26 +604,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $this->_removeFormParams($_POST);
 
-            $this->_redirect($this->getUrl(array('comm', 'zfmassremove', 'postMassIds')));
-        } else {
-            if (strpos($sql, ';') === false) {
-                return false;
-            }
-
-            $param = explode(";", $sql);
-
-            foreach ($param as $value) {
-                $dec = explode(":", $value);
-                $final[$dec[0]] = $dec[1];
-            }
-
-            if ($final['mode'] != 'delete') {
-                return 0;
-            }
-
-            $condition = $this->getIdentifierColumnsFromUrl();
+            $this->_redirect($this->getUrl(array( 'zfmassremove', 'postMassIds')));
         }
 
+        $condition = $this->getIdentifierColumnsFromUrl();
+            
+        if(count($condition)==0)
+        {
+            return false;
+        }
+        
         try {
             if ($this->_crudTableOptions['delete'] == true) {
 
@@ -646,14 +625,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_gridSession->message = $this->__('Record deleted');
             $this->_gridSession->correct = 1;
 
-            $this->_redirect($this->getUrl('comm'));
+            $this->_redirect($this->getUrl('delete'));
         } catch (Exception $e) {
             $this->_gridSession->correct = 1;
             $this->_gridSession->messageOk = false;
             $this->_gridSession->message = $this->__('Error deleting record: ') . $e->getMessage();
         }
 
-        $this->removeParam('comm' . $this->getGridId());
 
         return true;
     }
@@ -665,7 +643,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildHeader()
     {
-        $url = $this->getUrl(array('comm', 'edit', 'filters', 'order'));
+        $url = $this->getUrl(array( 'edit', 'filters', 'order'));
 
         $final = '';
         $final1 = '';
@@ -677,7 +655,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && $this->getSource()->getIdentifierColumns($this->_data['table'])
                 && $this->_allowAddButton == 1
                 && $this->getParam('add') != 1
-                && $this->getParam('edit') != 1
+                && !$this->getParam('edit')
             ) {
                 $addButton = "<button class='addRecord' onclick=\"window.location='"
                         . $this->_actionsUrls['add'] . "';\">"
@@ -751,7 +729,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Replace values
             if (($this->getInfo('noFilters') != 1 || $this->_allowAdd == 1)
-                && $this->getParam('add') != 1 && $this->getParam('edit') != 1
+                && $this->getParam('add') != 1 && !$this->getParam('edit')
             ) {
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
@@ -859,7 +837,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if (count($filters) == 0) {
 
             //Remove unwanted url params
-            $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo', 'noFilters'));
+            $url = $this->getUrl(array('filters', 'start',  '_exportTo', 'noFilters'));
 
             $helpJavascript = '';
             if (count($this->_externalFilters) > 0) {
@@ -1783,8 +1761,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if ($this->_allowDelete == 1
             || $this->_allowEdit == 1
-            || (is_array($this->_detailColumns)
-            && $this->_isDetail == false)
+            || (is_array($this->_detailColumns))
         ) {
             $pkUrl = $this->getSource()->getIdentifierColumns($this->_data['table']);
             $urlFinal = '';
@@ -1806,16 +1783,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             foreach ($pkUrl as $value) {
                 if (strpos($value, '.') !== false) {
-                    $urlFinal .= $value . ':{{' . substr($value, strpos($value, '.') + 1) . '}}-';
+                    $urlFinal .= '{{' . substr($value, strpos($value, '.') + 1) . '}}-';
                 } else {
-                    $urlFinal .= $value . ':{{' . $value . '}}-';
+                    $urlFinal .= '{{' . $value . '}}-';
                 }
             }
 
             $urlFinal = trim($urlFinal, '-');
         }
+        
 
-        $removeParams = array('add', 'edit', 'comm');
+        $removeParams = array('add', 'edit');
 
         $url = $this->getUrl($removeParams);
         if ($this->_allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
@@ -1832,8 +1810,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $this->_actionsUrls['edit'] = "$urlEdit/edit" . $this->getGridId()
-                                        . "/1/comm" . $this->getGridId() . "/"
-                                        . "mode:edit;[" . $urlFinal . "]";
+                                        . "/" . $urlFinal;
 
             if ($this->_crud->getEditColumn() !== false)
                 array_unshift(
@@ -1852,9 +1829,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             if ($this->_deleteConfirmationPage == true) {
-                $this->_actionsUrls['delete'] = "$url/comm" . $this->getGridId() . "/"
-                                              . "mode:view;[" . $urlFinal . "]/gridDetail" . $this->getGridId()
-                                              . "/1/gridRemove" . $this->getGridId() . "/1";
+                $this->_actionsUrls['delete'] = "$url/delete" . $this->getGridId() . "/$urlFinal"
+                                              . "/detail" . $this->getGridId()
+                                              . "/1";
 
                 if ($this->_crud->getDeleteColumn() !== false)
                     array_unshift(
@@ -1866,8 +1843,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                              )
                     );
             } else {
-                $this->_actionsUrls['delete'] = "$url/comm" . $this->getGridId() . "/"
-                                              . "mode:delete;[" . $urlFinal . "]";
+                $this->_actionsUrls['delete'] = "$url/delete/" . $urlFinal;
 
                 if ($this->_crud->getDeleteColumn() !== false)
                     array_unshift(
@@ -1887,11 +1863,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->_extraFields = array();
             }
 
-            $removeParams = array('add', 'edit', 'comm');
+            $removeParams = array('add', 'edit');
             $url = $this->getUrl($removeParams, false);
 
-            $this->_actionsUrls['detail'] = "$url/gridDetail" . $this->getGridId(). "/1/comm" . $this->getGridId();
-            $this->_actionsUrls['detail'] .=  "/" . "mode:view;[" . $urlFinal . "]/";
+            $this->_actionsUrls['detail'] = "$url/detail" . $this->getGridId(). "/" . $urlFinal ;
 
             if ($this->_showDetailColumn === true)
                 array_unshift(
@@ -1924,7 +1899,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['message'] = $this->_render['message'];
         }
 
-        if ((($this->getParam('edit') == 1) && $this->_allowEdit==1)
+        if (($this->getParam('edit') && $this->_allowEdit==1)
             || ($this->getParam('add') == 1  && $this->_allowAdd==1) || $this->getInfo("doubleTables") == 1) {
 
             if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
@@ -1952,13 +1927,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_renderDeploy['start'] = $this->_render['start'];
         }
 
-        if (((!$this->getParam('edit') || $this->getParam('edit') != 1)
+        if (((!$this->getParam('edit') )
             && (!$this->getParam('add') || $this->getParam('add') != 1))
             || $this->getInfo("doubleTables") == 1
         ) {
 
             if ($this->_isDetail == true
-                || ($this->_deleteConfirmationPage == true && $this->getParam('gridRemove') == 1)
+                || ($this->_deleteConfirmationPage == true && $this->getParam('delete') )
             ) {
                 $columns = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
 
@@ -1982,12 +1957,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     );
                 }
 
-                if ($this->getParam('gridRemove') == 1) {
-                    $localCancel = $this->getUrl(array('comm', 'gridDetail', 'gridRemove'));
+                if ($this->getParam('delete')) {
+                    $localCancel = $this->getUrl(array( 'detail', 'delete'));
 
-                    $localDelete = $this->getUrl(array('gridRemove', 'gridDetail', 'comm'))
-                                 . "/comm" . $this->getGridId() . "/"
-                                 . str_replace("view", 'delete', $this->getParam('comm'));
+                    $localDelete = $this->getUrl(array('delete', 'detail'))
+                                 . "/delete" . $this->getGridId() . "/"
+                                 . str_replace("view", 'delete', $this->getParam('delete'));
 
                     $buttonRemove = $this->getView()->formButton(
                         'delRecordGrid',
@@ -2009,7 +1984,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 } else {
                     $this->_render['detail'] .= str_replace(
                         array('{{url}}', '{{return}}'),
-                        array($this->getUrl(array('gridDetail', 'comm'), false),
+                        array($this->getUrl(array('detail'), false),
                         $this->__('Return')), $this->_temp['table']->detailEnd()
                     );
                 }
@@ -2724,7 +2699,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
         if (isset($crud->options['saveAndAddButton'])
             && $crud->options['saveAndAddButton'] == true
-            && $this->getParam('edit') != 1
+            && !$this->getParam('edit')
         ) {
             $crud->getForm()->addElement(
                 'submit',
@@ -2765,7 +2740,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                       'postMassIds',
                       'zfmassedit',
                       'edit',
-                      'comm',
                       'form_reset'),
                 array_keys($crud->getForm()->getElements())
             )
@@ -2965,7 +2939,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         }
 
         //Remove unwanted url params
-        $url = $this->getUrl(array('filters', 'start', 'comm', '_exportTo', 'noFilters'));
+        $url = $this->getUrl(array('filters', 'start',  '_exportTo', 'noFilters'));
 
         $fieldsSemAsFinal = $this->_data['fields'];
 
@@ -3384,14 +3358,14 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
-        if ($this->getParam('edit') == 1) {
+        if ($this->getParam('edit')) {
             $this->_formSettings['mode'] = 'edit';
             $this->_formSettings['id'] = $this->getIdentifierColumnsFromUrl();
             $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
 
-        if ($this->getParam('delete') == 1) {
+        if ($this->getParam('delete')) {
             $this->_formSettings['mode'] = 'delete';
             $this->_formSettings['id'] = $this->getIdentifierColumnsFromUrl();
             $this->_formSettings['row'] = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
