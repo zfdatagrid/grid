@@ -213,7 +213,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
                 }
 
-                if ($this->getParam('add') == 1) {
+                if ($this->getParam('add')) {
                     $this->_willShow['form'] = true;
                     $this->_willShow['formAdd'] = true;
                 }
@@ -648,13 +648,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $final = '';
         $final1 = '';
 
-        $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/1";
+        $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/record";
 
         if ($this->getSource()->hasCrud()) {
             if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1)
                 && $this->getSource()->getIdentifierColumns($this->_data['table'])
                 && $this->_allowAddButton == 1
-                && $this->getParam('add') != 1
+                && !$this->getParam('add')
                 && !$this->getParam('edit')
             ) {
                 $addButton = "<button class='addRecord' onclick=\"window.location='"
@@ -729,7 +729,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Replace values
             if (($this->getInfo('noFilters') != 1 || $this->_allowAdd == 1)
-                && $this->getParam('add') != 1 && !$this->getParam('edit')
+                && !$this->getParam('add') && !$this->getParam('edit')
             ) {
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
@@ -1900,7 +1900,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if (($this->getParam('edit') && $this->_allowEdit==1)
-            || ($this->getParam('add') == 1  && $this->_allowAdd==1) || $this->getInfo("doubleTables") == 1) {
+            || ($this->getParam('add')  && $this->_allowAdd==1) || $this->getInfo("doubleTables") == 1) {
 
             if ($this->_allowAdd == 1 || $this->_allowEdit == 1) {
 
@@ -1928,7 +1928,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if (((!$this->getParam('edit') )
-            && (!$this->getParam('add') || $this->getParam('add') != 1))
+            && !$this->getParam('add') )
             || $this->getInfo("doubleTables") == 1
         ) {
 
@@ -3353,7 +3353,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      */
     public function buildFormDefinitions()
     {
-        if ($this->getParam('add') == 1) {
+        if ($this->getParam('add')) {
             $this->_formSettings['mode'] = 'add';
             $this->_formSettings['action'] = $this->getForm()->getAction();
         }
