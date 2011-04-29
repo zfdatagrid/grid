@@ -1,11 +1,12 @@
 <?php
 
 use \Doctrine\ORM\EntityRepository,
- \Doctrine\ORM\QueryBuilder,
- \Doctrine\ORM\EntityManager,
- \Doctrine\ORM\Query,
- \Doctrine\DBAL\Types\Type,
- \Doctrine\ORM\Mapping\ClassMetadata;
+    \Doctrine\ORM\QueryBuilder,
+    \Doctrine\ORM\EntityManager,
+    \Doctrine\ORM\Query,
+    Doctrine\ORM\Query\AST,
+    \Doctrine\DBAL\Types\Type,
+    \Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Provides you the ability to use Doctrine 2.x as a source
@@ -15,7 +16,6 @@ use \Doctrine\ORM\EntityRepository,
  */
 class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_SourceInterface
 {
-
     /**
      * @var QueryBuilder
      */
@@ -324,6 +324,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         if(empty($fields)) {
             $ast = $this->getQueryBuilder()->getQuery()->getAST();
 
+            //used for expressions without an identification variable
+            $fieldNumber = 1;
             $returnFields = array();
             foreach($ast->selectClause->selectExpressions as $selectExpression) {
                 $expression = $selectExpression->expression;
@@ -332,6 +334,9 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                 //to get all fields from the alias, we fetch the entity class and retrieve
                 //the metadata from it, so we can set the fields correctly
                 if(is_string($expression)) {
+                    //the expression itself is a pathexpression, where we can directly
+                    //fetch the title and field
+
                     $alias = $expression;
                     $tableName = $this->_getModelFromAlias($alias);
                     $metadata = $this->getEntityManager()->getClassMetadata($tableName);
@@ -341,34 +346,39 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                         $returnFields[$key]['field'] = $alias . '.' . $key;
                         $returnFields[$key]['type'] = $details['type'];
                     }
-                //the expression itself is a pathexpression, where we can directly
-                //fetch the title and field
-                } elseif($expression instanceof Query\AST\PathExpression) {
+                } elseif($expression instanceof AST\PathExpression) {
                     $field = ($selectExpression->fieldIdentificationVariable != null) ? $selectExpression->fieldIdentificationVariable : $expression->field;
                     $returnFields[$field]['title'] = ucwords(str_replace('_', ' ', $field));
                     $returnFields[$field]['field'] = $expression->identificationVariable . '.' . $expression->field;
-
-                //handle subselects. we only need the identification variable for the field
-                } elseif($expression instanceof Query\AST\Subselect) {
+                } elseif($expression instanceof AST\Subselect) {
+                    //handle subselects. we only need the identification variable for the field
                     $field = $selectExpression->fieldIdentificationVariable;
 
                     $title = ucwords(str_replace('_', ' ', $field));
 
                     $returnFields[$field]['title'] = $title;
                     $returnFields[$field]['field'] = $field;
-
-                //the expression is aggregate expression
                 } else {
                     $field = $selectExpression->fieldIdentificationVariable;
-                    $pathExpression = $expression->pathExpression;
-                    $field = ($field == null) ? $expression->functionName . '(' . $pathExpression->identificationVariable . '.' . $pathExpression->field . ')' : $field;
+
+                    //doctrine uses numeric keys for expressions which got no
+                    //identification variable, so the key will be set to the
+                    //current counter $i
+                    if($field === null) {
+                        $field = $this->_getNameForExpression($expression);
+                        $key = $fieldNumber;
+                        $fieldNumber++;
+                    } else {
+                        $key = $field;
+                    }
 
                     $title = ucwords(str_replace('_', ' ', $field));
 
-                    $returnFields[$field]['title'] = $title;
-                    $returnFields[$field]['field'] = $field;
+                    $returnFields[$key]['title'] = $title;
+                    $returnFields[$key]['field'] = $field;
                 }
             }
+
             $this->fields = $returnFields;
 
             $event = new Bvb_Grid_Event('source.build_fields', $this, array('fields' => &$returnFields));
@@ -376,6 +386,45 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         }
 
         return $this->fields;
+    }
+
+    /**
+     * Generates the expression used in the select expression
+     * 
+     * @param FunctionNode $expression
+     * @return string 
+     */
+    private function _getNameForExpression($expression)
+    {
+        $str = '';
+
+        foreach($expression as $key => $sub) {
+            if($sub instanceof AST\PathExpression) {
+                $str .= $sub->identificationVariable . '.' . $sub->field;
+                if($expression instanceof AST\Functions\FunctionNode) {
+                    $str = $expression->name . '(' . $str . ')';
+                } elseif($expression instanceof AST\AggregateExpression) {
+                    $str = $expression->functionName . '(' . $str . ')';
+                }
+                //when we got another array, we will call the method recursive and add
+                //brackets for readability.
+            } elseif(is_array($sub)) {
+                $str .= '(' . $this->_getNameForExpression($sub) . ')';
+                //call the method recursive to get all names.
+            } elseif(is_object($sub)) {
+                $str .= $this->_getNameForExpression($sub);
+                //key is numeric and value is a string, we probably got an
+                //arithmetic identifier (like "-" or "/")
+            } elseif(is_numeric($key) && is_string($sub)) {
+                $str .= ' ' . $sub . ' ';
+                //we got a string value for example in an arithmetic expression
+                //(a.value - 1) the "1" here is the value we append to the string here
+            } elseif($key == 'value') {
+                $str .= $sub;
+            }
+        }
+
+        return $str;
     }
 
     /**
@@ -504,9 +553,9 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
                 $metadata = $em->getClassMetadata($targetEntity);
                 $assoc = $em->getRepository($targetEntity)
-                                ->createQueryBuilder('c')
-                                ->getQuery()
-                                ->getResult($hydrate);
+                        ->createQueryBuilder('c')
+                        ->getQuery()
+                        ->getResult($hydrate);
 
                 $primaryColumn = $metadata->identifier[0];
 
@@ -619,7 +668,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $event = new Bvb_Grid_Event('crud.before_delete',
                         $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
+                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
 
         $this->_eventDispatcher->emit($event);
 
@@ -642,7 +691,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $event = new Bvb_Grid_Event('crud.after_delete',
                         $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
+                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
 
         $this->_eventDispatcher->emit($event);
 
@@ -945,7 +994,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             $joinAlias = $this->_getNewAlias();
             $refColumn = $detail['joinColumns'][0]['referencedColumnName'];
             //join the table
-
             $qb->leftJoin($alias . '.' . $detail['fieldName'], $joinAlias);
 
             //append primary key from the joined table to the select
@@ -1216,7 +1264,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function setCache($cache)
     {
-
+        
     }
 
     /**
