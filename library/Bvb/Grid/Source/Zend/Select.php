@@ -357,6 +357,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             if ($this->_totalRecords > $this->_limit && $this->_limit > 0) {
                 return $this->_limit;
             }
+           
             return $this->_totalRecords;
         }
 
@@ -367,6 +368,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         foreach ($selectCount->getPart('columns') as $value) {
             if ($value[1] instanceof Zend_Db_Expr) {
+                
+                if($value[1]->__toString() =='SQL_CALC_FOUND_ROWS 1+1')
+                continue;
+                
                 $hasExp = true;
                 if (!empty($value[2]) && $value[2] !== 'TOTAL') {
                     $hasExpWithoutTotal = true;
@@ -391,12 +396,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $count = count($final->fetchAll());
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
+            return count($result);
         } elseif ($hasExpWithoutTotal == true) {
             $final = $selectCount->query();
             $result = $final->fetchAll();
             return count($result);
         }
-
 
 
         if ($this->_cache['enable'] == 1) {
@@ -407,12 +412,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $count = (int) $result['TOTAL'];
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
+            
+            $count = $result;
         } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
             $result = array_change_key_case($final->fetch(), CASE_UPPER);
             $count = (int) $result['TOTAL'];
         }
-
 
         if ($count > $this->_limit && $this->_limit > 0) {
             return $this->_limit;
@@ -1173,12 +1179,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $cache = array('enable' => 0);
         }
 
-        if (isset($cache['enable']['db']) && $cache['enable']['db'] == 1) {
-            $cache['enable'] = 1;
-        } else {
-            $cache['enable'] = 0;
-        }
-
         $this->_cache = $cache;
     }
 
@@ -1445,6 +1445,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $filterSelect = clone $this->_select;
         $filterSelect->reset('columns');
+        $filterSelect->reset('order');
 
         $filterSelect->columns($field)->distinct();
 
