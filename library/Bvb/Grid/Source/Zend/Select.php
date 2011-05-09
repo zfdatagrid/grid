@@ -55,6 +55,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      * @var mixed
      */
     protected $_limit = null;
+    
+    /**
+     *
+     * @var array Where part from SQL 
+     */
+    protected $_where = array();
 
     /**
      * Class construct.
@@ -70,6 +76,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         }
 
         $this->_select = $select;
+        $this->_where = $this->_select->getPart('where');
         $this->_limit = $this->_select->getPart(Zend_Db_Select::LIMIT_COUNT);
         $this->init($this->_select);
         return $this;
@@ -273,6 +280,35 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 }
             }
         }
+        
+        $where = $this->_select->getPart('where');
+
+        $replaced = false;
+
+        if (count($where) > count($this->_where)) {
+            foreach ($this->_where as $value) {
+                $key = array_search($value, $where);
+                if ($key !== false) {
+                    unset($where[$key]);
+                    $replaced = true;
+                }
+            }
+
+            if ($replaced === true) {
+                $where = array_values($where);
+                $where[0] = substr($where[0], strpos(trim($where[0]), ' ') + 1);
+            }
+
+
+            if (count($where) > 0) {
+                $this->_select->reset('where');
+                $this->_select->where(new Zend_Db_Expr(implode(' ', $where)));
+            }
+            if (count($this->_where) > 0) {
+                $this->_select->where(new Zend_Db_Expr(implode(' ', $this->_where)));
+            }
+        }
+
     }
 
     /**
@@ -413,11 +449,18 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
             
+            if(is_array($result))
+            {
+                $result = reset($result);
+            }
+            
             $count = $result;
-        } else {
+
+            } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
             $result = array_change_key_case($final->fetch(), CASE_UPPER);
             $count = (int) $result['TOTAL'];
+            
         }
 
         if ($count > $this->_limit && $this->_limit > 0) {
