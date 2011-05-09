@@ -2502,8 +2502,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $this->getUrl() . '/zfmassremove' . $this->getGridId() . '/1/',
-                          'caption' => 'Remove Selected Records',
-                          'confirm' => 'Are you sure?'
+                          'caption' => $this->__('Remove Selected Records'),
+                          'confirm' => $this->__('Are you sure?')
                     )
                 )
             );
@@ -2515,7 +2515,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $this->getMassActions()->addMassActions(
                 array(
                     array('url' => $editMassUrl,
-                          'caption' => 'Edit Selected Records'
+                          'caption' => $this->__('Edit Selected Records')
                     )
                 )
             );

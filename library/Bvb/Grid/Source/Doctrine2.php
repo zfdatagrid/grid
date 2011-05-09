@@ -581,7 +581,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                 foreach($assoc as $field) {
                     if(is_object($field)) {
                         $method = 'get' . ucfirst($primaryColumn);
-                        if(method_exists($field, $method)) {
+                        if(!method_exists($field, $method)) {
                             throw new Bvb_Grid_Source_Doctrine2_Exception('No getter method for the primary field found (used name: ' . $method . ').');
                         }
                         $final['values'][$column][$field->$method()] = $field->__toString();
@@ -834,7 +834,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         if(!isset($this->fields[$field]['type'])) {
             //get the field with the alias
             $fieldName = $this->_getFieldName($field);
-
             //remove an existing alias
             $field = $this->_removeAlias($field);
 
@@ -842,7 +841,9 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
             //fetch data type from metadata
             try {
-                $metadata = $this->getEntityManager()->getClassMetadata($tableModel);
+                if($tableModel !== null) {
+                    $metadata = $this->getEntityManager()->getClassMetadata($tableModel);
+                }
             } catch(Exception $e) {
                 $this->fields[$field]['type'] = Type::STRING;
             }
@@ -1338,7 +1339,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                     $post[$fieldName] = NULL;
                 } else {
                     $targetEntity = $metadata->associationMappings[$fieldName]['targetEntity'];
-                    $post[$fieldName] = $em->getReference($targetEntity, $value);
+                    $post[$fieldName] = $em->getRepository($targetEntity)->find($value);
                 }
             }
         }
@@ -1594,7 +1595,12 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         if(strpos($field, '.') === false) {
             if(!isset($this->fields[$field]['field'])) {
-                return $field;
+                $ids = $this->getIdentifierColumns();
+                list($alias, $field) = explode('.', $ids[0]);
+                
+                //no matching field was found in the fields array
+                //so we append the default alias to the field
+                return $alias .'.'. $field;
             }
             return $this->fields[$field]['field'];
         }
