@@ -664,14 +664,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function delete($table, array $condition)
     {
-        $values = $this->getRecord($table, $condition);
-
-        $event = new Bvb_Grid_Event('crud.before_delete',
-                        $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
-
-        $this->_eventDispatcher->emit($event);
-
         $qbDelete = new QueryBuilder($this->getEntityManager());
 
         $alias = $this->_getNewAlias();
@@ -688,12 +680,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         }
 
         $return = $qbDelete->getQuery()->execute();
-
-        $event = new Bvb_Grid_Event('crud.after_delete',
-                        $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
-
-        $this->_eventDispatcher->emit($event);
 
         return $return;
     }
@@ -1199,12 +1185,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         $entity = new $table();
 
-        $event = new Bvb_Grid_Event('crud.before_insert',
-                        $this,
-                        array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
-
         $post = $this->_setReferences($table, $post);
 
         $this->_setEntityValues($entity, $post);
@@ -1214,11 +1194,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $em->flush();
 
-        $event = new Bvb_Grid_Event('crud.after_insert',
-                        $this,
-                        array('table' => &$class, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
     }
 
     /**
@@ -1283,17 +1258,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function update($table, array $post, array $condition)
     {
-        $oldValues = $this->getRecord($table, $condition);
-
-        $event = new Bvb_Grid_Event('crud.before_update',
-                        $this,
-                        array('table' => &$table,
-                            'newValues' => &$post,
-                            'oldValues' => &$oldValues,
-                            'condition' => &$condition));
-
-        $this->_eventDispatcher->emit($event);
-
         $em = $this->getEntityManager();
         $newCondition = array();
         foreach($condition as $fieldName => $value) {
@@ -1309,15 +1273,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $em->persist($entity);
         $em->flush();
-
-        $event = new Bvb_Grid_Event('crud.after_update',
-                        $this,
-                        array('table' => &$table,
-                            'newValues' => &$post,
-                            'oldValues' => &$oldValues,
-                            'condition' => &$condition));
-
-        $this->_eventDispatcher->emit($event);
 
         return $this;
     }

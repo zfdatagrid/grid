@@ -278,15 +278,6 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         
-        $values = $this->getRecord($table, $condition);
-
-        $event = new Bvb_Grid_Event('crud.before_delete',
-                                    $this,
-                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
-
-        $this->_eventDispatcher->emit($event);
-
-
         $result = call_user_func_array(array($this->getModel(),'find'), $condition);
 
          if($result->current() === null)
@@ -296,13 +287,6 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         
         $return = $result->current()->delete();
         
-
-        $event = new Bvb_Grid_Event('crud.after_delete',
-                                    $this,
-                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
-
-        $this->_eventDispatcher->emit($event);
-
         return $return;
         
     }
@@ -314,34 +298,9 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        
-        $oldValues = $this->getRecord($table, $condition);
-        
-        $event = new Bvb_Grid_Event('crud.before_update',
-                                    $this,
-                                    array('table' => &$table, 
-                                          'newValues' => &$post,
-                                          'oldValues' => &$oldValues,
-                                          'condition'=> &$condition));
-
-        $this->_eventDispatcher->emit($event);
-        
-
         $result = call_user_func_array(array($this->getModel(),'find'), $condition);
 
         $return = $result->current()->setFromArray($post)->save();
-        
-        $newValues = $this->getRecord($table, $condition);
-        
-        $event = new Bvb_Grid_Event('crud.after_update',
-                                    $this,
-                                    array('table' => &$table, 
-                                          'newValues' => &$newValues,
-                                          'oldValues' => &$oldValues,
-                                          'condition'=> &$condition));
-
-        $this->_eventDispatcher->emit($event);
-        
         
         return $return;
     }
@@ -353,23 +312,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
         
-        
-        $event = new Bvb_Grid_Event('crud.before_insert',
-                                    $this,
-                                    array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
-
-
-
         $return = $this->getModel()->createRow($post)->save();
-        
-        
-        $event = new Bvb_Grid_Event('crud.after_insert',
-                                    $this,
-                                    array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
 
         return $return;
 

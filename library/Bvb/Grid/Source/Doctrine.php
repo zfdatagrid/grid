@@ -645,13 +645,6 @@ class Bvb_Grid_Source_Doctrine
      */
     public function insert($table, array $post)
     {
-                
-        $event = new Bvb_Grid_Event('crud.before_insert',
-                                    $this,
-                                    array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
-
 
         $tableModel = $this->_getModelFromTable($table);
 
@@ -663,14 +656,6 @@ class Bvb_Grid_Source_Doctrine
 
         $return = $model->trySave();
         
-                
-        $event = new Bvb_Grid_Event('crud.after_insert',
-                                    $this,
-                                    array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
-
-
         return $return;
     }
 
@@ -693,18 +678,6 @@ class Bvb_Grid_Source_Doctrine
     public function update($table, array $post, array $condition)
     {
         
-        $oldValues = $this->getRecord($table, $condition);
-        
-        $event = new Bvb_Grid_Event('crud.before_update',
-                                    $this,
-                                    array('table' => &$table, 
-                                          'newValues' => &$post,
-                                          'oldValues' => &$oldValues,
-                                          'condition'=> &$condition));
-
-        $this->_eventDispatcher->emit($event);
-        
-        
         $tableModel = $this->_getModelFromTable($table);
 
         $query = Doctrine_Query::create()->update($tableModel);
@@ -717,20 +690,7 @@ class Bvb_Grid_Source_Doctrine
             $query->addWhere($field . ' = ?', $value);
         }
 
-        $return = $query->execute();
-        
-        
-        $oldValues = $this->getRecord($table, $condition);
-        
-        $event = new Bvb_Grid_Event('crud.after_update',
-                                    $this,
-                                    array('table' => &$table, 
-                                          'newValues' => &$post,
-                                          'oldValues' => &$oldValues,
-                                          'condition'=> &$condition));
-
-        $this->_eventDispatcher->emit($event);
-        
+       return  $query->execute();
         
     }
 
@@ -751,14 +711,6 @@ class Bvb_Grid_Source_Doctrine
     public function delete($table, array $condition)
     {
         
-        $valkues = $this->getRecord($table, $condition);
-        
-        $event = new Bvb_Grid_Event('crud.before_delete',
-                                    $this,
-                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
-
-        $this->_eventDispatcher->emit($event);
-
 
         $tableModel = $this->_getModelFromTable($table);
 
@@ -768,15 +720,7 @@ class Bvb_Grid_Source_Doctrine
             $query->addWhere($field . ' = ?', $value);
         }
 
-        $return = $query->execute();
-        
-        $event = new Bvb_Grid_Event('crud.after_delete',
-                                    $this,
-                                    array('table' => &$table, 'condition' => &$condition, 'values'=>&$values));
-
-        $this->_eventDispatcher->emit($event);
-
-
+        return $query->execute();
         
     }
 

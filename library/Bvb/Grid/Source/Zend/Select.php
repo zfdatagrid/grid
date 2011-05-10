@@ -1067,23 +1067,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        $event = new Bvb_Grid_Event('crud.before_insert',
-                        $this,
-                        array('table' => &$table, 'values' => &$post));
-
-        $this->_eventDispatcher->emit($event);
-
-
         $this->_getDb()->insert($table, $post);
 
         $insertId = $this->_getDb()->lastInsertId();
-
-        $event = new Bvb_Grid_Event('crud.after_insert',
-                        $this,
-                        array('table' => &$table, 'values' => &$post, 'insertId' => $insertId));
-
-        $this->_eventDispatcher->emit($event);
-
 
         return $insertId;
     }
@@ -1103,29 +1089,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        $oldValues = $this->getRecord($table, $condition);
-
-        $event = new Bvb_Grid_Event('crud.before_update',
-                        $this,
-                        array('table' => &$table,
-                            'newValues' => &$post,
-                            'oldValues' => &$oldValues,
-                            'condition' => &$condition));
-
-        $this->_eventDispatcher->emit($event);
-
         $return = $this->_getDb()->update($table, $post, $this->buildWhereCondition($condition));
-
-
-        $event = new Bvb_Grid_Event('crud.after_update',
-                        $this,
-                        array('table' => &$table,
-                            'newValues' => &$post,
-                            'oldValues' => &$oldValues,
-                            'condition' => &$condition));
-
-        $this->_eventDispatcher->emit($event);
-
 
         return $return;
     }
@@ -1144,23 +1108,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_cache['instance']->clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array($this->_cache['tag']));
         }
 
-        $values = $this->getRecord($table, $condition);
-
-        $event = new Bvb_Grid_Event('crud.before_delete',
-                        $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
-        $this->_eventDispatcher->emit($event);
-
-
         $return = $this->_getDb()->delete($table, $this->buildWhereCondition($condition));
-
-
-        $event = new Bvb_Grid_Event('crud.after_delete',
-                        $this,
-                        array('table' => &$table, 'condition' => &$condition, 'values' => &$values));
-
-        $this->_eventDispatcher->emit($event);
-
 
         return $return;
     }
