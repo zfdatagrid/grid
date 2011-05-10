@@ -46,6 +46,7 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
 
     public function testHiddenFields()
     {
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')));
         $this->grid->updateColumn('test', array('hidden' => true));
         $this->assertFalse($this->grid->getField('non-existing'));
         $this->grid->updateColumn('Name', array('hidden' => true));
@@ -68,8 +69,10 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
 
     public function testAddObjectColumns()
     {
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($this->db->select()->from('unit')));
         $name = new Bvb_Grid_Column('Name');
         $name->title('teste');
+        $name->setHidden(true);
         $this->grid->updateColumns($name);
         $this->assertInternalType('array', $this->grid->getField('Name'));
     }
@@ -165,7 +168,18 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
         $this->assertEquals(count($this->grid->getDeployOptions()), 2);
     }
 
+    public function testExcepetionWhenSettingMultipleSources()
+    {
+        
+        try {
+            $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
+            $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Accounts()));
+        } catch (Bvb_Grid_Exception $expected) {
+            return;
+        }
+
+        $this->fail('An expected exception has not been raised.');
+    }
 
 }
 
-?>

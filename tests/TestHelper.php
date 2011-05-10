@@ -75,10 +75,13 @@ class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
     protected $controller;
     protected $db;
     
-    
+    protected $_temp;
+
     public function setUp()
     {
         date_default_timezone_set('Europe/Lisbon');
+        
+        $this->_temp = realpath(APPLICATION_PATH.'/../tests/_temp/').'/';
         
         include_once APPLICATION_PATH.'/models/Model.php';
         // Assign and instantiate in one step:

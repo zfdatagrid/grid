@@ -96,7 +96,14 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         header('Content-Type', 'application/json');
 
         $grid = array('titles' => $this->buildTitles(), 'rows' => $this->buildGrid(), 'sqlexp' => $this->buildSqlexp());
-
-        die(Zend_Json::encode($grid));
+        
+        if(!$this->getDeployOption('return', false))
+        {
+            echo Zend_Json::encode($grid);
+            die();
+        }else{
+            return Zend_Json::encode($grid);
+        }
+        
     }
 }

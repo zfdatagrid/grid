@@ -435,7 +435,7 @@ abstract class Bvb_Grid {
     /**
      * Events manager class
      *
-     * @var Bvb_Grid_Events
+     * @var Bvb_Grid_Event_Manager
      */
 
     protected $_eventDispatcher = false;
@@ -544,11 +544,10 @@ abstract class Bvb_Grid {
             define('E_USER_DEPRECATED', E_USER_WARNING);
         }
 
-
         $this->_sessionParams = new Zend_Session_Namespace('ZFDG_FILTERS' . $this->getGridId(true));
 
         //Set an empty event dispatcher
-        $this->setEventDispatcher(new Bvb_Grid_Event_Dispatcher());
+        $this->setEventDispatcher(Bvb_Grid_Event_Dispatcher::getInstance());
         
         //set an empty mass action
         $this->setMassActions(new Bvb_Grid_Mass_Actions());
@@ -692,6 +691,10 @@ abstract class Bvb_Grid {
 
         if (is_array($cache) && isset($cache['enable']) && isset($cache['instance']) && isset($cache['tag'])) {
             $this->_cache = $cache;
+            if($this->getSource() !== null)
+            {
+                $this->getSource()->setCache($this->getCache());
+            }
             return $this;
         }
 
@@ -1948,6 +1951,7 @@ abstract class Bvb_Grid {
                     $toReplaceObj[$key] = $rep;
                 }
             }
+            
         } else {
             return call_user_func($value['function']);
         }
@@ -1967,7 +1971,7 @@ abstract class Bvb_Grid {
                 $toReplace[$i] = $toReplaceObj[$i];
             }
         }
-
+        
         return call_user_func_array($value['function'], $toReplace);
     }
 
@@ -2665,6 +2669,9 @@ abstract class Bvb_Grid {
                 $this->setParam('order' . $this->getGridId(), $norder[0] . '_' . strtoupper($norder[1]));
             }
         }
+        
+        $event = new Bvb_Grid_Event('grid.before_filters', $this, array());
+        $this->_eventDispatcher->emit($event);
 
         $this->_buildDefaultFiltersValues();
 
@@ -2687,7 +2694,7 @@ abstract class Bvb_Grid {
         $result = $this->getSource()->execute();
 
         $resultCount = $this->getSource()->getTotalRecords();
-
+        
         $this->_totalRecords = $resultCount;
         $this->_result = $result;
 
@@ -2733,7 +2740,6 @@ abstract class Bvb_Grid {
                     break;
                 }
             }
-
             return $this->getSource()->getAutoCompleteForFilter($term, $field, $specialKey);
         }
 
@@ -4288,6 +4294,21 @@ abstract class Bvb_Grid {
         }
         
         return $this->_response;
+    }
+
+    /**
+     * Regists a new observer
+     *
+     * @param string  $event    Event name
+     * @param calable $callback Callback to be called
+     *
+     * @return Bvb_Grid
+     */
+    public function listenEvent($event, $callback)
+    {
+        Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback);
+        
+        return $this;
     }
     
 }

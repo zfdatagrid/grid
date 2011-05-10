@@ -430,5 +430,23 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $this->assertQuery("[@id='1-bug_description']");
     }
     
+    public function testMassActions()
+    {
+        $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
+        
+        $actions = new Bvb_Grid_Mass_Actions();
+        $actions->addMassAction($this->grid->getUrl().'/option/delete', 'Delete', 'Are you sure?');
+        $actions->addMassAction($this->grid->getUrl(), 'Print');
+        
+        $actions->setMassActionsSeparator(',');
+        $actions->setMultipleFieldsSeparator('-');
+        
+        $this->grid->setMassActions($actions);
+        
+        $grid = $this->grid->deploy();
+        $this->controller->getResponse()->setBody($grid);
+        
+        $this->assertQuery("[@id='massCheckBox_']");
+    }
   
 }

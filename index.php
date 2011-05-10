@@ -28,20 +28,21 @@ Zend_Session::start();
 // Load Config
 $config = new Zend_Config_Ini('./application/config.ini', 'general');
 Zend_Registry::set('config', $config);
-
-// Database
-$db = Zend_Db::factory($config->db->adapter, $config->db->config->toArray());
-Zend_Db_Table::setDefaultAdapter($db);
-#$db->getConnection ()->exec ( "SET NAMES utf8" );
-$db->setFetchMode(Zend_Db::FETCH_OBJ);
-$db->setProfiler(true);
-Zend_Registry::set('db', $db);
-
 //Cache Options
 $frontendOptions = array('lifetime' => 7200, 'automatic_serialization' => true);
 $backendOptions = array('cache_dir' => './data/cache/');
 $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
 Zend_Registry::set('cache', $cache);
+
+// Database
+$db = Zend_Db::factory($config->db->adapter, $config->db->config->toArray());
+Zend_Db_Table::setDefaultAdapter($db);
+#Zend_Db_Table::setDefaultMetadataCache($cache);
+#$db->getConnection ()->exec ( "SET NAMES utf8" );
+$db->setFetchMode(Zend_Db::FETCH_OBJ);
+$db->setProfiler(true);
+Zend_Registry::set('db', $db);
+
 
 /*
 //Locale
@@ -70,20 +71,19 @@ $frontController->setDefaultControllerName('site');
 
 // Leave 'Database' options empty to rely on Zend_Db_Table default adapter
 $options = array(
-    'jquery_path' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
+    'jquery_path' => 'http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js',
     'plugins' => array('Variables',
         'Html',
         'Database' => array('adapter' => array('standard' => $db)),
         'File' => array('base_path' => '/Library/WebServer/Documents/'),
         'Memory',
         'Time',
-        #'Cache' => array('backend' => $cache->getBackend()),
+        'Cache' => array('backend' => $cache->getBackend()),
         'Exception')
 );
 
 $debug = new ZFDebug_Controller_Plugin_Debug($options);
 
-$frontController = Zend_Controller_Front::getInstance();
 #$frontController->registerPlugin($debug);
 
 $frontController->dispatch();

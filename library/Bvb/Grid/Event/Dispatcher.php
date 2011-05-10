@@ -28,6 +28,36 @@ class Bvb_Grid_Event_Dispatcher
     protected $_listeners = array();
 
     /**
+     * Class Instance
+     *
+     * @var mixed
+     */
+    protected static $_instance = null;
+
+    /**
+     * Protect from instantiation
+     *
+     * @return void
+     */
+    final protected function __construct ()
+    {
+    }
+
+
+    /**
+     * Translator instante
+     *
+     * @return Zend_Translate
+     */
+    public static function getInstance ()
+    {
+        if ( self::$_instance === null ) {
+            self::$_instance = new self();
+        }
+        return self::$_instance;
+    }
+
+    /**
      * Regists a new observer
      *
      * @param string  $event    Event name
@@ -89,5 +119,13 @@ class Bvb_Grid_Event_Dispatcher
             }
         }
     }
-
+    
+    /**
+     * Protect from instantiation
+     *
+     * @return void
+     */
+    final protected function __clone ()
+    {
+    }
 }

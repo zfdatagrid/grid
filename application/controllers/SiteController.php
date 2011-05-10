@@ -1,5 +1,21 @@
 <?php
 
+
+function AddAutoCompleteToFields(Bvb_Grid_Event $event)
+{
+
+    $subject = $event->getSubject();
+    $script = "$(document).ready(function() {";
+    foreach ($subject->getVisibleFields() as $name) {
+        $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) "
+                 . "{document.getElementById('filter_$name').value = ui.item.value },"
+                 . " source: '{$subject->getAutoCompleteUrlForFilter($name)}'});\n";
+    }
+    $script .= "});";
+
+    $subject->getView()->headScript()->appendScript($script);
+}
+
 function my_callback(Bvb_Grid_Event $event)
 {
     /*
@@ -56,6 +72,23 @@ class SiteController extends Zend_Controller_Action
     {
         $this->_redirect('default/site/basic', array('exit' => 1));
         return false;
+    }
+
+    
+    public function dojoAction ()
+    {
+        
+         $form = new Zend_Form;
+
+        $birthday = new Zend_Dojo_Form_Element_DateTextBox('datepicker'); 
+        $birthday->setLabel('Birthday');
+
+        $form->addElements(array( $birthday));
+        
+        Zend_Dojo::enableForm($form);
+        
+        $this->view->pages = $form;
+        $this->render('index');
     }
 
 
@@ -129,8 +162,10 @@ class SiteController extends Zend_Controller_Action
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
         $grid = Bvb_Grid::factory('Table', $config, $id);
         $grid->setEscapeOutput(false);
-        $grid->setExport(array( 'csv','excel','pdf'));
+        $grid->setExport(array( 'xml','csv','excel','pdf'));
         $grid->setView($view);
+        
+        
         #$grid->saveParamsInSession(true);
         #$grid->setCache(array('enable' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
@@ -294,6 +329,13 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
+    
+    static function callback()
+    {
+        echo "<pre>";
+        print_r(func_get_args());
+        die();
+    }
 
     /**
      * The 'most' basic example.
@@ -324,22 +366,16 @@ class SiteController extends Zend_Controller_Action
         #$grid->updateColumn('Name',array('searchType'=>'sqlExp','searchSqlExp'=>'Name !={{value}} '));
 
 
-        $event = new Bvb_Grid_Event_Dispatcher();
-        #$event->connect('grid.init_deploy', create_function('$event', 'echo "It works!!!!".$event->getName();die();'));
-        $event->connect('grid.init_deploy', 'my_callback');
-        $grid->setEventDispatcher($event);
+        #$grid->listenEvent('grid.init_deploy', create_function('$event', 'echo "It works!!!!".$event->getName();die();'));
+        $grid->listenEvent('grid.init_deploy', 'AddAutoCompleteToFields');
+        
+        #$grid->updateCOlumn('Name',array('callback'=>array('function'=>array($this,'callback'),'params'=>array('{{Name}}'))));
+        
+        #$grid->setDeployOption('title', 'Barcelos');
 
-        $script = "$(document).ready(function() {";
-        foreach($grid->getVisibleFields() as $name)
-        {
-            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
-        }
-        $script .= "});";
-        $grid->getView()->headScript()->appendScript($script);
-
+        #$grid->setCsvGridColumns(array('Name','Population'));
+        
         $this->view->pages = $grid->deploy();
-
-
         $this->render('index');
     }
 
@@ -437,15 +473,6 @@ class SiteController extends Zend_Controller_Action
         $grid->setSqlExp(array('Population' => array('functions' => array('SUM'),'decorator'=>'Total: {{result}}')));
 
         $this->view->pages = $grid->deploy();
-
-
-        $script = "$(document).ready(function() {";
-        foreach($grid->getVisibleFields() as $name)
-        {
-            $script .= "$(\"input#filter_$name\").autocomplete({focus: function(event, ui) {document.getElementById('filter_$name').value = ui.item.value }, source: '{$grid->getAutoCompleteUrlForFilter($name)}'});\n";
-        }
-        $script .= "});";
-        $grid->getView()->headScript()->appendScript($script);
 
         $this->render('index');
     }
@@ -588,7 +615,8 @@ class SiteController extends Zend_Controller_Action
     public function crudAction ()
     {
         $grid = $this->grid();
-        $grid->query(new Bugs());
+        $b = new Bugs();
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table($b));
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
         $form = new Bvb_Grid_Form();
@@ -628,7 +656,7 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(1000)));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))->limit(1000)->order('Continent ASC')));
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
