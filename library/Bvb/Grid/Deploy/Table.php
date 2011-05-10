@@ -386,6 +386,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                     unset($post[$key][$field]);
                                 }
                             }
+                            
+                            if(count($post[$key])==0)
+                            {
+                                throw new Bvb_Grid_Exception($this->__('No values to insert'));
+                            }
 
                             $event = new Bvb_Grid_Event('crud.before_insert',
                                             $this,
@@ -490,6 +495,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                             $this->_eventDispatcher->emit($event);
 
+                            if(count($post[$key])==0)
+                            {
+                                throw new Bvb_Grid_Exception($this->__('No values to update'));
+                            }
                             
                             if ($this->_crudTableOptions['edit'] == true) {
                                 $this->getSource()->update(

@@ -329,7 +329,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     public function getIdentifierColumns ($table)
     {
         $info = $this->_model->info();
-
+        
         $keys = array();
         foreach ( $info['primary'] as $pk ) {
             $keys[] = $info['metadata'][$pk]['TABLE_NAME'] . '.' . $pk;
