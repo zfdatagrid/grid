@@ -1012,6 +1012,23 @@ abstract class Bvb_Grid {
     }
 
     /**
+     * Set option hidden=0 on several columns
+     *
+     * @param array $columns Array of columns that will be displayed
+     *
+     * @return Bvb_Grid
+     */
+    public function setColumnsVisible(array $columns)
+    {
+        $this->setColumnsHidden($this->getFields());
+        
+        foreach ($columns as $column) {
+            $this->updateColumn($column, array('hidden' => false));
+        }
+        return $this;
+    }
+
+    /**
      * Add a new dir to look for when formating a field
      *
      * @param string $dir    Classes Location
@@ -2699,9 +2716,13 @@ abstract class Bvb_Grid {
         
         $this->_totalRecords = $resultCount;
         $this->_result = $result;
-
+        
         $this->_colspan();
 
+        if(count($this->getVisibleFields())==0)
+        {
+            throw new Bvb_Grid_Exception('No columns to show');
+        }
 
         if ($this->getParam('_option') == 'autocomplete' && $this->getParam('_gridId') == $this->getGridId(true)) {
             $field = $this->getParam('field');
