@@ -1972,6 +1972,8 @@ abstract class Bvb_Grid {
             }
         }
         
+        $toReplace = str_replace($search, $replace, $toReplace);
+
         return call_user_func_array($value['function'], $toReplace);
     }
 
