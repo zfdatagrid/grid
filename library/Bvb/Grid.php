@@ -2454,12 +2454,12 @@ abstract class Bvb_Grid {
             $value = $this->_data['fields'][$value];
 
             if (isset($value['position']) && (!isset($value['hidden']) || $value['hidden'] == 0)) {
-                if ($value['position'] == 'last') {
+                if ($value['position'] === 'last') {
                     $fieldsFinal[($lastIndex + 100)] = $key;
-                } elseif ($value['position'] == 'first') {
+                } elseif ($value['position'] === 'first') {
                     $fieldsFinal[($lastIndex - 100)] = $key;
                 } else {
-                    if ($value['position'] == 'next') {
+                    if ($value['position'] === 'next') {
                         $norder = $lastIndex + 1;
                     } else {
                         $norder = (int) $value['position'];
