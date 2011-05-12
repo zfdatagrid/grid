@@ -336,6 +336,24 @@ class SiteController extends Zend_Controller_Action
         print_r(func_get_args());
         die();
     }
+    
+    
+    
+    public function pgsqlAction()
+    {
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('tb_nivel');
+        $grid->query($select);
+
+        $form = new Bvb_Grid_Form();
+        $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true);
+        $grid->setForm($form);
+        
+        $grid->listenEvent('crud.before_insert', create_function('$event', 'print_r($event->getParams());die();'));
+        
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
 
     /**
      * The 'most' basic example.
