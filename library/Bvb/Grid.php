@@ -435,7 +435,7 @@ abstract class Bvb_Grid {
     /**
      * Events manager class
      *
-     * @var Bvb_Grid_Event_Manager
+     * @var Bvb_Grid_Event_Dispatcher
      */
 
     protected $_eventDispatcher = false;
@@ -1053,6 +1053,7 @@ abstract class Bvb_Grid {
     protected function _applyFormat($value, $formatter)
     {
         if (is_array($formatter)) {
+            $formatter = array_values($formatter);
             $result = reset($formatter);
             if (!isset($formatter[1])) {
                 $formatter[1] = array();
