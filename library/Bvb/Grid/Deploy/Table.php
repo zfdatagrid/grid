@@ -383,7 +383,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                             foreach (array_keys($post[$key]) as $field) {
                                 if ($tableFields[$field]['NULLABLE'] == 1 && strlen($post[$key][$field]) == 0) {
-                                    unset($post[$key][$field]);
+                                    $post[$key][$field] = new Zend_Db_Expr("NULL");
                                 }
                             }
                             
