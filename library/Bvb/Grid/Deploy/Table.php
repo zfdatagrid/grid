@@ -169,12 +169,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->getGridId());
         $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template', 'table');
 
-        if ($this->getRequest()->isPost()
-            && $this->getRequest()->getPost('postMassIds')
-        ) {
-            $this->_redirect($this->getUrl());
-            die();
-        }
     }
 
     /**
@@ -321,7 +315,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         /**
          * Remove if there is something to remove
          */
-        if (($this->_allowDelete == 1 && $this->getParam('delete')) && !$this->getParam('detail')) {
+        if (($this->_allowDelete == 1 && ( $this->getParam('delete') ||  $this->getParam('zfmassremove'))) 
+            && !$this->getParam('detail')) {
             self::_deleteRecord();
         }
 
@@ -575,7 +570,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $extra = array_merge(
             $extra,
-            array('massActionsAll_' => '', 'postMassIds' => '', 'send_' => '', 'gridAction_' => '')
+            array('massActionsAll_'.$this->getGridId() => '', 
+                  'postMassIds'.$this->getGridId() => '', 
+                  'send_'.$this->getGridId() => '', 
+                  'gridAction_'.$this->getGridId() => '')
         );
 
         if (count($extra) > 0) {
@@ -612,7 +610,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _deleteRecord()
     {
-        if ($this->getParam('postMassIds') && $this->getParam('zfmassremove' . $this->getGridId()) == 1) {
+        if ($this->getParam('postMassIds') && $this->getParam('zfmassremove') == 1) {
             //ID's to remove
             $ids = explode(',', $this->getParam('postMassIds'));
 
@@ -1797,6 +1795,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->getSource() === null) {
             throw new Bvb_Grid_Exception('Please Specify your source');
         }
+        
+        if ($this->getRequest()->isPost()
+            && $this->getRequest()->getPost('postMassIds'.$this->getGridId())
+        ) {
+            $this->_redirect($this->getUrl(array(
+                           'zfmassedit',
+                           'send_',
+                           'gridAction_',
+                           'massActionsAll_')));
+            die();
+        }
 
         if ($this->_allowDelete == 1 || $this->_allowEdit == 1 || $this->_allowAdd == 1) {
             $this->setAjax(false);
@@ -2283,7 +2292,7 @@ function convertArrayToInput_" . $this->getGridId() . "()
 
     document.forms.massActions_" . $this->getGridId() . ".action = input_" . $this->getGridId() . ";
 
-    document.getElementById('postMassIds').value = postMassIds_" . $this->getGridId() . "
+    document.getElementById('postMassIds" . $this->getGridId() . "').value = postMassIds_" . $this->getGridId() . "
         .join('" . $this->getMassActions()->getRecordSeparator() . "');
 }
 
@@ -3639,7 +3648,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                 . "<form style=\"padding:0;margin:0;\" method=\"post\" action=\"\" "
                 . " id=\"massActions_{$this->getGridId()}\" name=\"massActions_{$this->getGridId()}\">"
                 . $this->getView()->formHidden('massActionsAll_' . $this->getGridId(), $ids)
-                . $this->getView()->formHidden('postMassIds', '')
+                . $this->getView()->formHidden('postMassIds' . $this->getGridId(), '')
                 . "<span " . $cssClasses['massSelect'] . ">"
                 . "<a href='#' onclick='checkAll_" . $this->getGridId() . ""
                 . "(document.massActions_" . $this->getGridId() . ".gridMassActions_" . $this->getGridId() . ","

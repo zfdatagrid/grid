@@ -1490,6 +1490,12 @@ abstract class Bvb_Grid {
                            'order',
                            'start',
                            'filters',
+                           'zfmassedit',
+                           'zfmassremove',
+                           'send_',
+                           'postMassIds',
+                           'gridAction_',
+                           'massActionsAll_',
                            'noFilters',
                            '_exportTo',
                            'add',
@@ -1531,7 +1537,7 @@ abstract class Bvb_Grid {
             }
             unset($params[$value]);
         }
-
+        
         $paramsClean = $params;
         unset($paramsClean['controller']);
         unset($paramsClean['module']);
