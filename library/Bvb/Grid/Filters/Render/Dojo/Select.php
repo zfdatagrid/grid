@@ -32,8 +32,6 @@ class Bvb_Grid_Filters_Render_Dojo_Select extends Bvb_Grid_Filters_Render_Render
              ->requireModule('dijit.form.Select');
         
         
-        $script = "dijit.byId( 'filter_bug_status' ).attr( 'value');";
-        
         $this->setAttribute('dojoType', 'dijit.form.Select');
         
         if ( ! $this->hasAttribute('style') ) $this->setAttribute('style', 'width:120px !important;');
