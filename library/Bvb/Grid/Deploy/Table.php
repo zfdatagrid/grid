@@ -2445,26 +2445,26 @@ function uncheckAll_" . $this->getGridId() . "(field)
             $script .= "
 
 
-            function encodeString(str)
-            {
-                if(document.defaultCharset)
-                {
-                    encoding = document.defaultCharset;
-                }else{
-                    encoding = document.characterSet
-                }
+function encodeString(str)
+    {
+        if(document.defaultCharset)
+        {
+            encoding = document.defaultCharset;
+        }else{
+            encoding = document.characterSet
+        }
 
-                encoding = encoding.toLowerCase();
+        encoding = encoding.toLowerCase();
 
-                if(encoding.indexOf('iso-8859')!=-1)
-                {
-                	str = escape(str);
-                }else{
-                	str = encodeURIComponent(str);
-                }
+        if(encoding.indexOf('iso-8859')!=-1)
+        {
+            str = escape(str);
+        }else{
+            str = encodeURIComponent(str);
+        }
 
-                return str;
-		}
+        return str;
+    }
 
 function _" . $this->getGridId() . "gridChangeFilters(event)
     {
@@ -2490,7 +2490,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                 if (!document.getElementById(fieldsArray[i])){
                     continue;
                 }
-
+        
                 if(document.getElementById(fieldsArray[i]).type=='checkbox'
                    && document.getElementById(fieldsArray[i]).checked ==false)
                 {
@@ -2498,23 +2498,25 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                 }else{
                     value = document.getElementById(fieldsArray[i]).value;
                 }
-                 " . PHP_EOL;
-
-            $script .= "
-
-               if ( value.length > 0 )
-                      {
-                            name = document.getElementById(fieldsArray[i]).name;
-                            if ( name == '' ) {
-                                name = dijit.byId(fieldsArray[i]).get('name');
-                            }
-                            value = value.replace(/^\s+|\s+$/g,'');
-                            value = value.replace(/\//,'');
-                            filtro += encodeString(name) + '/'+encodeString(value)+'/';
-        			}
-
+                 
+                if(typeof(value) == 'undefined')
+                {
+                    value = dijit.byId(fieldsArray[i]).attr( 'value' );
+                }
+                
+                if ( value.length > 0 )
+                {
+                    name = document.getElementById(fieldsArray[i]).name;
+                    if ( name == '' || typeof(name) == 'undefined' ) {
+                        name = dijit.byId(fieldsArray[i]).get('name');
+                     }
+                    
+                    value = value.replace(/^\s+|\s+$/g,'').replace(/\//,'');
+                    filtro += encodeString(name) + '/'+encodeString(value)+'/';
+        	}
 
             }
+            
     " . PHP_EOL;
 
             if ($useAjax == 1) {
