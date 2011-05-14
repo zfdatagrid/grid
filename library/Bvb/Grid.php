@@ -3378,7 +3378,7 @@ abstract class Bvb_Grid {
             throw new Bvb_Grid_Exception('options must be an instance from Zend_Config or an array');
         }
 
-        $this->_options = array_merge($this->options, $options);
+        $this->_options = array_merge($this->_options, $options);
         return $this;
     }
 
