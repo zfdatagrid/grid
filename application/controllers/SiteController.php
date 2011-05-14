@@ -78,16 +78,20 @@ class SiteController extends Zend_Controller_Action
     public function dojoAction ()
     {
         
-         $form = new Zend_Form;
-
-        $birthday = new Zend_Dojo_Form_Element_DateTextBox('datepicker'); 
-        $birthday->setLabel('Birthday');
-
-        $form->addElements(array( $birthday));
+        $grid = $this->grid();
         
-        Zend_Dojo::enableForm($form);
+        $grid->addFiltersRenderDir( 'Bvb/Grid/Filters/Render/Dojo', 'Bvb_Grid_Filters_Render_Dojo');
         
-        $this->view->pages = $form;
+        $select = $this->_db->select()->from('bugs',array('bug_id','bug_description','bug_status','date','status'));
+        $grid->query($select);
+        
+        $filters = new Bvb_Grid_Filters();
+        $filters->addFilter('date', array('render'=>'date'));
+        $filters->addFilter('bug_id', array('render'=>'number'));
+        $filters->addFilter('status', array('distinct' => array('field' => 'status', 'name' => 'status'),'render'=>'select'));
+        $grid->addFilters($filters);
+
+        $this->view->pages = $grid->deploy();
         $this->render('index');
     }
 
@@ -98,6 +102,8 @@ class SiteController extends Zend_Controller_Action
      */
     public function init ()
     {
+        Zend_Dojo::enableView($this->view);
+        
         $this->view->url = Zend_Registry::get('config')->site->url;
         $this->view->action = $this->getRequest()->getActionName();
         header('Content-Type: text/html; charset=ISO-8859-1');

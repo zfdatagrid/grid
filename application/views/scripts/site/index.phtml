@@ -5,8 +5,15 @@
 <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/humanity/jquery-ui.css" rel="stylesheet" type="text/css"/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
-
-
+<?php
+if($this->dojo()->isEnabled())
+{
+    $this->dojo()
+             ->addStylesheetModule('dijit.themes.nihilo');
+    echo $this->dojo();
+}
+?>
+</script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>P&eacute;tala Azul - DataGrid Examples</title>
 <link type="text/css" rel="stylesheet" href="<?php echo $this->url; ?>public/styles/styles.css">
 <?php echo $this->headScript();?>
@@ -42,7 +49,7 @@ li a, li a:VISITED {
 }
 </style>
 </head>
-<body>
+<body class="nihilo">
 
 <table style="width:900px;" align="center" cellpadding="0" cellspacing="0">
 <tr <?php if($this->action =='cs'){echo "style='display:none;'";}?>>
