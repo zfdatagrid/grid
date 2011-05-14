@@ -74,8 +74,15 @@ class Bvb_Grid_Filters_Render_Dojo_Number extends Bvb_Grid_Filters_Render_Render
 
         if ( ! $this->hasAttribute('style') ) $this->setAttribute('style', 'width:50px !important;');
 
-        return '<span>' . $this->__('From:') . "</span>" . $this->getView()
-            ->formText($this->getFieldName() . '[from]', $this->getDefaultValue('from'), array_merge($this->getAttributes(), array('id' => 'filter_' . $this->getFieldName() . '_from'))) . "<br><span>" . $this->__('To:') . "</span>" . $this->getView()
-            ->formText($this->getFieldName() . '[to]', $this->getDefaultValue('to'), array_merge($this->getAttributes(), array('id' => 'filter_' . $this->getFieldName() . '_to')));
+        return '<span>' . $this->__('From:') . "</span>" 
+               . $this->getView()->formText($this->getFieldName() . '[from]', 
+                                            $this->getDefaultValue('from'),
+                                            array_merge($this->getAttributes(), 
+                                                          array('id' => 'filter_' . $this->getFieldName() . '_from'))) 
+               . "<br><span>" . $this->__('To:') . "</span>" 
+               . $this->getView()->formText($this->getFieldName() . '[to]', 
+                                            $this->getDefaultValue('to'), 
+                                            array_merge($this->getAttributes(), 
+                                                        array('id' => 'filter_' . $this->getFieldName() . '_to')));
     }
 }

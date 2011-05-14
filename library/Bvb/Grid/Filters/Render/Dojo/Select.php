@@ -38,6 +38,9 @@ class Bvb_Grid_Filters_Render_Dojo_Select extends Bvb_Grid_Filters_Render_Render
         
         if ( ! $this->hasAttribute('style') ) $this->setAttribute('style', 'width:120px !important;');
         
-        return $this->getView()->formSelect($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes(),$this->getValues());
+        return $this->getView()->formSelect($this->getFieldName(), 
+                                            $this->getDefaultValue(), 
+                                            $this->getAttributes(),
+                                            $this->getValues());
     }
 }

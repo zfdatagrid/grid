@@ -25,6 +25,9 @@ class Bvb_Grid_Filters_Render_Table_Select extends Bvb_Grid_Filters_Render_Rende
      */
     public function render()
     {
-        return $this->getView()->formSelect($this->getFieldName(), $this->getDefaultValue(), $this->getAttributes(),$this->getValues());
+        return $this->getView()->formSelect($this->getFieldName(), 
+                                            $this->getDefaultValue(), 
+                                            $this->getAttributes(),
+                                            $this->getValues());
     }
 }

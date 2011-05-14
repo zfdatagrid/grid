@@ -61,7 +61,14 @@ class Bvb_Grid_Filters_Render_Table_Date extends Bvb_Grid_Filters_Render_RenderA
         if ( ! $this->hasAttribute('style') ) $this->setAttribute('style', 'width:50px !important;');
 
         return '<span>' . $this->__('From:') . "</span>" . $this->getView()
-            ->formText($this->getFieldName() . '[from]', $this->getDefaultValue('from'), array_merge($this->getAttributes(), array('id' => 'filter_' . $this->getFieldName() . '_from'))) . "<br><span>" . $this->__('To:') . "</span>" . $this->getView()
-            ->formText($this->getFieldName() . '[to]', $this->getDefaultValue('to'), array_merge($this->getAttributes(), array('id' => 'filter_' . $this->getFieldName() . '_to')));
+            ->formText($this->getFieldName() . '[from]', 
+                       $this->getDefaultValue('from'), 
+                       array_merge($this->getAttributes(), 
+                                   array('id' => 'filter_' . $this->getFieldName() . '_from'))) 
+             . "<br><span>" . $this->__('To:') . "</span>" . 
+            $this->getView()->formText($this->getFieldName() . '[to]', 
+                                       $this->getDefaultValue('to'),
+                                       array_merge($this->getAttributes(), 
+                                                   array('id' => 'filter_' . $this->getFieldName() . '_to')));
     }
 }
