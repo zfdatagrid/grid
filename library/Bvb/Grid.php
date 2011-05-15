@@ -1592,8 +1592,6 @@ abstract class Bvb_Grid {
         if(!self::getUseModRewrite())
         {
             $prefix = str_replace("/index.php","",$this->_baseUrl).'/index.php';
-            
-            
         }else{
             $prefix = $this->_baseUrl;
         }
@@ -4359,7 +4357,6 @@ abstract class Bvb_Grid {
     public static function useModRewrite($modRewrite)
     {
         self::$_modRewrite = (bool) $modRewrite;
-        return $this;
     }
     
     /**

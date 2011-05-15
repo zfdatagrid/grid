@@ -163,6 +163,7 @@ class SiteController extends Zend_Controller_Action
      */
     public function grid ($id = '')
     {
+        Bvb_Grid::useModRewrite(true);
         $view = new Zend_View();
         $view->setEncoding('ISO-8859-1');
         $config = new Zend_Config_Ini('./application/grids/grid.ini', 'production');
