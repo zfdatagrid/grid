@@ -483,3 +483,32 @@ th a {
 .green {
 	background-color: green !important;
 }
+ul {
+	padding:0;
+	margin:0;
+	margin-left:15px;
+	list-style:none;
+	width:430px;
+	float:left;
+}
+
+li{
+    color:#E88A16;
+	font-size:10px;
+	font-weight:bold;
+    padding:0;
+	height:28px;
+}
+
+li span{
+    color:#000;
+	display:block;
+	padding-left:20px;
+	font-weight:normal;
+}
+
+li a, li a:VISITED {
+	color:#E88A16;
+	letter-spacing:1px;
+	text-decoration:none;
+}
