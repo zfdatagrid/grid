@@ -37,6 +37,13 @@ abstract class Bvb_Grid {
      */
     const VERSION = '$Rev$';
     /**
+     * If we should use mod_write for URL's
+     *
+     * @var bool
+     * @static
+     */
+    protected static $_modRewrite = false;
+    /**
      * Default Configuration to be applied to all grids
      *
      * @var array
@@ -49,12 +56,6 @@ abstract class Bvb_Grid {
      * @var string
      */
     protected $_charEncoding = 'UTF-8';
-    /**
-     * DBRM server name
-     *
-     * @var string
-     */
-    private $_server = null;
     /**
      * Fields order
      *
@@ -1587,14 +1588,22 @@ abstract class Bvb_Grid {
             }
 
         }
+        
+        if(!self::getUseModRewrite())
+        {
+            $prefix = str_replace("/index.php","",$this->_baseUrl).'/index.php';
+            
+            
+        }else{
+            $prefix = $this->_baseUrl;
+        }
 
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
         if (array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true) {
+            $finalUrl = 'index.php/'.str_replace("index.php/","",$finalUrl);
             return $finalUrl . $url . '/gridmod' . $this->getGridId() . '/ajax' . '/_zfgid/' . $this->getGridId();
         } else {
-            //$ur = new Zend_View_Helper_Url();
-            //return $ur->url($params_clean, null, true);
-            return $this->_baseUrl . '/' . $finalUrl . $url;
+            return $prefix . '/' . $finalUrl . $url;
         }
     }
 
@@ -4339,6 +4348,28 @@ abstract class Bvb_Grid {
         Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback);
         
         return $this;
+    }
+
+    /**
+     * If we should use mod_write to create URL's
+     *
+     * @param bool $modRewrite 
+     * @return Bvb_Grid 
+     */
+    public static function useModRewrite($modRewrite)
+    {
+        self::$_modRewrite = (bool) $modRewrite;
+        return $this;
+    }
+    
+    /**
+     * Get usage of mod_rewrite
+     *
+     * @return bool
+     */
+    public static function getUseModRewrite()
+    {
+        return self::$_modRewrite;
     }
     
 }
