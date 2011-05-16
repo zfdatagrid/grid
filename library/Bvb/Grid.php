@@ -3476,6 +3476,9 @@ abstract class Bvb_Grid {
             $this->setRecordsPerPage($this->_options['grid']['recordsPerPage']);
         }
 
+        if (isset($this->_options['grid']['modRewrite'])) {
+            self::useModRewrite($this->_options['grid']['modRewrite']);
+        }
 
         if (isset($this->_options['grid']['paginationInterval'])) {
             $this->setPaginationInterval($this->_options['grid']['paginationInterval']);
