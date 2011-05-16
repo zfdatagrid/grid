@@ -2128,16 +2128,21 @@ abstract class Bvb_Grid {
         
         if($data === null)
         {
-            $data = $this->_result;
-            $search = $this->_prepareReplace($this->_fields);
+            $result = $this->_result;
             $fields = $this->_fields;
         }else{
-            $search = $this->_prepareReplace(array_keys($data[0]));
             $fields = array_keys($data[0]);
         }
         
         $classConditional = array();
-        foreach ($data as $row) {
+        foreach ($result as $row) {
+            
+            if($data === null)
+            {
+                $search = $this->_prepareReplace($this->_fields);
+            }else{
+                $search = $this->_prepareReplace(array_keys($data[0]));
+            }
             
 
             // Create a map of field values with which to replace special field placeholders (ex. {{field_name}})
@@ -2235,7 +2240,7 @@ abstract class Bvb_Grid {
                         $replace
                     );
                     $replace[$field] = $newValue;
-
+                    
                     $search[] = '{{format}}';
                     $replace[] = $newValue;
                 }
