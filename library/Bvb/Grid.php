@@ -2108,19 +2108,27 @@ abstract class Bvb_Grid {
      *
      * @return array
      */
-    protected function _buildGrid()
+    protected function _buildGrid($data = null)
     {
         $return = array();
 
-        $search = $this->_prepareReplace($this->_fields);
-
-        $fields = $this->_fields;
+        
 
         $i = 0;
-
+        
+        if($data === null)
+        {
+            $data = $this->_result;
+            $search = $this->_prepareReplace($this->_fields);
+            $fields = $this->_fields;
+        }else{
+            $search = $this->_prepareReplace(array_keys($data[0]));
+            $fields = array_keys($data[0]);
+        }
+        
         $classConditional = array();
-        foreach ($this->_result as $row) {
-
+        foreach ($data as $row) {
+            
 
             // Create a map of field values with which to replace special field placeholders (ex. {{field_name}})
             $replace = array();
@@ -2242,7 +2250,7 @@ abstract class Bvb_Grid {
                         $this->_data['fields'][$field]['decorator']
                     );
                 }
-
+              
                 if ($this->_displayField($field)) {
                     if (isset($this->_data['fields'][$field]['translate'])
                         && $this->_data['fields'][$field]['translate'] == true
@@ -2305,7 +2313,7 @@ abstract class Bvb_Grid {
             }
             $i++;
         }
-
+        
         return $return;
     }
 

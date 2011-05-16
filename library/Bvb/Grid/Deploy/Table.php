@@ -2020,18 +2020,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 {
                     $columns = array_intersect_key( $columns,array_flip($this->_detailColumns));
                 }
+                
+                $result = array($columns);
 
-                foreach ($columns as $field=>$value) {
+                $result = parent::_buildGrid($result);
 
-                    if (isset($this->_data['fields'][$field]['title'])) {
-                        $field = $this->__($this->_data['fields'][$field]['title']);
+                foreach ($result[0] as $value) {
+                    
+
+                    if (isset($this->_data['fields'][$value['field']]['title'])) {
+                        $field = $this->__($this->_data['fields'][$value['field']]['title']);
                     } else {
                         $field = $this->__(ucwords(str_replace('_', ' ',$field)));
                     }
-
+                    
                     $this->_render['detail'] .= str_replace(
                         array('{{field}}', '{{value}}'),
-                        array($field, $value),
+                        array($field, $value['value']),
                         $this->_temp['table']->detail()
                     );
                 }
