@@ -754,27 +754,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
-                if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button id='remove_filters' href=\"gridAjax('{$this->getInfo("ajax")}','"
-                            . $url . "')\">" . $this->__('Remove Filters') . "</button>"
-                            . "<button id='remove_order' onclick=\"gridAjax('{$this->getInfo("ajax")}','"
-                            . $url2 . "')\">" . $this->__('Remove Order') . "</button>"
-                            . "<button id='remove_filters_order' onclick=\"gridAjax('{$this->_info['ajax']}','"
-                            . $url3 . "')\">" . $this->__('Remove Filters and Order') . "</button>";
-                } else {
                     $final1 = "<button id='remove_filters_order' onclick=\"window.location='$url'\">"
                             . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">"
                             . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">"
                             . $this->__('Remove Filters and Order') . "</button>";
-                }
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
-                if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button id='remove_filters' onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url . "') \">"
-                            . $this->__('Remove Filters') . "</button>";
-                } else {
                     $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button>";
-                }
 
                 //Only order
             } elseif (count($this->_filtersValues) == 0
@@ -782,12 +768,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && !$this->getParam('noOrder')
                 && $this->getInfo('noOrder') != 1)
             ) {
-                if ($this->getInfo("ajax") !== false) {
-                    $final1 = "<button id='remove_order' onclick=\"gridAjax('{$this->getInfo("ajax")}','" . $url2 . "') \">"
-                            . $this->__('Remove Order') . "</button>";
-                } else {
                     $final1 = "<button id='remove_order' onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button>";
-                }
             }
 
             //Replace values
@@ -1037,51 +1018,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $spanClass = ' class="selected" ';
                         }
 
-                        if ($this->getInfo("ajax") !== false) {
-                            if ($this->getAlwaysShowOrderArrows() === true && $this->getShowOrderImages() === true) {
-                                $link1 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                                       . "'{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_DESC')\">"
-                                       . $images['desc']."</a>";
-                                $link2 = "<a  href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                                       . "'{$title['simpleUrl']}/order{$this->getGridId()}/{$title['field']}_ASC')\">"
-                                       . $images['asc']."</a>";
-
-                                if (($orderField == $title['field'] && $order == 'asc')
-                                    || $this->_data['fields'][$title['field']]['order'] == 0
-                                ) {
-                                    $link1 = '';
-                                }
-
-                                if (($orderField == $title['field'] && $order == 'desc')
-                                    || $this->_data['fields'][$title['field']]['order'] == 0
-                                ) {
-                                    $link2 = '';
-                                }
-
-                                $grid .= str_replace(
-                                    array('{{value}}', "{{colspan}}"),
-                                    array($link2 . $title['value'] . $link1, $colspan),
-                                    $this->_temp['table']->titlesLoop()
-                                );
-
-                            } else {
-                                if ($this->getShowOrderImages() == false) {
-                                    $hrefTitle = '';
-                                    if (substr($title['url'], - 4) == '_ASC') {
-                                        $hrefTitle = $this->__('Sort ASC') . ' ' . $title['value'];
-                                    } elseif (substr($title['url'], - 5) == '_DESC') {
-                                        $hrefTitle = $this->__('Sort DESC') . ' ' . $title['value'];
-                                    }
-                                }
-
-                                $grid .= str_replace(
-                                    array('{{value}}', "{{colspan}}"),
-                                    array("<a href=\"javascript:gridAjax('{$this->getInfo('ajax')}','"
-                                        . $title['url'] . "') \">" . $title['value'] . $imgFinal . "</a>", $colspan),
-                                    $this->_temp['table']->titlesLoop()
-                                );
-                            }
-                        } else {
 
                             //Replace values in the template
                             if (!array_key_exists('url', $title)) {
@@ -1138,7 +1074,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         $this->_temp['table']->titlesLoop()
                                     );
                                 }
-                            }
                         }
                     }
                 }
@@ -1451,6 +1386,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
     protected function _pagination()
     {
         $pageSelect = '';
+        
         if (count($this->_paginationInterval) > 0 && $this->getTotalRecords() > 0) {
             if (!array_key_exists($this->_recordsPerPage, $this->_paginationInterval) ) {
                 $this->_paginationOptions[0] = $this->__('Select');
@@ -1463,29 +1399,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $url = $this->getUrl('perPage');
 
-            if ($this->getInfo('ajax') !== false) {
-
-                $menuPerPage = ' | ' . $this->__('Show') . ' '
-                             . $this->getView()->formSelect(
-                                 'perPage' . $this->getGridId(),
-                                 $this->getParam('perPage', $this->_recordsPerPage),
-                                 array('onChange' => "gridAjax('{$this->getInfo("ajax")}',"
-                                                     ."'$url/perPage" . $this->getGridId() . "/'+this.value);"),
-                                 $this->_paginationInterval
-                             )
-                             . ' ' . $this->__('items');
-            } else {
-
-                $menuPerPage = ' | ' . $this->__('Show') . ' '
-                             . $this->getView()->formSelect(
-                                 'perPage' . $this->getGridId(),
-                                 $this->getParam('perPage', $this->_recordsPerPage),
-                                 array('onChange' => "window.location='$url/perPage"
-                                                   . $this->getGridId() . "/'+this.value;"),
-                                 $this->_paginationInterval
-                             )
-                             . ' ' . $this->__('items');
-            }
+            $menuPerPage = ' | ' . $this->__('Show') . ' '
+                         . $this->getView()->formSelect(
+                             'perPage' . $this->getGridId(),
+                             $this->getParam('perPage', $this->_recordsPerPage),
+                             array('onChange' => "window.location='$url/perPage"
+                                               . $this->getGridId() . "/'+this.value;"),
+                             $this->_paginationInterval
+                         )
+                         . ' ' . $this->__('items');
         } else {
             $menuPerPage = '';
         }
@@ -1511,23 +1433,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $actual = 0;
         }
 
-        if ($this->getInfo("ajax") !== false) {
-
-            if (1 == $actual) {
-                $pag = "<strong> 1 </strong>";
-            } else {
-                $pag = "<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                    . "'$url/start{$this->getGridId()}/0')\">1</a>";
-            }
-
-
+        if (1 == $actual) {
+            $pag = "<strong> 1 </strong>";
         } else {
-
-            if (1 == $actual) {
-                $pag = "<strong> 1 </strong>";
-            } else {
-                $pag = "<a href=\"$url/start{$this->getGridId()}/0\">1</a>";
-            }
+            $pag = "<a href=\"$url/start{$this->getGridId()}/0\">1</a>";
         }
 
         $pag .= ( $actual > 5) ? " ... " : "  ";
@@ -1539,23 +1448,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             for ($i = $in + 1; $i < $fin; $i++) {
 
-                if ($this->getInfo("ajax") !== false) {
-
-                    if ($i == $actual) {
-                        $pag .= "<strong> $i </strong>";
-                    } else {
-                        $pag .= " <a href=javascript:gridAjax('{$this->getInfo("ajax")}','"
-                              . $url."/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "')> $i </a>";
-                    }
-
+                if ($i == $actual) {
+                    $pag .= "<strong> $i </strong>";
                 } else {
-
-                    if ($i == $actual) {
-                        $pag .= "<strong> $i </strong>";
-                    } else {
-                        $pag .=  " <a href='$url/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "'> $i </a>";
-                    }
-
+                    $pag .=  " <a href='$url/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "'> $i </a>";
                 }
             }
 
@@ -1565,75 +1461,35 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             for ($i = 2; $i < $npaginas; $i++) {
 
-                if ($this->getInfo("ajax") !== false) {
-
-                    if ($i == $actual) {
-                        $pag .= "<strong> $i </strong>" ;
-                    } else {
-                        $pag .= " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','"
-                             . $url . "/start{$this->getGridId()}/" . (($i - 1) * $ppagina) . "')\">$i</a> ";
-                    }
-
+                if ($i == $actual) {
+                    $pag .= "<strong> $i </strong>";
                 } else {
-
-                    if ($i == $actual) {
-                        $pag .= "<strong> $i </strong>";
-                    } else {
-                        $pag .= " <a href=\"" . $url . "/start{$this->getGridId()}/"
-                             . (($i - 1) * $ppagina) . "\">$i</a> ";
-                    }
-
+                    $pag .= " <a href=\"" . $url . "/start{$this->getGridId()}/"
+                         . (($i - 1) * $ppagina) . "\">$i</a> ";
                 }
             }
         }
 
-        if ($this->getInfo("ajax") !== false) {
 
-            if ($actual == $npaginas) {
-                $pag .= "<strong>" . $npaginas . "</strong>" ;
-            } else {
-                $pag .= " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start{$this->getGridId()}/"
-                      . (($npaginas - 1) * $ppagina) . "')\">$npaginas</a> ";
-            }
-
-
+        if ($actual == $npaginas) {
+            $pag .= "<strong>" . $npaginas . "</strong>" ;
         } else {
-
-            if ($actual == $npaginas) {
-                $pag .= "<strong>" . $npaginas . "</strong>" ;
-            } else {
-                $pag .= " <a href=\"$url/start{$this->getGridId()}/"
-                      . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
-            }
-
+            $pag .= " <a href=\"$url/start{$this->getGridId()}/"
+                  . (($npaginas - 1) * $ppagina) . "\">$npaginas</a> ";
         }
 
+
         if ($actual != 1) {
-            if ($this->getInfo("ajax") !== false) {
-                $pag = " <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                     . "'$url/start{$this->getGridId()}/0')\">" . $this->__('First')
-                     . "</a>&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}','$url/start/"
-                     . (($actual - 2) * $ppagina) . "')\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
-            } else {
-                $pag = " <a href=\"$url/start/0\">" . $this->__('First')
-                     . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . (($actual - 2) * $ppagina)
-                     . "\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
-            }
+            $pag = " <a href=\"$url/start/0\">" . $this->__('First')
+                 . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . (($actual - 2) * $ppagina)
+                 . "\">" . $this->__('Previous') . "</a>&nbsp;&nbsp;" . $pag;
         }
 
         if ($actual != $npaginas) {
-            if ($this->getInfo("ajax") !== false) {
-                $pag .= "&nbsp;&nbsp;<a href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                      . "'$url/start{$this->getGridId()}/" . ($actual * $ppagina) . "')\">" . $this->__('Next')
-                      . "</a> <a href=\"javascript:gridAjax('{$this->getInfo("ajax")}',"
-                      . "'$url/start{$this->getGridId()}/"
-                      . (($npaginas - 1) * $ppagina) . "')\">" . $this->__('Last') . "&nbsp;&nbsp;</a>";
-            } else {
 
-                $pag .= "&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . ($actual * $ppagina) . "\">"
-                      . $this->__('Next') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/"
-                      . (($npaginas - 1) * $ppagina) . "\">" . $this->__('Last') . "</a>";
-            }
+            $pag .= "&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/" . ($actual * $ppagina) . "\">"
+                  . $this->__('Next') . "</a>&nbsp;&nbsp;<a href=\"$url/start{$this->getGridId()}/"
+                  . (($npaginas - 1) * $ppagina) . "\">" . $this->__('Last') . "</a>";
         }
 
         if ($npaginas > 1 && $this->getInfo("limit") == 0) {
@@ -1646,29 +1502,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $pageSelectOptions[(($i - 1) * $ppagina)] = $i;
                 }
 
-                // Buil the select form element
-                if ($this->getInfo("ajax") !== false) {
-
-                    $pageSelect = $this->getView()->formSelect(
-                        'idf' . $this->getGridId(),
-                        ($pa - 1) * $this->getRecordsPerPage(),
-                        array('onChange' => "javascript:gridAjax('{$this->getInfo("ajax")}',"
-                                            ."'{$url}/start{$this->getGridId()}/'+this.value)"),
-                        $pageSelectOptions
-                    );
-
-
-                } else {
-
-                    $pageSelect = $this->getView()->formSelect(
-                        'idf' . $this->getGridId(),
-                        ($pa - 1) * $this->getRecordsPerPage(),
-                        array('onChange' => "window.location='{$url}/start{$this->getGridId()}/'+this.value"),
-                        $pageSelectOptions
-                    );
-
-                }
-
+                $pageSelect = $this->getView()->formSelect(
+                    'idf' . $this->getGridId(),
+                    ($pa - 1) * $this->getRecordsPerPage(),
+                    array('onChange' => "window.location='{$url}/start{$this->getGridId()}/'+this.value"),
+                    $pageSelectOptions
+                );
 
             } else {
                 $pageSelect = $this->getView()->formText(
@@ -1700,7 +1539,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             $images = $this->_temp['table']->images($this->getImagesUrl());
 
-            $url1 = $url = $this->getUrl(array('start'), false);
+            $url1 = $url = $this->getUrl(array('start'));
 
             $this->_render['export'] = $this->_temp['table']->export(
                 $this->getExports(),
@@ -1876,12 +1715,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
 
-            if ($this->_allowEdit == 1 && $this->getInfo("ajax") !== false) {
-                $urlEdit = $this->_baseUrl . '/'
-                         . str_replace("/gridmod" . $this->getGridId(). "/ajax", "", $url);
-            } else {
-                $urlEdit = $url;
-            }
+             $urlEdit = $url;
 
             $this->_actionsUrls['edit'] = "$urlEdit/edit" . $this->getGridId()
                                         . "/" . $urlFinal;
@@ -1938,7 +1772,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $removeParams = array('add', 'edit');
-            $url = $this->getUrl($removeParams, false);
+            $url = $this->getUrl($removeParams);
 
             $this->_actionsUrls['detail'] = "$url/detail" . $this->getGridId(). "/" . $urlFinal ;
 
@@ -2018,14 +1852,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if(count($this->_detailColumns) > 0)
                 {
-                    $columns = array_intersect_key( $columns,array_flip($this->_detailColumns));
+                    $columns = array_intersect_key( $columns , array_flip($this->_detailColumns) );
                 }
                 
                 $result = array($columns);
 
                 $result = parent::_buildGrid($result);
-
+                
                 foreach ($result[0] as $value) {
+                    
+                    if(!isset($value['field']))
+                        continue;
                     
 
                     if (isset($this->_data['fields'][$value['field']]['title'])) {
@@ -2068,7 +1905,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 } else {
                     $this->_render['detail'] .= str_replace(
                         array('{{url}}', '{{return}}'),
-                        array($this->getUrl(array('detail'), false),
+                        array($this->getUrl(array('detail')),
                         $this->__('Return')), $this->_temp['table']->detailEnd()
                     );
                 }
@@ -2237,12 +2074,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _printScript()
     {
-        if ($this->getInfo('ajax') !== false) {
-            $useAjax = 1;
-        } else {
-            $useAjax = 0;
-        }
-
         $script = "";
 
         if ($this->getMassActions()->hasMassActions()) {
@@ -2389,65 +2220,12 @@ function uncheckAll_" . $this->getGridId() . "(field)
         {
             if(confirm(msg))
             {
-            ";
-            if ($useAjax == 1) {
-                        $script .= "    window.location = '" . $this->_baseUrl . "/' + ";
-                        $script  . "url.replace('/gridmod" . $this->getGridId() . "/ajax','');";
-            } else {
-                $script .= "    window.location = url;";
-            }
-
-            $script .= "
+               window.location = url;
             }else{
                 return false;
             }
         }\n\n";
         }
-        if ($useAjax == 1) {
-            $script .= "function gridAjax(ponto,url) {
-
-    var xmlhttp;
-    try
-    {
-        xmlhttp=new XMLHttpRequest();
-    }
-    catch (e)
-    {
-        try
-        {
-            xmlhttp=new ActiveXObject(\"Msxml2.XMLHTTP\");
-        }
-        catch (e)
-        {
-            try
-            {
-                xmlhttp=new ActiveXObject(\"Microsoft.XMLHTTP\");
-            }
-            catch (e)
-            {
-                alert(\"Your browser does not suppor AJAX!\");
-                return false;
-            }
-        }
-    }
-
-     xmlhttp.open(\"GET\", '" . $this->_baseUrl . "/'+url,true);
-
-    " . $this->_temp['table']->scriptOnAjaxOpen($this->getInfo('ajax')) . "
-
-    xmlhttp.onreadystatechange=function () {
-
-        if (xmlhttp.readyState==4) {
-            " . $this->_temp['table']->scriptOnAjaxResponse($this->getInfo('ajax')) . "
-        }else{
-            " . $this->_temp['table']->scriptOnAjaxStateChange($this->getInfo('ajax')) . "
-        }
-    }
-    xmlhttp.send(null);
-}
-" . PHP_EOL;
-        }
-
 
         if ((!$this->getInfo("noFilters") || $this->getInfo("noFilters") != 1 && !$this->_isDetail)
             || count($this->_externalFilters) > 0
@@ -2527,16 +2305,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
             }
             
-    " . PHP_EOL;
-
-            if ($useAjax == 1) {
-                $script .= "        gridAjax('{$this->getInfo("ajax")}',url+'/'+filtro);";
-            } else {
-                $script .= "        window.location=url+'/'+filtro;" . PHP_EOL;
-            }
-
-            $script .= "
-    }";
+            window.location=url+'/'+filtro;
+     }";
         }
         $this->getView()->headScript()->appendScript($script);
 
