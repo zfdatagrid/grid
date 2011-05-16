@@ -116,7 +116,7 @@ abstract class Bvb_Grid {
      *
      * @var bool
      */
-    protected $_routeUrl = false;
+    protected $_routeName = null;
     /**
      * Baseurl
      *
@@ -1474,14 +1474,14 @@ abstract class Bvb_Grid {
     /**
      * Returns the url, without the param(s) specified
      *
-     * @param mixed $situation Array of params to be removed
-     * @param bool  $allowAjax If this URL will be called using ajax
+     * @param mixed $situation   Array of params to be removed
+     * @param array  $extraParams param to add to url
      *
      * @todo Use a view helper to build url
      *
      * @return string
      */
-    public function getUrl($situation = '', $allowAjax = true)
+    public function getUrl($situation = '', array $extraParams = array())
     {
         $situation = (array) $situation;
 
@@ -1530,8 +1530,6 @@ abstract class Bvb_Grid {
             }
         }
 
-
-
         foreach ($situation as $value) {
             if (in_array($value, $paramsGet)) {
                 $value = $value . $this->getGridId();
@@ -1540,9 +1538,6 @@ abstract class Bvb_Grid {
         }
         
         $paramsClean = $params;
-        unset($paramsClean['controller']);
-        unset($paramsClean['module']);
-        unset($paramsClean['action']);
         unset($paramsClean['_zfgid']);
         unset($paramsClean['gridmod' . $this->getGridId()]);
 
@@ -1556,8 +1551,20 @@ abstract class Bvb_Grid {
                 }
             }
         }
-
-
+        
+        foreach ($extraParams as $key=>$value)
+        {
+            if($this->getGridId())
+            {
+                $extraParams[$key.$this->getGridId()] = $value;
+                unset($extraParams[$key]);
+            }
+        }
+        
+        $extraParams['zfghost'] = 1;
+        
+        $paramsClean = array_merge($paramsClean,(array)$extraParams);
+        /*
         $url = '';
         foreach ($paramsClean as $key => $param) {
             if (is_array($param)
@@ -1595,14 +1602,16 @@ abstract class Bvb_Grid {
         }else{
             $prefix = $this->_baseUrl;
         }
-
+        */
+        
         // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
-        if (array_key_exists('ajax', $this->_info) && $this->getInfo('ajax') !== false && $allowAjax == true) {
-            $finalUrl = 'index.php/'.str_replace("index.php/","",$finalUrl);
-            return $finalUrl . $url . '/gridmod' . $this->getGridId() . '/ajax' . '/_zfgid/' . $this->getGridId();
-        } else {
-            return $prefix . '/' . $finalUrl . $url;
-        }
+        
+        
+        $ur = new Zend_View_Helper_Url();
+        $url = $ur->url($paramsClean, $this->getRouteName(), true);
+        
+        return str_replace("/zfghost/1", '', $url);
+        
     }
 
     /**
@@ -1890,8 +1899,9 @@ abstract class Bvb_Grid {
                     $return[$titles[$i]] = array('type' => 'field',
                         'name' => $titles[$i],
                         'field' => $orderFinal,
-                        'simpleUrl' => $url,
-                        'url' => "$url/order{$this->getGridId()}/{$orderFinal}_$order",
+                        'simpleUrl' => $this->getUrl(array('order', 'start', 'comm', 'noOrder')),
+                        'url' => $this->getUrl(array('order', 'start', 'comm', 'noOrder'),
+                                               array('order'=>$orderFinal."_".$order)),
                         'value' => $fieldTitle,
                         'newrow' => $newrow,
                         'rowspan' => $rowspan,
@@ -3876,26 +3886,26 @@ abstract class Bvb_Grid {
     }
 
     /**
-     * Defines the route URL to be applied
+     * Defines the route name to be applied
      *
-     * @param string $url string to be prefixed on every URL
+     * @param string $url route name
      *
      * @return Bvb_Grid
      */
-    public function setRouteUrl($url)
+    public function setRoutename($name)
     {
-        $this->_routeUrl = (string) ltrim($url, '/');
+        $this->_routeName = $name;
         return $this;
     }
 
     /**
-     * Returns the current route URL
+     * Returns the current route name
      *
      * @return string
      */
-    public function getRouteUrl()
+    public function getRouteName()
     {
-        return $this->_routeUrl;
+        return $this->_routeName;
     }
 
     /**

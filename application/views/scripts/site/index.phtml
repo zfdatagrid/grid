@@ -74,7 +74,7 @@ if($this->dojo()->isEnabled())
 Only show countries with at least: <?php
 $continents = array('Europe');
 $array = array(''=>'--choose--',10000000=>'10 Millions',100000000=>'100 Millions',500000000=>'500 Millions',1000000000=>'1 Billion');
-echo $this->formSelect('new_filter',$this->pages->getParam('new_filter'),array('onChange'=>'gridChangeFilters()'),$array);?> people from <?php echo $this->formCheckbox('filter_country',$this->pages->getParam('filter_country'),array('onChange'=>'gridChangeFilters()'),$continents);?> Europe
+echo $this->formSelect('new_filter',$this->pages->getParam('new_filter'),array('onChange'=>'_gridChangeFilters()'),$array);?> people from <?php echo $this->formCheckbox('filter_country',$this->pages->getParam('filter_country'),array('onChange'=>'_gridChangeFilters()'),$continents);?> Europe
 </span>
 <?php }?>
 <div id="grid">

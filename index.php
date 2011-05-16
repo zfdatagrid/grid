@@ -85,5 +85,11 @@ $options = array(
 $debug = new ZFDebug_Controller_Plugin_Debug($options);
 
 #$frontController->registerPlugin($debug);
-
+    $route = new Zend_Controller_Router_Route(
+        'route/*',
+        array('controller' => 'site', 'action' => 'crud')
+    );
+    
+    $router = $frontController->getRouter();
+    $router->addRoute('login', $route);
 $frontController->dispatch();

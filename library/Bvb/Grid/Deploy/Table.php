@@ -426,12 +426,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_removeFormParams(array('add' . $this->getGridId() => '1'));
 
                         if ($addNew === true) {
-                            $finalUrl = '/add' . $this->getGridId() . '/1';
+                            $finalUrl = array('add'=>1);
                         } else {
-                            $finalUrl = '';
+                            $finalUrl = array();
                         }
 
-                        $this->_redirect($this->getUrl() . $finalUrl);
+                        $this->_redirect($this->getUrl() , $finalUrl);
 
                         die();
                     } catch (Exception $e) {
@@ -706,12 +706,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected function _buildHeader()
     {
-        $url = $this->getUrl(array( 'edit', 'filters', 'order'));
+        $url = array( 'edit', 'filters', 'order');
 
         $final = '';
         $final1 = '';
 
-        $this->_actionsUrls['add'] = "$url/add" . $this->getGridId() . "/record";
+        $this->_actionsUrls['add'] = $this->getUrl($url,array('add'=>'record'));
 
         if ($this->getSource()->hasCrud()) {
             if (($this->getInfo('doubleTables') == 0 && $this->_allowAdd == 1)
@@ -741,13 +741,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ((is_array($this->_defaultFilters) || $this->_paramsInSession === true)
                 && !$this->getParam('noFilters')
             ) {
-                $url .= '/noFilters' . $this->getGridId() . '/1';
-                $url3 .= '/noFilters' . $this->getGridId() . '/1';
+                $url = $this->getUrl(array('filters', 'noFilters'),array('noFilters'=>1));
+                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noFilters'=>1));
             }
 
             if (is_array($this->getSource()->getSelectOrder())) {
-                $url3 .= '/noOrder' . $this->getGridId() . '/1';
-                $url2 .= '/noOrder' . $this->getGridId() . '/1';
+                
+                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noOrder'=>1));
+                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noOrder'=>1));
             }
 
             $this->_temp['table']->hasExtraRow = 1;
@@ -1033,11 +1034,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 if ($this->getAlwaysShowOrderArrows() === true
                                     && $this->getShowOrderImages() == true
                                 ) {
+                                    $url1 = $this->getUrl(array('order', 'start', 'comm', 'noOrder'),
+                                                          array('order'=>$title['field'].'_DESC'));
+                                    
+                                    $url2 = $this->getUrl(array('order', 'start', 'comm', 'noOrder'),
+                                                          array('order'=>$title['field'].'_ASC'));
 
-                                    $link1 = "<a  href='" . $title['simpleUrl']
-                                           . "/order{$this->getGridId()}/{$title['field']}_DESC'>{$images['desc']}</a>";
-                                    $link2 = "<a  href='" . $title['simpleUrl']
-                                           . "/order{$this->getGridId()}/{$title['field']}_ASC'>{$images['asc']}</a>";
+                                    $link1 = "<a  href='$url1'>{$images['desc']}</a>";
+                                    $link2 = "<a  href='$url2'>{$images['asc']}</a>";
 
                                     if (($orderField == $title['field'] && $order == 'asc')
                                         || $this->_data['fields'][$title['field']]['order'] == 0
