@@ -2016,6 +2016,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
+                if(count($this->_detailColumns) > 0)
+                {
+                    $columns = array_intersect_key( $columns,array_flip($this->_detailColumns));
+                }
+
                 foreach ($columns as $field=>$value) {
 
                     if (isset($this->_data['fields'][$field]['title'])) {

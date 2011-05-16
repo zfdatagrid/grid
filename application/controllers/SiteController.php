@@ -367,7 +367,7 @@ class SiteController extends Zend_Controller_Action
     public function basicAction ()
     {
         $grid = $this->grid();
-        $select = $this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'))->order('Code ASC');
+        $select = $this->_db->select()->from('Country', array('Code','Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'))->order('Code ASC');
         #$grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $grid->query($select);
 
