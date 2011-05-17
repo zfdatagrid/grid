@@ -1185,7 +1185,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $table = $this->getMainTable();
         $cols = $this->getDescribeTable($table['table'], $table['schema']);
 
-        return $this->buildFormElements($cols, array(), $inputsType);
+        return $this->buildFormElements($cols, array(), $inputsType, array());
     }
 
     /**
@@ -1197,7 +1197,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      *
      * @return Bvb_Grid_Source_Zend_Select
      */
-    public function buildFormElements($cols, $info = array(), $inputsType = array())
+    public function buildFormElements($cols, $info = array(), $inputsType = array(),$relationMap)
     {
         $final = array();
         $form = array();
@@ -1219,7 +1219,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
 
             if (count($info['referenceMap']) > 0) {
-                foreach ($info['referenceMap'] as $dep) {
+                foreach ($info['referenceMap'] as $key=>$dep) {
                     if (is_array($dep['columns']) && in_array($column, $dep['columns'])) {
                         $refColumn = $dep['refColumns'][array_search($column, $dep['columns'])];
                     } elseif (is_string($dep['columns']) && $column == $dep['columns']) {
@@ -1227,7 +1227,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     } else {
                         continue;
                     }
-
+                    
+                    if(isset($relationMap[$key]['refBvbColumns']) && count($relationMap[$key]['refBvbColumns'])==1)
+                    {
+                        $refColumn = reset($relationMap[$key]['refBvbColumns']);
+                    }
+                    
                     $t = new $dep['refTableClass']();
 
                     $in = $t->info();

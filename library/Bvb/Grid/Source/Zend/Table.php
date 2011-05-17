@@ -63,7 +63,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
     {
         $info = $this->getModel()->info();
         $cols = $info['metadata'];
-        $form = $this->buildFormElements($cols, $info, $inputsType);
+        $form = $this->buildFormElements($cols, $info, $inputsType, $this->_relationMap);
         return $form;
     }
 
