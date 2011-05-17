@@ -2132,6 +2132,7 @@ abstract class Bvb_Grid {
             $fields = $this->_fields;
         }else{
             $fields = array_keys($data[0]);
+            $result = $data;
         }
         
         $classConditional = array();
