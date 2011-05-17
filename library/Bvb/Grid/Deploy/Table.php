@@ -1662,8 +1662,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             return;
 
         parent::deploy();
-
-
+        
+        
         $this->_applyConfigOptions(array());
 
         $this->_processForm();
@@ -3130,7 +3130,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      *
      * @return Bvb_Grid_Deploy_Table
      */
-    public function setClassCellCondition($column, $condition, $class, $else)
+    public function setClassCellCondition($column, $condition, $class, $else='')
     {
         $this->clearClassRowConditions();
         $this->_classCellCondition[$column][] = array('condition' => $condition,
