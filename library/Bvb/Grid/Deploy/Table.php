@@ -631,7 +631,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 }
 
                 try {
-                    if ($this->_crudTableOptions['delete'] == true) {
+
                         $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
                         
                         $values = $this->getSource()->getRecord($this->_crudTable, $condition);
@@ -642,8 +642,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'condition' => &$condition, 
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
-
+                        
+                    if ($this->_crudTableOptions['delete'] == true) {
                         $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
+                    }                        
                         
                         $event = new Bvb_Grid_Event('crud.after_delete',
                                         $this,
@@ -652,7 +654,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
 
-                    }
 
                 } catch (Exception $e) {
                     $this->_gridSession->correct = 1;
