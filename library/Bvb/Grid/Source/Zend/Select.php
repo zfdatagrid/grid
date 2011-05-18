@@ -1232,7 +1232,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                         continue;
                     }
                     
-                    if(isset($relationMap[$key]['refBvbColumns']) && count($relationMap[$key]['refBvbColumns'])==1)
+                    if(isset($relationMap[$key]['refBvbColumns']) && is_array($relationMap[$key]['refBvbColumns']))
                     {
                         $refColumn = reset($relationMap[$key]['refBvbColumns']);
                     }
