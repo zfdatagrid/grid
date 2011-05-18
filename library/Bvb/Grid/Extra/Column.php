@@ -17,14 +17,13 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
+class Bvb_Grid_Extra_Column {
 
-class Bvb_Grid_Extra_Column
-{
     /**
      * Columns to be added
      * @var array
      */
-    public   $_field;
+    public $_field;
 
     /**
      * Add new extra columns
@@ -37,4 +36,19 @@ class Bvb_Grid_Extra_Column
         $this->_field[$name] = $args[0];
         return $this;
     }
+
+    public function __construct($name='', $args='')
+    {
+        if(is_string($args))
+            return $this;
+        
+        foreach ($args as $key=>$value)
+        {
+            $this->_field[$key] = $value;
+        }
+        
+        $this->_field['name'] = $name;
+        return $this;
+    }
+
 }

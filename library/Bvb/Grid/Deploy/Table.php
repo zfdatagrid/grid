@@ -2976,14 +2976,24 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             }
         }
 
-        if ($firstCall === true) {
-            if (isset($this->_options['extra']) && is_array($this->_options['extra']['row'])) {
+        if ($firstCall === true && isset($this->_options['extra'])) {
+            if (isset($this->_options['extra']['row']) && is_array($this->_options['extra']['row'])) {
                 $rows = new Bvb_Grid_Extra_Rows();
                 foreach ($this->_options['extra']['row'] as $key => $value) {
                     $value['name'] = $key;
                     $rows->addRow($value['position'], array($value));
                 }
                 $this->addExtraRows($rows);
+            }
+            if (isset($this->_options['extra']['column']) && is_array($this->_options['extra']['column'])) {
+                
+                $columns = array();
+                foreach ($this->_options['extra']['column'] as $key => $value) {
+                   
+                    $columns[] = new Bvb_Grid_Extra_Column($key, $value);
+                    
+                }
+                $this->addExtraColumns($columns);
             }
         }
 
@@ -2994,6 +3004,9 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         if (isset($this->_deployOptions['template'])) {
             $this->setTemplate($this->_deployOptions['template'], 'table');
         }
+        
+        
+        
     }
 
     /**

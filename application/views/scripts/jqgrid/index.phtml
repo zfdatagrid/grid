@@ -3,6 +3,9 @@
 $this->doctype('XHTML1_TRANSITIONAL');
 $this->setEncoding('UTF-8');
 $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8');
+$this->jQuery()
+         ->setVersion('1.4.2')
+         ->setUiVersion('1.8.1');
 ?>
 <!-- code to show external filter possibility and cmd() chaining -->
 <?php $this->jQuery()->onLoadCaptureStart(); ?>
@@ -14,12 +17,12 @@ $('#filterPolynesia').bind('change', function() {
 });
 <?php $this->jQuery()->onLoadCaptureEnd(); ?>
 
-<?= $this->doctype() . PHP_EOL ?>
+<?php echo $this->doctype() . PHP_EOL ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<?= $this->headTitle("ZFDatagrid jqGrid Examples")->setAutoEscape(false)->setIndent('  ') . PHP_EOL ?>
-<?= $this->headMeta()->setIndent('  ') . PHP_EOL ?>
-<?= $this->headLink()->setIndent('  ')->prependStylesheet('http://jquery-ui.googlecode.com/svn/tags/latest/themes/base/jquery-ui.css'); ?>
+<?php echo  $this->headTitle("ZFDatagrid jqGrid Examples")->setAutoEscape(false)->setIndent('  ') . PHP_EOL ?>
+<?php echo  $this->headMeta()->setIndent('  ') . PHP_EOL ?>
+<?php echo  $this->headLink()->setIndent('  ')->prependStylesheet('http://jquery-ui.googlecode.com/svn/tags/latest/themes/base/jquery-ui.css'); ?>
   <!-- next line will add all necessery JavaScript and CSS includes -->
   <?php echo $this->jQuery();?>
 
@@ -43,10 +46,10 @@ $('#filterPolynesia').bind('change', function() {
 
 <h1>Bvb JqGrid Examples</h1>
 
-<h2>JqGrid (version <?=$this->g1->getVersion()?>)</h2>
+<h2>JqGrid (version <?php echo $this->g1->getVersion()?>)</h2>
 <div>
-<?=$this->formCheckbox("filterPolynesia", 0, null, array(1,0));?> Cities Only From Polynesia
+<?php echo $this->formCheckbox("filterPolynesia", 0, null, array(1,0));?> Cities Only From Polynesia
 </div>
-<?=$this->g1;?>
+<?php echo $this->g1;?>
 
 </body></html>
