@@ -2627,6 +2627,9 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         );
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
+                
+        $event = new Bvb_Grid_Event('crud.form_built', $this, array('form'=>$crud));
+        $this->_eventDispatcher->emit($event);
 
         $this->_crudOptions['addForce'] = $crud->getOnAddForce();
         $this->_crudOptions['editForce'] = $crud->getOnEditForce();
