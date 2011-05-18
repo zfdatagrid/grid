@@ -92,6 +92,7 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
 
             $select->setIntegrityCheck(false);
 
+            /**
             $columnsToRemove = array();
             foreach ( $map as $sel ) {
                 if ( is_array($sel['columns']) ) {
@@ -101,7 +102,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
                 }
             }
 
-            $columnsMainTable = array_diff($info['cols'], $columnsToRemove);
+            $columnsMainTable = array_diff($info['cols'], $columnsToRemove);*/
+            $columnsMainTable = $info['cols'];
             $select->from($info['name'], $columnsMainTable, $info['schema']);
 
             $tAlias = array($info['name'] => 1);
