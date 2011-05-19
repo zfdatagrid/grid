@@ -1028,6 +1028,29 @@ abstract class Bvb_Grid {
         }
         return $this;
     }
+    
+    /**
+     * Defines columns positions.
+     * 
+     * Hither define array('field'=>position) or array(field1, field2) 
+     *
+     * @param array $columns 
+     * @return Bvb_Grid 
+     */
+    public function setColumnsPositions(array $columns)
+    {
+        if(isset($columns[0]))
+        {
+            $columns = array_flip($columns);
+        }
+
+        foreach($columns as $field=>$position)
+        {
+            $this->updateColumn($field,array('position'=>$position));
+        }
+        
+        return $this;
+    }
 
     /**
      * Add a new dir to look for when formating a field
