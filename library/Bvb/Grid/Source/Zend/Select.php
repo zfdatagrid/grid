@@ -635,9 +635,12 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             return $this;
         }
 
+        $isExpr = false;
         foreach ($this->_select->getPart(Zend_Db_Select::COLUMNS) as $col) {
             if (($col[0] . '.' . $col[2] == $field) && is_object($col[1])) {
                 $field = $col[2];
+                $isExpr = true;
+                break;
             }
         }
 
@@ -645,7 +648,14 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_select->reset('order');
         }
 
+        
+        if($isExpr === false)
+        {
+            $field = $this->_fields[$field]['field'];
+        }
+        
         $this->_select->order($field . ' ' . $order);
+        
         return $this;
     }
 
