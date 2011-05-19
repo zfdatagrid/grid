@@ -63,13 +63,13 @@ class Bvb_Grid_Template_Table
 
     public function titlesStart ()
     {
-        return "    <tr>";
+        return "    <thead><tr>";
     }
 
 
     public function titlesEnd ()
     {
-        return "    </tr>" . PHP_EOL;
+        return "    </tr></thead>" . PHP_EOL;
     }
 
 
@@ -169,11 +169,11 @@ class Bvb_Grid_Template_Table
 
     public function pagination ()
     {
-        return "    <tr>" . PHP_EOL . "     <td ".$this->getClass('tableFooter')." colspan=\"{$this->options['colspan']}\"><div>
+        return "    <tfoot><tr>" . PHP_EOL . "     <td ".$this->getClass('tableFooter')." colspan=\"{$this->options['colspan']}\"><div>
         <div ".$this->getClass('tableFooterExport').">" . $this->export . "</div>
         <div ".$this->getClass('tableFooterPagination')."> <em>({{numberRecords}})</em> {{pagination}}  {{perPage}}  {{pageSelect}}</div>
         </div>
-        </td>" . PHP_EOL . "</tr>" . PHP_EOL;
+        </td>" . PHP_EOL . "</tr></tfoot>" . PHP_EOL;
     }
 
 

@@ -772,9 +772,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
-                    $final1 = "<button id='remove_filters_order' onclick=\"window.location='$url'\">"
-                            . $this->__('Remove Filters') . "</button><button onclick=\"window.location='$url2'\">"
-                            . $this->__('Remove Order') . "</button><button onclick=\"window.location='$url3'\">"
+                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">"
+                            . $this->__('Remove Filters') . "</button><button id='remove_order' onclick=\"window.location='$url2'\">"
+                            . $this->__('Remove Order') . "</button><button id='remove_filters_order' onclick=\"window.location='$url3'\">"
                             . $this->__('Remove Filters and Order') . "</button>";
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
