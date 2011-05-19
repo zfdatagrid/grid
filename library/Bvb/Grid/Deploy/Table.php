@@ -643,9 +643,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
                         
-                    if ($this->_crudTableOptions['delete'] == true) {
-                        $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
-                    }                        
+                        if ($this->_crudTableOptions['delete'] == true) {
+                            $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
+                        }                        
                         
                         $event = new Bvb_Grid_Event('crud.after_delete',
                                         $this,
@@ -679,11 +679,27 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
         
         try {
-            if ($this->_crudTableOptions['delete'] == true) {
+            
 
-                $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
+            $condition = array_merge($condition, $this->_crudOptions['deleteAddCondition']);
+            $values = $this->getSource()->getRecord($this->_crudTable, $condition);
+
+            $event = new Bvb_Grid_Event('crud.before_delete',
+                            $this,
+                            array('table' => &$this->_crudTable, 
+                                  'condition' => &$condition, 
+                                  'values' => &$values));
+            $this->_eventDispatcher->emit($event);
+            if ($this->_crudTableOptions['delete'] == true) {
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
             }
+                        
+            $event = new Bvb_Grid_Event('crud.after_delete',
+                            $this,
+                            array('table' => &$this->_crudTable, 
+                                  'condition' => &$condition, 
+                                  'values' => &$values));
+            $this->_eventDispatcher->emit($event);
 
             $this->_gridSession->messageOk = true;
             $this->_gridSession->message = $this->__('Record deleted');
