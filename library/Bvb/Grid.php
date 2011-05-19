@@ -3125,11 +3125,8 @@ abstract class Bvb_Grid {
 
         $filters = $filters->getFilters();
         
-        
         $event = new Bvb_Grid_Event('grid.add_extra_filters', $this, array('filters'=>$filters));
         $this->_eventDispatcher->emit($event);
-
-        
 
         foreach ($filters as $key => $value) {
             if (isset($filters[$key]['callback'])) {
@@ -3148,14 +3145,24 @@ abstract class Bvb_Grid {
             }
         }
 
-        $unspecifiedFields = array_diff($this->getFields(), array_keys($this->_filters));
-
-        foreach ($unspecifiedFields as $value) {
-            $this->updateColumn($value, array('search' => false));
-        }
-
         return $this;
     }
+    
+    /**
+     * Add filters removing pre-existing ones
+     *
+     * @param Bvb_Grid_Filters $filters
+     * @return Bvb_Grid 
+     */
+    public function setFilters($filters)
+    {
+        $this->_filters = array();
+        
+        $this->addFilters($filters);
+        
+        return $this;
+    }
+    
 
     /**
      * Add extra columns
