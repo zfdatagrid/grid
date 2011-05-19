@@ -32,9 +32,9 @@ class Bvb_Grid_Formatter_Bool implements Bvb_Grid_Formatter_FormatterInterface
        
     }
 
-    /**
+    /** 
      * Formats a given value
-     * @see library/Bvb/Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
+     * @see library/Bvb/ Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
      */
     public function format($value)
     {
