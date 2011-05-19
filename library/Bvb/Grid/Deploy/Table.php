@@ -2728,9 +2728,13 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         $renderLoaded = false;
         $allFieldsIds = $this->getAllFieldsIds();
-
-        if (isset($this->_filters[$field])
-            && is_array($this->_filters[$field])
+        
+        if(!isset($this->_filters[$field]))
+        {
+            $this->_filters[$field] = array();
+        }
+        
+        if (is_array($this->_filters[$field])
             && isset($this->_filters[$field]['render'])
         ) {
             $render = $this->loadFilterRender($this->_filters[$field]['render']);
@@ -2825,7 +2829,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
             if ($this->_displayField($value) && $hRow != 1 && $this->_data['fields'][$value]['search'] != false) {
 
-                if (is_array($allFieldsIds[$value])) {
+                if (isset($allFieldsIds[$value]) && is_array($allFieldsIds[$value])) {
                     foreach ($allFieldsIds[$value] as $newId) {
                         $helpJavascript .= "filter_" . $value . $this->getGridId() . "_" . $newId . ',';
                     }
