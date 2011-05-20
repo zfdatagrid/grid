@@ -112,6 +112,9 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         }else{
             $select->from($info['name'], $info['cols'], $info['schema']);
         }
+        
+        if(!count($this->_relationMap))
+            $this->_relationMap = $map;
 
         parent::__construct($select);
 
