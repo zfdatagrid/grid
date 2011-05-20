@@ -2591,7 +2591,7 @@ abstract class Bvb_Grid {
         if ($this->getInfo('noFilters') == 1)
             return false;
 
-        if (is_array($this->_filters))
+        if (is_array($this->_filters) && count($this->_filters)>0)
             return $this->_filters;
 
         return array_combine($this->_fields, $this->_fields);
