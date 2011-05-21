@@ -203,7 +203,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             } else {
                 if (is_object($value[1])) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[2]);
+                    $returnFields[$value[2]] = array('title' => $title, 'field' =>  $value[1]->__toString());
                 } elseif (strlen($value[2]) > 0) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
                     $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[1]);
@@ -534,8 +534,16 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $tableList = $this->getTableList();
 
         $explode = explode('.', $field);
-        $tableName = reset($explode);
-        $field = end($explode);
+        
+        if (count($explode) == 2) {
+            $tableName = reset($explode);
+            $field = end($explode);
+        } else {
+            $tableName = reset($tableList);
+            $tableName = $tableName['tableName'];
+            $field = end($explode);
+        }
+     
         $schema = '';
 
         if (array_key_exists($tableName, $tableList)) {

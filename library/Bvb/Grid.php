@@ -2684,6 +2684,14 @@ abstract class Bvb_Grid {
         foreach ($this->_updateColumnQueue as $field => $options) {
             $this->updateColumn($field, $options);
         }
+        
+        $fields = $this->getSource()->buildFields();
+        $newFields = array_diff(array_keys($fields),array_keys($this->_data['fields']));
+        
+        foreach($newFields as $field)
+        {
+            $this->_data['fields'][$field] = $fields[$field];
+        }
 
         // apply additional configuration
         $this->runConfigCallbacks();
