@@ -535,7 +535,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $explode = explode('.', $field);
         
-        if (count($explode) == 2) {
+        if (count($explode) == 2 && strpos($explode[0], '(')===false) {
             $tableName = reset($explode);
             $field = end($explode);
         } else {
