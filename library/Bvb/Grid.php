@@ -1430,17 +1430,23 @@ abstract class Bvb_Grid {
         $order1 = explode('_', $order);
         $orderf = strtoupper(end($order1));
 
+        array_pop($order1);
+        $orderField = implode('_', $order1);
+        
+        if(!isset($this->_fieldsOrder[$orderField]))
+        {
+            $this->removeParam('order');
+            $orderf = false;
+        }else{
+            $orderField = $this->_fieldsOrder[$orderField];
+        }
 
         if ($orderf == 'DESC'
             || $orderf == 'ASC'
             || ($this->_paramsInSession === true
             && is_array($this->_sessionParams->order))
         ) {
-
-            array_pop($order1);
-            $orderField = implode('_', $order1);
-            $orderField = $this->_fieldsOrder[$orderField];
-
+            
             if ($this->_paramsInSession === true) {
                 if ($this->getParam('noOrder')) {
                     $this->_sessionParams->order = null;
