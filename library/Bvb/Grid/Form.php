@@ -206,6 +206,12 @@ class Bvb_Grid_Form
      * @var bool
      */
     protected $_editColumn = true;
+    /**
+     * Text to be showed on top of add/edit form
+     * 
+     * @var mixed 
+     */
+    protected $_textFormHeader = false;
 
     /**
      * Instantiates a new form, using Zend_Form
@@ -763,5 +769,27 @@ class Bvb_Grid_Form
         $this->_editColumn = $_editColumn;
         return $this;
     }
-
+    
+   /**
+     * If we should use a table thead with some text to describe form action
+     * 
+     * @param string $label
+     * @return Bvb_Grid_Form 
+     */
+    public function setTextFormHeader($label)
+    {
+        $this->_textFormHeader = $label;
+        return $this;
+    }
+    
+    /**
+     * If we should use a for header to describe form action
+     *
+     * @return mixed 
+     */
+    public function getTextFormHeader()
+    {
+        return $this->_textFormHeader;
+    }
+    
 }

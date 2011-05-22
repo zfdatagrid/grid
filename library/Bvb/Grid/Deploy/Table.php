@@ -2550,6 +2550,21 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                         $element->setDecorators($crud->getFileDecorator());
                 }
             }
+            
+            
+            if($formsCount ==1 && $crud->getTextFormHeader() && $crud->getUseVerticalInputs())
+            {        
+                $form->addElement('text','infoTextHeader',array('ignore'=>true,
+                                               'label'=>$crud->getTextFormHeader(),
+                                               'required'=>false,
+                                               'order'=>-1,
+                                               'decorators'=>array(
+                        array('Label'),
+                        array(array('data2' => 'HtmlTag'), array('tag' => 'th', 'colspan' => '2')),
+                        array(array('row' => 'HtmlTag'), array('tag' => 'thead'), array('tag' => 'tr'))
+                    )));
+            }
+            
         }
 
         if ($crud->getUseVerticalInputs() === false) {
