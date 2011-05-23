@@ -63,13 +63,13 @@ class Bvb_Grid_Template_Table
 
     public function titlesStart ()
     {
-        return "    <thead><tr>";
+        return "    <tr>";
     }
 
 
     public function titlesEnd ()
     {
-        return "    </tr></thead>" . PHP_EOL;
+        return "    </tr>" . PHP_EOL;
     }
 
 
