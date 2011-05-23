@@ -734,7 +734,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         
         
         $columns = $distinct->getPart('columns');
-        foreach($columns as $field=>$value)
+        foreach($columns as $value)
         {
             
             if($value[1] instanceof  Zend_Db_Expr && $value[2] !=='ZFG_GHOST' )
