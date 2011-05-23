@@ -198,18 +198,26 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
                 foreach ($tableFields as $field) {
                     $title = ucwords(str_replace('_', ' ', $field));
-                    $returnFields[$field] = array('title' => $title, 'field' => $value[0] . '.' . $field);
+                    $returnFields[$field] = array('title' => $title, 
+                                                  'field' => $value[0] . '.' . $field,
+                                                  'alias' => $value[2] );
                 }
             } else {
                 if (is_object($value[1])) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $returnFields[$value[2]] = array('title' => $title, 'field' =>  $value[1]->__toString());
+                    $returnFields[$value[2]] = array('title' => $title, 
+                                                     'field' =>  $value[1]->__toString(),
+                                                     'alias'=>$value[2]);
                 } elseif (strlen($value[2]) > 0) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $returnFields[$value[2]] = array('title' => $title, 'field' => $value[0] . '.' . $value[1]);
+                    $returnFields[$value[2]] = array('title' => $title, 
+                                                     'field' => $value[0] . '.' . $value[1],
+                                                     'alias'=>$value[2]);
                 } else {
                     $title = ucwords(str_replace('_', ' ', $value[1]));
-                    $returnFields[$value[1]] = array('title' => $title, 'field' => $value[0] . '.' . $value[1]);
+                    $returnFields[$value[1]] = array('title' => $title, 
+                                                     'field' => $value[0] . '.' . $value[1],
+                                                     'alias'=>$value[2]);
                 }
             }
         }
@@ -543,7 +551,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $tableName = $tableName['tableName'];
             $field = end($explode);
         }
-     
+
         $schema = '';
 
         if (array_key_exists($tableName, $tableList)) {
@@ -723,7 +731,21 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function getDistinctValuesForFilters($field, $fieldValue, $order = 'name ASC')
     {
         $distinct = clone $this->_select;
-
+        
+        
+        $columns = $distinct->getPart('columns');
+        foreach($columns as $field=>$value)
+        {
+            
+            if($value[1] instanceof  Zend_Db_Expr && $value[2] !=='ZFG_GHOST' )
+            {
+                $distinct->reset(Zend_Db_Select::HAVING);
+                $distinct->reset(Zend_Db_Select::WHERE);
+            }
+            
+        }
+        
+        
         $distinct->reset(Zend_Db_Select::COLUMNS);
         $distinct->reset(Zend_Db_Select::ORDER);
         $distinct->reset(Zend_Db_Select::LIMIT_COUNT);
@@ -964,13 +986,18 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             } elseif ($field == $value[0]) {
                 $field = $value[0] . '.' . $value[1];
                 break;
+            }elseif($value[1] instanceof Zend_Db_Expr && $field == $value[1]->__toString())
+            {
+                $sqlExpr = true;
+                $field = $completeField['alias'];
+                break;
             }
         }
-
+        
         if (!$sqlExpr && strpos($field, '.') === false && $simpleField === false) {
             $field = $completeField['field'];
         }
-
+        
 
         /**
          * Reserved words from myslq dont contain any special charaters.
@@ -987,7 +1014,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $func = 'where';
 
-        if (!$sqlExpr && strpos($field, '(') !== false) {
+        if ($sqlExpr || strpos($field, '(') !== false) {
             $func = 'having';
         }
 
@@ -1203,7 +1230,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $table = $this->getMainTable();
         if(!isset($table['schema']))
         {
-            $table['schema'] ='';
+            $table['schema'] = '';
         }
         $cols = $this->getDescribeTable($table['table'], $table['schema']);
 
@@ -1252,11 +1279,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     
                     if(isset($relationMap[$key]['refBvbColumns']) && is_array($relationMap[$key]['refBvbColumns']))
                     {
-                        $refColumn = reset($relationMap[$key]['refBvbColumns']);
+                        $refColumn = end($relationMap[$key]['refBvbColumns']);
                     }
                     
                     $t = new $dep['refTableClass']();
-
                     $in = $t->info();
 
                     if ((count($in['cols']) == 1 && count($in['primary']) == 0) || count($in['primary']) > 1) {
