@@ -107,10 +107,7 @@ class Bvb_Grid_Form
      * Decorators for form
      * @var array
      */
-    protected $_formDecorator = array('FormElements',
-                                      array('HtmlTag',
-                                      array('tag' => 'table', 'class' => 'formTable')),
-                                      'Form');
+    protected $_formDecorator = array('FormElements','Form');
     /**
      * Decorators for Form
      * @var array
@@ -211,7 +208,7 @@ class Bvb_Grid_Form
      * 
      * @var mixed 
      */
-    protected $_textFormHeader = false;
+    protected $_formTitle = false;
 
     /**
      * Instantiates a new form, using Zend_Form
@@ -776,9 +773,9 @@ class Bvb_Grid_Form
      * @param string $label
      * @return Bvb_Grid_Form 
      */
-    public function setTextFormHeader($label)
+    public function setFormTitle($label)
     {
-        $this->_textFormHeader = $label;
+        $this->_formTitle = $label;
         return $this;
     }
     
@@ -787,9 +784,9 @@ class Bvb_Grid_Form
      *
      * @return mixed 
      */
-    public function getTextFormHeader()
+    public function getFormTitle()
     {
-        return $this->_textFormHeader;
+        return $this->_formTitle;
     }
     
 }

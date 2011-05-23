@@ -2552,10 +2552,10 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             }
             
             
-            if($formsCount ==1 && $crud->getTextFormHeader() && $crud->getUseVerticalInputs())
+            if($formsCount ==1 && $crud->getFormTitle() && $crud->getUseVerticalInputs())
             {        
                 $form->addElement('text','infoTextHeader',array('ignore'=>true,
-                                               'label'=>$crud->getTextFormHeader(),
+                                               'label'=>$crud->getFormTitle(),
                                                'required'=>false,
                                                'order'=>-1,
                                                'decorators'=>array(

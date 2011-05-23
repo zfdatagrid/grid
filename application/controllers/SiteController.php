@@ -655,7 +655,7 @@ class SiteController extends Zend_Controller_Action
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
         #$grid->setDetailColumns();
-
+ 
         $grid->setForm($form);
         
         $grid->setDeleteConfirmationPage(true);
