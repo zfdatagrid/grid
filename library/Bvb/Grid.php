@@ -2550,7 +2550,10 @@ abstract class Bvb_Grid {
                     }
 
                     if (array_key_exists($norder, $fieldsFinal)) {
-                        for ($i = count($fieldsFinal); $i >= $norder; $i--) {
+                        for ($i = count($fieldsFinal); $i >= $norder; $i--) { 
+                            if(!isset($fieldsFinal[$i]))
+                                continue;
+                            
                             $fieldsFinal[($i + 1)] = $fieldsFinal[$i];
                         }
                         $fieldsFinal[$norder] = $key;
@@ -2570,7 +2573,13 @@ abstract class Bvb_Grid {
             }
         }
 
-        ksort($fieldsFinal);
+        ksort($fieldsFinal); 
+        
+        foreach($fieldsFinal as $key=>$value)
+        {
+            if(strlen($value)==0)
+                unset($fieldsFinal[$key]);
+        }
 
         $fieldsFinal = array_values($fieldsFinal);
 
