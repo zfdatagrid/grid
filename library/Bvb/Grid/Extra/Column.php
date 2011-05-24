@@ -23,7 +23,7 @@ class Bvb_Grid_Extra_Column {
      * Columns to be added
      * @var array
      */
-    public $_field;
+    protected $_column;
 
     /**
      * Add new extra columns
@@ -39,7 +39,7 @@ class Bvb_Grid_Extra_Column {
             $name[0] = strtolower($name[0]);
         }
 
-        $this->_field[$name] = $args[0];
+        $this->_column[$name] = $args[0];
         return $this;
     }
 
@@ -50,11 +50,30 @@ class Bvb_Grid_Extra_Column {
         
         foreach ($args as $key=>$value)
         {
-            $this->_field[$key] = $value;
+            $this->_column[$key] = $value;
         }
         
-        $this->_field['name'] = $name;
+        $this->_column['name'] = $name;
         return $this;
+    }
+
+    /**
+     * Fecths a column
+     *
+     * @return mixed 
+     */
+    public function getOption($option)
+    {
+        return isset($this->_column[$option]) ? $this->_column[$option] : false;
+    }
+    
+    /**
+     * Returns column
+     * 
+     */
+    public function getColumn()
+    {
+        return $this->_column;
     }
 
 }

@@ -3240,19 +3240,19 @@ abstract class Bvb_Grid {
                 throw new Bvb_Grid_Exception($value . ' must be a instance of Bvb_Grid_Extra_Column');
             }
             
-            if (!isset($value->_field['name']) || !is_string($value->_field['name'])) {
+            if (!$value->getOption('name') || !is_string($value->getOption('name'))) {
                 throw new Bvb_Grid_Exception('You need to define the column name');
             }
 
-            if (isset($value->_field['title']) && !is_string($value->_field['title'])) {
+            if ($value->getOption('title') && !is_string($value->getOption('title'))) {
                 throw new Bvb_Grid_Exception('title option must be a string');
             }
 
-            if (!isset($value->_field['position']) || !in_array($value->_field['position'],array('left','right'))) {
+            if (!$value->getOption('position') || !in_array($value->getOption('position'),array('left','right'))) {
                 throw new Bvb_Grid_Exception('Please define column position (left|right)');
             }
 
-            $final[$value->_field['name']] = $value->_field;
+            $final[$value->getOption('name')] = $value->getColumn();
         }
         $this->_extraFields = $final;
         return $this;
