@@ -33,6 +33,12 @@ class Bvb_Grid_Extra_Column {
      */
     public function __call($name, $args)
     {
+
+        if (substr(strtolower($name), 0, 3) == 'set') {
+            $name = substr($name, 3);
+            $name[0] = strtolower($name[0]);
+        }
+
         $this->_field[$name] = $args[0];
         return $this;
     }
