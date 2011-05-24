@@ -456,6 +456,12 @@ abstract class Bvb_Grid {
     protected $_response = null;
     
     /**
+     *
+     * @var Zend_Controller_Front
+     */
+    protected $_controller = null;
+    
+    /**
      * Mass Actions instance holder
      * 
      * @var Bvb_Grid_Mass_Actions
@@ -744,7 +750,7 @@ abstract class Bvb_Grid {
     {
         if(!$this->_request)
         {
-            $this->_request = Zend_Controller_Front::getInstance()->getRequest();
+            $this->_request = $this->getController()->getRequest();
         }
         
         return $this->_request;
@@ -3968,6 +3974,11 @@ abstract class Bvb_Grid {
      */
     public function getRouteName()
     {
+        
+        if(null === $this->_routeName)
+        {
+             $this->_routeName = $this->getController()->getRouter()->getCurrentRouteName();
+        }
         return $this->_routeName;
     }
 
