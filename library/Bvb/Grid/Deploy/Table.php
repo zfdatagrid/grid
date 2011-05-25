@@ -2456,8 +2456,16 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             }
 
 
-            $fieldsDisallowed = array_merge($crud->getDisallowedFields(), array_flip($crud->getOnAddForce()));
+            if($this->getParam('add'))
+            {
+                $fieldsDisallowed = array_merge($crud->getDisallowedFields(), array_keys($crud->getOnAddForce()));
+               $crud->setDisallowedFields($fieldsDisallowed);
+            }
+            if($this->getParam('edit'))
+            {
+                $fieldsDisallowed = array_merge($crud->getDisallowedFields(), array_keys($crud->getOnEditForce()));
             $crud->setDisallowedFields($fieldsDisallowed);
+            }
 
             $crud->getForm()->addSubForm($arr[$i], $i);
 
@@ -2795,7 +2803,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                 $distinctOrder = 'name ASC';
             }
 
-
             $dir = stripos($distinctOrder, ' asc') !== false ? 'ASC' : 'DESC';
             $sort = stripos($distinctOrder, 'name') !== false ? 'value' : 'field';
 
@@ -3044,9 +3051,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         if (isset($this->_deployOptions['template'])) {
             $this->setTemplate($this->_deployOptions['template'], 'table');
         }
-        
-        
-        
     }
 
     /**
@@ -3618,4 +3622,13 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         return isset($this->_info['ajax']) ? $this->_info['ajax'] : false;
     }
 
+    /**
+     * Returns current CRUD table
+     *
+     * @return string
+     */
+    public function getCrudTable()
+    {
+        return $this->_crudTable;
+    }
 }
