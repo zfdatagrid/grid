@@ -341,6 +341,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 foreach ($this->_form->getSubForms() as $key => $value) {
                     foreach ($value->getElements() as $el) {
+                        if($el->getIgnore())
+                                continue;
 
                         $fieldValue = $el->getValue();
 
