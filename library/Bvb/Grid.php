@@ -152,7 +152,7 @@ abstract class Bvb_Grid {
      *
      * @var array
      */
-    protected $_filters;
+    protected $_filters = array();
     /**
      * Filters Render
      * @var
@@ -460,7 +460,6 @@ abstract class Bvb_Grid {
      * @var Zend_Controller_Front
      */
     protected $_controller = null;
-    
     /**
      * Mass Actions instance holder
      * 
@@ -1447,12 +1446,13 @@ abstract class Bvb_Grid {
             $orderField = $this->_fieldsOrder[$orderField];
         }
 
+
         if ($orderf == 'DESC'
             || $orderf == 'ASC'
             || ($this->_paramsInSession === true
             && is_array($this->_sessionParams->order))
         ) {
-            
+
             if ($this->_paramsInSession === true) {
                 if ($this->getParam('noOrder')) {
                     $this->_sessionParams->order = null;
@@ -1599,49 +1599,7 @@ abstract class Bvb_Grid {
         $extraParams['zfghost'] = 1;
         
         $paramsClean = array_merge($paramsClean,(array)$extraParams);
-        /*
-        $url = '';
-        foreach ($paramsClean as $key => $param) {
-            if (is_array($param)
-                || ($key == 'perPage' && $this->_recordsPerPage == $param)
-                || ($key == 'perPage' && (int) $param == 0)
-                || ($key == 'start' && (int) $param == 0)
-            ) {
-                continue;
-            }
-
-            $url .= '/' . $this->getView()->escape($key) . '/' . $this->getView()->escape($param);
-        }
-
-        $action = '';
-        if (isset($params['action'])) {
-            $action = '/' . $params['action'];
-        }
-
-        if ($this->getRouteUrl() !== false) {
-            $finalUrl = $this->getRouteUrl();
-        } else {
-
-            if(Zend_Controller_Front::getInstance()->getDefaultModule() == $params['module'])
-            {
-                $finalUrl =  $params['controller'] . $action;
-            }else{
-                $finalUrl = $params['module'] . '/' . $params['controller'] . $action;
-            }
-
-        }
-        
-        if(!self::getUseModRewrite())
-        {
-            $prefix = str_replace("/index.php","",$this->_baseUrl).'/index.php';
-        }else{
-            $prefix = $this->_baseUrl;
-        }
-        */
-        
-        // Remove the action e controller keys, they are not necessary (in fact they aren't part of url)
-        
-        
+       
         $ur = new Zend_View_Helper_Url();
         $url = $ur->url($paramsClean, $this->getRouteName(), true);
         
@@ -2556,7 +2514,7 @@ abstract class Bvb_Grid {
                     }
 
                     if (array_key_exists($norder, $fieldsFinal)) {
-                        for ($i = count($fieldsFinal); $i >= $norder; $i--) { 
+                        for ($i = count($fieldsFinal); $i >= $norder; $i--) {
                             if(!isset($fieldsFinal[$i]))
                                 continue;
                             
@@ -2579,7 +2537,7 @@ abstract class Bvb_Grid {
             }
         }
 
-        ksort($fieldsFinal); 
+        ksort($fieldsFinal);
         
         foreach($fieldsFinal as $key=>$value)
         {
@@ -3168,11 +3126,11 @@ abstract class Bvb_Grid {
     /**
      * Add filters
      *
-     * @param object $filters Filters object to be added to the grid
+     * @param Bvb_Grid_Filters $filters Filters object to be added to the grid
      *
      * @return Bvb_Grid
      */
-    public function addFilters($filters)
+    public function addFilters(Bvb_Grid_Filters $filters)
     {
 
         $filters = $filters->getFilters();
@@ -3189,7 +3147,7 @@ abstract class Bvb_Grid {
             }
         }
 
-        $this->_filters = $filters;
+        $this->_filters = array_merge($this->_filters,$filters);
 
         foreach ($filters as $key => $filter) {
             if (isset($filter['searchType'])) {
@@ -3234,6 +3192,7 @@ abstract class Bvb_Grid {
         $event = new Bvb_Grid_Event('grid.add_extra_columns', $this, array('columns'=>$extraFields));
         $this->_eventDispatcher->emit($event);
 
+        
 
         if (is_array($this->_extraFields)) {
             $final = $this->_extraFields;
@@ -3260,6 +3219,7 @@ abstract class Bvb_Grid {
 
             $final[$value->getOption('name')] = $value->getColumn();
         }
+
         $this->_extraFields = $final;
         return $this;
     }

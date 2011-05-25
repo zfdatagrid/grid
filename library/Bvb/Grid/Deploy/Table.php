@@ -644,7 +644,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'condition' => &$condition, 
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
-                        
+
                         if ($this->_crudTableOptions['delete'] == true) {
                             $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
                         }                        
@@ -695,7 +695,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ($this->_crudTableOptions['delete'] == true) {
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
             }
-                        
+
             $event = new Bvb_Grid_Event('crud.after_delete',
                             $this,
                             array('table' => &$this->_crudTable, 
@@ -2464,7 +2464,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             if($this->getParam('edit'))
             {
                 $fieldsDisallowed = array_merge($crud->getDisallowedFields(), array_keys($crud->getOnEditForce()));
-            $crud->setDisallowedFields($fieldsDisallowed);
+                $crud->setDisallowedFields($fieldsDisallowed);
             }
 
             $crud->getForm()->addSubForm($arr[$i], $i);
@@ -2668,7 +2668,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         );
 
         $crud->setAction($this->getUrl(array_keys($crud->getForm()->getElements())));
-                
+
         $event = new Bvb_Grid_Event('crud.form_built', $this, array('form'=>$crud));
         $this->_eventDispatcher->emit($event);
 
@@ -2774,7 +2774,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         {
             $this->_filters[$field] = array();
         }
-        
+
         if (is_array($this->_filters[$field])
             && isset($this->_filters[$field]['render'])
         ) {

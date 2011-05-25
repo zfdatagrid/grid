@@ -663,8 +663,8 @@ class Bvb_Grid_Form
     {
         $this->_disallowedFields = $_disallowedFields;
         return $this;
-    }  
-   
+    }
+    
     /**
      * Adds one more field to the set not allowed to be managed
      * @param string  $field
@@ -687,7 +687,6 @@ class Bvb_Grid_Form
         return $this;
     }
     
-
 
     /**
      * @return the $_onAddForce
@@ -790,8 +789,8 @@ class Bvb_Grid_Form
         $this->_editColumn = $_editColumn;
         return $this;
     }
-    
-   /**
+
+    /**
      * If we should use a table thead with some text to describe form action
      * 
      * @param string $label
