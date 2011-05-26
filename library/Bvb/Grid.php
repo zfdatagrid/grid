@@ -912,11 +912,17 @@ abstract class Bvb_Grid {
         $class = $this->_deployName;
 
         if ($name == 'set' . ucfirst($class) . 'GridColumns') {
+            if(!isset($value[0]))
+                $value[0] = array();
+            
             $this->setGridColumns($value[0]);
             return $this;
         }
 
         if ($name == 'set' . ucfirst($class) . 'DetailColumns') {
+            if(!isset($value[0]))
+                $value[0] = array();
+            
             $this->setDetailColumns($value[0]);
             return $this;
         }
@@ -2307,6 +2313,7 @@ abstract class Bvb_Grid {
                     $return[$i][] = array('class' => $fieldClass . ' ' . $finalClassConditional,
                                           'value' => $newValue,
                                           'field' => $field,
+                                          'type' => 'field',
                                           'style' => $style,
                                           'newrow' => $newrow,
                                           'rowspan' => $rowspan,
@@ -2387,9 +2394,12 @@ abstract class Bvb_Grid {
             $value = $this->_applyFieldDecorator($search, $replace, $field['decorator']);
         }
 
+       
 
         return array('class' => $field['class'],
             'value' => $value,
+            'type' => 'extraField',
+            'field' => $field['name'],
             'style' => $field['style'],
             'newrow' => $field['newrow'],
             'rowspan' => $field['rowspan'],

@@ -1168,7 +1168,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $search = array_keys($search);
 
             foreach ($value as $tia) {
-                if (isset($tia['field'])) {
+                if (isset($tia['field']) && $tia['type']=='field') {
                     $fi[] = $tia['value'];
                 }
             }
@@ -1884,11 +1884,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 
                 foreach ($result[0] as $value) {
                     
-                    if(!isset($value['field']))
-                        continue;
                     
-
-                    if (isset($this->_data['fields'][$value['field']]['title'])) {
+                    $field = $value['field'];
+                    
+                    if (isset($value['field'])
+                        && isset($this->_data['fields'][$value['field']]['title'])) {
                         $field = $this->__($this->_data['fields'][$value['field']]['title']);
                     } else {
                         $field = $this->__(ucwords(str_replace('_', ' ',$field)));
