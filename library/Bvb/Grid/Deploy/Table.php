@@ -2539,7 +2539,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             }
 
             foreach ($this->_data['fields'] as $key => $title) {
-                if ($form->getElement($key) ) {
+                if ($form->getElement($key) && strlen($form->getElement($key)->getLabel())==0 ) {
                     $form->getElement($key)->setLabel($title['title']);
                 }
             }
