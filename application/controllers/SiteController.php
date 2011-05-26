@@ -370,7 +370,7 @@ class SiteController extends Zend_Controller_Action
         $select = $this->_db->select()->from('Country', array('Code','Name', 'Continent', 'Population', 'LocalName'))->order('Code ASC');
         $grid->query($select);
 
-        $grid->setRecordsPerPage(6);
+        $grid->setRecordsPerPage(7);
         $grid->setNoFilters(1);
         $grid->setNoOrder(1);
 
