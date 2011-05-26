@@ -82,12 +82,12 @@ class SiteController extends Zend_Controller_Action
         
         $grid->addFiltersRenderDir( 'Bvb/Grid/Filters/Render/Dojo', 'Bvb_Grid_Filters_Render_Dojo');
         
-        $select = $this->_db->select()->from('bugs',array('bug_id','bug_description','bug_status','date','status'));
+        $select = $this->_db->select()->from('Country', array('Code','Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'))->order('Code ASC');
         $grid->query($select);
         
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('date', array('render'=>'date'));
-        $filters->addFilter('bug_id', array('render'=>'number'));
+        $filters->addFilter('Population', array('render'=>'number'));
         $filters->addFilter('status', array('distinct' => array('field' => 'status', 'name' => 'status'),'render'=>'select'));
         $grid->addFilters($filters);
 
@@ -125,7 +125,7 @@ class SiteController extends Zend_Controller_Action
     public function formAction ()
     {
         $grid = $this->grid();
-        $grid->query($this->_db->select()->from('form'));
+        $grid->query($this->_db->select()->from(array('iu'=>'form')));
         $form = new Bvb_Grid_Form();
         $form->setBulkAdd(2)->setAdd(true)->setEdit(true)->setBulkDelete(true)->setBulkEdit(true)->setDelete(true)->setAddButton(true);
         $grid->setForm($form);
@@ -364,6 +364,24 @@ class SiteController extends Zend_Controller_Action
     /**
      * The 'most' basic example.
      */
+    public function horizontalAction ()
+    {
+        $grid = $this->grid();
+        $select = $this->_db->select()->from('Country', array('Code','Name', 'Continent', 'Population', 'LocalName'))->order('Code ASC');
+        $grid->query($select);
+
+        $grid->setRecordsPerPage(6);
+        $grid->setNoFilters(1);
+        $grid->setNoOrder(1);
+
+        $grid->setTemplate('horizontal', 'table');
+        $this->view->pages = $grid->deploy();
+        $this->render('index');
+    }
+
+    /**
+     * The 'most' basic example.
+     */
     public function basicAction ()
     {
         $grid = $this->grid();
@@ -442,12 +460,13 @@ class SiteController extends Zend_Controller_Action
     {
 
         $grid = $this->grid();
-        $select = $this->_db->select()->from('Country');
+        $select = $this->_db->select()->from('Country',array('Code','Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
         $grid->query($select);
 
         $grid->setDetailColumns();
-        $grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));
 
+        
+        
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
@@ -488,6 +507,7 @@ class SiteController extends Zend_Controller_Action
         #$grid->updateColumn('Continent',array('hRow'=>true));
 
         $grid->setRecordsPerPage(15);
+        $grid->setRecordsPerPage(5);
         $grid->setPaginationInterval(array(10 => 10, 20 => 20, 50 => 50, 100 => 100));
 
         #$grid->setTableGridColumns(array('Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'));

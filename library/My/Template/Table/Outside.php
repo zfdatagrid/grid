@@ -43,10 +43,10 @@ class My_Template_Table_Outside extends Bvb_Grid_Template_Table
     }
 
 
-    public function loopLoop()
+    public function loopLoop($value, $class, $style, $rowspan, $colspan)
     {
-        $class = $this->i % 2 ? "alt" : "";
-        return "<td  class=\"$class {{class}}\" >{{value}}&nbsp;</td>";
+        $class = $class.' '.$this->i % 2 ? "alt" : "";
+        return "<td  class=\"$class \" >$value&nbsp;</td>";
     }
 
 }

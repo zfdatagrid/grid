@@ -189,8 +189,7 @@ select {
 	font-size: 10px;
 }
 
-#grid td {
-	vertical-align: middle;
+#grid td, .borders  td {
 	font-size: 10px;
 }
 

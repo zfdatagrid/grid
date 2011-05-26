@@ -775,12 +775,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
                     $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">"
-                            . $this->__('Remove Filters') . "</button><button id='remove_order' onclick=\"window.location='$url2'\">"
-                            . $this->__('Remove Order') . "</button><button id='remove_filters_order' onclick=\"window.location='$url3'\">"
+                            . $this->__('Remove Filters') 
+                            . "</button><button id='remove_order' onclick=\"window.location='$url2'\">"
+                            . $this->__('Remove Order') 
+                            . "</button><button id='remove_filters_order' onclick=\"window.location='$url3'\">"
                             . $this->__('Remove Filters and Order') . "</button>";
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
-                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">" . $this->__('Remove Filters') . "</button>";
+                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">" 
+                            . $this->__('Remove Filters') . "</button>";
 
                 //Only order
             } elseif (count($this->_filtersValues) == 0
@@ -788,7 +791,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && !$this->getParam('noOrder')
                 && $this->getInfo('noOrder') != 1)
             ) {
-                    $final1 = "<button id='remove_order' onclick=\"window.location='$url2'\">" . $this->__('Remove Order') . "</button>";
+                    $final1 = "<button id='remove_order' onclick=\"window.location='$url2'\">" 
+                            . $this->__('Remove Order') . "</button>";
             }
 
             //Replace values
@@ -798,8 +802,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') != 1) {
-                        $final1 .= "<button id='apply_filters' onclick=\"_" . $this->getGridId() . "gridChangeFilters(1)\">"
-                                 . $this->__('Apply Filter') . "</button>";
+                        $final1 .= "<button id='apply_filters' onclick=\"_" . $this->getGridId() 
+                                . "gridChangeFilters(1)\">"
+                                . $this->__('Apply Filter') . "</button>";
                     }
 
                     if ($this->_allowAdd == true)
@@ -807,8 +812,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                     $this->_render['addButton'] = $addButton;
 
-                    $this->_render['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
-                    $this->_renderDeploy['extra'] = str_replace("{{value}}", $final1, $this->_temp['table']->extra());
+                    $this->_render['extra'] = $this->_temp['table']->extra($final1);
+                    $this->_renderDeploy['extra'] =  $this->_temp['table']->extra($final1);
                 }
             }
         }
@@ -855,18 +860,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             } else if ($colspan < 0) {
                 $colspan = $this->_colspan + $colspan;
             }
-            $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
+            $colspan = $colspan !== null ?  $colspan : '';
 
             //Check extra fields
             if ($filter['type'] == 'extraField' && $filter['position'] == 'left') {
                 //Replace values
                 $filterValue = isset($filter['value']) ? $filter['value'] : '';
 
-                $grid .= str_replace(
-                    array('{{value}}', "{{colspan}}"),
-                    array($filterValue . '&nbsp;', $colspan),
-                    $this->_temp['table']->filtersLoop()
-                );
+                $grid .=$this->_temp['table']->filtersLoop($filterValue,$colspan);
             }
 
             $hRowField = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
@@ -878,22 +879,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ($filter['type'] == 'field') {
                     //Replace values
-                    $grid .= str_replace(
-                        array('{{value}}', "{{colspan}}"),
-                        array($this->_formatField($filter['field']), $colspan),
-                        $this->_temp['table']->filtersLoop()
-                    );
+                    $grid .= $this->_temp['table']->filtersLoop($this->_formatField($filter['field']),$colspan);
                 }
             }
 
             //Check extra fields from the right
             if ($filter['type'] == 'extraField' && $filter['position'] == 'right') {
                 $filter['value'] = isset($filter['value']) ? $filter['value'] : '';
-                $grid .= str_replace(
-                    array('{{value}}', "{{colspan}}"),
-                    array($filter['value'], $colspan),
-                    $this->_temp['table']->filtersLoop()
-                );
+                $grid .= $this->_temp['table']->filtersLoop($filter['value'],$colspan);
             }
         }
 
@@ -979,16 +972,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             } else if ($colspan < 0) {
                 $colspan = $this->_colspan + $colspan;
             }
-            $colspan = $colspan !== null ? "colspan='" . $colspan . "'" : '';
+            $colspan = $colspan !== null ?  $colspan : '';
 
 
             //deal with extra field and template
             if ($title['type'] == 'extraField' && $title['position'] == 'left') {
-                $grid .= str_replace(
-                    array('{{value}}', "{{colspan}}"),
-                    array($title['value'], $colspan),
-                    $this->_temp['table']->titlesLoop()
-                );
+                $grid .= $this->_temp['table']->titlesLoop($title['value'],$colspan);
             }
 
             $hRowTitle = $this->getInfo("hRow,field") ? $this->getInfo("hRow,field") : '';
@@ -1004,11 +993,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     if ($noOrder == 1) {
 
                         //user set the noOrder(1) method
-                        $grid .= str_replace(
-                            array('{{value}}', "{{colspan}}"),
-                            array($this->__($title['value']), $colspan),
-                            $this->_temp['table']->titlesLoop()
-                        );
+                        $grid .= $this->_temp['table']->titlesLoop($this->__($title['value']),$colspan);
 
                     } else {
                         if (!isset($this->_data['fields'][$title['field']]['order'])) {
@@ -1042,11 +1027,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             //Replace values in the template
                             if (!array_key_exists('url', $title)) {
 
-                                $grid .= str_replace(
-                                    array('{{value}}', "{{colspan}}"),
-                                    array($title['value'], $colspan),
-                                    $this->_temp['table']->titlesLoop()
-                                );
+                                $grid .= $this->_temp['table']->titlesLoop($title['value'],$colspan);
 
                             } else {
 
@@ -1074,13 +1055,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         $link2 = '';
                                     }
 
-                                    $grid .= str_replace(
-                                        array('{{value}}', "{{colspan}}"),
-                                        array($link2 . $title['value'] . $link1, $colspan),
-                                        $this->_temp['table']->titlesLoop()
-                                    );
-
-                                } else {
+                                    $grid .= $this->_temp['table']->titlesLoop($link2 . $title['value'] . $link1, 
+                                                                               $colspan);
+                            } else {
                                     if ($this->getShowOrderImages() == false) {
                                         $hrefTitle = '';
                                         if (substr($title['url'], - 4) == '_ASC') {
@@ -1090,12 +1067,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     }
 
-                                    $grid .= str_replace(
-                                        array('{{value}}', "{{colspan}}"),
-                                        array("<a title='$hrefTitle' href='" . $title['url'] . "'><span $spanClass>"
-                                            . $title['value'] . $imgFinal . "</span></a>", $colspan),
-                                        $this->_temp['table']->titlesLoop()
-                                    );
+                                    $grid .= $this->_temp['table']->titlesLoop("<a title='$hrefTitle' href='" 
+                                          . $title['url'] . "'><span $spanClass>". $title['value'] . $imgFinal 
+                                          . "</span></a>",$colspan);
                                 }
                         }
                     }
@@ -1104,11 +1078,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Deal with extra fields
             if ($title['type'] == 'extraField' && $title['position'] == 'right') {
-                $grid .= str_replace(
-                    array('{{value}}', "{{colspan}}"),
-                    array($title['value'], $colspan),
-                    $this->_temp['table']->titlesLoop()
-                );
+                $grid .= $this->_temp['table']->titlesLoop($title['value'],$colspan);
             }
         }
 
@@ -1215,11 +1185,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         );
                     }
 
-                    $grid .= str_replace(
-                        array("{{value}}", "{{class}}"),
-                        array($bar[$aa][$hRowIndex]['value'], isset($value['class']) ? $value['class'] : ''),
-                        $this->_temp['table']->hRow($finalFields)
-                    );
+                    $grid .= $this->_temp['table']->hRow($bar[$aa][$hRowIndex]['value']);
                 }
             }
 
@@ -1239,7 +1205,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 // check if this goes on a new row
                 if (isset($final['newrow']) && $final['newrow']) {
 
-                    $grid .= $this->_temp['table']->loopEnd($finalFields);
+                    $grid .= $this->_temp['table']->loopEnd();
 
                     if (is_array($final['newrow'])) {
 
@@ -1288,25 +1254,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $colspan = $this->_colspan + $colspan;
                     }
 
+                    $colspan = $colspan !== null ?  $colspan : '';
+                    $classLoop = strlen($final['class']) > 1 ?   $final['class']  : '';
+                    $styleLoop = strlen($final['style']) > 1 ?   $final['style']  : '';
 
-                    $colspan = $colspan !== null ? " colspan='" . $colspan . "' " : '';
-                    $classLoop = strlen($final['class']) > 1 ? ' class=" ' . $final['class'] . '" ' : '';
-                    $styleLoop = strlen($final['style']) > 1 ? ' style=" ' . $final['style'] . '" ' : '';
-
-
-                    $grid .= str_replace(
-                        array("{{value}}",
-                              "{{class}}",
-                              "{{style}}",
-                              "{{rowspan}}",
-                              "{{colspan}}"),
-                        array($final['value'],
-                              $classLoop,
-                              $styleLoop,
-                              $rowspan,
-                              $colspan),
-                        $this->_temp['table']->loopLoop($finalFields)
-                    );
+                    $grid .=  $this->_temp['table']->loopLoop($final['value'],$classLoop,$styleLoop,$rowspan,$colspan);
                 }
             }
 
@@ -1323,14 +1275,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
 
             $set = null;
-            $grid .= $this->_temp['table']->loopEnd($finalFields);
+            $grid .= $this->_temp['table']->loopEnd();
 
             @$aa++;
             $class++;
         }
 
         if ($this->_totalRecords == 0) {
-            $grid = str_replace("{{value}}", $this->__('No records found'), $this->_temp['table']->noResults());
+            $grid = $this->_temp['table']->noResults($this->__('No records found'));
         }
 
         return $grid;
@@ -1353,11 +1305,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             foreach ($sql as $exp) {
                 if (!$this->getInfo("hRow,field") || $exp['field'] != $this->getInfo("hRow,field")) {
-                    $grid .= str_replace(
-                        array("{{value}}", '{{class}}'),
-                        array($exp['value'], $exp['class']),
-                        $this->_temp['table']->sqlExpLoop()
-                    );
+                    $grid .= $this->_temp['table']->sqlExpLoop($exp['value'],$exp['class']);
                 }
             }
             $grid .= $this->_temp['table']->sqlExpEnd();
@@ -1573,36 +1521,23 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if ((int) $this->getInfo("limit") > 0) {
 
-                $result2 = str_replace(
-                    array('{{pagination}}',
-                          '{{numberRecords}}',
-                          '{{perPage}}',
-                          '{{pageSelect}}'),
-                    array('',
-                          (int) $this->getInfo("limit"),
-                          $menuPerPage,
-                          $pageSelect),
-                    $this->_temp['table']->pagination()
-                );
-
+                $result2 = $this->_temp['table']->pagination('', 
+                                                             (int) $this->getInfo("limit"), 
+                                                             $menuPerPage, 
+                                                             $pageSelect);
             } elseif ($npaginas > 1 && count($this->_export) > 0) {
                 if ($this->_recordsPerPage == 0) {
                     $pag = '';
                     $pageSelect = '';
                 }
 
-                $result2 = str_replace(
-                    array('{{pagination}}',
-                          '{{numberRecords}}',
-                          '{{perPage}}', '{{pageSelect}}'),
-                    array(' | ' . $pag,
+                $result2 =
+                    $this->_temp['table']->pagination(' | ' . $pag,
                           $registoActual . ' ' . $this->__('to') . ' '
                             . $registoFinal . ' ' . $this->__('of') . '  '
                             . $this->_totalRecords,
                           $menuPerPage,
-                          $pageSelect),
-                    $this->_temp['table']->pagination()
-                );
+                          $pageSelect);
 
             } elseif ($npaginas < 2 && count($this->_export) > 0) {
 
@@ -1611,34 +1546,20 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     $pageSelect = '';
                 }
 
-                $result2 .= str_replace(
-                    array('{{pagination}}',
-                          '{{numberRecords}}',
-                          '{{perPage}}',
-                          '{{pageSelect}}'),
-                    array('',
+                $result2 .=  $this->_temp['table']->pagination('',
                           $this->_totalRecords,
                           $menuPerPage,
-                          $pageSelect),
-                    $this->_temp['table']->pagination()
-                );
+                          $pageSelect);
 
             } elseif (count($this->_export) == 0) {
                 if ($this->_recordsPerPage == 0) {
                     $pag = '';
                     $pageSelect = '';
                 }
-                $result2 .= str_replace(
-                    array('{{pagination}}',
-                          '{{numberRecords}}',
-                          '{{perPage}}',
-                          '{{pageSelect}}'),
-                    array(' | ' . $pag,
+                $result2 .= $this->_temp['table']->pagination(' | ' . $pag,
                           $this->_totalRecords,
                           $menuPerPage,
-                          $pageSelect),
-                    $this->_temp['table']->pagination()
-                );
+                          $pageSelect);
             }
         } else {
             return '';
@@ -1821,11 +1742,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if (strlen($this->_gridSession->message) > 0) {
-            $this->_render['message'] = str_replace(
-                "{{value}}",
-                $this->_gridSession->message,
-                $this->_temp['table']->formMessage($this->_gridSession->messageOk)
-            );
+            $this->_render['message'] = 
+                $this->_temp['table']->formMessage($this->_gridSession->messageOk,$this->_gridSession->message);
 
             $this->_renderDeploy['message'] = $this->_render['message'];
         }
@@ -1899,11 +1817,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $field = $this->__(ucwords(str_replace('_', ' ',$field)));
                     }
                     
-                    $this->_render['detail'] .= str_replace(
-                        array('{{field}}', '{{value}}'),
-                        array($field, $value['value']),
-                        $this->_temp['table']->detail()
-                    );
+                    $this->_render['detail'] .= $this->_temp['table']->detail($field, $value['value']);
                 }
 
                 if ($this->getParam('delete')) {
@@ -1925,17 +1839,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         array('onclick' => "window.location='$localCancel'")
                     );
 
-                    $this->_render['detail'] .= str_replace(
-                        '{{button}}',
-                        $buttonRemove . ' ' . $buttonCancel,
-                        $this->_temp['table']->detailDelete()
-                    );
+                    $this->_render['detail'] .= $this->_temp['table']->detailDelete($buttonRemove . ' ' . $buttonCancel);
                 } else {
-                    $this->_render['detail'] .= str_replace(
-                        array('{{url}}', '{{return}}'),
-                        array($this->getUrl(array('detail')),
-                        $this->__('Return')), $this->_temp['table']->detailEnd()
-                    );
+                    $this->_render['detail'] .= $this->_temp['table']->detailEnd($this->getUrl(array('detail')), 
+                                                                                 $this->__('Return'));
                 }
 
                 $this->_render['detail'] .= $this->_temp['table']->globalEnd();
