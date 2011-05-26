@@ -60,8 +60,8 @@ class My_Template_Table_Horizontal extends Bvb_Grid_Template_Table {
             $print .= "<td " . $this->getClass('tableFooter') . " colspan='" . 
                     (count($this->result['titles']) + 2) . "'><div>
                     <div " . $this->getClass('tableFooterExport') . ">" . $this->export . "</div>
-                    <div " . $this->getClass('tableFooterPagination') . "> <em>{$this->result['pagination'][0]}</em> 
-                    {$this->result['pagination'][1]}  {$this->result['pagination'][2]}  
+                    <div " . $this->getClass('tableFooterPagination') . "> <em>{$this->result['pagination'][1]}</em> 
+                    {$this->result['pagination'][0]}  {$this->result['pagination'][2]}  
                     {$this->result['pagination'][3]}</div>
                     </div>
                     </td>";

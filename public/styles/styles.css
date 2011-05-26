@@ -63,7 +63,7 @@ form label {
 
 .paginationExport {
 	float: left;
-	width: 110px;
+	width: 120px;
 }
 
 .paginationNumbers {
@@ -163,7 +163,7 @@ td input[type='checkbox'],td input[type='radio'],td textarea:focus {
 table.borders {
 	border: 2px solid #FFa500;
 	border-collapse: collapse;
-	width: 100%;
+	width: 98%;
 }
 
 body {
