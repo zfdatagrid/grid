@@ -2137,13 +2137,8 @@ abstract class Bvb_Grid {
         $classConditional = array();
         foreach ($result as $row) {
             
-            if($data === null)
-            {
-                $search = $this->_prepareReplace($this->_fields);
-            }else{
-                $search = $this->_prepareReplace(array_keys($data[0]));
-            }
             
+            $search = $this->_prepareReplace($this->_fields);
 
             // Create a map of field values with which to replace special field placeholders (ex. {{field_name}})
             $replace = array();
@@ -2151,6 +2146,8 @@ abstract class Bvb_Grid {
                 $row[$field] = isset($row[$field]) ? $row[$field] : null;
                 $replace[$field] = $row[$field];
             }
+            
+          
 
             if (isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders'])
                 && $this->_options['grid']['enableUnmodifiedFieldPlaceholders'] == true

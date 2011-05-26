@@ -1875,7 +1875,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if(count($this->_detailColumns) > 0)
                 {
-                    $columns = array_intersect_key( $columns , array_flip($this->_detailColumns) );
+                    #$columns = array_intersect_key( $columns , array_flip($this->_detailColumns) );
                 }
                 
                 $result = array($columns);
@@ -1884,6 +1884,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 
                 foreach ($result[0] as $value) {
                     
+                    
+                    if($value['type']=='extraField' 
+                       && count($this->_detailColumns)>0
+                       && !in_array($value['field'],$this->_detailColumns))
+                            continue;
                     
                     $field = $value['field'];
                     
