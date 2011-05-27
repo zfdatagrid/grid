@@ -31,19 +31,20 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
         }
 
         $xml = Zend_Json::decode($result, true);
-
+        
         $cols = explode(',', $loop);
         if (is_array($cols)) {
             foreach ($cols as $value) {
                 $xml = $xml[$value];
             }
         }
-
+        
         //Remove possible arrays
-        for ($i = 0; $i < count($xml); $i ++) {
-            foreach ($xml[$i] as $key => $final) {
-                if (! is_string($final)) {
-                    unset($xml[$i][$key]);
+        foreach ($xml as $x1 => $f1) {
+            
+            foreach ($f1 as $key => $final) {
+                if (!is_scalar($final)) {
+                    unset($xml[$x1][$key]);
                 }
             }
         }
@@ -54,7 +55,7 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
                     $columns = $columns[$value];
             }
         } else {
-            $columns = array_keys($xml[0]);
+            $columns = array_keys(reset($xml));
         }
 
         $this->_fields = $columns;
