@@ -18,30 +18,32 @@
  * @link      http://zfdatagrid.com
  */
 
-class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
-{
+class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
+
     public function __construct($array, $loop = null, $columns = null)
     {
-        $array = trim($array);
 
-        if ($array[0] != '{') {
+        $array = trim($array);
+        
+        if ($array[0] !='[') {
             $result = file_get_contents($array);
         } else {
             $result = $array;
         }
 
         $xml = Zend_Json::decode($result, true);
-        
+
         $cols = explode(',', $loop);
-        if (is_array($cols)) {
+        
+        if (is_array($cols) && count($cols)>1) {
             foreach ($cols as $value) {
                 $xml = $xml[$value];
             }
         }
-        
+
         //Remove possible arrays
         foreach ($xml as $x1 => $f1) {
-            
+
             foreach ($f1 as $key => $final) {
                 if (!is_scalar($final)) {
                     unset($xml[$x1][$key]);
@@ -64,4 +66,5 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array
 
         return $this;
     }
+
 }
