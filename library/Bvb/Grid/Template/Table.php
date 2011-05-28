@@ -115,8 +115,8 @@ class Bvb_Grid_Template_Table {
     {
         if($this->buildAbstract)
                 return;
-        return "      <td  colspan=\"{$this->options['colspan']}\"  " . 
-               $this->getClass('noRecords') . " >$message</div>" . PHP_EOL;
+        return "      <tr><td  colspan=\"{$this->options['colspan']}\"  " . 
+               $this->getClass('noRecords') . " >$message</div></td></tr>" . PHP_EOL;
     }
 
     public function filtersLoop($value, $colspan)
