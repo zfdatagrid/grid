@@ -292,6 +292,13 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 
                 $event = new Bvb_Grid_Event('crud.set_values',$this,array('form' => $this->getForm()));
                 $this->_eventDispatcher->emit($event);
+                
+                if($this->getEventsPrefix()){
+                    $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.set_values',
+                                                $this,
+                                                array('form' => $this->getForm()));
+                    $this->_eventDispatcher->emit($event);
+                }
             }
         }
     }
@@ -420,6 +427,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                                   'insertId' => $insertId));
                             $this->_eventDispatcher->emit($event);
 
+                            if($this->getEventsPrefix()){
+                                $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.after_insert',
+                                                $this,
+                                                array('table' => &$this->_crudTable, 
+                                                      'values' => &$post[$key], 
+                                                      'insertId' => $insertId));
+                                $this->_eventDispatcher->emit($event);
+                            }
 
                             unset($this->_gridSession->post[$key]);
                         }
@@ -501,6 +516,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                                 'condition' => &$condition));
 
                             $this->_eventDispatcher->emit($event);
+                            
+                            if($this->getEventsPrefix()){
+                                $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.before_update',
+                                                $this,
+                                                array('table' => &$this->_crudTable,
+                                                    'newValues' => &$post[$key],
+                                                    'oldValues' => &$oldValues,
+                                                    'condition' => &$condition));
+
+                                $this->_eventDispatcher->emit($event);
+                            }
 
                             if(count($post[$key])==0)
                             {
@@ -520,6 +546,17 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                                 'condition' => &$condition));
 
                             $this->_eventDispatcher->emit($event);
+                            
+                            if($this->getEventsPrefix()){
+                                $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.after_update',
+                                                $this,
+                                                array('table' => &$this->_crudTable,
+                                                    'newValues' => &$newValues,
+                                                    'oldValues' => &$oldValues,
+                                                    'condition' => &$condition));
+
+                                $this->_eventDispatcher->emit($event);
+                            }
 
                         }
 
@@ -652,6 +689,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'condition' => &$condition, 
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
+                        
+                        if($this->getEventsPrefix()){
+                            $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.before_delete',
+                                            $this,
+                                            array('table' => &$this->_crudTable, 
+                                                  'condition' => &$condition, 
+                                                  'values' => &$values));
+                            $this->_eventDispatcher->emit($event);
+                        }
 
                         if ($this->_crudTableOptions['delete'] == true) {
                             $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
@@ -663,6 +709,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                               'condition' => &$condition, 
                                               'values' => &$values));
                         $this->_eventDispatcher->emit($event);
+                        
+                        if($this->getEventsPrefix()){
+                            $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.after_delete',
+                                            $this,
+                                            array('table' => &$this->_crudTable, 
+                                                  'condition' => &$condition, 
+                                                  'values' => &$values));
+                            $this->_eventDispatcher->emit($event);
+                        }
 
 
                 } catch (Exception $e) {
@@ -700,6 +755,16 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                   'condition' => &$condition, 
                                   'values' => &$values));
             $this->_eventDispatcher->emit($event);
+            
+            if($this->getEventsPrefix()){
+                $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.before_delete',
+                            $this,
+                            array('table' => &$this->_crudTable, 
+                                  'condition' => &$condition, 
+                                  'values' => &$values));
+                $this->_eventDispatcher->emit($event);              
+            }
+            
             if ($this->_crudTableOptions['delete'] == true) {
                 $resultDelete = $this->getSource()->delete($this->_crudTable, $condition);
             }
@@ -710,6 +775,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                   'condition' => &$condition, 
                                   'values' => &$values));
             $this->_eventDispatcher->emit($event);
+            
+            if($this->getEventsPrefix()){
+                $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.after_delete',
+                                $this,
+                                array('table' => &$this->_crudTable, 
+                                      'condition' => &$condition, 
+                                      'values' => &$values));
+                $this->_eventDispatcher->emit($event);
+            }
 
             $this->_gridSession->messageOk = true;
             $this->_gridSession->message = $this->__('Record deleted');
@@ -2271,6 +2345,12 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         
         $event = new Bvb_Grid_Event('crud.set_form', $this, array('form'=>$crud));
         $this->_eventDispatcher->emit($event);
+        
+        if($this->getEventsPrefix()){
+            $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.set_form', $this, array('form'=>$crud));
+            $this->_eventDispatcher->emit($event);
+        }
+        
         $this->_bvbForm = $crud;
 
         $this->setAjax(false);
@@ -2286,6 +2366,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         }
 
         $formElements = $this->getSource()->buildForm($crud->getInputsType());
+        
+        $event = new Bvb_Grid_Event('crud.elements_loaded', $this, array('elements'=>&$form));
+        $this->_eventDispatcher->emit($event);
+
+        if($this->getEventsPrefix()){
+            $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.elements_loaded', 
+                                        $this, 
+                                        array('elements'=>&$formElements));
+            $this->_eventDispatcher->emit($event);
+        }
+
 
         if ($this->getParam('add')) {
             $formsCount = $crud->getBulkAdd() > 0 ? $crud->getBulkAdd() : 1;
@@ -2593,6 +2684,11 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
         $event = new Bvb_Grid_Event('crud.form_built', $this, array('form'=>$crud));
         $this->_eventDispatcher->emit($event);
+        
+        if($this->getEventsPrefix()){
+            $event = new Bvb_Grid_Event($this->getEventsPrefix().'crud.form_built', $this, array('form'=>$crud));
+            $this->_eventDispatcher->emit($event);
+        }
 
         $this->_crudOptions['addForce'] = $crud->getOnAddForce();
         $this->_crudOptions['editForce'] = $crud->getOnEditForce();

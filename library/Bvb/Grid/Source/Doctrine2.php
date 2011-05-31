@@ -155,12 +155,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $this->whereConditions[$field]['filter'] = $filter;
         $this->whereConditions[$field]['op'] = $op;
 
-        $event = new Bvb_Grid_Event('source.add_condition',
-                        $this,
-                        array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-
-        $this->_eventDispatcher->emit($event);
-
         $qb = $this->getQueryBuilder();
 
         $this->_addCondition($qb, $field, $op, $filter);
@@ -381,8 +375,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
             $this->fields = $returnFields;
 
-            $event = new Bvb_Grid_Event('source.build_fields', $this, array('fields' => &$returnFields));
-            $this->_eventDispatcher->emit($event);
         }
 
         return $this->fields;

@@ -86,7 +86,8 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         $map = $info['referenceMap'];
 
         $map = array_merge_recursive($map,$this->_relationMap);
-
+        
+        $this->_relationMap = $map;
 
         if ( is_array($map) && count($map) > 0 ) {
 
@@ -112,9 +113,6 @@ class Bvb_Grid_Source_Zend_Table extends Bvb_Grid_Source_Zend_Select
         }else{
             $select->from($info['name'], $info['cols'], $info['schema']);
         }
-        
-        if(!count($this->_relationMap))
-            $this->_relationMap = $map;
 
         parent::__construct($select);
 

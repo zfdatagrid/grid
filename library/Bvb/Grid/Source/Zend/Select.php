@@ -222,11 +222,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             }
         }
 
-
-        $event = new Bvb_Grid_Event('source.build_fields', $this, array('fields' => &$returnFields));
-        $this->_eventDispatcher->emit($event);
-
-
         $this->_fields = $returnFields;
 
         return $returnFields;
@@ -736,16 +731,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $columns = $distinct->getPart('columns');
         foreach($columns as $value)
         {
-            
             if($value[1] instanceof  Zend_Db_Expr && $value[2] !=='ZFG_GHOST' )
             {
                 $distinct->reset(Zend_Db_Select::HAVING);
                 $distinct->reset(Zend_Db_Select::WHERE);
             }
-            
         }
-        
-        
+
         $distinct->reset(Zend_Db_Select::COLUMNS);
         $distinct->reset(Zend_Db_Select::ORDER);
         $distinct->reset(Zend_Db_Select::LIMIT_COUNT);
@@ -951,14 +943,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      */
     public function addCondition($filter, $op, $completeField)
     {
-
-
-        $event = new Bvb_Grid_Event('source.add_condition',
-                        $this,
-                        array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-        $this->_eventDispatcher->emit($event);
-
-
 
         $op = strtolower($op);
 

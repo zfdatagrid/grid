@@ -20,7 +20,6 @@
 class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 {
 
-    protected $_eventDispatcher;
     protected $_fields;
     protected $_rawResult;
     protected $_offset;
@@ -99,12 +98,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     public function addCondition($filter, $op, $completeField)
     {
         
-        $event = new Bvb_Grid_Event('source.add_condition', 
-                                    $this, 
-                                    array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-        $this->_eventDispatcher->emit($event);
-
-
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -396,9 +389,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
             $form['elements'][$elements] = array('text', array('size' => 10, 'label' => $label));
         }
         
-        $event = new Bvb_Grid_Event('crud.elements_build', $this, array('elments'=>&$form));
-        $this->_eventDispatcher->emit($event);
-
         return $form;
     }
 
@@ -457,18 +447,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     public function getAutoCompleteForFilter($term, $field, $specialKey='', $output = 'json')
     {
         throw new Exception('Not possible');
-    }
-
-    /**
-     * Registers a new event dispatcher
-     *
-     * @var $dispatcher Event Dispatcher
-     *
-     */
-    public function setEventDispatcher(Bvb_Grid_Event_Dispatcher $dispatcher)
-    {
-        $this->_eventDispatcher = $dispatcher;
-        return $this;
     }
 
     public function hasCrud()

@@ -549,11 +549,6 @@ class Bvb_Grid_Source_Doctrine
     public function addCondition($filter, $op, $completeField)
     {
         
-        $event = new Bvb_Grid_Event('source.add_condition', 
-                                    $this, 
-                                    array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-        $this->_eventDispatcher->emit($event);
-
         $field = $completeField['field'];
 
         /**
