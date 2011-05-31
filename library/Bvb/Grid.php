@@ -632,12 +632,7 @@ abstract class Bvb_Grid {
 
         $this->_source = $source;
         
-        $event = new Bvb_Grid_Event('grid.set_source', $this, array('source'=>$this->getSource()));
-        $this->_eventDispatcher->emit($event);
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.set_source', $this, array('source'=>$this->getSource()));
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.set_source', array('source'=>$this->getSource()));
 
         $this->getSource()->setCache($this->getCache());
 
@@ -656,14 +651,7 @@ abstract class Bvb_Grid {
 
         $this->_allFieldsAdded = true;
 
-        $event = new Bvb_Grid_Event('grid.all_fields_added', $this, array('fields'=>&$this->_data['fields']));
-        $this->_eventDispatcher->emit($event);
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.all_fields_added', 
-                                        $this, 
-                                        array('fields'=>&$this->_data['fields']));
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.all_fields_added', array('fields'=>&$this->_data['fields']));
 
         //Apply options to the fields
         $this->_applyOptionsToFields();
@@ -987,15 +975,7 @@ abstract class Bvb_Grid {
      */
     public function updateColumn($field, array $options = array())
     {
-        $event = new Bvb_Grid_Event('grid.update_column', $this, array('field'=>$field,'options'=>$options));
-        $this->_eventDispatcher->emit($event);
-
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.update_column', 
-                                        $this, 
-                                        array('field'=>$field,'options'=>$options));
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.update_column', array('field'=>$field,'options'=>$options));
         
         
         if (null == $this->getSource()
@@ -1303,17 +1283,8 @@ abstract class Bvb_Grid {
                         //Some exaemples: =valu, >value, r:regexp
                         $op = $this->getFilterOp($key, $filter);
 
-                        $event = new Bvb_Grid_Event('source.add_condition', 
-                                    $this, 
+                        $this->emitEvent('source.add_condition', 
                                     array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-                        $this->_eventDispatcher->emit($event);
-                        
-                        if($this->getEventsPrefix()){
-                            $event = new Bvb_Grid_Event($this->getEventsPrefix().'source.add_condition', 
-                                        $this, 
-                                        array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-                            $this->_eventDispatcher->emit($event);
-                        }
 
                         $this->getSource()->addCondition($op['filter'], $op['op'], $this->_data['fields'][$key]);
                     }
@@ -1339,17 +1310,8 @@ abstract class Bvb_Grid {
                                 $oldValue = $value;
                                 $value = $render->normalize($value, $nkey);
                                 
-                                $event = new Bvb_Grid_Event('source.add_condition', 
-                                            $this, 
+                                $this->emitEvent('source.add_condition', 
                                             array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-                                $this->_eventDispatcher->emit($event);
-
-                                if($this->getEventsPrefix()){
-                                    $event = new Bvb_Grid_Event($this->getEventsPrefix().'source.add_condition', 
-                                                $this, 
-                                                array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
-                                    $this->_eventDispatcher->emit($event);
-                                }
 
                                 $this->getSource()->addCondition($value, $cond[$nkey], $this->_data['fields'][$key]);
                                 $filtersValues[$key][$nkey] = $oldValue;
@@ -2707,13 +2669,7 @@ abstract class Bvb_Grid {
             throw new Bvb_Grid_Exception('Please specify your source');
         }
         
-        $event = new Bvb_Grid_Event('grid.init_deploy', $this, array());
-        $this->_eventDispatcher->emit($event);
-        
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.init_deploy', $this, array());
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.init_deploy', array());
 
         //Disable ajax for CRUD operations
         if (!is_null($this->_crud)) {
@@ -2798,13 +2754,7 @@ abstract class Bvb_Grid {
             }
         }
         
-        $event = new Bvb_Grid_Event('grid.before_filters', $this, array());
-        $this->_eventDispatcher->emit($event);
-
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.before_filters', $this, array());
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.before_filters');
         
         $this->_buildDefaultFiltersValues();
 
@@ -3201,15 +3151,7 @@ abstract class Bvb_Grid {
 
         $filters = $filters->getFilters();
         
-        $event = new Bvb_Grid_Event('grid.add_extra_filters', $this, array('filters'=>$filters));
-        $this->_eventDispatcher->emit($event);
-        
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.add_extra_filters', 
-                                        $this, 
-                                        array('filters'=>$filters));
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.add_extra_filters', array('filters'=>$filters));
 
         foreach ($filters as $key => $value) {
             if (isset($filters[$key]['callback'])) {
@@ -3262,16 +3204,7 @@ abstract class Bvb_Grid {
         }
         
         
-        $event = new Bvb_Grid_Event('grid.add_extra_columns', $this, array('columns'=>$extraFields));
-        $this->_eventDispatcher->emit($event);
-
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.add_extra_columns', 
-                                        $this, 
-                                        array('columns'=>$extraFields));
-            $this->_eventDispatcher->emit($event);
-        }
-        
+        $this->emitEvent('grid.add_extra_columns',  array('columns'=>$extraFields));
 
         if (is_array($this->_extraFields)) {
             $final = $this->_extraFields;
@@ -4110,14 +4043,7 @@ abstract class Bvb_Grid {
      */
     public function addExtraRows(Bvb_Grid_Extra_Rows $rows)
     {
-        $event = new Bvb_Grid_Event('grid.add_extra_rows', $this, array('rows'=>$rows));
-        $this->_eventDispatcher->emit($event);
-        
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.add_extra_rows', $this, array('rows'=>$rows));
-            $this->_eventDispatcher->emit($event);
-        }
-
+        $this->emitEvent('grid.add_extra_rows', array('rows'=>$rows));
         
         $rows = $this->_object2array($rows);
         $this->_extraRows = array_merge($this->_extraRows, $rows['_rows']);
@@ -4393,15 +4319,7 @@ abstract class Bvb_Grid {
     public function setMassActions(Bvb_Grid_Mass_Actions $actions)
     {
         
-        $event = new Bvb_Grid_Event('grid.set_mass_actions', $this, array('source'=>$actions));
-        $this->_eventDispatcher->emit($event);
-
-        if($this->getEventsPrefix()){
-            $event = new Bvb_Grid_Event($this->getEventsPrefix().'grid.set_mass_actions', 
-                                        $this, 
-                                        array('source'=>$actions));
-            $this->_eventDispatcher->emit($event);
-        }
+        $this->emitEvent('grid.set_mass_actions', array('source'=>$actions));
 
         $this->_massActions = $actions;
         return $this;
@@ -4538,5 +4456,26 @@ abstract class Bvb_Grid {
     public function getEventsPrefix()
     {
         return $this->_eventsPrefix;
+    }
+    
+    /**
+     * Proxy for emiting events
+     * 
+     * @param string   $name
+     * @param array    $params 
+     * @param object   $subject
+     */
+    public function emitEvent($name, $params = array(), $subject=null)
+    {
+        if ($subject === null) {
+            $subject = $this;
+        }
+
+        $event = new Bvb_Grid_Event($name, $subject, $params);
+        $this->_eventDispatcher->emit($event);
+        if ($this->getEventsPrefix()) {
+            $event = new Bvb_Grid_Event($this->getEventsPrefix() . $name, $subject, $params);
+            $this->_eventDispatcher->emit($event);
+        }
     }
 }
