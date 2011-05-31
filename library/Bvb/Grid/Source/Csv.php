@@ -30,6 +30,10 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
     {
         $final = array();
 
+        if (!is_file($dataSource)) {
+            throw new Bvb_Grid_Exception('Could not find file: ' . $dataSource);
+        }
+
         if (! is_readable($dataSource)) {
             throw new Bvb_Grid_Exception('Could not read file: ' . $dataSource);
         }

@@ -17,8 +17,7 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
-class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
-{
+class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
     protected $_fields;
     protected $_rawResult;
@@ -78,10 +77,10 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         foreach ($fields as $value) {
             if ($value == '_zfgId') {
                 $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)),
-                                       'field' => $value, 'remove' => 1);
+                    'field' => $value, 'remove' => 1);
             } else {
                 $final[$value] = array('title' => ucfirst(str_replace('_', ' ', $value)),
-                                       'field' => $value);
+                    'field' => $value);
             }
         }
 
@@ -97,7 +96,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function addCondition($filter, $op, $completeField)
     {
-        
+
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -340,12 +339,12 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function getFieldType($field)
     {
-
+        
     }
 
     public function getSelectObject()
     {
-
+        
     }
 
     public function addFullTextSearch($filter, $field)
@@ -355,22 +354,27 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function insert($table, array $post)
     {
-
+        
     }
 
     public function update($table, array $post, array $condition)
     {
-
+        
     }
 
     public function delete($table, array $condition)
     {
+        
+    }
 
+    public function getCache()
+    {
+        return $this->_cache;
     }
 
     public function setCache($cache)
     {
-        if (!is_array($cache)) {
+        if (!is_array($cache) && !$this->_cache) {
             $cache = array('enable' => 0);
         }
 
@@ -388,7 +392,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
             $label = ucwords(str_replace('_', ' ', $elements));
             $form['elements'][$elements] = array('text', array('size' => 10, 'label' => $label));
         }
-        
+
         return $form;
     }
 
@@ -404,7 +408,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         return false;
     }
 
-    public function getMassActionsIds ($table, $fields, $separator = '-')
+    public function getMassActionsIds($table, $fields, $separator = '-')
     {
         if (!$pk = $this->getIdentifierColumns()) {
             throw new Bvb_Grid_Exception('No primary key found');

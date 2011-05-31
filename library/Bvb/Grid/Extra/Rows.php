@@ -17,9 +17,8 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
+class Bvb_Grid_Extra_Rows {
 
-class Bvb_Grid_Extra_Rows
-{
     /**
      * Rows to be added
      * @var array
@@ -36,4 +35,5 @@ class Bvb_Grid_Extra_Rows
     {
         $this->_rows[] = array('position'=>$position,'values'=>$rows);
     }
+
 }

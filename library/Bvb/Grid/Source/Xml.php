@@ -17,39 +17,52 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
+class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array {
 
-class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
-{
-
-
-    public function __construct ($url, $loop, $columns = null)
+    public function __construct($url, $loop, $columns = null, $cache = null)
     {
-        if ( strstr($url, '<?xml') ) {
+        
+        if($cache)
+        {
+            $this->setCache($cache);
+        }
+        
+        $cache = $this->getCache();
+        
+        if (strstr($url, '<?xml')) {
             $xml = simplexml_load_string($url);
         } else {
-            $xml = simplexml_load_file($url);
+
+            if ($cache['enable'] == true) {
+                if (($xml = $cache['instance']->load(md5($url))) === false) {
+                    $xml = file_get_contents($url);
+                    $cache['instance']->save($xml, md5($url), array($this->_cache['tag']));
+                }
+            } else {
+                $xml = simplexml_load_file($url);
+            }
         }
 
         $xml = $this->_object2array($xml);
 
         $cols = explode(',', $loop);
-        if ( is_array($cols) ) {
-            foreach ( $cols as $value ) {
+        if (is_array($cols)) {
+            foreach ($cols as $value) {
                 $xml = $xml[$value];
             }
         }
 
         //Remove possible arrays
-        for ( $i = 0; $i < count($xml); $i ++ ) {
-            foreach ( $xml[$i] as $key => $final ) {
-                if ( ! is_string($final) ) {
+        for ($i = 0; $i < count($xml); $i++) {
+            foreach ($xml[$i] as $key => $final) {
+                if (!is_string($final)) {
                     unset($xml[$i][$key]);
                 }
             }
         }
 
-        if ( is_array($columns) ) {
-            foreach ( $columns as $value ) {
+        if (is_array($columns)) {
+            foreach ($columns as $value) {
                 $columns = $columns[$value];
             }
         } else {
@@ -63,4 +76,5 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array
         unset($columns);
         unset($xml);
     }
+
 }

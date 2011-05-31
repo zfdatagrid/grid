@@ -17,19 +17,32 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
-
 class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
 
-    public function __construct($array, $loop = null, $columns = null)
+    public function __construct($array, $loop = null, $columns = null, $cache = null)
     {
+
+        $this->setCache($cache);
+        
+        $cache = $this->getCache();
 
         $array = trim($array);
 
         if ($array[0] != '[' && $array[0] != '{') {
-            $result = file_get_contents($array);
+
+            if ($cache['enable'] == true) {
+                if (($result = $cache['instance']->load(md5($array))) === false) {
+                    $result = file_get_contents($array);
+                    $cache['instance']->save($result, md5($array), array($this->_cache['tag']));
+                }
+            } else {
+                $result = file_get_contents($array);
+            }
         } else {
             $result = $array;
         }
+        
+       
 
         $xml = Zend_Json::decode($result, true);
 
