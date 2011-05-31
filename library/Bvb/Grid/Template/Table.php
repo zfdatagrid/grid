@@ -196,7 +196,7 @@ class Bvb_Grid_Template_Table {
                 $this->getClass('sqlExp') . ">$value</td>" . PHP_EOL;
     }
 
-    public function pagination($numberRecords, $pagination, $perPage, $pageSelect)
+    public function pagination($pagination, $numberRecords,  $perPage, $pageSelect)
     {
         $this->result['pagination'] = func_get_args();
         if($this->buildAbstract)
