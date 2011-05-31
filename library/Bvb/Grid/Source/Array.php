@@ -21,7 +21,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 {
 
     protected $_eventDispatcher;
-
     protected $_fields;
     protected $_rawResult;
     protected $_offset;
@@ -71,11 +70,6 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         return $this->_sourceName;
     }
 
-    public function hasCrud()
-    {
-        return false;
-    }
-
     public function buildFields()
     {
         $fields = $this->_fields;
@@ -110,7 +104,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
                                     array('filter' => &$filter, 'op' => &$op, 'field' => &$completeField));
         $this->_eventDispatcher->emit($event);
 
-        
+
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -343,7 +337,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
         }
 
         $field = key($where);
-        $valueToSearch = array_shift($where);
+        $valueToSearch = reset($where);
 
         foreach ($this->_rawResult as $key => $value) {
             if ($value[$field] == $valueToSearch)
@@ -363,12 +357,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
 
     public function addFullTextSearch($filter, $field)
     {
-
-    }
-
-    public function getRecord($table, array $condition)
-    {
-
+        
     }
 
     public function insert($table, array $post)
@@ -480,6 +469,24 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface
     {
         $this->_eventDispatcher = $dispatcher;
         return $this;
+    }
+
+    public function hasCrud()
+    {
+        return true;
+    }
+
+    public function getRecord($table, array $condition)
+    {
+        $key = key($condition);
+        $value = reset($condition);
+        foreach ($this->_rawResult as $result) {
+
+            if (isset($result[$key]) && $result[$key] = $value) {
+                return $result;
+            }
+        }
+        return false;
     }
 
 }

@@ -1970,11 +1970,18 @@ abstract class Bvb_Grid {
      * @param string $value    Field Name
      * @param array  $search   Variables to search for
      * @param array  $replace  Replace variable with these values
+     * @param string $field    Current field 
      *
      * @return mixed
      */
-    protected function _applyFieldCallback($newValue, $value, $search, $replace)
+    protected function _applyFieldCallback($newValue, $value, $search, $replace, $field)
     {
+       
+        if(is_string($value))
+        {
+            $value = array('function'=>$value);
+        }
+        
         if (!is_callable($value['function'])) {
             throw new Bvb_Grid_Exception($value['function'] . ' not callable');
         }
@@ -1993,7 +2000,7 @@ abstract class Bvb_Grid {
             }
             
         } else {
-            return call_user_func($value['function']);
+            return call_user_func($value['function'],$replace[$field]);
         }
 
         if (is_array($toReplace)) {
@@ -2146,8 +2153,6 @@ abstract class Bvb_Grid {
                 $row[$field] = isset($row[$field]) ? $row[$field] : null;
                 $replace[$field] = $row[$field];
             }
-            
-          
 
             if (isset($this->_options['grid']['enableUnmodifiedFieldPlaceholders'])
                 && $this->_options['grid']['enableUnmodifiedFieldPlaceholders'] == true
@@ -2221,7 +2226,8 @@ abstract class Bvb_Grid {
                         $newValue,
                         $this->_data['fields'][$field]['callback'],
                         $search,
-                        $replace
+                        $replace,
+                        $field
                     );
                     $replace[$field] = $newValue;
 
@@ -2376,7 +2382,7 @@ abstract class Bvb_Grid {
         }
 
         if (isset($field['callback'])) {
-            $value = $this->_applyFieldCallback($value, $field['callback'], $search, $replace);
+            $value = $this->_applyFieldCallback($value, $field['callback'], $search, $replace,$field);
             $search[] = '{{callback}}';
             $replace[] = $value;
         }
@@ -2391,7 +2397,6 @@ abstract class Bvb_Grid {
             $value = $this->_applyFieldDecorator($search, $replace, $field['decorator']);
         }
 
-       
 
         return array('class' => $field['class'],
             'value' => $value,

@@ -209,6 +209,12 @@ class Bvb_Grid_Form
      * @var mixed 
      */
     protected $_formTitle = false;
+    /**
+     * Add button label
+     * 
+     * @var string  
+     */
+    protected $_addButtonLabel = 'Add Record';
 
     /**
      * Instantiates a new form, using Zend_Form
@@ -221,7 +227,12 @@ class Bvb_Grid_Form
      */
     public function __construct($formClass = 'Zend_Form', $formOptions = array())
     {
-        $this->_form = new $formClass($formOptions);
+        if($formClass instanceof Zend_Form)
+        {
+            $this->_form = $formClass;
+        }else{
+            $this->_form = new $formClass($formOptions);
+        }
     }
 
     /**
@@ -664,7 +675,7 @@ class Bvb_Grid_Form
         $this->_disallowedFields = $_disallowedFields;
         return $this;
     }
-    
+
     /**
      * Adds one more field to the set not allowed to be managed
      * @param string  $field
@@ -675,7 +686,7 @@ class Bvb_Grid_Form
         $this->_disallowedFields[] = $field;
         return $this;
     }
-    
+
     /**
      * Adds another set of fields not allowed to be managed
      * @param array $fields
@@ -683,10 +694,9 @@ class Bvb_Grid_Form
      */
     public function addDisallowedFields(array $fields)
     {
-        $this->_disallowedFields = array_merge($fields,$this->_disallowedFields);
+        $this->_disallowedFields = array_merge($fields, $this->_disallowedFields);
         return $this;
     }
-    
 
     /**
      * @return the $_onAddForce
@@ -801,7 +811,7 @@ class Bvb_Grid_Form
         $this->_formTitle = $label;
         return $this;
     }
-    
+
     /**
      * If we should use a for header to describe form action
      *
@@ -811,5 +821,26 @@ class Bvb_Grid_Form
     {
         return $this->_formTitle;
     }
-    
+
+    /**
+     * returns current label for add button
+     * 
+     * @return string 
+     */
+    public function getAddButtonLabel()
+    {
+        return $this->_addButtonLabel;
+    }
+
+    /**
+     * Defines a new label for the add record button
+     * @param string $label
+     * @return Bvb_Grid_Form 
+     */
+    public function setAddButtonLabel($label)
+    {
+        $this->_addButtonLabel = (string) $label;
+        return $this;
+    }
+
 }

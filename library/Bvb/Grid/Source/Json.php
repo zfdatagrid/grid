@@ -24,8 +24,8 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
     {
 
         $array = trim($array);
-        
-        if ($array[0] !='[') {
+
+        if ($array[0] != '[' && $array[0] != '{') {
             $result = file_get_contents($array);
         } else {
             $result = $array;
@@ -34,8 +34,8 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
         $xml = Zend_Json::decode($result, true);
 
         $cols = explode(',', $loop);
-        
-        if (is_array($cols) && count($cols)>1) {
+
+        if (is_array($cols) && count($cols) > 1) {
             foreach ($cols as $value) {
                 $xml = $xml[$value];
             }

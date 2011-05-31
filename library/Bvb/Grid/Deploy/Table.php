@@ -67,6 +67,11 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      */
     protected $_form;
     /**
+     *
+     * @var Bvb_Grid_Form 
+     */
+    protected $_bvbForm;
+    /**
      * The table where crud operations
      * should be performed.
      * by default the table is fetched from the quaery
@@ -284,6 +289,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         }
                     }
                 }
+                
+                $event = new Bvb_Grid_Event('crud.set_values',$this,array('form' => $this->getForm()));
+                $this->_eventDispatcher->emit($event);
             }
         }
     }
@@ -389,6 +397,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 throw new Bvb_Grid_Exception($this->__('No values to insert'));
                             }
 
+                            
+                            $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
+                            
                             $event = new Bvb_Grid_Event('crud.before_insert',
                                             $this,
                                             array('table' => &$this->_crudTable, 
@@ -396,7 +407,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             $this->_eventDispatcher->emit($event);
 
                             if ($this->_crudTableOptions['add'] == true) {
-                                $post[$key] = array_merge($post[$key], $this->_crudOptions['addForce']);
                                 $insertId = $this->getSource()->insert($this->_crudTable, $post[$key]);
                             }else{
                                 $insertId = '';
@@ -498,9 +508,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                             }
                             
                             if ($this->_crudTableOptions['edit'] == true) {
-                                $this->getSource()->update(
-                                    $this->_crudTable, $post[$key], $queryUrl
-                                );
+                                $this->getSource()->update($this->_crudTable, $post[$key], $queryUrl);
                             }
                             
                             $newValues = $this->getSource()->getRecord($this->_crudTable, $condition);
@@ -741,7 +749,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             ) {
                 $addButton = "<button class='addRecord' onclick=\"window.location='"
                         . $this->_actionsUrls['add'] . "';\">"
-                        . $this->__('Add Record') . "</button>";
+                        . $this->__($this->getBvbForm()->getAddButtonLabel()) . "</button>";
             } else {
                 $addButton = '';
             }
@@ -1802,6 +1810,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 
                 foreach ($result[0] as $value) {
                     
+                    if(!isset($value['field']))
+                        continue;
                     
                     if($value['type']=='extraField' 
                        && count($this->_detailColumns)>0
@@ -2261,7 +2271,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         
         $event = new Bvb_Grid_Event('crud.set_form', $this, array('form'=>$crud));
         $this->_eventDispatcher->emit($event);
-
+        $this->_bvbForm = $crud;
 
         $this->setAjax(false);
 
@@ -2590,6 +2600,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $this->_crudOptions['deleteAddCondition'] = $crud->getOnDeleteAddCondition();
 
         $this->_form = $crud->getForm();
+        $this->_bvbForm = $crud;
 
 
         $crud = $this->_object2array($crud);
@@ -3542,5 +3553,15 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     public function getCrudTable()
     {
         return $this->_crudTable;
+    }
+    
+    /**
+     * Returns current Bvb_Grid_Form instance
+     *
+     * @return Bvb_Grid_Form 
+     */
+    public function getBvbForm()
+    {
+        return $this->_bvbForm;
     }
 }
