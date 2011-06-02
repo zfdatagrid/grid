@@ -462,9 +462,8 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
     {
         $key = key($condition);
         $value = reset($condition);
-        foreach ($this->_rawResult as $result) {
-
-            if (isset($result[$key]) && $result[$key] = $value) {
+        foreach ($this->_rawResult as $id=>$result) {
+            if (isset($result[$key]) && $result[$key] == $value) {
                 return $result;
             }
         }
