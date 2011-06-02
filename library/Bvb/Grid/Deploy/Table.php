@@ -250,7 +250,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     for ($i = 1; $i <= count($conditions); $i++) {
                         $r = $this->getSource()->getRecord($this->_crudTable, $conditions[$i]);
 
-                        if ($r === false && count($conditions) == 1) {
+                        if (($r === false || (is_array($r) && count($r)==0) ) && count($conditions) == 1) {
                             $this->_gridSession->message = $this->__('Record Not Found');
                             $this->_gridSession->_noForm = 1;
                             $this->_gridSession->correct = 1;
