@@ -23,7 +23,7 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
     {
 
         $this->setCache($cache);
-        
+
         $cache = $this->getCache();
 
         $array = trim($array);
@@ -41,11 +41,11 @@ class Bvb_Grid_Source_Json extends Bvb_Grid_Source_Array {
         } else {
             $result = $array;
         }
-        
-       
+
 
         $xml = Zend_Json::decode($result, true);
 
+     
         $cols = explode(',', $loop);
 
         if (is_array($cols) && count($cols) > 1) {

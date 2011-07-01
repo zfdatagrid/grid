@@ -55,7 +55,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      * @var mixed
      */
     protected $_limit = null;
-    
     /**
      *
      * @var array Where part from SQL 
@@ -311,7 +310,6 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_select->where(new Zend_Db_Expr(implode(' ', $this->_where)));
             }
         }
-
     }
 
     /**
@@ -452,18 +450,15 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
             
-            if(is_array($result))
-            {
+            if (is_array($result)) {
                 $result = reset($result);
             }
             
             $count = $result;
-
             } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
             $result = array_change_key_case($final->fetch(), CASE_UPPER);
             $count = (int) $result['TOTAL'];
-            
         }
 
         if ($count > $this->_limit && $this->_limit > 0) {
@@ -660,8 +655,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         }
 
         
-        if($isExpr === false)
-        {
+        if ($isExpr === false) {
             $field = $this->_fields[$field]['field'];
         }
         
@@ -729,10 +723,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         
         
         $columns = $distinct->getPart('columns');
-        foreach($columns as $value)
-        {
-            if($value[1] instanceof  Zend_Db_Expr && $value[2] !=='ZFG_GHOST' )
-            {
+        foreach ($columns as $value) {
+            if ($value[1] instanceof Zend_Db_Expr && $value[2] !== 'ZFG_GHOST') {
                 $distinct->reset(Zend_Db_Select::HAVING);
                 $distinct->reset(Zend_Db_Select::WHERE);
             }
@@ -970,8 +962,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             } elseif ($field == $value[0]) {
                 $field = $value[0] . '.' . $value[1];
                 break;
-            }elseif($value[1] instanceof Zend_Db_Expr && $field == $value[1]->__toString())
-            {
+            } elseif ($value[1] instanceof Zend_Db_Expr && $field == $value[1]->__toString()) {
                 $sqlExpr = true;
                 $field = $completeField['alias'];
                 break;
@@ -1212,8 +1203,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function buildForm($inputsType = array())
     {
         $table = $this->getMainTable();
-        if(!isset($table['schema']))
-        {
+        if (!isset($table['schema'])) {
             $table['schema'] = '';
         }
         $cols = $this->getDescribeTable($table['table'], $table['schema']);
@@ -1261,8 +1251,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                         continue;
                     }
                     
-                    if(isset($relationMap[$key]['refBvbColumns']) && is_array($relationMap[$key]['refBvbColumns']))
-                    {
+                    if (isset($relationMap[$key]['refBvbColumns']) && is_array($relationMap[$key]['refBvbColumns'])) {
                         $refColumn = end($relationMap[$key]['refBvbColumns']);
                     }
                     
@@ -1529,6 +1518,30 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function setTotalRecords($total)
     {
         $this->_totalRecords = (int) $total;
+    }
+
+    public function beginTransaction()
+    {
+        return $this->_select->getAdapter()->beginTransaction();
+    }
+
+    public function commit()
+    {
+        return $this->_select->getAdapter()->commit();
+    }
+
+    public function rollBack()
+    {
+        return $this->_select->getAdapter()->rollBack();
+    }
+
+    public function getConnectionId()
+    {
+        if ($this->_server == 'mysql') {
+            return $this->_select->getAdapter()->fetchOne('SELECT CONNECTION_ID();');
+        }
+
+        return 0;
     }
 
 }

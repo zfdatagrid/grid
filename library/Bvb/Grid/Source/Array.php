@@ -44,6 +44,10 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
             $this->_fields = $titles;
         }
 
+        if (count($this->_fields) == 0) {
+            $this->_fields = array('Default');
+        }
+
         $this->_rawResult = $array;
         $this->_sourceName = 'array';
     }
@@ -224,7 +228,11 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
         // Obtain a list of columns
         foreach ($this->_rawResult as $key => $row) {
+            if (isset($row[$field])) {
             $result[$key] = $row[$field];
+            } else {
+                $result[$key] = '';
+            }
         }
 
         array_multisort($result, $sort, $this->_rawResult);
@@ -257,7 +265,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
                 $i++;
             }
         } else {
-            $valor = $this->_applySqlExpToArray($valor['value'], $value['functions'], null, $where);
+            $valor = $this->_applySqlExpToArray($value['value'], $value['functions'], null, $where);
         }
 
         return $valor;
@@ -276,8 +284,9 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
         if (null === $value) {
             foreach ($this->_rawResult as $value) {
-                if ((count($where) > 0 && $value[key($where)] == reset($where)) || count($where) == 0)
+                if ((count($where) > 0 && $value[key($where)] == reset($where)) || count($where) == 0) {
                     $array[] = $value[$field];
+            }
             }
         } else {
             $array = array($value);
@@ -390,7 +399,8 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
                 continue;
 
             $label = ucwords(str_replace('_', ' ', $elements));
-            $form['elements'][$elements] = array('text', array('size' => 10, 'label' => $label));
+            $type = isset($inputsType[$elements]) ? $inputsType[$elements] : 'text';
+            $form['elements'][$elements] = array($type, array('size' => 10, 'label' => $label));
         }
 
         return $form;
@@ -470,4 +480,23 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return false;
     }
 
+    public function beginTransaction()
+    {
+       return false;
+    }
+
+    public function commit()
+    {
+        return false;
+    }
+
+    public function rollBack()
+    {
+        return false;
+    }
+
+    public function getConnectionId()
+    {
+        return 0;
+    }
 }

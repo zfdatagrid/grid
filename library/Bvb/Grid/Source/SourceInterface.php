@@ -417,4 +417,23 @@ interface Bvb_Grid_Source_SourceInterface
      */
     public function getIdentifierColumns($table);
     
+    /**
+     * Starts a transaction
+     */
+    public function beginTransaction();
+
+    /**
+     * Commits
+     */
+    public function commit();
+
+    /**
+     * Rollbacks
+     */
+    public function rollBack();
+
+    /**
+     * Returns curretn connection ID
+     */
+    public function getConnectionId();
 }

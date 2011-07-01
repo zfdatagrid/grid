@@ -219,6 +219,15 @@ class Bvb_Grid_Template_Table {
                      'edit' => "<img src=\"" . $url . "edit.png\"  border=\"0\" />");
     }
 
+    public function startDetail($title)
+    {
+        
+        if($this->buildAbstract)
+                return;
+        return "    <tr>" . PHP_EOL . "     <th colspan='2' " . $this->getClass('detailLeft') . ">$title</th>" 
+                . PHP_EOL . "</tr>" . PHP_EOL;
+    }
+
     public function detail($field, $value)
     {
         $this->result['detail'][] = func_get_args();
@@ -234,8 +243,8 @@ class Bvb_Grid_Template_Table {
         $this->result['detailEnd'][] = func_get_args();
         if($this->buildAbstract)
                 return;
-        return "    <tr>" . PHP_EOL . "     <td colspan='2'><button type='button' class='detailReturn' 
-               onclick='window.location=\"$url\"';>$text</button></td>" . PHP_EOL . "    </tr>" . PHP_EOL;
+        return "    <tr>" . PHP_EOL . "     <td colspan='2' class='detailEnd'><button type='button' class='detailReturn' 
+               onclick='window.location=\"$url\"';>$text</button></td>" . PHP_EOL . " </tr>" . PHP_EOL;
     }
 
     public function detailDelete($button)

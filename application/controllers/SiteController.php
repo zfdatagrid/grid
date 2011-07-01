@@ -74,17 +74,17 @@ class SiteController extends Zend_Controller_Action
         return false;
     }
 
-    
+
     public function dojoAction ()
     {
-        
+
         $grid = $this->grid();
-        
+
         $grid->addFiltersRenderDir( 'Bvb/Grid/Filters/Render/Dojo', 'Bvb_Grid_Filters_Render_Dojo');
-        
+
         $select = $this->_db->select()->from('Country', array('Code','Name', 'Continent', 'Population', 'LocalName', 'GovernmentForm'))->order('Code ASC');
         $grid->query($select);
-        
+
         $filters = new Bvb_Grid_Filters();
         $filters->addFilter('date', array('render'=>'date'));
         $filters->addFilter('Population', array('render'=>'number'));
@@ -103,7 +103,7 @@ class SiteController extends Zend_Controller_Action
     public function init ()
     {
         Zend_Dojo::enableView($this->view);
-        
+
         $this->view->url = Zend_Registry::get('config')->site->url;
         $this->view->action = $this->getRequest()->getActionName();
         header('Content-Type: text/html; charset=ISO-8859-1');
@@ -170,8 +170,8 @@ class SiteController extends Zend_Controller_Action
         $grid->setEscapeOutput(false);
         $grid->setExport(array( 'xml','csv','excel','pdf'));
         $grid->setView($view);
-        
-        
+
+
         #$grid->saveParamsInSession(true);
         #$grid->setCache(array('enable' => array('form'=>false,'db'=>false), 'instance' => Zend_Registry::get('cache'), 'tag' => 'grid'));
         return $grid;
@@ -185,7 +185,7 @@ class SiteController extends Zend_Controller_Action
     public function filtersAction ()
     {
 
-        $grid = $this->grid();
+        $grid = $this->grid('ois');
 
         $grid->setSource(new Bvb_Grid_Source_Zend_Select($this->_db->select()->from('Country', array('Name', 'Continent', 'Population', 'LifeExpectancy', 'GovernmentForm', 'HeadOfState'))));
 
@@ -335,16 +335,16 @@ class SiteController extends Zend_Controller_Action
         $this->render('index');
     }
 
-    
+
     static function callback()
     {
         echo "<pre>";
         print_r(func_get_args());
         die();
     }
-    
-    
-    
+
+
+
     public function pgsqlAction()
     {
         $grid = $this->grid();
@@ -354,9 +354,9 @@ class SiteController extends Zend_Controller_Action
         $form = new Bvb_Grid_Form();
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true);
         $grid->setForm($form);
-        
+
         $grid->listenEvent('crud.before_insert', create_function('$event', 'print_r($event->getParams());die();'));
-        
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -410,13 +410,13 @@ class SiteController extends Zend_Controller_Action
 
         #$grid->listenEvent('grid.init_deploy', create_function('$event', 'echo "It works!!!!".$event->getName();die();'));
         $grid->listenEvent('grid.init_deploy', 'AddAutoCompleteToFields');
-        
+
         #$grid->updateCOlumn('Name',array('callback'=>array('function'=>array($this,'callback'),'params'=>array('{{Name}}'))));
-        
+
         #$grid->setDeployOption('title', 'Barcelos');
 
         #$grid->setCsvGridColumns(array('Name','Population'));
-        
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
@@ -465,8 +465,8 @@ class SiteController extends Zend_Controller_Action
 
         $grid->setDetailColumns();
 
-        
-        
+
+
         $this->view->pages = $grid->deploy();
 
         $this->render('index');
@@ -537,16 +537,16 @@ class SiteController extends Zend_Controller_Action
 
 
         $actions = new Bvb_Grid_Mass_Actions();
-//        $actions->setMassActions(array(array('url' => $grid->getUrl(), 
-//                                             'caption' => 'Remove (Nothing will happen)', 
-//                                             'confirm' => 'Are you sure?'), 
-//                                       array('url' => $grid->getUrl() . '/nothing/happens', 
-//                                             'caption' => 'Some other action', 
+//        $actions->setMassActions(array(array('url' => $grid->getUrl(),
+//                                             'caption' => 'Remove (Nothing will happen)',
+//                                             'confirm' => 'Are you sure?'),
+//                                       array('url' => $grid->getUrl() . '/nothing/happens',
+//                                             'caption' => 'Some other action',
 //                                             'confirm' => 'Another confirmation message?')));
 
         $actions->addMassAction($grid->getUrl().'/option/delete', 'Delete', 'Are you sure?');
         $actions->addMassAction($grid->getUrl(), 'Print');
-        
+
         $grid->setMassActions($actions);
 
         $grid->setRecordsPerPage(15);
@@ -658,13 +658,13 @@ class SiteController extends Zend_Controller_Action
      */
     public function crudAction ()
     {
-        
+
         $ref =  array('Reporter' => array('refBvbColumns' => array('reported_by' => 'account_name')),
                      'Verifier' => array('refBvbColumns' => array('verified_by' => 'account_name')),
                      'Engineer' => array('refBvbColumns' => array('assigned_to' => 'account_name')),
                 );
-        
-        
+
+
         $grid = $this->grid();
         $b = new Bugs();
         $grid->setSource(new Bvb_Grid_Source_Zend_Table($b,$ref));
@@ -675,9 +675,9 @@ class SiteController extends Zend_Controller_Action
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
         #$grid->setDetailColumns();
- 
+
         $grid->setForm($form);
-        
+
         $grid->setDeleteConfirmationPage(true);
         $this->view->pages = $grid->deploy();
 

@@ -1555,4 +1555,23 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         return $field;
     }
 
+    public function beginTransaction()
+    {
+       return false;
+    }
+
+    public function commit()
+    {
+        return false;
+    }
+
+    public function rollBack()
+    {
+        return false;
+    }
+
+    public function getConnectionId()
+    {
+        return 0;
+    }
 }

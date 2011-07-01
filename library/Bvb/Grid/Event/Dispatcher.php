@@ -17,8 +17,7 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
-class Bvb_Grid_Event_Dispatcher
-{
+class Bvb_Grid_Event_Dispatcher {
 
     /**
      * List of observers
@@ -65,7 +64,7 @@ class Bvb_Grid_Event_Dispatcher
      *
      * @return Bvb_Grid
      */
-    public function connect($event, $callback)
+    public function connect($event, $callback, $priority = 10)
     {
 
         if (!is_callable($callback)) {
@@ -76,7 +75,7 @@ class Bvb_Grid_Event_Dispatcher
             $this->_listeners[$event] = array();
         }
 
-        $this->_listeners[$event][] = $callback;
+        $this->_listeners[$event][] = array('callback' => $callback, 'priority' => $priority);
 
         return $this;
     }
@@ -111,11 +110,18 @@ class Bvb_Grid_Event_Dispatcher
      */
     public function emit(Bvb_Grid_Event $event)
     {
-
         if (isset($this->_listeners[$event->getName()])) {
 
-            foreach ($this->_listeners[$event->getName()] as $callback) {
-                call_user_func($callback, $event);
+            $code = $this->_listeners[$event->getName()];
+
+            $priority = array();
+            foreach ($code as $key => $pri) {
+                $priority[$key] = $pri['priority'];
+            }
+            array_multisort($priority, SORT_ASC, $code);
+
+            foreach ($code as $callback) {
+                call_user_func($callback['callback'], $event);
             }
         }
     }
@@ -127,5 +133,7 @@ class Bvb_Grid_Event_Dispatcher
      */
     final protected function __clone ()
     {
+
     }
+
 }

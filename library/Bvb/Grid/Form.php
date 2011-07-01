@@ -681,6 +681,28 @@ class Bvb_Grid_Form
      * @param string  $field
      * @return Bvb_Grid_Form 
      */
+    public function addAllowedField($field)
+    {
+        $this->_allowedFields[] = $field;
+        return $this;
+    }
+
+    /**
+     * Adds another set of fields not allowed to be managed
+     * @param array $fields
+     * @return Bvb_Grid_Form
+     */
+    public function addAllowedFields(array $fields)
+    {
+        $this->_allowedFields = array_merge($fields, $this->_allowedFields);
+        return $this;
+    }
+
+    /**
+     * Adds one more field to the set not allowed to be managed
+     * @param string  $field
+     * @return Bvb_Grid_Form
+     */
     public function addDisallowedField($field)
     {
         $this->_disallowedFields[] = $field;

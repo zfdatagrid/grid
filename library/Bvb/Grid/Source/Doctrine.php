@@ -1296,4 +1296,23 @@ class Bvb_Grid_Source_Doctrine
     }
 
 
+    public function beginTransaction()
+    {
+       return false;
+    }
+
+    public function commit()
+    {
+        return false;
+    }
+
+    public function rollBack()
+    {
+        return false;
+    }
+
+    public function getConnectionId()
+    {
+      return 0;
+    }
 }
