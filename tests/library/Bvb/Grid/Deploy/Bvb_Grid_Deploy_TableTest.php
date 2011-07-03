@@ -7,7 +7,7 @@
  */
 class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
 
-    
+
     public function testCountResults()
     {
         $this->deployGrid();
@@ -204,8 +204,7 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
     {
         $select = $this->db->select()->from('unit');
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
-        $this->grid->setParam('edit', 1);
-        $this->grid->setParam('comm', 'mode:edit;[Name:Portugal]');
+        $this->grid->setParam('edit', 'Portugal');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -235,7 +234,7 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Select($select));
         $this->grid->setParam('gridDetail', 1);
         $this->grid->setParam('gridRemove', 1);
-        $this->grid->setParam('comm', 'mode:delete;[Name:Afghanistan]');
+        $this->grid->setParam('delete', 'Name');
 
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
@@ -411,14 +410,14 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $this->controller->getResponse()->setBody($grid);
         $this->assertQueryContentContains("td", '<div>Asia</div>');
     }
-    
-    
+
+
     public function testFormWithModel()
     {
-        
+
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
         $this->grid->setParam('add', 1);
-        
+
         $form = new Bvb_Grid_Form();
         $form->setView(new Zend_View());
         $form->setAdd(true)->setEdit(true)->setDelete(true);
@@ -429,24 +428,24 @@ class Bvb_Grid_Deploy_TableTest extends Bvb_GridTestHelper {
         $this->assertQuery("form");
         $this->assertQuery("[@id='1-bug_description']");
     }
-    
+
     public function testMassActions()
     {
         $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
-        
+
         $actions = new Bvb_Grid_Mass_Actions();
         $actions->addMassAction($this->grid->getUrl().'/option/delete', 'Delete', 'Are you sure?');
         $actions->addMassAction($this->grid->getUrl(), 'Print');
-        
+
         $actions->setMassActionsSeparator(',');
         $actions->setMultipleFieldsSeparator('-');
-        
+
         $this->grid->setMassActions($actions);
-        
+
         $grid = $this->grid->deploy();
         $this->controller->getResponse()->setBody($grid);
-        
+
         $this->assertQuery("[@id='massCheckBox_']");
     }
-  
+
 }

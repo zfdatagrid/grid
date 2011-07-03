@@ -126,7 +126,7 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
 
     public function testUpdateOptions()
     {
-        $options = array('title'=>'Test');
+        $options = array('title' => 'Test');
         $this->grid->setOptions(array());
         $this->grid->updateOptions($options);
         $this->assertEquals($options, $this->grid->getOptions());
@@ -142,16 +142,15 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
 
     public function testResetColumns()
     {
-        $this->grid->updateColumn('Name',array('hidden'=>true));
+        $this->grid->updateColumn('Name', array('hidden' => true));
         $this->grid->resetColumn('Name');
         $this->assertEquals(count($this->grid->getField('Name')), 2);
 
-        $this->grid->updateColumn('Name',array('hidden'=>true));
-        $this->grid->updateColumn('Continent',array('hidden'=>true));
-        $this->grid->resetColumns(array('Name','Continent'));
+        $this->grid->updateColumn('Name', array('hidden' => true));
+        $this->grid->updateColumn('Continent', array('hidden' => true));
+        $this->grid->resetColumns(array('Name', 'Continent'));
         $this->assertEquals(count($this->grid->getField('Name')), 2);
         $this->assertEquals(count($this->grid->getField('Continent')), 2);
-
     }
 
     public function testDeployOptions()
@@ -160,17 +159,17 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
         $this->assertEquals(count($this->grid->getDeployOptions()), 0);
 
         $this->grid->setDeployOption('title', 'Test');
-        $this->assertEquals($this->grid->getDeployOption('title'),'Test');
+        $this->assertEquals($this->grid->getDeployOption('title'), 'Test');
         $this->assertEquals(count($this->grid->getDeployOptions()), 1);
         $this->grid->clearDeployOptions();
 
-        $this->grid->setDeployOptions(array('title'=> 'Test','download'=>true));
+        $this->grid->setDeployOptions(array('title' => 'Test', 'download' => true));
         $this->assertEquals(count($this->grid->getDeployOptions()), 2);
     }
 
     public function testExcepetionWhenSettingMultipleSources()
     {
-        
+
         try {
             $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Bugs()));
             $this->grid->setSource(new Bvb_Grid_Source_Zend_Table(new Accounts()));
