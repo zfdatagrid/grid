@@ -22,16 +22,19 @@ class Bugs extends Zend_Db_Table_Abstract {
         'Reporter' => array(
             'columns' => 'reported_by',
             'refTableClass' => 'Accounts',
+            'refBvbColumns' => array('reported_by' => 'account_name'),
             'refColumns' => 'account_name')
         ,
         'Engineer' => array(
             'columns' => 'assigned_to',
             'refTableClass' => 'Accounts',
+            'refBvbColumns' => array('assigned_to' => 'account_name'),
             'refColumns' => 'account_name')
         ,
         'Verifier' => array(
             'columns' => array('verified_by'),
             'refTableClass' => 'Accounts',
+            'refBvbColumns' => array('verified_by' => 'account_name'),
             'refColumns' => array('account_name'))
     );
 

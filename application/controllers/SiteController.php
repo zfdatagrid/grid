@@ -659,15 +659,9 @@ class SiteController extends Zend_Controller_Action
     public function crudAction ()
     {
 
-        $ref =  array('Reporter' => array('refBvbColumns' => array('reported_by' => 'account_name')),
-                     'Verifier' => array('refBvbColumns' => array('verified_by' => 'account_name')),
-                     'Engineer' => array('refBvbColumns' => array('assigned_to' => 'account_name')),
-                );
-
-
         $grid = $this->grid();
         $b = new Bugs();
-        $grid->setSource(new Bvb_Grid_Source_Zend_Table($b,$ref));
+        $grid->setSource(new Bvb_Grid_Source_Zend_Table($b));
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
         $form = new Bvb_Grid_Form();
