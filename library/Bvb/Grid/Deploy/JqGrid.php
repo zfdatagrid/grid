@@ -579,7 +579,7 @@ HTML;
             $data->rows[] = $dataRow;
         }
         // set some other information
-        if ($count >0) {
+        if ($limit>0) {
             $totalPages = ceil($count/$limit);
         } else {
             $totalPages = 0;
