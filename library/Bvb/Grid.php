@@ -3338,7 +3338,6 @@ abstract class Bvb_Grid {
             foreach ($this->_configCallbacks as $func) {
 
             }
-            break;
         } else {
             // only one callback function defined
             call_user_func($this->_configCallbacks, $this);
@@ -3751,12 +3750,14 @@ abstract class Bvb_Grid {
      * Returns a param without search for grid id
      *
      * @param string $param   Param Name
+     * @param mixed  $default Default value to be returned if param does not exists
      *
      * @return mixed
      */
-    public function getParamClean($param)
+    public function getParamClean($param, $default=null)
     {
-        return $this->getRequest()->getParam($param);
+        $result = $this->getRequest()->getParam($param);
+        return is_null($result) ? $default : $result;
     }
 
     /**
@@ -3767,10 +3768,11 @@ abstract class Bvb_Grid {
      *
      * @return mixed
      */
-    public function getParam($param)
+    public function getParam($param, $default=null)
     {
         $param = $param . $this->getGridId();
-        return $this->getRequest()->getParam($param);
+        $result = $this->getRequest()->getParam($param);
+        return is_null($result) ? $default : $result;
     }
 
     /**
