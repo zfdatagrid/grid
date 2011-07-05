@@ -1331,10 +1331,11 @@ abstract class Bvb_Grid {
             return false;
 
         foreach ($this->_externalFilters as $id => $callback) {
-
-            if ($this->getParamClean($id)) {
-                call_user_func_array($callback, array($id, $this->getParamClean($id), $this->getSelect()));
-                $this->_filtersValues[$id] = $this->getParamClean($id);
+            $val = $this->getRequestParamClean($id);
+            if ($val) {
+                call_user_func_array($callback, array($id, $val, $this->getSelect()));
+                // TODO not sure if $val could change in that $callback
+                $this->_filtersValues[$id] = $this->getRequestParamClean($id);
             }
         }
     }
@@ -3747,15 +3748,30 @@ abstract class Bvb_Grid {
     }
 
     /**
-     * Returns a param without search for grid id
+     * Returns request param without search for grid id
      *
      * @param string $param   Param Name
      * @param mixed  $default Default value to be returned if param does not exists
      *
      * @return mixed
      */
-    public function getParamClean($param, $default=null)
+    public function getRequestParamClean($param, $default=null)
     {
+        $result = $this->getRequest()->getParam($param);
+        return is_null($result) ? $default : $result;
+    }
+
+    /**
+     * Returns request param for current grid id
+     *
+     * @param string $param   Param Name
+     * @param mixed  $default Default value to be returned if param does not exists
+     *
+     * @return mixed
+     */
+    public function getRequestParam($param, $default=null)
+    {
+        $param = $param . $this->getGridId();
         $result = $this->getRequest()->getParam($param);
         return is_null($result) ? $default : $result;
     }
@@ -3771,8 +3787,7 @@ abstract class Bvb_Grid {
     public function getParam($param, $default=null)
     {
         $param = $param . $this->getGridId();
-        $result = $this->getRequest()->getParam($param);
-        return is_null($result) ? $default : $result;
+        return isset($this->_ctrlParams[$param]) ? $this->_ctrlParams[$param] : $default;
     }
 
     /**
