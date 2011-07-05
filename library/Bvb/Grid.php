@@ -4396,11 +4396,12 @@ abstract class Bvb_Grid {
      * Regists a new observer
      *
      * @param string  $event    Event name
+     * @param int     $event    Priority Number
      * @param calable $callback Callback to be called
      *
      * @return Bvb_Grid
      */
-    public function listenEvent($event, $callback)
+    public function listenEvent($event, $callback, $priority = 10)
     {
         Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback);
 
