@@ -45,14 +45,13 @@ class Bvb_Grid_Extra_Column {
 
     public function __construct($name='', $args='')
     {
-        if(is_string($args))
+        if (is_string($args))
             return $this;
-        
-        foreach ($args as $key=>$value)
-        {
+
+        foreach ($args as $key => $value) {
             $this->_column[$key] = $value;
         }
-        
+
         $this->_column['name'] = $name;
         return $this;
     }
@@ -60,20 +59,34 @@ class Bvb_Grid_Extra_Column {
     /**
      * Fecths a column
      *
-     * @return mixed 
+     * @return mixed
      */
     public function getOption($option)
     {
         return isset($this->_column[$option]) ? $this->_column[$option] : false;
     }
-    
+
     /**
      * Returns column
-     * 
+     *
      */
     public function getColumn()
     {
         return $this->_column;
+    }
+
+    /**
+     * Defined a new option for the column
+     *
+     * @param string     $name
+     * @param string|int $value
+     * 
+     * @return Bvb_Grid_Extra_Column
+     */
+    public function setOption($name, $value)
+    {
+        $this->_column[$name] = $value;
+        return $this;
     }
 
 }

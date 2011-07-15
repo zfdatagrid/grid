@@ -1788,29 +1788,29 @@ abstract class Bvb_Grid {
      */
     protected function _buildTitles()
     {
+        static $index = 0;
         $return = array();
         $url = $this->getUrl(array('order', 'start', 'comm', 'noOrder'));
 
-        foreach ($this->_extraColumns as $key => $value) {
-            if ($value['position'] == 'left') {
+        foreach ($this->getExtraColumnsForPosition('left') as $key => $value) {
+            $index++;
 
-                $value['newrow'] = !isset($value['newrow']) ? false : $value['newrow'];
-                $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
-                $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
+            $value['newrow'] = !isset($value['newrow']) ? false : $value['newrow'];
+            $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
+            $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
 
-                if ($this->__(isset($value['title']))) {
-                    $fieldValue = $value['title'];
-                } else {
-                    $fieldValue = $value['name'];
-                }
-
-                $title = $return[$key] = array('type' => 'extraField',
-                    'value' => $fieldValue,
-                    'position' => 'left',
-                    'newrow' => $value['newrow'],
-                    'rowspan' => $value['rowspan'],
-                    'colspan' => $value['colspan']);
+            if ($this->__(isset($value['title']))) {
+                $fieldValue = $value['title'];
+            } else {
+                $fieldValue = $value['name'];
             }
+
+            $return[$index . '-' . $key] = array('type' => 'extraField',
+                'value' => $fieldValue,
+                'position' => 'left',
+                'newrow' => $value['newrow'],
+                'rowspan' => $value['rowspan'],
+                'colspan' => $value['colspan']);
         }
 
         $titles = $this->_fields;
@@ -1896,20 +1896,19 @@ abstract class Bvb_Grid {
             }
         }
 
-        foreach ($this->_extraColumns as $key => $value) {
-            if ($value['position'] == 'right') {
+        foreach ($this->getExtraColumnsForPosition('right') as $key => $value) {
+            $index++;
 
-                $value['newrow'] = !isset($value['newrow']) ? false : $value['newrow'];
-                $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
-                $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
+            $value['newrow'] = !isset($value['newrow']) ? false : $value['newrow'];
+            $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
+            $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
 
-                $return[$key] = array('type' => 'extraField',
-                    'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']),
-                    'position' => 'right',
-                    'newrow' => $value['newrow'],
-                    'rowspan' => $value['rowspan'],
-                    'colspan' => $value['colspan']);
-            }
+            $return[$index . '-' . $key] = array('type' => 'extraField',
+                'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']),
+                'position' => 'right',
+                'newrow' => $value['newrow'],
+                'rowspan' => $value['rowspan'],
+                'colspan' => $value['colspan']);
         }
 
         $this->_finalFields = $return;
@@ -2206,7 +2205,10 @@ abstract class Bvb_Grid {
             /**
              * Deal with extrafield from the left
              */
-            foreach ($this->_getExtraFields('left') as $field) {
+
+            $left = $this->getExtraColumnsForPosition('left');
+
+            foreach ($left as $field) {
                 $return[$i][] = $this->_buildExtraField($field, $search, $replace);
             }
 
@@ -2312,7 +2314,7 @@ abstract class Bvb_Grid {
             /**
              * Deal with extra fields from the right
              */
-            foreach ($this->_getExtraFields('right') as $field) {
+            foreach ($this->getExtraColumnsForPosition('right') as $field) {
                 $return[$i][] = $this->_buildExtraField($field, $search, $replace);
             }
             $i++;
@@ -2328,7 +2330,7 @@ abstract class Bvb_Grid {
      *
      * @return array
      */
-    protected function _getExtraFields($position = 'left')
+    public function getExtraColumnsForPosition($position = 'left')
     {
         if (!is_array($this->_extraColumns)) {
             return array();
@@ -2336,11 +2338,18 @@ abstract class Bvb_Grid {
 
         $final = array();
 
-        foreach ($this->_extraColumns as $value) {
+        foreach ($this->getExtraColumns() as $value) {
             if ($value['position'] == $position) {
                 $final[] = $value;
             }
         }
+
+        $newOrder = array();
+        foreach ($final as $key => $value) {
+            $newOrder[$key] = (int)$value['order'];
+        }
+
+        array_multisort(  $newOrder, SORT_ASC, $final);
 
         return $final;
     }
@@ -3158,6 +3167,8 @@ abstract class Bvb_Grid {
      */
     public function addExtraColumns($columns = array())
     {
+        static $order = 10;
+
         if (is_array($columns)) {
             $extraColumns = $columns;
         } else {
@@ -3187,6 +3198,12 @@ abstract class Bvb_Grid {
 
             if (!$value->getOption('position') || !in_array($value->getOption('position'), array('left', 'right'))) {
                 throw new Bvb_Grid_Exception('Please define column position (left|right)');
+            }
+
+            if (!$value->getOption('order')) {
+
+                $order++;
+                $value->setOption('order', $order);
             }
 
             $this->_extraColumns[$value->getOption('name')] = $value->getColumn();

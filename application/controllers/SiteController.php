@@ -261,10 +261,10 @@ class SiteController extends Zend_Controller_Action
 
 
         $right = new Bvb_Grid_Extra_Column();
-        $right->position('right')->name('Right')->decorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
+        $right->setPosition('right')->setName('Right')->setDecorator("<input class='input_p'type='text' value=\"{{Population}}\" size=\"3\" name='number[]'>");
 
         $left = new Bvb_Grid_Extra_Column();
-        $left->position('left')->name('Left')->decorator("<input  type='checkbox' name='number[]'>");
+        $left->setPosition('left')->setName('Left')->setDecorator("<input  type='checkbox' name='number[]'>");
 
         $grid->addExtraColumns($right, $left);
 
