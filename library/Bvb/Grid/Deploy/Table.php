@@ -1676,8 +1676,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $url = $this->getUrl($removeParams);
         if ($this->_allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
-            if (!is_array($this->_extraFields)) {
-                $this->_extraFields = array();
+            if (!is_array($this->_extraColumns)) {
+                $this->_extraColumns = array();
             }
 
 
@@ -1688,7 +1688,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if ($this->_crud->getEditColumn() !== false)
                 array_unshift(
-                        $this->_extraFields, array('position' => 'left', 'class'=>'gridEditColumn',
+                        $this->_extraColumns, array('position' => 'left', 'class'=>'gridEditColumn',
                           'name' => 'E',
                           'decorator' => "<a href=\"" . $this->_actionsUrls['edit'] . "\" > " . $images['edit']
                                        . "</a>", 'edit' => true
@@ -1697,8 +1697,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if ($this->_allowDelete && is_object($this->_crud) && $this->_crud->getBulkDelete() !== true) {
-            if (!is_array($this->_extraFields)) {
-                $this->_extraFields = array();
+            if (!is_array($this->_extraColumns)) {
+                $this->_extraColumns = array();
             }
 
             if ($this->_deleteConfirmationPage == true) {
@@ -1708,7 +1708,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ($this->_crud->getDeleteColumn() !== false)
                     array_unshift(
-                            $this->_extraFields, array('position' => 'left','class'=>'gridDeleteColumn',
+                            $this->_extraColumns, array('position' => 'left','class'=>'gridDeleteColumn',
                               'name' => 'D',
                               'decorator' => "<a href=\"" . $this->_actionsUrls['delete'] . "\" > "
                                              . $images['delete'] . "</a>", 'delete' => true
@@ -1719,7 +1719,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if ($this->_crud->getDeleteColumn() !== false)
                     array_unshift(
-                            $this->_extraFields, array('position' => 'left', 'class'=>'gridDeleteColumn',
+                            $this->_extraColumns, array('position' => 'left', 'class'=>'gridDeleteColumn',
                         'name' => 'D',
                         'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('"
                                        . $this->__('Are you sure?') . "','"
@@ -1731,8 +1731,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         if (is_array($this->_detailColumns) && $this->_isDetail == false) {
-            if (!is_array($this->_extraFields)) {
-                $this->_extraFields = array();
+            if (!is_array($this->_extraColumns)) {
+                $this->_extraColumns = array();
             }
 
             $removeParams = array('add', 'edit');
@@ -1742,7 +1742,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             if ($this->_showDetailColumn === true)
                 array_unshift(
-                        $this->_extraFields, array('position' => 'left','class'=>'gridDetailColumn',
+                        $this->_extraColumns, array('position' => 'left','class'=>'gridDetailColumn',
                     'name' => 'V',
                     'decorator' => "<a href=\"" . $this->_actionsUrls['detail'] . "\" >" . $images['detail'] . "</a>",
                     'detail' => true)

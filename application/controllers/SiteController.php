@@ -269,6 +269,12 @@ class SiteController extends Zend_Controller_Action
         $grid->addExtraColumns($right, $left);
 
 
+        $row = new Bvb_Grid_Extra_Rows();
+        $row->addRow('beforePagination', array(array('content' => '<button class="addRecord" type="button" onClick="if(confirm(\'Please confirm you wish to approve all.\')){window.location=\'/admin/campaigns/approveall\'};return false;">Approve All</button>', 'colspan' => 6, 'class' => 'r')));
+        $grid->addExtraRows($row);
+
+        #$grid->addExtraColumn($grid->getExtraColumn('Left'));
+
         $this->view->pages = $grid->deploy();
         $this->render('index');
     }
