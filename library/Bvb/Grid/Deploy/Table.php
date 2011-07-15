@@ -940,9 +940,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @return string
      *
      */
-    protected function _buildTitlesTable($titles)
+    protected function _buildTitlesTable($titles, $header = false)
     {
         $orderField = null;
+
+        if($this->getInfo('hRow') && $header==true)
+        {
+            return;
+        }
 
         if (is_array($this->_order)) {
             //We must now the field that is being ordered. So we can grab the image
@@ -1213,6 +1218,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
 
                     $grid .= $this->_temp['table']->hRow($gridData[$gridDataIndex][$hRowIndex]['value']);
+
+
+                    $grid .= $this->_buildTitlesTable(parent::_buildTitles());
+
                 }
             }
 
@@ -1938,7 +1947,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $bTitles  = $this->_buildExtraRows('beforeTitles')
                   . $this->_buildMassActions()
-                  . $this->_buildTitlesTable(parent::_buildTitles())
+                  . $this->_buildTitlesTable(parent::_buildTitles(),true)
                   . $this->_buildExtraRows('afterTitles');
 
         $bFilters = $this->_buildExtraRows('beforeFilters')
