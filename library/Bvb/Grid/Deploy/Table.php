@@ -2299,6 +2299,10 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
         $formElements = $this->getSource()->buildForm($crud->getInputsType());
 
+        if ($crud->getUsePreDefinedFormElements() == true) {
+            $formElements = array();
+        }
+
         $this->emitEvent('crud.elements_loaded', array('elements'=>&$form));
 
 
@@ -2346,7 +2350,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
 
             if ($formsCount > 1)
                 $arr[0]->addElement('checkbox', 'ZFIGNORE', array('label' => $this->__('Ignore'), 'order' => 0));
-            $arr[0]->setElementDecorators($crud->getSubformElementTitle());
+                $arr[0]->setElementDecorators($crud->getSubformElementTitle());
 
             if ($crud->getUseDecorators() === true) {
 

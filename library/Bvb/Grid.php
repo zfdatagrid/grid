@@ -397,9 +397,9 @@ abstract class Bvb_Grid {
      * @var array
      */
     protected $_actionsUrls = array('add' => '',
-        'edit' => '',
-        'delete' => '',
-        'detail' => '');
+                                    'edit' => '',
+                                    'delete' => '',
+                                    'detail' => '');
     /**
      * Permission to add records
      *
@@ -600,7 +600,7 @@ abstract class Bvb_Grid {
         } elseif ($object instanceof Zend_Db_Table_Abstract) {
             $this->setSource(new Bvb_Grid_Source_Zend_Table($object));
         } else {
-            throw new Bvb_Grid_Exception('Please use the setSource() method instead');
+            throw new Bvb_Grid_Exception('Please use setSource() method instead');
         }
 
         return $this;

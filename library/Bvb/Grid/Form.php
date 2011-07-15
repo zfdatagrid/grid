@@ -205,16 +205,24 @@ class Bvb_Grid_Form
     protected $_editColumn = true;
     /**
      * Text to be showed on top of add/edit form
-     * 
-     * @var mixed 
+     *
+     * @var mixed
      */
     protected $_formTitle = false;
     /**
      * Add button label
-     * 
-     * @var string  
+     *
+     * @var string
      */
     protected $_addButtonLabel = 'Add Record';
+
+    /**
+     * If we should load only form elements that where defined
+     * in user supplied form
+     *
+     * @var bool
+     */
+    protected $_usePreDefinedFormElements = false;
 
     /**
      * Instantiates a new form, using Zend_Form
@@ -679,7 +687,7 @@ class Bvb_Grid_Form
     /**
      * Adds one more field to the set not allowed to be managed
      * @param string  $field
-     * @return Bvb_Grid_Form 
+     * @return Bvb_Grid_Form
      */
     public function addAllowedField($field)
     {
@@ -712,7 +720,7 @@ class Bvb_Grid_Form
     /**
      * Adds another set of fields not allowed to be managed
      * @param array $fields
-     * @return Bvb_Grid_Form 
+     * @return Bvb_Grid_Form
      */
     public function addDisallowedFields(array $fields)
     {
@@ -824,9 +832,9 @@ class Bvb_Grid_Form
 
     /**
      * If we should use a table thead with some text to describe form action
-     * 
+     *
      * @param string $label
-     * @return Bvb_Grid_Form 
+     * @return Bvb_Grid_Form
      */
     public function setFormTitle($label)
     {
@@ -837,7 +845,7 @@ class Bvb_Grid_Form
     /**
      * If we should use a for header to describe form action
      *
-     * @return mixed 
+     * @return mixed
      */
     public function getFormTitle()
     {
@@ -846,8 +854,8 @@ class Bvb_Grid_Form
 
     /**
      * returns current label for add button
-     * 
-     * @return string 
+     *
+     * @return string
      */
     public function getAddButtonLabel()
     {
@@ -857,12 +865,36 @@ class Bvb_Grid_Form
     /**
      * Defines a new label for the add record button
      * @param string $label
-     * @return Bvb_Grid_Form 
+     * @return Bvb_Grid_Form
      */
     public function setAddButtonLabel($label)
     {
         $this->_addButtonLabel = (string) $label;
         return $this;
+    }
+
+    /**
+     * Defined if we should display all form elements or only the ones
+     * definef in user supplied form
+     *
+     * @param bool $use
+     * @return Bvb_Grid_Form
+     */
+    public function setUsePreDefinedFormElements($value)
+    {
+        $this->_usePreDefinedFormElements = (bool) $value;
+        return $this;
+    }
+
+    /**
+     * Returns current option if we should display all form elements
+     * or only the ones defined in user supplied form
+     *
+     * @return bool
+     */
+    public function getUsePreDefinedFormElements()
+    {
+        return $this->_usePreDefinedFormElements;
     }
 
 }
