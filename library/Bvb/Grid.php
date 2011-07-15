@@ -4420,7 +4420,7 @@ abstract class Bvb_Grid {
      */
     public function listenEvent($event, $callback, $priority = 10)
     {
-        Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback);
+        Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback, $priority);
 
         return $this;
     }
