@@ -1089,9 +1089,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                         }
                                     }
 
-                                    $grid .= $this->_temp['table']->titlesLoop("<a title='$hrefTitle' href='"
-                                          . $title['url'] . "'><span $spanClass>". $title['value'] . $imgFinal
-                                          . "</span></a>",$colspan);
+                                    if ( $this->_data['fields'][$title['field']]['order'] == 0
+                                    ) {
+                                        $grid .= $this->_temp['table']->titlesLoop($title['value'] . $imgFinal,$colspan);
+                                    }else{
+                                        $grid .= $this->_temp['table']->titlesLoop("<a title='$hrefTitle' href='"
+                                              . $title['url'] . "'><span $spanClass>". $title['value'] . $imgFinal
+                                              . "</span></a>",$colspan);
+                                    }
+
                                 }
                         }
                     }
