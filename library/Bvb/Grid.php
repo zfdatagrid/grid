@@ -3161,6 +3161,9 @@ abstract class Bvb_Grid {
             if (isset($filter['searchType'])) {
                 $this->updateColumn($key, array('searchType' => $filter['searchType']));
             }
+            if (isset($filter['search'])) {
+                $this->updateColumn($key, array('search' => $filter['search']));
+            }
         }
 
         return $this;
