@@ -184,6 +184,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         $this->_gridSession = new Zend_Session_Namespace('Bvb_Grid_' . $this->getGridId());
         $this->addTemplateDir('Bvb/Grid/Template', 'Bvb_Grid_Template', 'table');
+
+        if ($this->getParam('add') || $this->getParam('edit')) {
+
+            if ($this->getParam('add')) {
+                $this->_willShow['form'] = true;
+                $this->_willShow['formAdd'] = true;
+            }
+            if ($this->getParam('edit')) {
+                $this->_willShow['form'] = true;
+                $this->_willShow['formEdit'] = true;
+            }
+        } else {
+            if ($this->getParam('detail') ||  $this->getParam('delete') ){
+                $this->_willShow['detail'] = true;
+            } else {
+                $this->_willShow['listing'] = true;
+            }
+        }
     }
 
     /**
@@ -222,15 +240,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                     }
                 }
 
-                if ($this->getParam('add')) {
-                    $this->_willShow['form'] = true;
-                    $this->_willShow['formAdd'] = true;
-                }
-
                 if ($mode == 'edit') {
-                    $this->_willShow['form'] = true;
-                    $this->_willShow['formEdit'] = true;
-                    $this->_willShow['formEditId'] = $this->getIdentifierColumnsFromUrl();
 
                     $conditions = array();
                     if ($this->getParam('postMassIds')) {
@@ -1827,9 +1837,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             ) {
                 $columns = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
 
-                $this->_willShow['detail'] = true;
-                $this->_willShow['detailId'] = $this->getIdentifierColumnsFromUrl();
-
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
                 if (count($this->_detailColumns) > 0) {
@@ -1891,7 +1898,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 $this->_renderDeploy['detail'] = $this->_render['detail'];
             } else {
-                $this->_willShow['grid'] = true;
                 $this->_buildGridRender();
             }
 
