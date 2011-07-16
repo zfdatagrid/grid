@@ -2511,6 +2511,9 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                     if ($crud->getUseDecorators() === true)
                         $element->setDecorators($crud->getFileDecorator());
                 }
+                if ($element->helper == 'formHidden') {
+                    $element->setLabel('');
+                }
             }
 
 
