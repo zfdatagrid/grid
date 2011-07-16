@@ -4590,4 +4590,15 @@ abstract class Bvb_Grid {
     {
         return self::$_deployClassesDir->load($class);
     }
+
+    /**
+     * Returns current deploy paths
+     *
+     * @return mixed
+     */
+    public static function getDeployPrefixPaths()
+    {
+        return self::$_deployClassesDir;
+    }
+
 }
