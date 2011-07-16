@@ -188,18 +188,18 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->getParam('add') || $this->getParam('edit')) {
 
             if ($this->getParam('add')) {
-                $this->_willShow['form'] = true;
-                $this->_willShow['formAdd'] = true;
+                $this->_willShow[] = 'form';
+                $this->_willShow[] = 'formAdd';
             }
             if ($this->getParam('edit')) {
-                $this->_willShow['form'] = true;
-                $this->_willShow['formEdit'] = true;
+                $this->_willShow[] = 'form';
+                $this->_willShow[] = 'formEdit';
             }
         } else {
             if ($this->getParam('detail') ||  $this->getParam('delete') ){
-                $this->_willShow['detail'] = true;
+                $this->_willShow[] = 'detail';
             } else {
-                $this->_willShow['listing'] = true;
+                $this->_willShow[] = 'listing';
             }
         }
     }
