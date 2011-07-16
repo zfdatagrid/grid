@@ -195,7 +195,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             case 'isnull':
                 $qb->$func($field . ' IS NULL ');
                 break;
-            case 'isnnotull':
+            case 'isnotnull':
                 $qb->$func($field . ' IS NOT NULL ');
                 break;
             case 'empty':
@@ -382,9 +382,9 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
     /**
      * Generates the expression used in the select expression
-     * 
+     *
      * @param FunctionNode $expression
-     * @return string 
+     * @return string
      */
     private function _getNameForExpression($expression)
     {
@@ -1232,7 +1232,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function setCache($cache)
     {
-        
+
     }
 
     /**
@@ -1544,7 +1544,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             if(!isset($this->fields[$field]['field'])) {
                 $ids = $this->getIdentifierColumns();
                 list($alias, $field) = explode('.', $ids[0]);
-                
+
                 //no matching field was found in the fields array
                 //so we append the default alias to the field
                 return $alias .'.'. $field;

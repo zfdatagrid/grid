@@ -548,7 +548,7 @@ class Bvb_Grid_Source_Doctrine
      */
     public function addCondition($filter, $op, $completeField)
     {
-        
+
         $field = $completeField['field'];
 
         /**
@@ -650,7 +650,7 @@ class Bvb_Grid_Source_Doctrine
         $model->fromArray($post);
 
         $return = $model->trySave();
-        
+
         return $return;
     }
 
@@ -672,7 +672,7 @@ class Bvb_Grid_Source_Doctrine
      */
     public function update($table, array $post, array $condition)
     {
-        
+
         $tableModel = $this->_getModelFromTable($table);
 
         $query = Doctrine_Query::create()->update($tableModel);
@@ -686,7 +686,7 @@ class Bvb_Grid_Source_Doctrine
         }
 
        return  $query->execute();
-        
+
     }
 
     /**
@@ -705,7 +705,7 @@ class Bvb_Grid_Source_Doctrine
      */
     public function delete($table, array $condition)
     {
-        
+
 
         $tableModel = $this->_getModelFromTable($table);
 
@@ -716,7 +716,7 @@ class Bvb_Grid_Source_Doctrine
         }
 
         return $query->execute();
-        
+
     }
 
 

@@ -57,7 +57,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     protected $_limit = null;
     /**
      *
-     * @var array Where part from SQL 
+     * @var array Where part from SQL
      */
     protected $_where = array();
 
@@ -197,24 +197,24 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
                 foreach ($tableFields as $field) {
                     $title = ucwords(str_replace('_', ' ', $field));
-                    $returnFields[$field] = array('title' => $title, 
+                    $returnFields[$field] = array('title' => $title,
                                                   'field' => $value[0] . '.' . $field,
                                                   'alias' => $value[2] );
                 }
             } else {
                 if (is_object($value[1])) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $returnFields[$value[2]] = array('title' => $title, 
+                    $returnFields[$value[2]] = array('title' => $title,
                                                      'field' =>  $value[1]->__toString(),
                                                      'alias'=>$value[2]);
                 } elseif (strlen($value[2]) > 0) {
                     $title = ucwords(str_replace('_', ' ', $value[2]));
-                    $returnFields[$value[2]] = array('title' => $title, 
+                    $returnFields[$value[2]] = array('title' => $title,
                                                      'field' => $value[0] . '.' . $value[1],
                                                      'alias'=>$value[2]);
                 } else {
                     $title = ucwords(str_replace('_', ' ', $value[1]));
-                    $returnFields[$value[1]] = array('title' => $title, 
+                    $returnFields[$value[1]] = array('title' => $title,
                                                      'field' => $value[0] . '.' . $value[1],
                                                      'alias'=>$value[2]);
                 }
@@ -282,7 +282,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 }
             }
         }
-        
+
         $where = $this->_select->getPart('where');
 
         $replaced = false;
@@ -394,7 +394,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             if ($this->_totalRecords > $this->_limit && $this->_limit > 0) {
                 return $this->_limit;
             }
-           
+
             return $this->_totalRecords;
         }
 
@@ -405,10 +405,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         foreach ($selectCount->getPart('columns') as $value) {
             if ($value[1] instanceof Zend_Db_Expr) {
-                
+
                 if($value[1]->__toString() =='SQL_CALC_FOUND_ROWS 1+1')
                 continue;
-                
+
                 $hasExp = true;
                 if (!empty($value[2]) && $value[2] !== 'TOTAL') {
                     $hasExpWithoutTotal = true;
@@ -449,11 +449,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 $count = (int) $result['TOTAL'];
                 $this->_cache['instance']->save($count, $hash, array($this->_cache['tag']));
             }
-            
+
             if (is_array($result)) {
                 $result = reset($result);
             }
-            
+
             $count = $result;
             } else {
             $final = $selectCount->query(Zend_Db::FETCH_ASSOC);
@@ -532,7 +532,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
         $tableList = $this->getTableList();
 
         $explode = explode('.', $field);
-        
+
         if (count($explode) == 2 && strpos($explode[0], '(')===false) {
             $tableName = reset($explode);
             $field = end($explode);
@@ -654,13 +654,13 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $this->_select->reset('order');
         }
 
-        
+
         if ($isExpr === false) {
             $field = $this->_fields[$field]['field'];
         }
-        
+
         $this->_select->order($field . ' ' . $order);
-        
+
         return $this;
     }
 
@@ -720,8 +720,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
     public function getDistinctValuesForFilters($field, $fieldValue, $order = 'name ASC')
     {
         $distinct = clone $this->_select;
-        
-        
+
+
         $columns = $distinct->getPart('columns');
         foreach ($columns as $value) {
             if ($value[1] instanceof Zend_Db_Expr && $value[2] !== 'ZFG_GHOST') {
@@ -968,11 +968,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 break;
             }
         }
-        
+
         if (!$sqlExpr && strpos($field, '.') === false && $simpleField === false) {
             $field = $completeField['field'];
         }
-        
+
 
         /**
          * Reserved words from myslq dont contain any special charaters.
@@ -1003,7 +1003,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             case 'isnull':
                 $this->_select->$func(new Zend_Db_Expr($field . ' IS NULL '));
                 break;
-            case 'isnnotull':
+            case 'isnotnull':
                 $this->_select->$func(new Zend_Db_Expr($field . ' IS NOT NULL '));
                 break;
             case 'equal':
@@ -1250,11 +1250,11 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                     } else {
                         continue;
                     }
-                    
+
                     if (isset($relationMap[$key]['refBvbColumns']) && is_array($relationMap[$key]['refBvbColumns'])) {
                         $refColumn = end($relationMap[$key]['refBvbColumns']);
                     }
-                    
+
                     $t = new $dep['refTableClass']();
                     $in = $t->info();
 

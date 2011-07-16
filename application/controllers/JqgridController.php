@@ -42,7 +42,7 @@ class JqgridController extends Zend_Controller_Action
     public function indexAction ()
     {
         // construct JqGrid and let it configure
-        $grid1 = new Bvb_Grid_Deploy_JqGrid($this->_config);
+        $grid1 = new Bvb_Grid_Deploy_JqGrid($this->_config->toArray());
         $this->configG1($grid1, $this->_getParam('onlyFromPolynesia', 'false') === 'true');
 
 

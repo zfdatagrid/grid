@@ -2791,8 +2791,8 @@ abstract class Bvb_Grid {
 
             $specialKeys = array('sqlexp',
                 ':empty',
-                'isnull',
-                'isnnotull',
+                ':isnull',
+                'isnotnull',
                 'equal',
                 '=',
                 'rege',
