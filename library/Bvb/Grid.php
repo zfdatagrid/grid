@@ -1535,23 +1535,23 @@ abstract class Bvb_Grid {
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
         $paramsGet = array('perPage',
-            'order',
-            'start',
-            'filters',
-            'zfmassedit',
-            'zfmassremove',
-            'send_',
-            'postMassIds',
-            'gridAction_',
-            'massActionsAll_',
-            'noFilters',
-            '_exportTo',
-            'add',
-            'edit',
-            'noOrder',
-            'comm',
-            'detail',
-            'delete');
+                           'order',
+                           'start',
+                           'filters',
+                           'zfmassedit',
+                           'zfmassremove',
+                           'send_',
+                           'postMassIds',
+                           'gridAction_',
+                           'massActionsAll_',
+                           'noFilters',
+                           '_exportTo',
+                           'add',
+                           'edit',
+                           'noOrder',
+                           'comm',
+                           'detail',
+                           'delete');
 
         $params = $this->getAllParams();
 
@@ -1570,8 +1570,10 @@ abstract class Bvb_Grid {
                     $fl = explode('[', $key);
 
                     if (in_array(rtrim($fl[0], $this->getGridId()), $fields)) {
-
                         unset($params[rtrim($fl[0]) . '[' . $fl[1]]);
+                        $fieldName = substr(rtrim($fl[0]), 0, strpos(rtrim($fl[0]), $this->getGridId()));
+                        if(in_array($fieldName, $this->_fields))
+                        $this->removeParam($fieldName);
                     }
                 }
             }

@@ -789,14 +789,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ((is_array($this->_defaultFilters) || $this->_paramsInSession === true)
                 && !$this->getParam('noFilters')
             ) {
-                $url = $this->getUrl(array('filters', 'noFilters'),array('noFilters'=>1));
-                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noFilters'=>1));
+                $url = $this->getUrl(array('filters', 'noFilters'), array('noFilters' => 1));
+                $url3 = $this->getUrl(array('filters', 'noFilters'), array('noFilters' => 1));
             }
 
             if (is_array($this->getSource()->getSelectOrder())) {
 
-                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noOrder'=>1));
-                $url3 = $this->getUrl(array('filters', 'noFilters'),array('noOrder'=>1));
+                $url3 = $this->getUrl(array('filters', 'noFilters'), array('noOrder' => 1));
+                $url3 = $this->getUrl(array('filters', 'noFilters'), array('noOrder' => 1));
             }
 
             $this->_temp['table']->hasExtraRow = 1;
