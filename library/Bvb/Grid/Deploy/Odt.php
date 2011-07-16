@@ -26,7 +26,7 @@ class Bvb_Grid_Deploy_Odt extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
     protected $templateDir;
 
-    public function __construct ($options)
+    public function __construct (array $options = array())
     {
         if(!class_exists('ZipArchive'))
         {

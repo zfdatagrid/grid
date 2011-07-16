@@ -20,5 +20,8 @@
 
 interface Bvb_Grid_Deploy_DeployInterface
 {
+
+    public function __construct (array $options = array());
+
     public function deploy();
 }

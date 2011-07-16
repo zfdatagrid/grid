@@ -671,7 +671,7 @@ class SiteController extends Zend_Controller_Action
         $grid->setColumnsHidden(array('bug_id', 'time', 'verified_by','next'));
 
         $form = new Bvb_Grid_Form();
-
+        $form->setFormTitle('Manage Records');
         $form->setAdd(true)->setEdit(true)->setDelete(true)->setAddButton(true)->setSaveAndAddButton(true);
 
         #$grid->setDetailColumns();

@@ -154,7 +154,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
      *
      * @param array $options configuration options
      */
-    public function __construct ($options = array())
+    public function __construct (array $options = array())
     {
         $this->initLogger();
 

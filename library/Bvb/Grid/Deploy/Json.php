@@ -27,7 +27,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
      *
      * @param array $options
      */
-    public function __construct ($options)
+    public function __construct (array $options = array())
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -96,7 +96,7 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         header('Content-Type', 'application/json');
 
         $grid = array('titles' => $this->buildTitles(), 'rows' => $this->buildGrid(), 'sqlexp' => $this->buildSqlexp());
-        
+
         if(!$this->getDeployOption('return', false))
         {
             echo Zend_Json::encode($grid);
@@ -104,6 +104,6 @@ class Bvb_Grid_Deploy_Json extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInt
         }else{
             return Zend_Json::encode($grid);
         }
-        
+
     }
 }

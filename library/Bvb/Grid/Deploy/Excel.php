@@ -29,7 +29,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      *
      * @return void
      */
-    public function __construct ($options)
+    public function __construct (array $options = array())
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -53,7 +53,7 @@ class Bvb_Grid_Deploy_Excel extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
 
         parent::deploy();
-        
+
         if ( ! isset($this->_deploy['title']) ) {
             $this->_deploy['title'] = 'ZFDatagrid';
         }

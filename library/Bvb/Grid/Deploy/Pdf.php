@@ -32,7 +32,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $_totalPages;
     protected $_currentPage;
 
-    public function __construct($options)
+    public function __construct (array $options = array())
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
@@ -159,7 +159,7 @@ class Bvb_Grid_Deploy_Pdf extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
         {
             return;
         }
-        
+
         $this->_page->setStyle($this->_styles['style']);
         $this->_pdf->pages[] = $this->_page;
         $this->_currentPage++;

@@ -41,7 +41,7 @@ class Bvb_Grid_Deploy_Ods extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
     protected $templateDir;
 
 
-    public function __construct ($options)
+    public function __construct (array $options = array())
     {
         if ( ! class_exists('ZipArchive') ) {
             throw new Bvb_Grid_Exception('Class ZipArchive not available. Check www.php.net/ZipArchive for more information');

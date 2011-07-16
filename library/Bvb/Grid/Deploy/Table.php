@@ -172,7 +172,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      *
      * @param array $options Config options to apply
      */
-    public function __construct($options)
+    public function __construct (array $options = array())
     {
         $this->_setRemoveHiddenFields(true);
 

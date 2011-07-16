@@ -19,7 +19,7 @@
  */
 class Bvb_Grid_Deploy_Word extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInterface
 {
-    public function __construct($options)
+    public function __construct (array $options = array())
     {
         $this->_setRemoveHiddenFields(true);
         parent::__construct($options);
