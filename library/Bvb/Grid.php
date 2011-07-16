@@ -3152,6 +3152,39 @@ abstract class Bvb_Grid {
     }
 
     /**
+     * Clears existing filters
+     *
+     * @return Bvb_Grid
+     */
+    public function clearFilters()
+    {
+        $this->_filters = array();
+        return $this;
+    }
+
+
+    /**
+     * Returns current filters
+     *
+     * @return array
+     */
+    public function getFilters()
+    {
+        return $this->_filters;
+    }
+
+    /**
+     * Returns a specific filter
+     *
+     * @param string $filter
+     * @return array|false
+     */
+    public function getFilter($filter)
+    {
+        return isset($this->_filters[$filter]) ? $this->_filters[$filter] : false;
+    }
+
+    /**
      * Add filters removing pre-existing ones
      *
      * @param Bvb_Grid_Filters $filters
