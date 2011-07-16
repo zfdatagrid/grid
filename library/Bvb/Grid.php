@@ -1558,6 +1558,11 @@ abstract class Bvb_Grid {
         if (in_array('filters', $situation)) {
             $fields = array_merge($this->getFields(), array_keys($this->_externalFilters));
 
+            foreach(array_keys($this->_externalFilters) as $removeExternalFilter)
+            {
+                unset($params[$removeExternalFilter]);
+            }
+
             foreach ($fields as $field) {
                 if (isset($params[$field . $this->getGridId()])) {
                     unset($params[$field . $this->getGridId()]);
@@ -3898,6 +3903,12 @@ abstract class Bvb_Grid {
      */
     public function getParam($param, $default=null)
     {
+
+        if(array_key_exists($param, $this->_externalFilters))
+        {
+            return isset($this->_ctrlParams[$param]) ? $this->_ctrlParams[$param] : $default;
+        }
+
         $param = $param . $this->getGridId();
         return isset($this->_ctrlParams[$param]) ? $this->_ctrlParams[$param] : $default;
     }
