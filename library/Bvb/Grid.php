@@ -1369,7 +1369,15 @@ abstract class Bvb_Grid {
         ) {
             $op = 'sqlExp';
             $sqlExp = $this->_data['fields'][$field]['searchSqlExp'];
-            $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
+            if (!isset($this->_data['fields'][$field]['searchSqlQuote'])) {
+                $this->_data['fields'][$field]['searchSqlQuote'] = false;
+            }
+            $sqlQuote = (bool) $this->_data['fields'][$field]['searchSqlQuote'];
+            if ($sqlQuote === false) {
+                $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
+            } else {
+                $filter = str_replace('{{value}}', $filter, $sqlExp);
+            }
         } elseif (substr(strtolower($filter), 0, 6) == ':empty') {
             $op = 'empty';
             $filter = substr($filter, 2);
