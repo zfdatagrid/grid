@@ -51,6 +51,12 @@ abstract class Bvb_Grid {
      */
     protected static $_defaultConfig = array();
     /**
+     * Location for deploy class
+     *
+     * @var mixed
+     */
+    protected static $_deployClassesDir = false;
+    /**
      * Char encoding
      *
      * @var string
@@ -3306,15 +3312,15 @@ abstract class Bvb_Grid {
      *
      * @return Bvb_Grid
      */
-    public static function factory($defaultClass, $options = array(), $id = '', $classCallbacks = array(), $requestParams = false)
+    public static function factory($defaultClass = 'Table', $options = array(), $id = '', $classCallbacks = array(), $requestParams = false)
     {
+        self::initDeployClass();
+
         if (!is_string($id)) {
             $id = '';
         }
 
-        if (strpos($defaultClass, '_') === false) {
-            $defaultClass = 'Bvb_Grid_Deploy_' . ucfirst(strtolower($defaultClass));
-        }
+        $defaultClass = self::loadDeployClass($defaultClass);
 
         if (false === $requestParams) {
             // use request parameters
@@ -3355,7 +3361,7 @@ abstract class Bvb_Grid {
 
             // now we need to find and load the right Bvb deploy class
             // TODO support user defined classes
-            $className = 'Bvb_Grid_Deploy_' . ucfirst($exportTo);
+            $className = self::loadDeployClass($exportTo);
 
             if (Zend_Loader_Autoloader::autoload($className)) {
                 $grid = new $className($options);
@@ -4552,4 +4558,36 @@ abstract class Bvb_Grid {
         }
     }
 
+    /**
+     * Adds the default deploy classes dir location
+     */
+    public static function initDeployClass()
+    {
+        self::$_deployClassesDir = new Zend_Loader_PluginLoader();
+        self::$_deployClassesDir->addPrefixPath('Bvb_Grid_Deploy', 'Bvb/Grid/Deploy/');
+    }
+
+    /**
+     * Adds a new deploy class dir to be loaded
+     *
+     * @param string $dir
+     * @param string $prefix
+     */
+    public static function addDeployPrefixPath($dir, $prefix)
+    {
+        self::$_deployClassesDir->addPrefixPath(trim($prefix, '_'), trim($dir, '/') . '/');
+    }
+
+
+    /**
+     * Loads a deploy class
+     *
+     * @param string $class
+     *
+     * @return Bvb_Grid
+     */
+    public static function loadDeployClass($class)
+    {
+        return self::$_deployClassesDir->load($class);
+    }
 }
