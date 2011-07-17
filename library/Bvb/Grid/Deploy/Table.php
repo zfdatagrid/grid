@@ -1925,6 +1925,9 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         $this->_printScript();
 
         $gridId = $this->getGridId();
+        if (strlen($gridId) == 0) {
+            $gridId = 'grid';
+        }
 
         if (($this->getParam('gridmod') == 'ajax' && $this->getInfo("ajax") !== false )
             || $this->getRequest()->isXmlHttpRequest()) {
