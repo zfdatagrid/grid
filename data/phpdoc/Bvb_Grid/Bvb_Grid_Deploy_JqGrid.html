@@ -1,0 +1,2306 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Bvb_Grid_Deploy_JqGrid</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Bvb_Grid_Deploy_JqGrid</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../Bvb_Grid/Bvb_Grid_Deploy_DeployInterface.html">Bvb_Grid_Deploy_DeployInterface</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Deploy class to render data with jqGrid library</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> k2s (Martin Minka) &lt;<a href="mailto:martin.minka@gmail.com">martin.minka@gmail.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id: JqGrid.php 1813 2011-07-16 03:15:32Z bento.vilas.boas@gmail.com $</li>
+				<li><span class="field">copyright:</span> Copyright (c) 2010-2011 XTmotion Limited (http://www.xtmotion.co.uk/)</li>
+				<li><span class="field">license:</span> <a href="http://www.petala-azul.com/bsd.txt">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Grid---Deploy---JqGrid.php.html">/Grid/Deploy/JqGrid.php</a> (line <span class="field">36</span>)
+		</p>
+		
+				
+		<pre><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a>
+   |
+   --Bvb_Grid_Deploy_JqGrid</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-consts">Constants</a>
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+												<div class="var-title">
+					static <span class="var-type">bool</span>
+					<a href="#$debug" title="details" class="var-name">$debug</a>
+				</div>
+																<div class="var-title">
+					static <span class="var-type">string</span>
+					<a href="#$defaultActionClasses" title="details" class="var-name">$defaultActionClasses</a>
+				</div>
+																<div class="var-title">
+					static <span class="var-type">string</span>
+					<a href="#$defaultJqgI18n" title="details" class="var-name">$defaultJqgI18n</a>
+				</div>
+																<div class="var-title">
+					static <span class="var-type">string</span>
+					<a href="#$defaultJqGridLibPath" title="details" class="var-name">$defaultJqGridLibPath</a>
+				</div>
+																																																																																																				<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$_deploymentContent" title="details" class="var-name">$_deploymentContent</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$_id" title="details" class="var-name">$_id</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_jqgColDefaultParams" title="details" class="var-name">$_jqgColDefaultParams</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_jqgDefaultParams" title="details" class="var-name">$_jqgDefaultParams</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">boolean</span>
+					<a href="#$_jqInitialized" title="details" class="var-name">$_jqInitialized</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$_logger" title="details" class="var-name">$_logger</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																												<div class="method-definition">
+					static 						<span class="method-result">mixed</span>
+										<a href="#encodeJson" title="details" class="method-name">encodeJson</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#formatterActionBar" title="details" class="method-name">formatterActionBar</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$actions</span>)
+									</div>
+																																																																																																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#getVersion" title="details" class="method-name">getVersion</a>
+										()
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#htmlAttribs" title="details" class="method-name">htmlAttribs</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$attribs</span>)
+									</div>
+																																																																																																																																																																																
+												<div class="method-definition">
+											<span class="method-result">Bvb_Grid_Deploy_JqGrid</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$options</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addExportButtons" title="details" class="method-name">addExportButtons</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$exports</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#ajax" title="details" class="method-name">ajax</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#bvbClearOnInit" title="details" class="method-name">bvbClearOnInit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#bvbGetId" title="details" class="method-name">bvbGetId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#bvbSetId" title="details" class="method-name">bvbSetId</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#bvbSetOnInit" title="details" class="method-name">bvbSetOnInit</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$javaScript</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/JqGridCommand.html">JqGridCommand</a></span>
+										<a href="#cmd" title="details" class="method-name">cmd</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$command</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#convertRequestParams" title="details" class="method-name">convertRequestParams</a>
+											([<span class="var-type">array</span>&nbsp;<span class="var-name">$params</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#deploy" title="details" class="method-name">deploy</a>
+										()
+									</div>
+																																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getBvbParam" title="details" class="method-name">getBvbParam</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$default</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getExportButtonJs" title="details" class="method-name">getExportButtonJs</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$newWindow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$exportTo</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getId" title="details" class="method-name">getId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getJqgI18n" title="details" class="method-name">getJqgI18n</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getJqgParam" title="details" class="method-name">getJqgParam</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$default</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getJqgPreloadConfig" title="details" class="method-name">getJqgPreloadConfig</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getJqGridLibPath" title="details" class="method-name">getJqGridLibPath</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getJsFuncMassAction" title="details" class="method-name">getJsFuncMassAction</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$massAction</span>, [<span class="var-type">boolean|string</span>&nbsp;<span class="var-name">$useOnSubmit</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getJsFuncSelectedValues" title="details" class="method-name">getJsFuncSelectedValues</a>
+											(<span class="var-type">array|string</span>&nbsp;<span class="var-name">$colNames</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getRecordsPerPage" title="details" class="method-name">getRecordsPerPage</a>
+										()
+									</div>
+																																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#initLogger" title="details" class="method-name">initLogger</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#isAjaxRequest" title="details" class="method-name">isAjaxRequest</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#jqAddOnLoad" title="details" class="method-name">jqAddOnLoad</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$js</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#jqgAddNavButton" title="details" class="method-name">jqgAddNavButton</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$button</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#jqgGetColumnModel" title="details" class="method-name">jqgGetColumnModel</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#jqgGetIdPager" title="details" class="method-name">jqgGetIdPager</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#jqgGetIdTable" title="details" class="method-name">jqgGetIdTable</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#jqInit" title="details" class="method-name">jqInit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#log" title="details" class="method-name">log</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$message</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">7</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#prepareOptions" title="details" class="method-name">prepareOptions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#renderPartData" title="details" class="method-name">renderPartData</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#renderPartHtml" title="details" class="method-name">renderPartHtml</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#renderPartJavascript" title="details" class="method-name">renderPartJavascript</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setAjax" title="details" class="method-name">setAjax</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#setBvbParam" title="details" class="method-name">setBvbParam</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#setBvbParams" title="details" class="method-name">setBvbParams</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#setId" title="details" class="method-name">setId</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#setJqgParam" title="details" class="method-name">setJqgParam</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+										<a href="#setJqgParams" title="details" class="method-name">setJqgParams</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__set" title="details" class="method-name">__set</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#__toString" title="details" class="method-name">__toString</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$debug" id="$debug"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">bool</span>
+			<span class="var-name">$debug</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">1056</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set to true if you want to debug this class</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$defaultActionClasses" id="$defaultActionClasses"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">string</span>
+			<span class="var-name">$defaultActionClasses</span>
+			 = <span class="var-default">array(<br />        '{edit}'   =&gt; 'ui-icon ui-icon-pencil',<br />        '{delete}' =&gt; 'ui-icon ui-icon-trash',<br />        '{view}'   =&gt; 'ui-icon ui-icon-search',<br />        '{add}'    =&gt; 'ui-icon ui-icon-plus',<br />    )</span>			(line <span class="line-number">64</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">URL path to place where JqGrid library resides</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$defaultJqgI18n" id="$defaultJqgI18n"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">string</span>
+			<span class="var-name">$defaultJqgI18n</span>
+			 = <span class="var-default"> &quot;en&quot;</span>			(line <span class="line-number">50</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Code of locale file to use</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$defaultJqGridLibPath" id="$defaultJqGridLibPath"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			static <span class="var-type">string</span>
+			<span class="var-name">$defaultJqGridLibPath</span>
+			 = <span class="var-default"> &quot;public/scripts/jqgrid&quot;</span>			(line <span class="line-number">43</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">URL path to place where JqGrid library resides</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_deploymentContent" id="$_deploymentContent"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$_deploymentContent</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">1018</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Contains result of deploy() function.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_id" id="$_id"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$_id</span>
+			 = <span class="var-default"> 0</span>			(line <span class="line-number">1044</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Ajax ID</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_jqgColDefaultParams" id="$_jqgColDefaultParams"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_jqgColDefaultParams</span>
+			 = <span class="var-default">array(<br />        'title' =&gt; false<br />    )</span>			(line <span class="line-number">108</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Default options for columns</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_jqgDefaultParams" id="$_jqgDefaultParams"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_jqgDefaultParams</span>
+			 = <span class="var-default">array(<br />        'mtype' =&gt; 'POST', // GET will not work because of our parsing<br />        'height' =&gt; 'auto',<br />        'autowidth' =&gt; true,<br />        'rownumbers' =&gt; true,<br />        'gridview' =&gt; true,<br />        'multiselect' =&gt; false,<br />        'viewrecords' =&gt; true,<br />        'imgpath' =&gt; &quot;themes/basic/images&quot;,<br />        'caption' =&gt; '',<br />        'loadError' =&gt; 'function(xhr,st,err) { if (xhr.status!=200) {alert(xhr.statusText);} }',<br />    )</span>			(line <span class="line-number">90</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Default options for JqGrid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_jqInitialized" id="$_jqInitialized"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">boolean</span>
+			<span class="var-name">$_jqInitialized</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">57</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Remember if we are already initialized</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_logger" id="$_logger"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$_logger</span>
+			 = <span class="var-default"> null</span>			(line <span class="line-number">1049</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_actionsUrls">Bvb_Grid::$_actionsUrls</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_allowAdd">Bvb_Grid::$_allowAdd</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_allowAddButton">Bvb_Grid::$_allowAddButton</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_allowDelete">Bvb_Grid::$_allowDelete</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_allowEdit">Bvb_Grid::$_allowEdit</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_baseUrl">Bvb_Grid::$_baseUrl</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_cache">Bvb_Grid::$_cache</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_charEncoding">Bvb_Grid::$_charEncoding</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_classCellCondition">Bvb_Grid::$_classCellCondition</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_classRowCondition">Bvb_Grid::$_classRowCondition</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_classRowConditionResult">Bvb_Grid::$_classRowConditionResult</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_colspan">Bvb_Grid::$_colspan</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_configCallbacks">Bvb_Grid::$_configCallbacks</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_controller">Bvb_Grid::$_controller</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_crud">Bvb_Grid::$_crud</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_cssClasses">Bvb_Grid::$_cssClasses</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_ctrlParams">Bvb_Grid::$_ctrlParams</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_data">Bvb_Grid::$_data</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_defaultConfig">Bvb_Grid::$_defaultConfig</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_defaultFilters">Bvb_Grid::$_defaultFilters</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_deploy">Bvb_Grid::$_deploy</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_deployClassesDir">Bvb_Grid::$_deployClassesDir</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_deployName">Bvb_Grid::$_deployName</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_detailColumns">Bvb_Grid::$_detailColumns</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_escapeFunction">Bvb_Grid::$_escapeFunction</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_eventDispatcher">Bvb_Grid::$_eventDispatcher</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_eventsPrefix">Bvb_Grid::$_eventsPrefix</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_export">Bvb_Grid::$_export</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_externalFilters">Bvb_Grid::$_externalFilters</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_extraColumns">Bvb_Grid::$_extraColumns</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_extraRows">Bvb_Grid::$_extraRows</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_fields">Bvb_Grid::$_fields</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_filters">Bvb_Grid::$_filters</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_filtersRenders">Bvb_Grid::$_filtersRenders</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_filtersValues">Bvb_Grid::$_filtersValues</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_finalFields">Bvb_Grid::$_finalFields</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_formatter">Bvb_Grid::$_formatter</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_gridColumns">Bvb_Grid::$_gridColumns</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_gridId">Bvb_Grid::$_gridId</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_info">Bvb_Grid::$_info</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_isDetail">Bvb_Grid::$_isDetail</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_libraryDir">Bvb_Grid::$_libraryDir</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_massActions">Bvb_Grid::$_massActions</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_modRewrite">Bvb_Grid::$_modRewrite</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_options">Bvb_Grid::$_options</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_order">Bvb_Grid::$_order</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_paginationInterval">Bvb_Grid::$_paginationInterval</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_paramsInSession">Bvb_Grid::$_paramsInSession</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_recordsPerPage">Bvb_Grid::$_recordsPerPage</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_removeHiddenFields">Bvb_Grid::$_removeHiddenFields</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_request">Bvb_Grid::$_request</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_response">Bvb_Grid::$_response</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_result">Bvb_Grid::$_result</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_routeName">Bvb_Grid::$_routeName</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_runCallbacks">Bvb_Grid::$_runCallbacks</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_sessionParams">Bvb_Grid::$_sessionParams</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_showFiltersInExport">Bvb_Grid::$_showFiltersInExport</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_showsGrid">Bvb_Grid::$_showsGrid</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_temp">Bvb_Grid::$_temp</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_templateParams">Bvb_Grid::$_templateParams</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_templates">Bvb_Grid::$_templates</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_titles">Bvb_Grid::$_titles</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_totalRecords">Bvb_Grid::$_totalRecords</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_translator">Bvb_Grid::$_translator</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_updateColumnQueue">Bvb_Grid::$_updateColumnQueue</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_view">Bvb_Grid::$_view</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid.html#var$_willShow">Bvb_Grid::$_willShow</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodencodeJson" id="encodeJson"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method encodeJson</span> (line <span class="line-number">786</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Encode Json that may include javascript expressions.</p>
+<p class="description"><p>Take care of using the Zend_Json_Encoder to alleviate problems with the json_encode  magic key mechanism as of now.</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> Zend_Json::encode</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			encodeJson
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: value to encode</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodformatterActionBar" id="formatterActionBar"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method formatterActionBar</span> (line <span class="line-number">1236</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Function to format action links</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			formatterActionBar
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$actions</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$actions</span><span class="var-description">: definition of links to action                        all parameters will be added as HTML attributes to link except:                        caption: will be placed between &lt;a&gt;&lt;span&gt;$caption&lt;/span&gt;&lt;/a&gt;                        class: predefined variables {edit},{delete},{view} will be replaced with jQuery UI classes                        img: could be array and will be extracted as HTML attributes to &lt;img&gt; tag</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetVersion" id="getVersion"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getVersion</span> (line <span class="line-number">1373</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Will return actual version of this file</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getVersion
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid.html#methodgetVersion">Bvb_Grid::getVersion()</a></dt>
+						<dd>Returns the grid version</dd>
+					</dl>
+			
+	</div>
+<a name="methodhtmlAttribs" id="htmlAttribs"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method htmlAttribs</span> (line <span class="line-number">1288</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Converts an associative array to a string of tag attributes.</p>
+<p class="description"><p>This function is clone from Zend_View_Helper_HtmlElement</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The XHTML for the attributes.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			htmlAttribs
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$attribs</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$attribs</span><span class="var-description">: From this array, each key-value pair is                        converted to an attribute name and value.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">157</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Bvb_Grid_Deploy_JqGrid</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$options</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: configuration options</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid.html#method__construct">Bvb_Grid::__construct()</a></dt>
+						<dd>The __construct function receives the db adapter. All information related to the  URL is also processed here</dd>
+					</dl>
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Deploy_DeployInterface.html#method__construct">Bvb_Grid_Deploy_DeployInterface::__construct()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodaddExportButtons" id="addExportButtons"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addExportButtons</span> (line <span class="line-number">358</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add export action buttons to grid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addExportButtons
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$exports</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$exports</span><span class="var-description">: names of deploy classes</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodajax" id="ajax"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">ajax</span> (line <span class="line-number">212</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Deprecated, use setAjax()</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			ajax
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbvbClearOnInit" id="bvbClearOnInit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">bvbClearOnInit</span> (line <span class="line-number">344</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes all javascript code added by calls to setJqgOnInit()</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			bvbClearOnInit
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodbvbGetId" id="bvbGetId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">bvbGetId</span> (line <span class="line-number">1109</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get column containing id value of the row</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			bvbGetId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodbvbSetId" id="bvbSetId"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">bvbSetId</span> (line <span class="line-number">1099</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set column containing id value of the row</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			bvbSetId
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: name of the column</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbvbSetOnInit" id="bvbSetOnInit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">bvbSetOnInit</span> (line <span class="line-number">333</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Will add passed javascript code inside anonymouse function.</p>
+<p class="description"><p>Following variables are accessible in that function:  this  - jqgrid DOM object  grid  - jqGrid object</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			bvbSetOnInit
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$javaScript</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$javaScript</span><span class="var-description">: javascript will be included into funcion</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcmd" id="cmd"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">cmd</span> (line <span class="line-number">1004</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add command to chain. See http://www.trirand.com/jqgridwiki/doku.php?id=wiki:methods.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/JqGridCommand.html">JqGridCommand</a></span>
+		<span class="method-name">
+			cmd
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$command</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$command</span><span class="var-description">: jqGrid command                         there could be any number of additional parameters</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodconvertRequestParams" id="convertRequestParams"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">convertRequestParams</span> (line <span class="line-number">1160</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Handle parameters send from frontend.</p>
+<p class="description"><p>They could contain: <ul><li>number of rows to be shown on page</li><li>first row to show on page</li><li>sort order</li><li>search filters</li></ul></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			convertRequestParams
+		</span>
+					([<span class="var-type">array</span>&nbsp;<span class="var-name">$params</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$params</span><span class="var-description">: parameters to conver, request parameters will be used of not set                       this array should always contain Zend parameters module, controller, action</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddeploy" id="deploy"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">deploy</span> (line <span class="line-number">432</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build grid. Will output HTML definition for grid and add js/css to view.</p>
+<p class="description"><p>Use __toString() function to receive the result and place it in view where you want to display the grid.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			deploy
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid.html#methoddeploy">Bvb_Grid::deploy()</a></dt>
+						<dd>Deploys</dd>
+					</dl>
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Deploy_DeployInterface.html#methoddeploy">Bvb_Grid_Deploy_DeployInterface::deploy()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodgetBvbParam" id="getBvbParam"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getBvbParam</span> (line <span class="line-number">317</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return value of parameter from Bvb_Grid_Deploy_JqGrid domain</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getBvbParam
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$default</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$var</span><span class="var-description">: variable name</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$default</span><span class="var-description">: value to return if option is not set</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetExportButtonJs" id="getExportButtonJs"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getExportButtonJs</span> (line <span class="line-number">388</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Create javascript adding export button to grid navBar</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getExportButtonJs
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">boolean</span>&nbsp;<span class="var-name">$newWindow</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$exportTo</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$url</span><span class="var-description">: url to action which supports generation of export</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$newWindow</span><span class="var-description">: should the export be opened as new window</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$exportTo</span><span class="var-description">: Bvb deploy class name used to generate export</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetId" id="getId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getId</span> (line <span class="line-number">1074</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return value used to build HTML element ID attributes</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetJqgI18n" id="getJqgI18n"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJqgI18n</span> (line <span class="line-number">826</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return language code</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getJqgI18n
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetJqgParam" id="getJqgParam"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJqgParam</span> (line <span class="line-number">265</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return value of parameter from jqGrid domain</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getJqgParam
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$default</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$var</span><span class="var-description">: variable name</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$default</span><span class="var-description">: value to return if option is not set</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetJqgPreloadConfig" id="getJqgPreloadConfig"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJqgPreloadConfig</span> (line <span class="line-number">863</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return Javascript which will configure jqGrid before it will be loaded.</p>
+<p class="description"><p>This code should be added between grid.locale-*.js and  jquery.jqGrid.min.js file.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getJqgPreloadConfig
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetJqGridLibPath" id="getJqGridLibPath"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJqGridLibPath</span> (line <span class="line-number">836</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return URL where jqGrid library is located (it has js and css folders under it).</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getJqGridLibPath
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetJsFuncMassAction" id="getJsFuncMassAction"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJsFuncMassAction</span> (line <span class="line-number">681</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return javascript call to post to given mass action</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getJsFuncMassAction
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$massAction</span>, [<span class="var-type">boolean|string</span>&nbsp;<span class="var-name">$useOnSubmit</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$massAction</span><span class="var-description">: mass action definition to execute on selected rows</span>			</li>
+					<li>
+				<span class="var-type">boolean|string</span>
+				<span class="var-name">$useOnSubmit</span><span class="var-description">: true will add hander defined on action, false will add nothing, string will replace action setting</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetJsFuncSelectedValues" id="getJsFuncSelectedValues"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getJsFuncSelectedValues</span> (line <span class="line-number">742</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Helper to generate JS to get column data of selected rows</p>
+<p class="description"><p>TODO empty $colNames should cause to receive data from all columns</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> javascript function which returns data when executed</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getJsFuncSelectedValues
+		</span>
+					(<span class="var-type">array|string</span>&nbsp;<span class="var-name">$colNames</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array|string</span>
+				<span class="var-name">$colNames</span><span class="var-description">: list of column names you want collect</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetRecordsPerPage" id="getRecordsPerPage"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRecordsPerPage</span> (line <span class="line-number">1359</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the number of records to show per page</p>
+<p class="description"><p>Is overriden to return always the number of data requested by jqGrid ajax request.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getRecordsPerPage
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRecordsPerPage">Bvb_Grid::getRecordsPerPage()</a></dt>
+						<dd>Returns the number of records to show per page</dd>
+					</dl>
+			
+	</div>
+<a name="methodinitLogger" id="initLogger"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">initLogger</span> (line <span class="line-number">1119</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Create Zend_Log object used to debug Bvb classes</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			initLogger
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodisAjaxRequest" id="isAjaxRequest"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">isAjaxRequest</span> (line <span class="line-number">1063</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Use to detect if we should return plain JSON data or full table definition</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			isAjaxRequest
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodjqAddOnLoad" id="jqAddOnLoad"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqAddOnLoad</span> (line <span class="line-number">850</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add JavaScript code to be executed when jQuery ready event</p>
+<p class="description"><p>ZendX_Jquery is used as default, but this could be overriden.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			jqAddOnLoad
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$js</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$js</span><span class="var-description">: javascipt code to add</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodjqgAddNavButton" id="jqgAddNavButton"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqgAddNavButton</span> (line <span class="line-number">877</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Add action button to navigation bar</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			jqgAddNavButton
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$button</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$button</span><span class="var-description">: options for JqGrid custom button</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodjqgGetColumnModel" id="jqgGetColumnModel"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqgGetColumnModel</span> (line <span class="line-number">888</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return colModel property for jqGrid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			jqgGetColumnModel
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodjqgGetIdPager" id="jqgGetIdPager"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqgGetIdPager</span> (line <span class="line-number">981</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return ID for pager HTML element</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			jqgGetIdPager
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodjqgGetIdTable" id="jqgGetIdTable"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqgGetIdTable</span> (line <span class="line-number">991</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return ID for pager HTML element</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			jqgGetIdTable
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodjqInit" id="jqInit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">jqInit</span> (line <span class="line-number">798</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Loads jQuery related libraries needed to display jqGrid.</p>
+<p class="description"><p>ZendX_Jquery is used as default, but this could be overriden.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			jqInit
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodlog" id="log"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">log</span> (line <span class="line-number">1140</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Log message. Per default the message will be sent to FirePHP.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			log
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$message</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">7</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$message</span><span class="var-description">: message to log</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$priority</span><span class="var-description">: one of Zend_Log constances, Zend_Log::DEBUG is default</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodprepareOptions" id="prepareOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">prepareOptions</span> (line <span class="line-number">610</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Consolidate all settings to know how to render the grid</p>
+<p class="description"><p>Options are set on grid level by: <ol><li>javascript options passed to jqGrid (?)</li><li>special Bvb_Grid_Deploy_JqGrid options (jqg array)</li><li>standard Bvb settings</li></ol>  Options are set on column level by: <ol><li>javascript options passed to columns (?)</li><li>special Bvb_Grid_Deploy_JqGrid options (jqg array)</li><li>standard Bvb settings</li><li>formaters (?)</li></ol></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			prepareOptions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodrenderPartData" id="renderPartData"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">renderPartData</span> (line <span class="line-number">543</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return data in JSON format</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			renderPartData
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodrenderPartHtml" id="renderPartHtml"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">renderPartHtml</span> (line <span class="line-number">525</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return html part of grid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			renderPartHtml
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodrenderPartJavascript" id="renderPartJavascript"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">renderPartJavascript</span> (line <span class="line-number">470</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return javascript part of grid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			renderPartJavascript
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetAjax" id="setAjax"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setAjax</span> (line <span class="line-number">178</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Call this in controller (before any output) to dispatch Ajax requests.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setAjax
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: ID to recognize the request from multiple tables ajax request will be ignored if FALSE</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetBvbParam" id="setBvbParam"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setBvbParam</span> (line <span class="line-number">303</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set value to one parameter from Bvb_Grid_Deploy_JqGrid domain</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			setBvbParam
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$var</span><span class="var-description">: name of property to set with value</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetBvbParams" id="setBvbParams"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setBvbParams</span> (line <span class="line-number">277</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set Bvb_Grid_Deploy_JqGrid own options (merging with old options)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			setBvbParams
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: set Bvb_Grid_Deploy_JqGrid</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetId" id="setId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setId</span> (line <span class="line-number">1086</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set value used to build HTML element ID attributes</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			setId
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: text to apply as part of jqGrid HTML element IDs</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetJqgParam" id="setJqgParam"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setJqgParam</span> (line <span class="line-number">251</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set value to one parameter from jqGrid domain</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			setJqgParam
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$var</span><span class="var-description">: name of property to set with value</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetJqgParams" id="setJqgParams"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setJqgParams</span> (line <span class="line-number">225</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set jQuery Grid options (merging with old options)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Deploy_JqGrid.html">Bvb_Grid_Deploy_JqGrid</a></span>
+		<span class="method-name">
+			setJqgParams
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: set JqGrid options (@see http://www.trirand.com/jqgridwiki/doku.php?id=wiki:options)</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="method__set" id="__set"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__set</span> (line <span class="line-number">1327</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Configuration magic</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__set
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$var</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$var</span><span class="var-description">: name of property to set with value</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$value</span><span class="var-description">: value</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid.html#method__set">Bvb_Grid::__set()</a></dt>
+						<dd>Magic function handling</dd>
+					</dl>
+			
+	</div>
+<a name="method__toString" id="__toString"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">__toString</span> (line <span class="line-number">1027</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return result of deploy().</p>
+<p class="description"><p>string|boolean FALSE if deploy() was not called before</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			__toString
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method__construct">Bvb_Grid::__construct()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddDeployPrefixPath">Bvb_Grid::addDeployPrefixPath()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddDetailColumns">Bvb_Grid::addDetailColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddExport">Bvb_Grid::addExport()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddExternalFilter">Bvb_Grid::addExternalFilter()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddExtraColumn">Bvb_Grid::addExtraColumn()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddExtraColumns">Bvb_Grid::addExtraColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddExtraRows">Bvb_Grid::addExtraRows()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddFilters">Bvb_Grid::addFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddFiltersRenderDir">Bvb_Grid::addFiltersRenderDir()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddFormatterDir">Bvb_Grid::addFormatterDir()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddGridColumns">Bvb_Grid::addGridColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddParam">Bvb_Grid::addParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddParams">Bvb_Grid::addParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddTemplateDir">Bvb_Grid::addTemplateDir()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddTemplateParam">Bvb_Grid::addTemplateParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodaddTemplateParams">Bvb_Grid::addTemplateParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodarrayPluck">Bvb_Grid::arrayPluck()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodcheckExportRights">Bvb_Grid::checkExportRights()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodclearDeployOptions">Bvb_Grid::clearDeployOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodclearExternalFilters">Bvb_Grid::clearExternalFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodclearExtraColumns">Bvb_Grid::clearExtraColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodclearFilters">Bvb_Grid::clearFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methoddeploy">Bvb_Grid::deploy()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodemitEvent">Bvb_Grid::emitEvent()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodfactory">Bvb_Grid::factory()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetAllParams">Bvb_Grid::getAllParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetAutoCompleteUrlForFilter">Bvb_Grid::getAutoCompleteUrlForFilter()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetCache">Bvb_Grid::getCache()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetCharEncoding">Bvb_Grid::getCharEncoding()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetController">Bvb_Grid::getController()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetDefaultConfig">Bvb_Grid::getDefaultConfig()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetDefaultEscapeFunction">Bvb_Grid::getDefaultEscapeFunction()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetDeployOption">Bvb_Grid::getDeployOption()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetDeployOptions">Bvb_Grid::getDeployOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetDeployPrefixPaths">Bvb_Grid::getDeployPrefixPaths()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetEventDispatcher">Bvb_Grid::getEventDispatcher()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetEventsPrefix">Bvb_Grid::getEventsPrefix()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetExport">Bvb_Grid::getExport()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetExports">Bvb_Grid::getExports()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetExtraColumn">Bvb_Grid::getExtraColumn()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetExtraColumns">Bvb_Grid::getExtraColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetExtraColumnsForPosition">Bvb_Grid::getExtraColumnsForPosition()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetField">Bvb_Grid::getField()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetFieldAlias">Bvb_Grid::getFieldAlias()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetFields">Bvb_Grid::getFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetFilter">Bvb_Grid::getFilter()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetFilterOp">Bvb_Grid::getFilterOp()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetFilters">Bvb_Grid::getFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetGridId">Bvb_Grid::getGridId()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetHiddenFields">Bvb_Grid::getHiddenFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetIdentifierColumnsFromUrl">Bvb_Grid::getIdentifierColumnsFromUrl()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetInfo">Bvb_Grid::getInfo()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetLibraryDir">Bvb_Grid::getLibraryDir()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetMassActions">Bvb_Grid::getMassActions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetOptions">Bvb_Grid::getOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetPaginationInterval">Bvb_Grid::getPaginationInterval()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetParam">Bvb_Grid::getParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRecordsPerPage">Bvb_Grid::getRecordsPerPage()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRequest">Bvb_Grid::getRequest()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRequestParam">Bvb_Grid::getRequestParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRequestParamClean">Bvb_Grid::getRequestParamClean()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetResponse">Bvb_Grid::getResponse()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetRouteName">Bvb_Grid::getRouteName()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetSelect">Bvb_Grid::getSelect()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetSource">Bvb_Grid::getSource()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetTemplateParams">Bvb_Grid::getTemplateParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetTotalRecords">Bvb_Grid::getTotalRecords()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetTranslator">Bvb_Grid::getTranslator()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetUrl">Bvb_Grid::getUrl()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetUseModRewrite">Bvb_Grid::getUseModRewrite()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetVersion">Bvb_Grid::getVersion()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetView">Bvb_Grid::getView()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodgetVisibleFields">Bvb_Grid::getVisibleFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodhasFilters">Bvb_Grid::hasFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodinitDeployClass">Bvb_Grid::initDeployClass()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodisExport">Bvb_Grid::isExport()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodisTranslated">Bvb_Grid::isTranslated()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodlistenEvent">Bvb_Grid::listenEvent()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodloadDeployClass">Bvb_Grid::loadDeployClass()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodloadFilterRender">Bvb_Grid::loadFilterRender()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodquery">Bvb_Grid::query()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodremoveAllParams">Bvb_Grid::removeAllParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodremoveExternalFilter">Bvb_Grid::removeExternalFilter()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodremoveParam">Bvb_Grid::removeParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodresetColumn">Bvb_Grid::resetColumn()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodresetColumns">Bvb_Grid::resetColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodrunConfigCallbacks">Bvb_Grid::runConfigCallbacks()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsaveParamsInSession">Bvb_Grid::saveParamsInSession()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetCache">Bvb_Grid::setCache()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetcharEncoding">Bvb_Grid::setcharEncoding()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetColumnsHidden">Bvb_Grid::setColumnsHidden()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetColumnsPositions">Bvb_Grid::setColumnsPositions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetColumnsVisible">Bvb_Grid::setColumnsVisible()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetController">Bvb_Grid::setController()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDefaultConfig">Bvb_Grid::setDefaultConfig()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDefaultEscapeFunction">Bvb_Grid::setDefaultEscapeFunction()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDefaultFiltersValues">Bvb_Grid::setDefaultFiltersValues()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDeployOption">Bvb_Grid::setDeployOption()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDeployOptions">Bvb_Grid::setDeployOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetDetailColumns">Bvb_Grid::setDetailColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetEventDispatcher">Bvb_Grid::setEventDispatcher()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetEventsPrefix">Bvb_Grid::setEventsPrefix()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetExport">Bvb_Grid::setExport()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetExtraColumns">Bvb_Grid::setExtraColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetFilters">Bvb_Grid::setFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetGridColumns">Bvb_Grid::setGridColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetGridId">Bvb_Grid::setGridId()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetLibraryDir">Bvb_Grid::setLibraryDir()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetMassActions">Bvb_Grid::setMassActions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetOptions">Bvb_Grid::setOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetPaginationInterval">Bvb_Grid::setPaginationInterval()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetParam">Bvb_Grid::setParam()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetParams">Bvb_Grid::setParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetRecordsPerPage">Bvb_Grid::setRecordsPerPage()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetRequest">Bvb_Grid::setRequest()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetResponse">Bvb_Grid::setResponse()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetRoutename">Bvb_Grid::setRoutename()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetShowFiltersInExport">Bvb_Grid::setShowFiltersInExport()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetSource">Bvb_Grid::setSource()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetSqlExp">Bvb_Grid::setSqlExp()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetTemplate">Bvb_Grid::setTemplate()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetTemplateParams">Bvb_Grid::setTemplateParams()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetTranslator">Bvb_Grid::setTranslator()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodsetView">Bvb_Grid::setView()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodupdateColumn">Bvb_Grid::updateColumn()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodupdateColumns">Bvb_Grid::updateColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodupdateOptions">Bvb_Grid::updateOptions()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methoduseModRewrite">Bvb_Grid::useModRewrite()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#methodwillShow">Bvb_Grid::willShow()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyExternalFilters">Bvb_Grid::_applyExternalFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFieldCallback">Bvb_Grid::_applyFieldCallback()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFieldDecorator">Bvb_Grid::_applyFieldDecorator()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFieldEscape">Bvb_Grid::_applyFieldEscape()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFieldFormat">Bvb_Grid::_applyFieldFormat()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFieldHelper">Bvb_Grid::_applyFieldHelper()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyFormat">Bvb_Grid::_applyFormat()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_applyOptionsToFields">Bvb_Grid::_applyOptionsToFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildDefaultFiltersValues">Bvb_Grid::_buildDefaultFiltersValues()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildExtraField">Bvb_Grid::_buildExtraField()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildFilters">Bvb_Grid::_buildFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildFiltersValues">Bvb_Grid::_buildFiltersValues()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildGrid">Bvb_Grid::_buildGrid()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildQueryOrderAndLimit">Bvb_Grid::_buildQueryOrderAndLimit()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildSqlExp">Bvb_Grid::_buildSqlExp()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_buildTitles">Bvb_Grid::_buildTitles()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_checkForAllParamsInField">Bvb_Grid::_checkForAllParamsInField()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_colspan">Bvb_Grid::_colspan()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_displayField">Bvb_Grid::_displayField()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_getColumn">Bvb_Grid::_getColumn()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_getMassActionsDecorator">Bvb_Grid::_getMassActionsDecorator()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_object2array">Bvb_Grid::_object2array()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_prepareReplace">Bvb_Grid::_prepareReplace()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_redirect">Bvb_Grid::_redirect()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_replaceSpecialTags">Bvb_Grid::_replaceSpecialTags()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_setRemoveHiddenFields">Bvb_Grid::_setRemoveHiddenFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_validateFields">Bvb_Grid::_validateFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method_validateFilters">Bvb_Grid::_validateFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method__">Bvb_Grid::__()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method__call">Bvb_Grid::__call()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid.html#method__set">Bvb_Grid::__set()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span></p>
+					<blockquote>
+													<img src="../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../Bvb_Grid/Bvb_Grid.html#constVERSION">Bvb_Grid::VERSION</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 17 Jul 2011 02:28:56 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

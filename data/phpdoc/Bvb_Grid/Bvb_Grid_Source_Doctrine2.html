@@ -1,0 +1,1781 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Bvb_Grid_Source_Doctrine2</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Bvb_Grid_Source_Doctrine2</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html">Bvb_Grid_Source_SourceInterface</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Provides you the ability to use Doctrine 2.x as a source  with the Grid.</p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Martin Parsiegla &lt;<a href="mailto:martin.parsiegla@speanet.info">martin.parsiegla@speanet.info</a>&gt;</li>
+				<li><span class="field">version:</span> $Id: DbAbstract.php 1791 2011-05-31 03:19:53Z bento.vilas.boas@gmail.com $</li>
+				<li><span class="field">copyright:</span> 2010 ZFDatagrid</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Grid---Source---Doctrine2.php.html">/Grid/Source/Doctrine2.php</a> (line <span class="field">17</span>)
+		</p>
+		
+				
+		<pre><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html">Bvb_Grid_Source_Db_DbAbstract</a>
+   |
+   --Bvb_Grid_Source_Doctrine2</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																																																																																																																																																																																												
+												<div class="method-definition">
+											<span class="method-result">Bvb_Grid_Source_Doctrine2</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type">string|QueryBuilder</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">EntityManager</span>&nbsp;<span class="var-name">$entityManager</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+										<a href="#addCondition" title="details" class="method-name">addCondition</a>
+											(<span class="var-type">$filter</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">$op</span>&nbsp;<span class="var-name">$op</span>, <span class="var-type">$completeField</span>&nbsp;<span class="var-name">$completeField</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addFullTextSearch" title="details" class="method-name">addFullTextSearch</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#beginTransaction" title="details" class="method-name">beginTransaction</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#buildFields" title="details" class="method-name">buildFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#buildForm" title="details" class="method-name">buildForm</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#buildFormElements" title="details" class="method-name">buildFormElements</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$cols</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$info</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Mp_Grid_Source_Doctrine2</span>
+										<a href="#buildQueryLimit" title="details" class="method-name">buildQueryLimit</a>
+											(<span class="var-type">$start</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">$offset</span>&nbsp;<span class="var-name">$offset</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Mp_Grid_Source_Doctrine2</span>
+										<a href="#buildQueryOrder" title="details" class="method-name">buildQueryOrder</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$order</span>, [<span class="var-type">bool</span>&nbsp;<span class="var-name">$reset</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#commit" title="details" class="method-name">commit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#delete" title="details" class="method-name">delete</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#execute" title="details" class="method-name">execute</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#fetchDetail" title="details" class="method-name">fetchDetail</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getAutoCompleteForFilter" title="details" class="method-name">getAutoCompleteForFilter</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$term</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$specialKey</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">'json'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getConnectionId" title="details" class="method-name">getConnectionId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getDescribeTable" title="details" class="method-name">getDescribeTable</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$class</span>, <span class="var-type">array|string</span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getDistinctValuesForFilters" title="details" class="method-name">getDistinctValuesForFilters</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">EntityManager</span>
+										<a href="#getEntityManager" title="details" class="method-name">getEntityManager</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string|null</span>
+										<a href="#getFieldType" title="details" class="method-name">getFieldType</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getFilterValuesBasedOnFieldDefinition" title="details" class="method-name">getFilterValuesBasedOnFieldDefinition</a>
+											(<span class="var-type">$field</span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getIdentifierColumns" title="details" class="method-name">getIdentifierColumns</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$table</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getMainTable" title="details" class="method-name">getMainTable</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getMassActionsIds" title="details" class="method-name">getMassActionsIds</a>
+											(<span class="var-type">$table</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$separator</span> = <span class="var-default">'-'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">QueryBuilder</span>
+										<a href="#getQueryBuilder" title="details" class="method-name">getQueryBuilder</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">false|array</span>
+										<a href="#getRecord" title="details" class="method-name">getRecord</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">QueryBuilder</span>
+										<a href="#getSelectObject" title="details" class="method-name">getSelectObject</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getSelectOrder" title="details" class="method-name">getSelectOrder</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getSourceName" title="details" class="method-name">getSourceName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getSqlExp" title="details" class="method-name">getSqlExp</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTableList" title="details" class="method-name">getTableList</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getTotalRecords" title="details" class="method-name">getTotalRecords</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getValuesForFiltersFromTable" title="details" class="method-name">getValuesForFiltersFromTable</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#hasCrud" title="details" class="method-name">hasCrud</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#insert" title="details" class="method-name">insert</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#quoteValue" title="details" class="method-name">quoteValue</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+										<a href="#resetLimit" title="details" class="method-name">resetLimit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+										<a href="#resetOrder" title="details" class="method-name">resetOrder</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#rollBack" title="details" class="method-name">rollBack</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setCache" title="details" class="method-name">setCache</a>
+											(<span class="var-type">Zend_Cache</span>&nbsp;<span class="var-name">$cache</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setEntityManager" title="details" class="method-name">setEntityManager</a>
+											([<span class="var-type">EntityManager</span>&nbsp;<span class="var-name">$entityManager</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine2.html">Bvb_Grid_Source_Doctrine2</a></span>
+										<a href="#setQueryBuilder" title="details" class="method-name">setQueryBuilder</a>
+											(<span class="var-type">string|EntityManager|EntityRepository</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTotalRecords" title="details" class="method-name">setTotalRecords</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$total</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#update" title="details" class="method-name">update</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">58</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class construct.</p>
+	
+	<div class="method-signature">
+		<span class="method-result">Bvb_Grid_Source_Doctrine2</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type">string|QueryBuilder</span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">EntityManager</span>&nbsp;<span class="var-name">$entityManager</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string|QueryBuilder</span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type">EntityManager</span>
+				<span class="var-name">$entityManager</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddCondition" id="addCondition"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addCondition</span> (line <span class="line-number">151</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new condition to the current query</p>
+<p class="description"><p>$filter is the value to be filtered  $op is the opreand to be used: =,&gt;=, like, llike,REGEX,  $completeField. use the index $completField['field'] to  specify the field, to avoid ambiguous</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+		<span class="method-name">
+			addCondition
+		</span>
+					(<span class="var-type">$filter</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">$op</span>&nbsp;<span class="var-name">$op</span>, <span class="var-type">$completeField</span>&nbsp;<span class="var-name">$completeField</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$filter</span>
+				<span class="var-name">$filter</span>			</li>
+					<li>
+				<span class="var-type">$op</span>
+				<span class="var-name">$op</span>			</li>
+					<li>
+				<span class="var-type">$completeField</span>
+				<span class="var-name">$completeField</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodaddCondition">Bvb_Grid_Source_SourceInterface::addCondition()</a></dt>
+						<dd>Adds a new condition to the current query</dd>
+					</dl>
+			
+	</div>
+<a name="methodaddFullTextSearch" id="addFullTextSearch"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addFullTextSearch</span> (line <span class="line-number">288</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addFullTextSearch
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$filter</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodaddFullTextSearch">Bvb_Grid_Source_SourceInterface::addFullTextSearch()</a></dt>
+						<dd>Adds a fulltext search instead of a addcondition method</dd>
+					</dl>
+			
+	</div>
+<a name="methodbeginTransaction" id="beginTransaction"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">beginTransaction</span> (line <span class="line-number">1558</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			beginTransaction
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodbeginTransaction">Bvb_Grid_Source_SourceInterface::beginTransaction()</a></dt>
+						<dd>Starts a transaction</dd>
+					</dl>
+			
+	</div>
+<a name="methodbuildFields" id="buildFields"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildFields</span> (line <span class="line-number">316</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">builds a key=&gt;value array</p>
+<p class="description"><p>they must have two options  title and field  field is used to perform queries.  Must have table name or table alias as a prefix  ex: user.id | country.population</p><p>The key for this array is the output field  If raw sql is somehting like</p><p>select name as alias, country from users</p><p>the return array must be like this:</p><p>array('alias'=&gt;array('title'=&gt;'alias','field'=&gt;'users.name'));</p><p>its not bad idea to apply this to fields titles  $title = ucwords(str_replace('_',' ',$title));</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			buildFields
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodbuildFields">Bvb_Grid_Source_SourceInterface::buildFields()</a></dt>
+						<dd>builds a key=&gt;value array</dd>
+					</dl>
+			
+	</div>
+<a name="methodbuildForm" id="buildForm"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildForm</span> (line <span class="line-number">427</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the form based on a Model or query.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			buildForm
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$inputsType</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodbuildForm">Bvb_Grid_Source_SourceInterface::buildForm()</a></dt>
+						<dd>Build the form based on a Model or query</dd>
+					</dl>
+			
+	</div>
+<a name="methodbuildFormElements" id="buildFormElements"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildFormElements</span> (line <span class="line-number">449</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Will build out an array of form elements,  based on the column type and return the array  to be used when loading the Bvb_Grid_Form</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			buildFormElements
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$cols</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$info</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$cols</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$info</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$inputsType</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbuildQueryLimit" id="buildQueryLimit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildQueryLimit</span> (line <span class="line-number">607</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the query limit clause</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Mp_Grid_Source_Doctrine2</span>
+		<span class="method-name">
+			buildQueryLimit
+		</span>
+					(<span class="var-type">$start</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">$offset</span>&nbsp;<span class="var-name">$offset</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$start</span>
+				<span class="var-name">$start</span>			</li>
+					<li>
+				<span class="var-type">$offset</span>
+				<span class="var-name">$offset</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodbuildQueryLimit">Bvb_Grid_Source_SourceInterface::buildQueryLimit()</a></dt>
+						<dd>Build the query limit clause</dd>
+					</dl>
+			
+	</div>
+<a name="methodbuildQueryOrder" id="buildQueryOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildQueryOrder</span> (line <span class="line-number">631</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the order part from the query.</p>
+<p class="description"><p>The first arg is the field to be ordered and the $order  arg is the correspondent order (ASC|DESC)</p><p>If the $reset is set to true, all previous order will be removed.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Mp_Grid_Source_Doctrine2</span>
+		<span class="method-name">
+			buildQueryOrder
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$order</span>, [<span class="var-type">bool</span>&nbsp;<span class="var-name">$reset</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$order</span>			</li>
+					<li>
+				<span class="var-type">bool</span>
+				<span class="var-name">$reset</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodbuildQueryOrder">Bvb_Grid_Source_SourceInterface::buildQueryOrder()</a></dt>
+						<dd>Build the order part from the query.</dd>
+					</dl>
+			
+	</div>
+<a name="methodcommit" id="commit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">commit</span> (line <span class="line-number">1563</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			commit
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodcommit">Bvb_Grid_Source_SourceInterface::commit()</a></dt>
+						<dd>Commits</dd>
+					</dl>
+			
+	</div>
+<a name="methoddelete" id="delete"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">delete</span> (line <span class="line-number">657</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Delete a record from a table</p>
+<p class="description"><p>Ex: array('user_id'=&gt;'1','id_site'=&gt;'12');  Raw SQL: * WHERE user_id='1' AND id_site='12'</p></p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Of Affected rows</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			delete
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methoddelete">Bvb_Grid_Source_SourceInterface::delete()</a></dt>
+						<dd>Delete a record from a table</dd>
+					</dl>
+			
+	</div>
+<a name="methodexecute" id="execute"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">execute</span> (line <span class="line-number">684</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Runs the query and returns the result as a associative array</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			execute
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodexecute">Bvb_Grid_Source_SourceInterface::execute()</a></dt>
+						<dd>Runs the query and returns the result as a associative array</dd>
+					</dl>
+			
+	</div>
+<a name="methodfetchDetail" id="fetchDetail"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">fetchDetail</span> (line <span class="line-number">712</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get a record detail based the current query</p>
+<p class="description"><p><div class="src-code"><ol><li><div class="src-line">&nbsp;<span class="src-var">$where&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-str">'columnName'&nbsp;</span>=&gt;&nbsp;<span class="src-str">'searchValue'</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line">&nbsp;<span class="src-sym">)</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			fetchDetail
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodfetchDetail">Bvb_Grid_Source_SourceInterface::fetchDetail()</a></dt>
+						<dd>Get a record detail based the current query</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetAutoCompleteForFilter" id="getAutoCompleteForFilter"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAutoCompleteForFilter</span> (line <span class="line-number">1297</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getAutoCompleteForFilter
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$term</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$specialKey</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">'json'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$term</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$specialKey</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$output</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetAutoCompleteForFilter">Bvb_Grid_Source_SourceInterface::getAutoCompleteForFilter()</a></dt>
+						<dd>Returns a JSON encoded array of options to be used by auto-complete operations</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetConnectionId" id="getConnectionId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getConnectionId</span> (line <span class="line-number">1573</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getConnectionId
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetConnectionId">Bvb_Grid_Source_SourceInterface::getConnectionId()</a></dt>
+						<dd>Returns curretn connection ID</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetDescribeTable" id="getDescribeTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDescribeTable</span> (line <span class="line-number">737</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method is not implemented in the interface (yet), nevertheless it  has to be implemented so crud-operations can be used.</p>
+<p class="description"><p>The only thing that is done here, is the creation of a new field 'NULLABLE',  which defines wether or not the field is nullable.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getDescribeTable
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$class</span>, <span class="var-type">array|string</span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array|string</span>
+				<span class="var-name">$table</span><span class="var-description">: Table Name</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$class</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetDistinctValuesForFilters" id="getDistinctValuesForFilters"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDistinctValuesForFilters</span> (line <span class="line-number">774</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Should preform a query based on the provided by the user  select the two fields and return an array $field=&gt;$value  as result</p>
+<p class="description"><p>ex: SELECT $field, $value FROM *  array('1'=&gt;'Something','2'=&gt;'Number','3'=&gt;'history')....;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getDistinctValuesForFilters
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldValue</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$order</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetDistinctValuesForFilters">Bvb_Grid_Source_SourceInterface::getDistinctValuesForFilters()</a></dt>
+						<dd>Should perform a query based on the provided by the user  select the two fields and return an array $field=&gt;$value  as result</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetEntityManager" id="getEntityManager"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEntityManager</span> (line <span class="line-number">69</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retriev the entity manager.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">EntityManager</span>
+		<span class="method-name">
+			getEntityManager
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetFieldType" id="getFieldType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFieldType</span> (line <span class="line-number">809</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return te field type  char, varchar, int</p>
+<p class="description"><p>Note: If the field is enum or set,  the value returned must be set or enum,  and not the full definition</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string|null</span>
+		<span class="method-name">
+			getFieldType
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetFieldType">Bvb_Grid_Source_SourceInterface::getFieldType()</a></dt>
+						<dd>Return field type  char, varchar, int</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetFilterValuesBasedOnFieldDefinition" id="getFilterValuesBasedOnFieldDefinition"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFilterValuesBasedOnFieldDefinition</span> (line <span class="line-number">853</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return possible filters values based on field definition  This is mostly used for enum fields where the possibile  values are extracted</p>
+<p class="description"><p>Ex: enum('Yes','No','Empty');</p><p>should return</p><p>array('Yes'=&gt;'Yes','No'=&gt;'No','Empty'=&gt;'Empty');</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getFilterValuesBasedOnFieldDefinition
+		</span>
+					(<span class="var-type">$field</span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$field</span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetFilterValuesBasedOnFieldDefinition">Bvb_Grid_Source_SourceInterface::getFilterValuesBasedOnFieldDefinition()</a></dt>
+						<dd>Return possible filters values based on field definition  This is mostly used for enum fields where the possible  values are extracted</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetIdentifierColumns" id="getIdentifierColumns"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIdentifierColumns</span> (line <span class="line-number">864</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Find identifier columns.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Primary Keys for specified table</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getIdentifierColumns
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$table</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetIdentifierColumns">Bvb_Grid_Source_SourceInterface::getIdentifierColumns()</a></dt>
+						<dd>Returns an array of table identifier columns or PK's</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetMainTable" id="getMainTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMainTable</span> (line <span class="line-number">891</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the &quot;main&quot; table  the one after SELECT * FROM {MAIN_TABLE}</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getMainTable
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetMainTable">Bvb_Grid_Source_SourceInterface::getMainTable()</a></dt>
+						<dd>Returns the &quot;main&quot; table  the one after select * FROM {MAIN_TABLE}</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetMassActionsIds" id="getMassActionsIds"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMassActionsIds</span> (line <span class="line-number">903</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns tables primary keys separeted by commas &quot;,&quot;</p>
+<p class="description"><p>This is necessary for mass actions</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getMassActionsIds
+		</span>
+					(<span class="var-type">$table</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$separator</span> = <span class="var-default">'-'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$table</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$separator</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetMassActionsIds">Bvb_Grid_Source_SourceInterface::getMassActionsIds()</a></dt>
+						<dd>Returns tables primary keys separeted by commas &quot;,&quot;  This is necessary for mass actions</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetQueryBuilder" id="getQueryBuilder"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getQueryBuilder</span> (line <span class="line-number">103</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the query builder.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">QueryBuilder</span>
+		<span class="method-name">
+			getQueryBuilder
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetRecord" id="getRecord"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRecord</span> (line <span class="line-number">948</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a specified record</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">false|array</span>
+		<span class="method-name">
+			getRecord
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span><span class="var-description">: Table Name</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span><span class="var-description">: Conditions to build query</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetRecord">Bvb_Grid_Source_SourceInterface::getRecord()</a></dt>
+						<dd>Gets a unique record as a associative array</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetSelectObject" id="getSelectObject"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSelectObject</span> (line <span class="line-number">1005</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the select object</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">QueryBuilder</span>
+		<span class="method-name">
+			getSelectObject
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetSelectObject">Bvb_Grid_Source_SourceInterface::getSelectObject()</a></dt>
+						<dd>Returns the select object</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetSelectOrder" id="getSelectOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSelectOrder</span> (line <span class="line-number">1028</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the selected order  that was defined by the user in the query entered  and not the one generated by the system</p>
+<p class="description"><p>If empty an empty array must be returned.</p><p>Else the array must be like this:</p><p><div class="src-code"><ol><li><div class="src-line">&nbsp;<span class="src-var">$return&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-num">0&nbsp;</span>=&gt;&nbsp;<span class="src-id">field</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-num">1&nbsp;</span>=&gt;&nbsp;<span class="src-sym">(</span><span class="src-id">ASC</span>|<span class="src-id">DESC</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line">&nbsp;<span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getSelectOrder
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetSelectOrder">Bvb_Grid_Source_SourceInterface::getSelectOrder()</a></dt>
+						<dd>returns the selected order  that was defined by the user in the query entered  and not the one generated by the system</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetSourceName" id="getSourceName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSourceName</span> (line <span class="line-number">1062</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the database driver name.</p>
+<p class="description"><p>Ex: mysql, pgsql, array, xml</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getSourceName
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetSourceName">Bvb_Grid_Source_SourceInterface::getSourceName()</a></dt>
+						<dd>Should return the database server name or source name</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetSqlExp" id="getSqlExp"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSqlExp</span> (line <span class="line-number">1085</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Perform a sqlexp</p>
+<p class="description"><p>$value =  array ('functions' =&gt; array ('AVG'), 'value' =&gt; 'Population' );</p><p>Should be converted to  SELECT AVG(Population) FROM *</p><p>$value =  array ('functions' =&gt; array ('SUM','AVG'), 'value' =&gt; 'Population' );</p><p>Should be converted to  SELECT SUM(AVG(Population)) FROM *</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getSqlExp
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetSqlExp">Bvb_Grid_Source_SourceInterface::getSqlExp()</a></dt>
+						<dd>Perform a sqlexp</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetTableList" id="getTableList"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTableList</span> (line <span class="line-number">1109</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTableList
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetTableList">Bvb_Grid_Source_SourceInterface::getTableList()</a></dt>
+						<dd>Ex: array('c'=&gt;array('tableName'=&gt;'Country'));  where c is the table alias. If the table as no alias,  c should be the table name</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetTotalRecords" id="getTotalRecords"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTotalRecords</span> (line <span class="line-number">1119</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the total number of records.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getTotalRecords
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetTotalRecords">Bvb_Grid_Source_SourceInterface::getTotalRecords()</a></dt>
+						<dd>Return the total of records</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetValuesForFiltersFromTable" id="getValuesForFiltersFromTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getValuesForFiltersFromTable</span> (line <span class="line-number">1153</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">see:</span> library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getValuesForFiltersFromTable()</li>
+				<li><span class="field">todo:</span> Implement</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getValuesForFiltersFromTable
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldValue</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$order</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodgetValuesForFiltersFromTable">Bvb_Grid_Source_SourceInterface::getValuesForFiltersFromTable()</a></dt>
+						<dd>Fetch pairs from a table</dd>
+					</dl>
+			
+	</div>
+<a name="methodhasCrud" id="hasCrud"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasCrud</span> (line <span class="line-number">1164</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Simple method for the Grid to determine if this  Source can handle CRUD</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			hasCrud
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodhasCrud">Bvb_Grid_Source_SourceInterface::hasCrud()</a></dt>
+						<dd>Should return true|false if this source support  crud operations</dd>
+					</dl>
+			
+	</div>
+<a name="methodinsert" id="insert"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">insert</span> (line <span class="line-number">1176</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Insert an array of key=&gt;values in the specified table</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			insert
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodinsert">Bvb_Grid_Source_SourceInterface::insert()</a></dt>
+						<dd>Insert an array of key=&gt;values in the specified table</dd>
+					</dl>
+			
+	</div>
+<a name="methodquoteValue" id="quoteValue"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">quoteValue</span> (line <span class="line-number">1197</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Quotes a string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			quoteValue
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: Field Value</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodquoteValue">Bvb_Grid_Source_SourceInterface::quoteValue()</a></dt>
+						<dd>Quotes a string</dd>
+					</dl>
+			
+	</div>
+<a name="methodresetLimit" id="resetLimit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">resetLimit</span> (line <span class="line-number">1207</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes any limit in query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+		<span class="method-name">
+			resetLimit
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodresetLimit">Bvb_Grid_Source_SourceInterface::resetLimit()</a></dt>
+						<dd>Removes any offset in que query</dd>
+					</dl>
+			
+	</div>
+<a name="methodresetOrder" id="resetOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">resetOrder</span> (line <span class="line-number">1221</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes any order in query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine.html">Bvb_Grid_Source_Doctrine</a></span>
+		<span class="method-name">
+			resetOrder
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodresetOrder">Bvb_Grid_Source_SourceInterface::resetOrder()</a></dt>
+						<dd>Removes any order in que query</dd>
+					</dl>
+			
+	</div>
+<a name="methodrollBack" id="rollBack"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">rollBack</span> (line <span class="line-number">1568</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			rollBack
+		</span>
+				()
+			</div>
+	
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodrollBack">Bvb_Grid_Source_SourceInterface::rollBack()</a></dt>
+						<dd>Rollbacks</dd>
+					</dl>
+			
+	</div>
+<a name="methodsetCache" id="setCache"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setCache</span> (line <span class="line-number">1233</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Cache handler.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setCache
+		</span>
+					(<span class="var-type">Zend_Cache</span>&nbsp;<span class="var-name">$cache</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Zend_Cache</span>
+				<span class="var-name">$cache</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodsetCache">Bvb_Grid_Source_SourceInterface::setCache()</a></dt>
+						<dd>Cache handler.</dd>
+					</dl>
+			
+	</div>
+<a name="methodsetEntityManager" id="setEntityManager"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setEntityManager</span> (line <span class="line-number">81</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the entity manager.</p>
+<p class="description"><p>If no entity manager is assigned, we try to get it from the registry.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setEntityManager
+		</span>
+					([<span class="var-type">EntityManager</span>&nbsp;<span class="var-name">$entityManager</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">EntityManager</span>
+				<span class="var-name">$entityManager</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetQueryBuilder" id="setQueryBuilder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setQueryBuilder</span> (line <span class="line-number">114</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Sets the query builder.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Source_Doctrine2.html">Bvb_Grid_Source_Doctrine2</a></span>
+		<span class="method-name">
+			setQueryBuilder
+		</span>
+					(<span class="var-type">string|EntityManager|EntityRepository</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string|EntityManager|EntityRepository</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetTotalRecords" id="setTotalRecords"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTotalRecords</span> (line <span class="line-number">1336</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines total records</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTotalRecords
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$total</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$total</span><span class="var-description">: Total records found</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodsetTotalRecords">Bvb_Grid_Source_SourceInterface::setTotalRecords()</a></dt>
+						<dd>Defines total records found</dd>
+					</dl>
+			
+	</div>
+<a name="methodupdate" id="update"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">update</span> (line <span class="line-number">1251</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Update values in a table using the $condition clause</p>
+<p class="description"><p>The condition clause is a $field=&gt;$value array</p><p>Ex: array('user_id'=&gt;'1','id_site'=&gt;'12');</p><p>Raw SQL: * WHERE user_id='1' AND id_site='12'</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			update
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_SourceInterface.html#methodupdate">Bvb_Grid_Source_SourceInterface::update()</a></dt>
+						<dd>Update values in a table using the $condition clause</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html">Bvb_Grid_Source_Db_DbAbstract</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html#methodbuildFormElementsFromArray">Bvb_Grid_Source_Db_DbAbstract::buildFormElementsFromArray()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 17 Jul 2011 02:28:36 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

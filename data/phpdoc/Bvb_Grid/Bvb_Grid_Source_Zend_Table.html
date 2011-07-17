@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Bvb_Grid_Source_Zend_Table</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Bvb_Grid_Source_Zend_Table</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">LICENSE</p>
+<p class="description"><p>This source file is subject to the new BSD license  It is  available through the world-wide-web at this URL:  http://www.petala-azul.com/bsd.txt  If you did not receive a copy of the license and are unable to  obtain it through the world-wide-web, please send an email  to geral@petala-azul.com so we can send you a copy immediately.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Bento Vilas Boas &lt;<a href="mailto:geral@petala-azul.com">geral@petala-azul.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id: Table.php 1791 2011-05-31 03:19:53Z bento.vilas.boas@gmail.com $</li>
+				<li><span class="field">copyright:</span> 2010 ZFDatagrid</li>
+				<li><span class="field">link:</span> <a href="http://zfdatagrid.com">http://zfdatagrid.com</a></li>
+				<li><span class="field">license:</span> <a href="http://www.petala-azul.com/bsd.txt">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Grid---Source---Zend---Table.php.html">/Grid/Source/Zend/Table.php</a> (line <span class="field">21</span>)
+		</p>
+		
+				
+		<pre><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html">Bvb_Grid_Source_Db_DbAbstract</a>
+   |
+   --<a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html">Bvb_Grid_Source_Zend_Select</a>
+      |
+      --Bvb_Grid_Source_Zend_Table</pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																								<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_relationMap" title="details" class="var-name">$_relationMap</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																												
+												<div class="method-definition">
+											<span class="method-result">$this</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$model</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$relationMap</span> = <span class="var-default">array()</span>], <span class="var-type">array</span>&nbsp;<span class="var-name">$relationmap</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#buildForm" title="details" class="method-name">buildForm</a>
+											([<span class="var-type">array</span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#delete" title="details" class="method-name">delete</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#execute" title="details" class="method-name">execute</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#fetchDetail" title="details" class="method-name">fetchDetail</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getIdentifierColumns" title="details" class="method-name">getIdentifierColumns</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">Zend_Db_Table</span>
+										<a href="#getModel" title="details" class="method-name">getModel</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getRecord" title="details" class="method-name">getRecord</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getRelationMap" title="details" class="method-name">getRelationMap</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#insert" title="details" class="method-name">insert</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#update" title="details" class="method-name">update</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_relationMap" id="$_relationMap"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_relationMap</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">30</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+							<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html">Bvb_Grid_Source_Zend_Select</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_cache">Bvb_Grid_Source_Zend_Select::$_cache</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_describeTables">Bvb_Grid_Source_Zend_Select::$_describeTables</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_fields">Bvb_Grid_Source_Zend_Select::$_fields</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_limit">Bvb_Grid_Source_Zend_Select::$_limit</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_select">Bvb_Grid_Source_Zend_Select::$_select</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_server">Bvb_Grid_Source_Zend_Select::$_server</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_totalRecords">Bvb_Grid_Source_Zend_Select::$_totalRecords</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#var$_where">Bvb_Grid_Source_Zend_Select::$_where</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">79</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Creating a query using a Model.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">$this</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$model</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$relationMap</span> = <span class="var-default">array()</span>], <span class="var-type">array</span>&nbsp;<span class="var-name">$relationmap</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Zend_Db_Table_Abstract</span>
+				<span class="var-name">$model</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$relationmap</span><span class="var-description">: Relation map for joins</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$relationMap</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#method__construct">Bvb_Grid_Source_Zend_Select::__construct()</a></dt>
+						<dd>Class construct.</dd>
+					</dl>
+			
+	</div>
+<a name="methodbuildForm" id="buildForm"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildForm</span> (line <span class="line-number">62</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Builds form input types</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			buildForm
+		</span>
+					([<span class="var-type">array</span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$inputsType</span><span class="var-description">: Elements input types</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildForm">Bvb_Grid_Source_Zend_Select::buildForm()</a></dt>
+						<dd>Builds form</dd>
+					</dl>
+			
+	</div>
+<a name="methoddelete" id="delete"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">delete</span> (line <span class="line-number">278</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			delete
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methoddelete">Bvb_Grid_Source_Zend_Select::delete()</a></dt>
+						<dd>Deletes a record from the database</dd>
+					</dl>
+			
+	</div>
+<a name="methodexecute" id="execute"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">execute</span> (line <span class="line-number">225</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Executes the current query and returns an associative array of results</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			execute
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodexecute">Bvb_Grid_Source_Zend_Select::execute()</a></dt>
+						<dd>Executes the current query and returns an associative array of results</dd>
+					</dl>
+			
+	</div>
+<a name="methodfetchDetail" id="fetchDetail"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">fetchDetail</span> (line <span class="line-number">251</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			fetchDetail
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodfetchDetail">Bvb_Grid_Source_Zend_Select::fetchDetail()</a></dt>
+						<dd>Get full details for a given record</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetIdentifierColumns" id="getIdentifierColumns"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIdentifierColumns</span> (line <span class="line-number">332</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the primary table key  This is important because we only allow edit, add or remove records  From tables that have on primary key</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getIdentifierColumns
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetIdentifierColumns">Bvb_Grid_Source_Zend_Select::getIdentifierColumns()</a></dt>
+						<dd>Get the primary table key  This is important because we only allow edit, add or remove records  From tables that have on primary key</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetModel" id="getModel"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getModel</span> (line <span class="line-number">38</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current model</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Zend_Db_Table</span>
+		<span class="method-name">
+			getModel
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetRecord" id="getRecord"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRecord</span> (line <span class="line-number">195</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getRecord
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetRecord">Bvb_Grid_Source_Zend_Select::getRecord()</a></dt>
+						<dd>Returns a specified record</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetRelationMap" id="getRelationMap"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRelationMap</span> (line <span class="line-number">49</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current relationmap</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getRelationMap
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodinsert" id="insert"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">insert</span> (line <span class="line-number">312</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			insert
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodinsert">Bvb_Grid_Source_Zend_Select::insert()</a></dt>
+						<dd>Inserts a new record in the database</dd>
+					</dl>
+			
+	</div>
+<a name="methodupdate" id="update"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">update</span> (line <span class="line-number">298</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			update
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodupdate">Bvb_Grid_Source_Zend_Select::update()</a></dt>
+						<dd>Updates a given record</dd>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html">Bvb_Grid_Source_Zend_Select</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#method__construct">Bvb_Grid_Source_Zend_Select::__construct()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodaddCondition">Bvb_Grid_Source_Zend_Select::addCondition()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodaddFullTextSearch">Bvb_Grid_Source_Zend_Select::addFullTextSearch()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbeginTransaction">Bvb_Grid_Source_Zend_Select::beginTransaction()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildFields">Bvb_Grid_Source_Zend_Select::buildFields()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildForm">Bvb_Grid_Source_Zend_Select::buildForm()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildFormElements">Bvb_Grid_Source_Zend_Select::buildFormElements()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildQueryLimit">Bvb_Grid_Source_Zend_Select::buildQueryLimit()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildQueryOrder">Bvb_Grid_Source_Zend_Select::buildQueryOrder()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodbuildWhereCondition">Bvb_Grid_Source_Zend_Select::buildWhereCondition()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodcommit">Bvb_Grid_Source_Zend_Select::commit()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methoddelete">Bvb_Grid_Source_Zend_Select::delete()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodexecute">Bvb_Grid_Source_Zend_Select::execute()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodfetchDetail">Bvb_Grid_Source_Zend_Select::fetchDetail()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetAutoCompleteForFilter">Bvb_Grid_Source_Zend_Select::getAutoCompleteForFilter()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetColumns">Bvb_Grid_Source_Zend_Select::getColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetConnectionId">Bvb_Grid_Source_Zend_Select::getConnectionId()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetDescribeTable">Bvb_Grid_Source_Zend_Select::getDescribeTable()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetDistinctValuesForFilters">Bvb_Grid_Source_Zend_Select::getDistinctValuesForFilters()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetFieldType">Bvb_Grid_Source_Zend_Select::getFieldType()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetFilterValuesBasedOnFieldDefinition">Bvb_Grid_Source_Zend_Select::getFilterValuesBasedOnFieldDefinition()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetIdentifierColumns">Bvb_Grid_Source_Zend_Select::getIdentifierColumns()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetMainTable">Bvb_Grid_Source_Zend_Select::getMainTable()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetMassActionsIds">Bvb_Grid_Source_Zend_Select::getMassActionsIds()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetRecord">Bvb_Grid_Source_Zend_Select::getRecord()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetSelectObject">Bvb_Grid_Source_Zend_Select::getSelectObject()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetSelectOrder">Bvb_Grid_Source_Zend_Select::getSelectOrder()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetSourceName">Bvb_Grid_Source_Zend_Select::getSourceName()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetSqlExp">Bvb_Grid_Source_Zend_Select::getSqlExp()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetTableList">Bvb_Grid_Source_Zend_Select::getTableList()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetTotalRecords">Bvb_Grid_Source_Zend_Select::getTotalRecords()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodgetValuesForFiltersFromTable">Bvb_Grid_Source_Zend_Select::getValuesForFiltersFromTable()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodhasCrud">Bvb_Grid_Source_Zend_Select::hasCrud()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodinit">Bvb_Grid_Source_Zend_Select::init()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodinsert">Bvb_Grid_Source_Zend_Select::insert()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodquoteValue">Bvb_Grid_Source_Zend_Select::quoteValue()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodresetLimit">Bvb_Grid_Source_Zend_Select::resetLimit()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodresetOrder">Bvb_Grid_Source_Zend_Select::resetOrder()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodrollBack">Bvb_Grid_Source_Zend_Select::rollBack()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodsetCache">Bvb_Grid_Source_Zend_Select::setCache()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodsetTotalRecords">Bvb_Grid_Source_Zend_Select::setTotalRecords()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#methodupdate">Bvb_Grid_Source_Zend_Select::update()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#method_getDb">Bvb_Grid_Source_Zend_Select::_getDb()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#method_prepareExecute">Bvb_Grid_Source_Zend_Select::_prepareExecute()</a></span><br>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Zend_Select.html#method_setDb">Bvb_Grid_Source_Zend_Select::_setDb()</a></span><br>
+											</blockquote>
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html">Bvb_Grid_Source_Db_DbAbstract</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../Bvb_Grid/Bvb_Grid_Source_Db_DbAbstract.html#methodbuildFormElementsFromArray">Bvb_Grid_Source_Db_DbAbstract::buildFormElementsFromArray()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 17 Jul 2011 02:29:18 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

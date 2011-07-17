@@ -1,0 +1,1313 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Bvb_Grid_Source_SourceInterface</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Interface Bvb_Grid_Source_SourceInterface</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">LICENSE</p>
+<p class="description"><p>This source file is subject to the new BSD license  It is  available through the world-wide-web at this URL:  http://www.petala-azul.com/bsd.txt  If you did not receive a copy of the license and are unable to  obtain it through the world-wide-web, please send an email  to geral@petala-azul.com so we can send you a copy immediately.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Bento Vilas Boas &lt;<a href="mailto:geral@petala-azul.com">geral@petala-azul.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id: SourceInterface.php 1796 2011-07-01 22:54:02Z bento.vilas.boas@gmail.com $</li>
+				<li><span class="field">copyright:</span> 2010 ZFDatagrid</li>
+				<li><span class="field">link:</span> <a href="http://zfdatagrid.com">http://zfdatagrid.com</a></li>
+				<li><span class="field">license:</span> <a href="http://www.petala-azul.com/bsd.txt">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Grid---Source---SourceInterface.php.html">/Grid/Source/SourceInterface.php</a> (line <span class="field">21</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																																																																																																																																				
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addCondition" title="details" class="method-name">addCondition</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$op</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$completeField</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#addFullTextSearch" title="details" class="method-name">addFullTextSearch</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#beginTransaction" title="details" class="method-name">beginTransaction</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#buildFields" title="details" class="method-name">buildFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#buildForm" title="details" class="method-name">buildForm</a>
+											([<span class="var-type">array</span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#buildQueryLimit" title="details" class="method-name">buildQueryLimit</a>
+											(<span class="var-type">$start</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">$offset</span>&nbsp;<span class="var-name">$offset</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#buildQueryOrder" title="details" class="method-name">buildQueryOrder</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$order</span>, [<span class="var-type">bool</span>&nbsp;<span class="var-name">$reset</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#commit" title="details" class="method-name">commit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#delete" title="details" class="method-name">delete</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#execute" title="details" class="method-name">execute</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#fetchDetail" title="details" class="method-name">fetchDetail</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">json</span>
+										<a href="#getAutoCompleteForFilter" title="details" class="method-name">getAutoCompleteForFilter</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$term</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$specialKey</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">'json'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getConnectionId" title="details" class="method-name">getConnectionId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getDistinctValuesForFilters" title="details" class="method-name">getDistinctValuesForFilters</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getFieldType" title="details" class="method-name">getFieldType</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getFilterValuesBasedOnFieldDefinition" title="details" class="method-name">getFilterValuesBasedOnFieldDefinition</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getIdentifierColumns" title="details" class="method-name">getIdentifierColumns</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getMainTable" title="details" class="method-name">getMainTable</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getMassActionsIds" title="details" class="method-name">getMassActionsIds</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span> = <span class="var-default">'-'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getRecord" title="details" class="method-name">getRecord</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#getSelectObject" title="details" class="method-name">getSelectObject</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getSelectOrder" title="details" class="method-name">getSelectOrder</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getSourceName" title="details" class="method-name">getSourceName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getSqlExp" title="details" class="method-name">getSqlExp</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getTableList" title="details" class="method-name">getTableList</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#getTotalRecords" title="details" class="method-name">getTotalRecords</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getValuesForFiltersFromTable" title="details" class="method-name">getValuesForFiltersFromTable</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">bool</span>
+										<a href="#hasCrud" title="details" class="method-name">hasCrud</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#insert" title="details" class="method-name">insert</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#quoteValue" title="details" class="method-name">quoteValue</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#resetLimit" title="details" class="method-name">resetLimit</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#resetOrder" title="details" class="method-name">resetOrder</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#rollBack" title="details" class="method-name">rollBack</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setCache" title="details" class="method-name">setCache</a>
+											(<span class="var-type">Zend_Cache</span>&nbsp;<span class="var-name">$cache</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTotalRecords" title="details" class="method-name">setTotalRecords</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$total</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#update" title="details" class="method-name">update</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methodaddCondition" id="addCondition"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addCondition</span> (line <span class="line-number">286</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new condition to the current query</p>
+<p class="description"><p>$filter is the value to be filtered  $op is the operand to be used: =,&gt;=, like, llike,REGEX,  $completeField. use the index $completField['field'] to  specify the field, to avoid ambiguous</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addCondition
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$op</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$completeField</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$filter</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$op</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$completeField</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddFullTextSearch" id="addFullTextSearch"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addFullTextSearch</span> (line <span class="line-number">272</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a fulltext search instead of a addcondition method</p>
+<p class="description"><p>$field has an index search $field['search'] = array('extra'=&gt;'boolean|queryExpansion','indexes'=&gt;'string|array');</p><p>if no indexes provided, use the field name</p><p>boolean =&gt;  IN BOOLEAN MODE queryExpansion =&gt;  WITH QUERY EXPANSION</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			addFullTextSearch
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$filter</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$filter</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbeginTransaction" id="beginTransaction"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">beginTransaction</span> (line <span class="line-number">423</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Starts a transaction</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			beginTransaction
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodbuildFields" id="buildFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildFields</span> (line <span class="line-number">68</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">builds a key=&gt;value array</p>
+<p class="description"><p>they must have two options  title and field  field is used to perform queries.  Must have table name or table alias as a prefix  ex: user.id | country.population</p><p>The key for this array is the output field  If raw sql is something like</p><p>select name as alias, country from users</p><p>the return array must be like this:</p><p>array('alias'=&gt;array('title'=&gt;'alias','field'=&gt;'users.name'));</p><p>its not bad idea to apply this to fields titles  $title = ucwords(str_replace('_',' ',$title));</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			buildFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodbuildForm" id="buildForm"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildForm</span> (line <span class="line-number">356</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the form based on a Model or query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			buildForm
+		</span>
+					([<span class="var-type">array</span>&nbsp;<span class="var-name">$inputsType</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$inputsType</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbuildQueryLimit" id="buildQueryLimit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildQueryLimit</span> (line <span class="line-number">186</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the query limit clause</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			buildQueryLimit
+		</span>
+					(<span class="var-type">$start</span>&nbsp;<span class="var-name">$start</span>, <span class="var-type">$offset</span>&nbsp;<span class="var-name">$offset</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$start</span>
+				<span class="var-name">$start</span>			</li>
+					<li>
+				<span class="var-type">$offset</span>
+				<span class="var-name">$offset</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodbuildQueryOrder" id="buildQueryOrder"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">buildQueryOrder</span> (line <span class="line-number">175</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Build the order part from the query.</p>
+<p class="description"><p>The first arg is the field to be ordered and the $order  arg is the correspondent order (ASC|DESC)</p><p>If the $reset is set to true, all previous order should be removed</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			buildQueryOrder
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$order</span>, [<span class="var-type">bool</span>&nbsp;<span class="var-name">$reset</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$order</span>			</li>
+					<li>
+				<span class="var-type">bool</span>
+				<span class="var-name">$reset</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcommit" id="commit"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">commit</span> (line <span class="line-number">428</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Commits</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			commit
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methoddelete" id="delete"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">delete</span> (line <span class="line-number">328</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Delete a record from a table</p>
+<p class="description"><p>The condition clause is a $field=&gt;$value array  that should be escaped by YOU (if your class doesn't do that for you)  and using the AND operand</p><p>Ex: array('user_id'=&gt;'1','id_site'=&gt;'12');  Raw SQL: * WHERE user_id='1' AND id_site='12'</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			delete
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodexecute" id="execute"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">execute</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Runs the query and returns the result as a associative array</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			execute
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodfetchDetail" id="fetchDetail"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">fetchDetail</span> (line <span class="line-number">96</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get a record detail based the current query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			fetchDetail
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAutoCompleteForFilter" id="getAutoCompleteForFilter"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAutoCompleteForFilter</span> (line <span class="line-number">401</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a JSON encoded array of options to be used by auto-complete operations</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Term to search</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">json</span>
+		<span class="method-name">
+			getAutoCompleteForFilter
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$term</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$field</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$specialKey</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$output</span> = <span class="var-default">'json'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$term</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$specialKey</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$output</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetConnectionId" id="getConnectionId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getConnectionId</span> (line <span class="line-number">438</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns curretn connection ID</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getConnectionId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDistinctValuesForFilters" id="getDistinctValuesForFilters"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDistinctValuesForFilters</span> (line <span class="line-number">231</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Should perform a query based on the provided by the user  select the two fields and return an array $field=&gt;$value  as result</p>
+<p class="description"><p>ex: SELECT $field, $value FROM *  array('1'=&gt;'Something','2'=&gt;'Number','3'=&gt;'history')....;</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getDistinctValuesForFilters
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldValue</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$order</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetFieldType" id="getFieldType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFieldType</span> (line <span class="line-number">148</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return field type  char, varchar, int</p>
+<p class="description"><p>Note: If the field is enum or set,  the value returned must be set or enum,  and not the full definition</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getFieldType
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetFilterValuesBasedOnFieldDefinition" id="getFilterValuesBasedOnFieldDefinition"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFilterValuesBasedOnFieldDefinition</span> (line <span class="line-number">132</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return possible filters values based on field definition  This is mostly used for enum fields where the possible  values are extracted</p>
+<p class="description"><p>Ex: enum('Yes','No','Empty');</p><p>should return</p><p>array('Yes'=&gt;'Yes','No'=&gt;'No','Empty'=&gt;'Empty');</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getFilterValuesBasedOnFieldDefinition
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetIdentifierColumns" id="getIdentifierColumns"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getIdentifierColumns</span> (line <span class="line-number">418</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns an array of table identifier columns or PK's</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getIdentifierColumns
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span><span class="var-description">: Table where to fetch fields</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetMainTable" id="getMainTable"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMainTable</span> (line <span class="line-number">157</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the &quot;main&quot; table  the one after select * FROM {MAIN_TABLE}</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getMainTable
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetMassActionsIds" id="getMassActionsIds"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMassActionsIds</span> (line <span class="line-number">367</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns tables primary keys separeted by commas &quot;,&quot;  This is necessary for mass actions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getMassActionsIds
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type">array</span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span> = <span class="var-default">'-'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span><span class="var-description">: table to get records from</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$fields</span><span class="var-description">: Fields to fetch</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$separator</span><span class="var-description">: Separator for multiple PK's</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetRecord" id="getRecord"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRecord</span> (line <span class="line-number">42</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets a unique record as a associative array</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getRecord
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetSelectObject" id="getSelectObject"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSelectObject</span> (line <span class="line-number">194</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the select object</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			getSelectObject
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSelectOrder" id="getSelectOrder"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSelectOrder</span> (line <span class="line-number">215</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">returns the selected order  that was defined by the user in the query entered  and not the one generated by the system</p>
+<p class="description"><p>If empty a empty array must be returned.</p><p>Else the array must be like this:</p><p>Array  (  [0] =&gt; field  [1] =&gt; ORDER (ASC|DESC)  )</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getSelectOrder
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSourceName" id="getSourceName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSourceName</span> (line <span class="line-number">78</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Should return the database server name or source name</p>
+<p class="description"><p>Ex: mysql, pgsql, array, xml</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getSourceName
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSqlExp" id="getSqlExp"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSqlExp</span> (line <span class="line-number">253</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Perform a sqlexp</p>
+<p class="description"><p>$value =  array ('functions' =&gt; array ('AVG'), 'value' =&gt; 'Population' );</p><p>Should be converted to SELECT AVG(Population) FROM *</p><p>$value =  array ('functions' =&gt; array ('SUM','AVG'), 'value' =&gt; 'Population' );</p><p>Should be converted to SELECT SUM(AVG(Population)) FROM *</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getSqlExp
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>, [<span class="var-type">array</span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$value</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetTableList" id="getTableList"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTableList</span> (line <span class="line-number">114</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Ex: array('c'=&gt;array('tableName'=&gt;'Country'));  where c is the table alias. If the table as no alias,  c should be the table name</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getTableList
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTotalRecords" id="getTotalRecords"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTotalRecords</span> (line <span class="line-number">104</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the total of records</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			getTotalRecords
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetValuesForFiltersFromTable" id="getValuesForFiltersFromTable"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getValuesForFiltersFromTable</span> (line <span class="line-number">388</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Fetch pairs from a table</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getValuesForFiltersFromTable
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$field</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$fieldValue</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$order</span> = <span class="var-default">'name ASC'</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span><span class="var-description">: Table Name</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$field</span><span class="var-description">: Field Name</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$fieldValue</span><span class="var-description">: Field Value</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$order</span><span class="var-description">: Query Order</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodhasCrud" id="hasCrud"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasCrud</span> (line <span class="line-number">31</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Should return true|false if this source support  crud operations</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">bool</span>
+		<span class="method-name">
+			hasCrud
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodinsert" id="insert"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">insert</span> (line <span class="line-number">294</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Insert an array of key=&gt;values in the specified table</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			insert
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodquoteValue" id="quoteValue"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">quoteValue</span> (line <span class="line-number">376</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Quotes a string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			quoteValue
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span><span class="var-description">: Field Value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodresetLimit" id="resetLimit"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">resetLimit</span> (line <span class="line-number">340</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes any offset in que query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			resetLimit
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodresetOrder" id="resetOrder"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">resetOrder</span> (line <span class="line-number">334</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes any order in que query</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			resetOrder
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodrollBack" id="rollBack"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">rollBack</span> (line <span class="line-number">433</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Rollbacks</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			rollBack
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetCache" id="setCache"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setCache</span> (line <span class="line-number">348</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Cache handler.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setCache
+		</span>
+					(<span class="var-type">Zend_Cache</span>&nbsp;<span class="var-name">$cache</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">Zend_Cache</span>
+				<span class="var-name">$cache</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetTotalRecords" id="setTotalRecords"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTotalRecords</span> (line <span class="line-number">408</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines total records found</p>
+	<ul class="tags">
+				<li><span class="field">var:</span> Total records</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTotalRecords
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$total</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$total</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodupdate" id="update"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">update</span> (line <span class="line-number">312</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Update values in a table using the $condition clause</p>
+<p class="description"><p>The condition clause is a $field=&gt;$value array that should be escaped by YOU (if your class doesn't do that for you)  and using the AND operand</p><p>Ex: array('user_id'=&gt;'1','id_site'=&gt;'12');</p><p>Raw SQL: * WHERE user_id='1' AND id_site='12'</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			update
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$table</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$post</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$condition</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$table</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$post</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$condition</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 17 Jul 2011 02:29:18 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

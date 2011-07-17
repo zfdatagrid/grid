@@ -1,0 +1,853 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Bvb_Grid_Mass_Actions</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Bvb_Grid_Mass_Actions</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">LICENSE</p>
+<p class="description"><p>This source file is subject to the new BSD license  It is  available through the world-wide-web at this URL:  http://www.petala-azul.com/bsd.txt  If you did not receive a copy of the license and are unable to  obtain it through the world-wide-web, please send an email  to geral@petala-azul.com so we can send you a copy immediately.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Bento Vilas Boas &lt;<a href="mailto:geral@petala-azul.com">geral@petala-azul.com</a>&gt;</li>
+				<li><span class="field">version:</span> $Id: Actions.php 1653 2011-03-20 22:15:09Z bento.vilas.boas@gmail.com $</li>
+				<li><span class="field">copyright:</span> 2010 ZFDatagrid</li>
+				<li><span class="field">link:</span> <a href="http://zfdatagrid.com">http://zfdatagrid.com</a></li>
+				<li><span class="field">license:</span> <a href="http://www.petala-azul.com/bsd.txt">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Grid---Mass---Actions.php.html">/Grid/Mass/Actions.php</a> (line <span class="field">20</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																<div class="var-title">
+					<span class="var-type">string|bool</span>
+					<a href="#$_decorator" title="details" class="var-name">$_decorator</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_fields" title="details" class="var-name">$_fields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_massActions" title="details" class="var-name">$_massActions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$_multipleFieldsSeparator" title="details" class="var-name">$_multipleFieldsSeparator</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$_recordSeparator" title="details" class="var-name">$_recordSeparator</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$_submitAttributes" title="details" class="var-name">$_submitAttributes</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																				
+												<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#addMassAction" title="details" class="method-name">addMassAction</a>
+											(<span class="var-type">type</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">type</span>&nbsp;<span class="var-name">$caption</span>, [<span class="var-type">type</span>&nbsp;<span class="var-name">$confirm</span> = <span class="var-default">''</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#addMassActions" title="details" class="method-name">addMassActions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#clearMassActions" title="details" class="method-name">clearMassActions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getDecorator" title="details" class="method-name">getDecorator</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getFields" title="details" class="method-name">getFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getMassActionsOptions" title="details" class="method-name">getMassActionsOptions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getMassActionsSeparator" title="details" class="method-name">getMassActionsSeparator</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getMultipleFieldsSeparator" title="details" class="method-name">getMultipleFieldsSeparator</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getRecordSeparator" title="details" class="method-name">getRecordSeparator</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getSumitAttributes" title="details" class="method-name">getSumitAttributes</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">bool</span>
+										<a href="#hasMassActions" title="details" class="method-name">hasMassActions</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#setDecorator" title="details" class="method-name">setDecorator</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#setFields" title="details" class="method-name">setFields</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$fields</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#setMassAction" title="details" class="method-name">setMassAction</a>
+											(<span class="var-type">type</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">type</span>&nbsp;<span class="var-name">$caption</span>, [<span class="var-type">type</span>&nbsp;<span class="var-name">$confirm</span> = <span class="var-default">''</span>], <span class="var-type">type</span>&nbsp;<span class="var-name">$fields</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#setMassActions" title="details" class="method-name">setMassActions</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#setMassActionsSeparator" title="details" class="method-name">setMassActionsSeparator</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+										<a href="#setMultipleFieldsSeparator" title="details" class="method-name">setMultipleFieldsSeparator</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Mass_Actions.html">Bvb_Grid_Mass_Actions</a></span>
+										<a href="#setSubmitAttributes" title="details" class="method-name">setSubmitAttributes</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$attributes</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_decorator" id="$_decorator"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string|bool</span>
+			<span class="var-name">$_decorator</span>
+			 = <span class="var-default"> false</span>			(line <span class="line-number">48</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_fields" id="$_fields"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_fields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">33</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Columns that should be return when submiting the form</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_massActions" id="$_massActions"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_massActions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Mass Actions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_multipleFieldsSeparator" id="$_multipleFieldsSeparator"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$_multipleFieldsSeparator</span>
+			 = <span class="var-default"> '-'</span>			(line <span class="line-number">43</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The defaulf separator for multiple fields values</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_recordSeparator" id="$_recordSeparator"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$_recordSeparator</span>
+			 = <span class="var-default"> ','</span>			(line <span class="line-number">38</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The defaulf separator for mass actions post values</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$_submitAttributes" id="$_submitAttributes"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$_submitAttributes</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">53</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methodaddMassAction" id="addMassAction"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addMassAction</span> (line <span class="line-number">134</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new mass action</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			addMassAction
+		</span>
+					(<span class="var-type">type</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">type</span>&nbsp;<span class="var-name">$caption</span>, [<span class="var-type">type</span>&nbsp;<span class="var-name">$confirm</span> = <span class="var-default">''</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$url</span><span class="var-description">: Url to post the results</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$caption</span><span class="var-description">: Caption for the select option</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$confirm</span><span class="var-description">: Confirmation message when submiting</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddMassActions" id="addMassActions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addMassActions</span> (line <span class="line-number">150</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new mass action option</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			addMassActions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: Options to be made available to user</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodclearMassActions" id="clearMassActions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">clearMassActions</span> (line <span class="line-number">100</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Clears all mass actions previously defined</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			clearMassActions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDecorator" id="getDecorator"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDecorator</span> (line <span class="line-number">239</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current decorator</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDecorator
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetFields" id="getFields"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getFields</span> (line <span class="line-number">260</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current fields</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetMassActionsOptions" id="getMassActionsOptions"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMassActionsOptions</span> (line <span class="line-number">70</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the active mass options</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getMassActionsOptions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetMassActionsSeparator" id="getMassActionsSeparator"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMassActionsSeparator</span> (line <span class="line-number">229</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current Mass Action separator for post values</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getMassActionsSeparator
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetMultipleFieldsSeparator" id="getMultipleFieldsSeparator"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMultipleFieldsSeparator</span> (line <span class="line-number">200</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current Mass Action separator for multiple fields</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getMultipleFieldsSeparator
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetRecordSeparator" id="getRecordSeparator"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRecordSeparator</span> (line <span class="line-number">270</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current separator</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getRecordSeparator
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetSumitAttributes" id="getSumitAttributes"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getSumitAttributes</span> (line <span class="line-number">293</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns current attributes for submit button for mass actions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getSumitAttributes
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodhasMassActions" id="hasMassActions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasMassActions</span> (line <span class="line-number">60</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks if there are any mass actions registered</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">bool</span>
+		<span class="method-name">
+			hasMassActions
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetDecorator" id="setDecorator"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDecorator</span> (line <span class="line-number">250</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set's decorator</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			setDecorator
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetFields" id="setFields"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setFields</span> (line <span class="line-number">169</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines which fields should be posted.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			setFields
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$fields</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$fields</span><span class="var-description">: Fields to be used as post ids</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetMassAction" id="setMassAction"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setMassAction</span> (line <span class="line-number">116</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new mass action and clears all previous</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			setMassAction
+		</span>
+					(<span class="var-type">type</span>&nbsp;<span class="var-name">$url</span>, <span class="var-type">type</span>&nbsp;<span class="var-name">$caption</span>, [<span class="var-type">type</span>&nbsp;<span class="var-name">$confirm</span> = <span class="var-default">''</span>], <span class="var-type">type</span>&nbsp;<span class="var-name">$fields</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$url</span><span class="var-description">: Url to post the results</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$caption</span><span class="var-description">: Caption for the select option</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$confirm</span><span class="var-description">: Confirmation message when submiting</span>			</li>
+					<li>
+				<span class="var-type">type</span>
+				<span class="var-name">$fields</span><span class="var-description">: Fields to be used</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetMassActions" id="setMassActions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setMassActions</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines mass actions, overriden any previous</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			setMassActions
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$options</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$options</span><span class="var-description">: Options to be made available to user</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetMassActionsSeparator" id="setMassActionsSeparator"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setMassActionsSeparator</span> (line <span class="line-number">212</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines the separator for primary keys or fields for mass actions post values</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			setMassActionsSeparator
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$separator</span><span class="var-description">: Separator to be used in post fields</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetMultipleFieldsSeparator" id="setMultipleFieldsSeparator"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setMultipleFieldsSeparator</span> (line <span class="line-number">183</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines the separator for multiple primary keys or fields for mass actions post values</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid.html">Bvb_Grid</a></span>
+		<span class="method-name">
+			setMultipleFieldsSeparator
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$separator</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$separator</span><span class="var-description">: Separator to be used</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetSubmitAttributes" id="setSubmitAttributes"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setSubmitAttributes</span> (line <span class="line-number">282</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Defines attributes to be applyied to submit input for mass actions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Bvb_Grid/Bvb_Grid_Mass_Actions.html">Bvb_Grid_Mass_Actions</a></span>
+		<span class="method-name">
+			setSubmitAttributes
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$attributes</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$attributes</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 17 Jul 2011 02:28:19 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
