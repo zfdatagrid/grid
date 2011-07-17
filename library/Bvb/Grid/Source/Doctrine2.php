@@ -217,6 +217,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                 break;
             case 'rlike':
                 $expr = $qb->expr()->like($field, $pnUse);
+                $qb->$func($expr);
                 $qb->setParameter($pn, $filter . "%");
                 break;
             case 'llike':
