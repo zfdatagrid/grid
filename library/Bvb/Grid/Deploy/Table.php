@@ -166,6 +166,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      * @var string
      */
     protected $_detailViewReturnLabel = 'Return';
+    /**
+     * Columns positions
+     *
+     * @var left|right
+     */
+    protected $_crudColumnsPosition = 'left';
 
     /**
      * Class construct
