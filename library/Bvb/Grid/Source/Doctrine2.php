@@ -8,12 +8,15 @@ use \Doctrine\ORM\EntityRepository,
     \Doctrine\DBAL\Types\Type,
     \Doctrine\ORM\Mapping\ClassMetadata;
 
+
 /**
- * Provides you the ability to use Doctrine 2.x as a source
+ * Provides you the ability to use Doctrine as a source
  * with the Grid.
  *
+ * @package   Bvb_Grid
  * @author Martin Parsiegla <martin.parsiegla@speanet.info>
  */
+
 class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_SourceInterface
 {
     /**
