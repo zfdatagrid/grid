@@ -1416,7 +1416,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
      *
      * @return string
      */
-    protected function _pagination()
+    protected function _buildPagination()
     {
         $pageSelect = '';
 
@@ -1435,8 +1435,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $menuPerPage = ' | ' . $this->__('Show') . ' '
                          . $this->getView()->formSelect(
                             'perPage' . $this->getGridId(), $this->getParam('perPage', $this->_recordsPerPage), array('onChange' => "window.location='$url/perPage"
-                        . $this->getGridId() . "/'+this.value;"), $this->_paginationInterval
-                         )
+                         . $this->getGridId() . "/'+this.value;"), $this->_paginationInterval
+                           )
                          . ' ' . $this->__('items');
         } else {
             $menuPerPage = '';
@@ -1992,7 +1992,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         }
 
         $bPagination = $this->_buildExtraRows('beforePagination')
-                     . $this->_pagination()
+                     . $this->_buildPagination()
                      . $this->_buildExtraRows('afterPagination');
 
         if ($deploy == true) {
