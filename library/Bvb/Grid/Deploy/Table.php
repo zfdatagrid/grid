@@ -1711,7 +1711,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ($this->_crud->getEditColumn() !== false)
             {
                 $this->addExtraColumn(array(
-                    'position' => 'left',
+                    'position' => $this->getCrudColumnsPosition(),
                     'name' => 'E',
                     'decorator' => "<a href=\"" . $this->_actionsUrls['edit'] . "\" > " . $images['edit'] . "</a>",
                     'edit' => true,
@@ -1731,7 +1731,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if ($this->_crud->getDeleteColumn() !== false)
                 {
                     $this->addExtraColumn(array(
-                            'position' => 'left',
+                            'position' => $this->getCrudColumnsPosition(),
                             'name' => 'D',
                             'class' => 'gridDeleteColumn',
                             'decorator' => "<a href=\"" . $this->_actionsUrls['delete'] . "\" > "
@@ -1747,7 +1747,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 if ($this->_crud->getDeleteColumn() !== false)
                 {
                     $this->addExtraColumn(array(
-                            'position' => 'left',
+                            'position' => $this->getCrudColumnsPosition(),
                             'name' => 'D',
                             'class' => 'gridDeleteColumn',
                             'decorator' => "<a href=\"#\" onclick=\"_" . $this->getGridId() . "confirmDel('"
@@ -1770,7 +1770,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ($this->_showDetailColumn === true)
             {
                 $this->addExtraColumn(array(
-                        'position' => 'left',
+                        'position' => $this->getCrudColumnsPosition(),
                         'name' => 'V',
                         'class' => 'gridDetailColumn',
                         'decorator' => "<a href=\"" . $this->_actionsUrls['detail'] . "\" >" . $images['detail'] . "</a>",
@@ -3647,4 +3647,30 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         return $this->_detailViewReturnLabel;
     }
 
+
+    /**
+     * Sets crud columns positions (delete, edit)
+     *
+     * @param string $positon
+     * @return Bvb_Grid
+     */
+    public function setCrudColumnsPosition($positon = 'left')
+    {
+        if ($positon != 'left' && $positon != 'right') {
+            throw new Bvb_Grid_Exception('Please use left or right');
+        }
+
+        $this->_crudColumnsPosition = $positon;
+        return $this;
+    }
+
+    /**
+     * Returns current position for crud aux columns
+     *
+     * @return string
+     */
+    public function getCrudColumnsPosition()
+    {
+        return $this->_crudColumnsPosition;
+    }
 }

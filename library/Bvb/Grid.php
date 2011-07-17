@@ -471,6 +471,12 @@ abstract class Bvb_Grid {
      * @var string/null
      */
     protected $_eventsPrefix = null;
+    /**
+     * Columns positions
+     *
+     * @var left|right
+     */
+    protected $_crudColumnsPosition = 'left';
 
     /**
      * The __construct function receives the db adapter. All information related to the
