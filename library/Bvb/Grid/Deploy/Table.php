@@ -3687,4 +3687,14 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         return $this->_crudColumnsPosition;
     }
+
+    /**
+     * In some cases we don't need to execute costly query on data source on grid deployment
+     *
+     * @return bool
+     */
+    protected function _deployNeedsData()
+    {
+        return !in_array('listing',$this->willShow()) && $this->getInfo("doubleTables") != 1;
+    }
 }

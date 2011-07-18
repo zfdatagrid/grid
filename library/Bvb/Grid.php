@@ -2775,7 +2775,7 @@ abstract class Bvb_Grid {
             $this->getSource()->resetOrder();
         }
 
-        if ( !in_array('listing',$this->willShow()) && $this->getInfo("doubleTables") != 1 ) {
+        if ( !$this->_deployNeedsData() ) {
             $result = array();
             $resultCount = 0;
         } else {
@@ -4670,6 +4670,16 @@ abstract class Bvb_Grid {
     public static function getDeployPrefixPaths()
     {
         return self::$_deployClassesDir;
+    }
+
+    /**
+     * In some cases we don't need to execute costly query on data source on grid deployment
+     *
+     * @return bool
+     */
+    protected function _deployNeedsData()
+    {
+        return true;
     }
 
 }
