@@ -17,11 +17,7 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
-
-class Bvb_Grid_Formatter_Bool implements Bvb_Grid_Formatter_FormatterInterface
-{
-
-    protected $_locale = null;
+class Bvb_Grid_Formatter_Bool implements Bvb_Grid_Formatter_FormatterInterface {
 
     /**
      * Constructor
@@ -29,10 +25,10 @@ class Bvb_Grid_Formatter_Bool implements Bvb_Grid_Formatter_FormatterInterface
      */
     public function __construct($options = array())
     {
-       
+
     }
 
-    /** 
+    /**
      * Formats a given value
      * @see library/Bvb/ Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
      */
@@ -40,6 +36,7 @@ class Bvb_Grid_Formatter_Bool implements Bvb_Grid_Formatter_FormatterInterface
     {
         $translate = Bvb_Grid_Translator::getInstance();
 
-        return ((bool)($value))?$translate->__('Yes'):$translate->__('No');
+        return ((bool) ($value)) ? $translate->__('Yes') : $translate->__('No');
     }
+
 }
