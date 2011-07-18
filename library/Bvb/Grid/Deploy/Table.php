@@ -1841,7 +1841,12 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             if ($this->_isDetail == true
                 || ($this->_deleteConfirmationPage == true && $this->getParam('delete') )
             ) {
-                $columns = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
+                $columnsTemp = $this->getSource()->fetchDetail($this->getIdentifierColumnsFromUrl());
+
+                $columns = array();
+                foreach ($this->_fields as $orderValue) {
+                    $columns[$orderValue] = $columnsTemp[$orderValue];
+                }
 
                 $this->_render['detail'] = $this->_temp['table']->globalStart();
 
