@@ -20,10 +20,25 @@
 
 class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
 {
+    /**
+     * Data source
+     *
+     * @var array
+     */
     protected $_dataSource;
 
+    /**
+     * Source columns
+     *
+     * @var type
+     */
     protected $_columns;
 
+    /**
+     * Source separator
+     *
+     * @var type
+     */
     protected $_separator;
 
     public function __construct ($dataSource, $columns = null, $separator = ',')
@@ -97,6 +112,11 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         return true;
     }
 
+    /**
+     *Insert an array of key=>values in the specified table
+     * @param string $table
+     * @param array $post
+     */
     public function insert ($table, array $post)
     {
         $fp = fopen($this->_dataSource, 'a');
@@ -105,6 +125,21 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         fclose($fp);
     }
 
+    /**
+     *Update values in a table using the $condition clause
+     *
+     *The condition clause is a $field=>$value array
+     *that should be escaped by YOU (if your class doesn't do that for you)
+     * and using the AND operand
+     *
+     *Ex: array('user_id'=>'1','id_site'=>'12');
+     *
+     *Raw SQL: * WHERE user_id='1' AND id_site='12'
+     *
+     * @param string $table
+     * @param array $post
+     * @param array $condition
+     */
     public function update ($table, array $post, array $condition)
     {
         $filename = $this->_dataSource;
@@ -124,6 +159,19 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         file_put_contents($this->_dataSource, implode($file, ''));
     }
 
+    /**
+     * Delete a record from a table
+     *
+     * The condition clause is a $field=>$value array
+     * that should be escaped by YOU (if your class doesn't do that for you)
+     * and using the AND operand
+     *
+     * Ex: array('user_id'=>'1','id_site'=>'12');
+     * Raw SQL: * WHERE user_id='1' AND id_site='12'
+     *
+     * @param string $table
+     * @param array $condition
+     */
     public function delete ($table, array $condition)
     {
         $filename = $this->_dataSource;
@@ -139,6 +187,14 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         file_put_contents($this->_dataSource, implode($file, ''));
     }
 
+     /**
+     * Returns record details
+     *
+     * @param string $table
+     * @param array  $condition
+     *
+     * @return mixed
+     */
     public function getRecord ($table, array $condition)
     {
         $position = $condition['_zfgId'];
@@ -149,6 +205,11 @@ class Bvb_Grid_Source_Csv extends Bvb_Grid_Source_Array
         return $this->_rawResult[$position];
     }
 
+    /**
+     * If this adapter supports crud operations
+     *
+     * @return bool
+     */
     public function hasCrud ()
     {
         return is_writable($this->_dataSource) ? true : false;

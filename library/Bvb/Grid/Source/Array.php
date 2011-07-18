@@ -19,13 +19,53 @@
  */
 class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
-    protected $_fields;
-    protected $_rawResult;
+    /**
+     * Fields list
+     *
+     * @var array
+     */
+    protected $_fields = array();
+    /**
+     * Raw result
+     *
+     * @var array
+     */
+    protected $_rawResult = array();
+    /**
+     * Current Offset
+     *
+     * @var int
+     */
     protected $_offset;
+    /**
+     * Current Result start
+     *
+     * @var int
+     */
     protected $_start;
+    /**
+     * Total Records Foun
+     *
+     * @var int
+     */
     protected $_totalRecords = 0;
+    /**
+     * Source nama
+     *
+     * @var string
+     */
     protected $_sourceName;
+    /**
+     * Cache Instance
+     *
+     * @var mixed
+     */
     protected $_cache;
+    /**
+     * Primary Key
+     *
+     * @var string|null
+     */
     protected $_primaryKey = null;
 
     public function __construct(array $array, $titles = null)
@@ -57,21 +97,41 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return $value;
     }
 
+    /**
+     * Resets query order
+     *
+     * @return bool
+     */
     public function resetOrder()
     {
         return true;
     }
 
+    /**
+     * Resets result limit
+     *
+     * @return bool
+     */
     public function resetLimit()
     {
         return true;
     }
 
+    /**
+     * Returns source name
+     *
+     * @return string
+     */
     public function getSourceName()
     {
         return $this->_sourceName;
     }
 
+    /**
+     * Builds fields information.
+     *
+     * @return array
+     */
     public function buildFields()
     {
         $fields = $this->_fields;
@@ -91,6 +151,14 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return $final;
     }
 
+    /**
+     * Builds query limit
+     *
+     * @param int $offset
+     * @param int $start
+     *
+     * @return bool
+     */
     public function buildQueryLimit($offset, $start)
     {
         $this->_offset = $offset;
@@ -98,6 +166,15 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return true;
     }
 
+    /**
+     * Adds a condition to filter
+     *
+     * @param string $filter
+     * @param string $op
+     * @param array  $completeField
+     *
+     * @return bool
+     */
     public function addCondition($filter, $op, $completeField)
     {
 
@@ -119,50 +196,56 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
     /**
      * Apply the search to a give field when the adaptar is an array
+     *
+     * @param type $fieldValue
+     * @param type $valueNeeded
+     * @param type $op
+     *
+     * @return bool
      */
-    protected function _applySearchType($final, $filtro, $op)
+    protected function _applySearchType($fieldValue, $valueNeeded, $op)
     {
         switch ($op) {
             case 'equal':
             case '=':
-                if ($filtro == $final)
+                if ($valueNeeded == $fieldValue)
                     return true;
                 break;
             case 'REGEXP':
-                if (preg_match($filtro, $final))
+                if (preg_match($valueNeeded, $fieldValue))
                     return true;
                 break;
             case 'rlike':
-                if (substr($final, 0, strlen($filtro)) == $filtro)
+                if (substr($fieldValue, 0, strlen($valueNeeded)) == $valueNeeded)
                     return true;
                 break;
             case 'llike':
-                if (substr($final, - strlen($filtro)) == $filtro)
+                if (substr($fieldValue, - strlen($valueNeeded)) == $valueNeeded)
                     return true;
                 break;
             case '>=':
-                if ($final >= $filtro)
+                if ($fieldValue >= $valueNeeded)
                     return true;
                 break;
             case '>':
-                if ($final > $filtro)
+                if ($fieldValue > $valueNeeded)
                     return true;
                 break;
             case '<>':
             case '!=':
-                if ($final != $filtro)
+                if ($fieldValue != $valueNeeded)
                     return true;
                 break;
             case '<=':
-                if ($final <= $filtro)
+                if ($fieldValue <= $valueNeeded)
                     return true;
                 break;
             case '<':
-                if ($final < $filtro)
+                if ($fieldValue < $valueNeeded)
                     return true;
                 break;
             default:
-                $enc = stripos((string) $final, $filtro);
+                $enc = stripos((string) $fieldValue, $valueNeeded);
                 if ($enc !== false) {
                     return true;
                 }
@@ -173,28 +256,51 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
     }
 
     /**
-     * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getSelectOrder()
+     * returns query order
      */
     public function getSelectOrder()
     {
         return array();
     }
 
+    /**
+     * Describe table
+     *
+     * @return bool
+     */
     public function getDescribeTable()
     {
         return false;
     }
 
+    /**
+     * Returns field options based on field type
+     * Not applicable to array sources
+     *
+     * @param string $field
+     *
+     * @return string
+     */
     public function getFilterValuesBasedOnFieldDefinition($field)
     {
         return 'text';
     }
 
+    /**
+     * Returns records count
+     *
+     * @return int
+     */
     public function getTotalRecords()
     {
         return $this->_totalRecords;
     }
 
+    /**
+     * Executes query
+     *
+     * @return array
+     */
     public function execute()
     {
         if ((int) $this->_totalRecords === 0) {
@@ -208,16 +314,33 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return array_slice($this->_rawResult, $this->_start, $this->_offset);
     }
 
+    /**
+     * Returns main table name
+     *
+     * @return bool
+     */
     public function getMainTable()
     {
         return true;
     }
 
+    /**
+     * Returns table list
+     *
+     * @return array
+     */
     public function getTableList()
     {
         return array();
     }
 
+    /**
+     * Builds query order
+     *
+     * @param string $field
+     * @param string $order
+     * @param bool   $reset
+     */
     public function buildQueryOrder($field, $order, $reset = false)
     {
         if (strtolower($order) == 'desc') {
@@ -229,7 +352,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         // Obtain a list of columns
         foreach ($this->_rawResult as $key => $row) {
             if (isset($row[$field])) {
-            $result[$key] = $row[$field];
+                $result[$key] = $row[$field];
             } else {
                 $result[$key] = '';
             }
@@ -240,6 +363,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         unset($result);
     }
 
+    /**
+     * Converts an object to an array
+     *
+     * @param object $data
+     *
+     * @return array
+     */
     protected function _object2array($data)
     {
         if (!is_object($data) && !is_array($data))
@@ -251,6 +381,14 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return array_map(array($this, '_object2array'), $data);
     }
 
+    /**
+     * Builds sql expressions
+     *
+     * @param array $value
+     * @param array $where
+     *
+     * @return scalar
+     */
     public function getSqlExp(array $value, $where = array())
     {
         if (is_array($value['functions'])) {
@@ -273,6 +411,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
 
     /**
      * Applies the SQL EXP options to an array
+     *
      * @param $field
      * @param $operation
      * @param $option
@@ -286,7 +425,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
             foreach ($this->_rawResult as $value) {
                 if ((count($where) > 0 && $value[key($where)] == reset($where)) || count($where) == 0) {
                     $array[] = $value[$field];
-            }
+                }
             }
         } else {
             $array = array($value);
@@ -321,6 +460,15 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         }
     }
 
+    /**
+     * Returns distincts values from a field
+     *
+     * @param string $field
+     * @param string $fieldValue
+     * @param string $order
+     *
+     * @return array
+     */
     public function getDistinctValuesForFilters($field, $fieldValue, $order = 'name ASC')
     {
         $filter = array();
@@ -331,10 +479,17 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return array_unique($filter);
     }
 
+    /**
+     * Returns record details
+     *
+     * @param array $where
+     *
+     * @return array
+     */
     public function fetchDetail(array $where)
     {
         if (count($where) > 1) {
-            throw new Bvb_Grid_Exception('At this moment ony arrays with one primary key are supported');
+            throw new Bvb_Grid_Exception('At this moment only arrays with one primary key are supported');
         }
 
         $field = key($where);
@@ -346,41 +501,84 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         }
     }
 
+    /**
+     * Returns field tyoe
+     *
+     * @param string $field
+     */
     public function getFieldType($field)
     {
-        
+
     }
 
+    /**
+     * Returns select object
+     */
     public function getSelectObject()
     {
-        
+
     }
 
+    /**
+     * Adds fulltext search
+     *
+     * @param string $filter
+     * @param string $field
+     */
     public function addFullTextSearch($filter, $field)
     {
-        
+
     }
 
+    /**
+     * Inserts a new record
+     *
+     * @param string $table
+     * @param array $post
+     */
     public function insert($table, array $post)
     {
-        
+
     }
 
+    /**
+     * Updates a record
+     *
+     * @param string $table
+     * @param array  $post
+     * @param array  $condition
+     */
     public function update($table, array $post, array $condition)
     {
-        
+
     }
 
+    /**
+     * Deletes a record
+     *
+     * @param string $table
+     * @param array  $condition
+     */
     public function delete($table, array $condition)
     {
-        
+
     }
 
+    /**
+     * Returns cache instance
+     *
+     * @return mixed
+     */
     public function getCache()
     {
         return $this->_cache;
     }
 
+    /**
+     * Defines cache instance
+     *
+     * @param Zend_Cache $cache
+     */
     public function setCache($cache)
     {
         if (!is_array($cache) && !$this->_cache) {
@@ -390,6 +588,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         $this->_cache = $cache;
     }
 
+    /**
+     * Builds form fields
+     *
+     * @param array $inputsType
+     *
+     * @return array
+     */
     public function buildForm($inputsType = array())
     {
         $form = array();
@@ -406,6 +611,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return $form;
     }
 
+    /**
+     * Returns columns identifiers for result set
+     *
+     * @param string $table
+     *
+     * @return mixed
+     */
     public function getIdentifierColumns($table)
     {
         if (in_array('_zfgId', $this->_fields)) {
@@ -418,19 +630,44 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return false;
     }
 
+    /**
+     * Returns mass actions id's
+     *
+     * @param string $table
+     * @param array  $fields
+     * @param string $separator
+     *
+     * @return type
+     */
     public function getMassActionsIds($table, $fields, $separator = '-')
     {
         if (!$pk = $this->getIdentifierColumns()) {
             throw new Bvb_Grid_Exception('No primary key found');
         }
+
+        return $this->getIdentifierColumns($table);
     }
 
+    /**
+     * Defines primary key
+     *
+     * @param array $pk
+     * @return Bvb_Grid_Source_Array
+     */
     public function setPrimaryKey(array $pk)
     {
         $this->_primaryKey = $pk;
         return $this;
     }
 
+    /**
+     * Builds filters values from table
+     *
+     * @param type $table
+     * @param type $field
+     * @param type $fieldValue
+     * @param type $order
+     */
     public function getValuesForFiltersFromTable($table, $field, $fieldValue, $order = 'name ASC')
     {
 
@@ -463,16 +700,29 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         throw new Exception('Not possible');
     }
 
+    /**
+     * If this adapter supports crud operations
+     *
+     * @return bool
+     */
     public function hasCrud()
     {
         return true;
     }
 
+    /**
+     * Returns record details
+     *
+     * @param string $table
+     * @param array  $condition
+     *
+     * @return mixed
+     */
     public function getRecord($table, array $condition)
     {
         $key = key($condition);
         $value = reset($condition);
-        foreach ($this->_rawResult as $id=>$result) {
+        foreach ($this->_rawResult as $id => $result) {
             if (isset($result[$key]) && $result[$key] == $value) {
                 return $result;
             }
@@ -480,23 +730,44 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         return false;
     }
 
+    /**
+     * Starts a new transaction
+     *
+     * @return bool
+     */
     public function beginTransaction()
     {
-       return false;
+        return false;
     }
 
+    /**
+     * Commits active transaction
+     *
+     * @return bool
+     */
     public function commit()
     {
         return false;
     }
 
+    /**
+     * Rollbacks current trasaction
+     *
+     * @return bool
+     */
     public function rollBack()
     {
         return false;
     }
 
+    /**
+     * Returns current connection ID
+     *
+     * @return type
+     */
     public function getConnectionId()
     {
         return 0;
     }
+
 }

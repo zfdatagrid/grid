@@ -21,14 +21,13 @@ class Bvb_Grid_Source_Xml extends Bvb_Grid_Source_Array {
 
     public function __construct($url, $loop, $columns = null, $cache = null)
     {
-        
-        if($cache)
-        {
+
+        if ($cache) {
             $this->setCache($cache);
         }
-        
+
         $cache = $this->getCache();
-        
+
         if (strstr($url, '<?xml')) {
             $xml = simplexml_load_string($url);
         } else {
