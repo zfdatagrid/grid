@@ -2775,9 +2775,13 @@ abstract class Bvb_Grid {
             $this->getSource()->resetOrder();
         }
 
-        $result = $this->getSource()->execute();
-
-        $resultCount = $this->getSource()->getTotalRecords();
+        if ( !in_array('listing',$this->willShow()) && $this->getInfo("doubleTables") != 1 ) {
+            $result = array();
+            $resultCount = 0;
+        } else {
+            $result = $this->getSource()->execute();
+            $resultCount = $this->getSource()->getTotalRecords();
+        }
 
         $this->_totalRecords = $resultCount;
         $this->_result = $result;
