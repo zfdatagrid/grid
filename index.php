@@ -21,7 +21,7 @@ $autoloader->registerNamespace('Zendx');
 #$autoloader->setFallbackAutoloader(true);
 
 
-define('APPLICATION_PATH',  getcwd());
+define('APPLICATION_PATH', getcwd());
 
 Zend_Session::start();
 
@@ -37,7 +37,7 @@ Zend_Registry::set('cache', $cache);
 // Database
 $db = Zend_Db::factory($config->db->adapter, $config->db->config->toArray());
 Zend_Db_Table::setDefaultAdapter($db);
-#Zend_Db_Table::setDefaultMetadataCache($cache);
+Zend_Db_Table::setDefaultMetadataCache($cache);
 #$db->getConnection ()->exec ( "SET NAMES utf8" );
 $db->setFetchMode(Zend_Db::FETCH_OBJ);
 $db->setProfiler(true);
@@ -45,9 +45,9 @@ Zend_Registry::set('db', $db);
 
 
 /*
-//Locale
-$locale = new Zend_Locale('en_US');
-Zend_Registry::set('locale', $locale);
+  //Locale
+  $locale = new Zend_Locale('en_US');
+  Zend_Registry::set('locale', $locale);
   $english = array(
   'Name_of' => 'Barcelos',
   'message2' => 'message2',
@@ -61,7 +61,7 @@ Zend_Registry::set('locale', $locale);
   $translate = new Zend_Translate('array', $english, 'en');
 
   Zend_Registry::set('Zend_Translate',$translate);
-*/
+ */
 
 
 $frontController = Zend_Controller_Front::getInstance();
@@ -85,11 +85,11 @@ $options = array(
 $debug = new ZFDebug_Controller_Plugin_Debug($options);
 
 #$frontController->registerPlugin($debug);
-    $route = new Zend_Controller_Router_Route(
-        'route/*',
-        array('controller' => 'site', 'action' => 'crud')
-    );
-    
-    $router = $frontController->getRouter();
-    $router->addRoute('login', $route);
+$route = new Zend_Controller_Router_Route(
+                'route/*',
+                array('controller' => 'site', 'action' => 'crud')
+);
+
+$router = $frontController->getRouter();
+$router->addRoute('login', $route);
 $frontController->dispatch();
