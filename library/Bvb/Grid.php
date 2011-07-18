@@ -3378,7 +3378,14 @@ abstract class Bvb_Grid {
             $id = '';
         }
 
-        $defaultClass = self::loadDeployClass($defaultClass);
+        try {
+            $defaultClass = self::loadDeployClass($defaultClass);
+        } catch (Zend_Loader_PluginLoader_Exception $e) {
+            // let's try if the class is not loaded already
+            if (!class_exists($defaultClass)) {
+                throw $e;
+            }
+        }
 
         if (false === $requestParams) {
             // use request parameters
