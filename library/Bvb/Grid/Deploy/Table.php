@@ -1824,7 +1824,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             }
         }
 
-        $showsForm = $this->willShow();
+        $showsForm = $this->getWillShow();
 
         if ((isset($showsForm['form']) && $showsForm['form'] == 1 && $this->getInfo("doubleTables") == 1)
             || !isset($showsForm['form'])
@@ -1912,7 +1912,6 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->_buildGridRender();
             }
 
-            $this->_showsGrid = true;
         } else {
             $this->_render['start'] = $this->_temp['table']->globalStart();
             $this->_buildGridRender(false);
@@ -3695,6 +3694,17 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      */
     protected function _deployNeedsData()
     {
-        return in_array('listing', $this->willShow()) || $this->getInfo("doubleTables") == 1;
+        return in_array('listing', $this->getWillShow()) || $this->getInfo("doubleTables") == 1;
+    }
+
+
+    /**
+     * Let the user know what will be displayed.
+     *
+     * @return array
+     */
+    public function getWillShow()
+    {
+        return $this->_willShow;
     }
 }

@@ -282,12 +282,6 @@ abstract class Bvb_Grid {
      */
     protected $_templateParams = array();
     /**
-     * To let a user know if the grid will be displayed or not
-     *
-     * @var bool
-     */
-    protected $_showsGrid = false;
-    /**
      * Array of fields that should appear on detail view
      *
      * @var array
@@ -3869,16 +3863,6 @@ abstract class Bvb_Grid {
         $primaryKeys = array_combine($primaryKeys, $par);
 
         return $primaryKeys;
-    }
-
-    /**
-     * Let the user know what will be displayed.
-     *
-     * @return array
-     */
-    public function willShow()
-    {
-        return $this->_willShow;
     }
 
     /**
