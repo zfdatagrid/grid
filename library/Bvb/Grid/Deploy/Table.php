@@ -3695,6 +3695,6 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
      */
     protected function _deployNeedsData()
     {
-        return !in_array('listing',$this->willShow()) && $this->getInfo("doubleTables") != 1;
+        return in_array('listing', $this->willShow()) || $this->getInfo("doubleTables") == 1;
     }
 }
