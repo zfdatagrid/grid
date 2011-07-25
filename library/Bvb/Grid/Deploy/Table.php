@@ -1709,7 +1709,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
         if ($this->_allowEdit == 1 && is_object($this->_crud) && $this->_crud->getBulkEdit() !== true) {
 
 
-             $urlEdit = $url;
+            $urlEdit = $url;
 
             $this->_actionsUrls['edit'] = "$urlEdit/edit" . $this->getGridId()
                                         . "/" . $urlFinal;
@@ -1790,8 +1790,8 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $this->_gridSession->unsetAll();
         }
 
-        if (!in_array('add' . $this->getGridId(), array_keys($this->getAllParams()))
-            && !in_array('edit' . $this->getGridId(), array_keys($this->getAllParams()))
+        if (!in_array('add' . $this->getGridId(), array_keys($this->getParams()))
+            && !in_array('edit' . $this->getGridId(), array_keys($this->getParams()))
         ) {
             if ($this->_gridSession->correct === null || $this->_gridSession->correct === 0) {
                 $this->_gridSession->unsetAll();
@@ -3536,7 +3536,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             return;
         }
 
-        if (count(array_intersect(array_flip($this->getAllParams()), $this->getFields())) > 0) {
+        if (count(array_intersect(array_flip($this->getParams()), $this->getFields())) > 0) {
             return;
         }
 

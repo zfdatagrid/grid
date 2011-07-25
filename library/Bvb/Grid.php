@@ -1546,7 +1546,7 @@ abstract class Bvb_Grid {
                            'detail',
                            'delete');
 
-        $params = $this->getAllParams();
+        $params = $this->getParams();
 
         if (in_array('filters', $situation)) {
             $fields = array_merge($this->getFields(), array_keys($this->_externalFilters));
@@ -3566,6 +3566,19 @@ abstract class Bvb_Grid {
      */
     public function setOptions(array $options)
     {
+        $this->_options = $options;
+        return $this;
+    }
+
+    /**
+     * Add options to the grid
+     *
+     * @param array $options Associative array of options to be applied
+     *
+     * @return Bvb_Grid
+     */
+    public function addOptions(array $options)
+    {
         $this->_options = array_merge_recursive($options, $this->_options);
         return $this;
     }
@@ -3918,7 +3931,7 @@ abstract class Bvb_Grid {
      *
      * @return array
      */
-    public function getAllParams()
+    public function getParams()
     {
         return $this->_ctrlParams;
     }

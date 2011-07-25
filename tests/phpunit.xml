@@ -1,7 +1,7 @@
 
 <phpunit bootstrap="./TestHelper.php" colors="true">
     <testsuite name="ZFDatagrid - Testsuite">
-        <directory>./Bvb</directory>
+        <directory>./library/Bvb</directory>
     </testsuite>
     <filter>
         <whitelist>

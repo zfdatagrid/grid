@@ -74,15 +74,15 @@ class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
     protected $grid;
     protected $controller;
     protected $db;
-    
+
     protected $_temp;
 
     public function setUp()
     {
         date_default_timezone_set('Europe/Lisbon');
-        
+
         $this->_temp = realpath(APPLICATION_PATH.'/../tests/_temp/').'/';
-        
+
         include_once APPLICATION_PATH.'/models/Model.php';
         // Assign and instantiate in one step:
         $this->bootstrap = new Zend_Application(
@@ -105,8 +105,8 @@ class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
 
         parent::setUp();
     }
-    
-    
+
+
     public function deployGrid($select = null)
     {
         if ($select === null) {

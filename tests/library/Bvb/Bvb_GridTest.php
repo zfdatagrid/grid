@@ -20,13 +20,13 @@ class Bvb_GridTest extends Bvb_GridTestHelper {
 
     public function testParams()
     {
-        $this->assertFalse($this->grid->getParam('empty'));
+        $this->assertNull($this->grid->getParam('empty'));
         $this->grid->setParam('empty', 1);
         $this->assertEquals($this->grid->getParam('empty'), 1);
-        $this->assertEquals(count($this->grid->removeAllParams()->getAllParams()), 0);
+        $this->assertEquals(count($this->grid->clearParams()->getParams()), 0);
         $this->assertEquals($this->grid->addParam('test', 'value')->getParam('test'), 'value');
-        $this->assertEquals($this->grid->removeParam('test')->getParam('test'), false);
-        $this->assertEquals($this->grid->addParams(array('1', '2', '3'))->getAllParams(), array('1', '2', '3'));
+        $this->assertEquals($this->grid->clearParam('test')->getParam('test'), false);
+        $this->assertEquals($this->grid->addParams(array('1', '2', '3'))->getParams(), array('1', '2', '3'));
     }
 
     public function testExport()
