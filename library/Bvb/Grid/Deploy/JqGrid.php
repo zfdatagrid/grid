@@ -164,7 +164,7 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
         $this->_view = null;
 
         // prepare request parameters sent by jqGrid
-        $this->removeAllParams();
+        $this->clearParams();
         $this->convertRequestParams();
     }
 

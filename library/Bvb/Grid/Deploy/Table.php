@@ -614,24 +614,24 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
         if (count($extra) > 0) {
             foreach ($extra as $key => $value) {
-                $this->removeParam($key);
+                $this->clearParam($key);
             }
         }
 
         if ($this->getRequest()->isPost()) {
             foreach ($_POST as $key => $value) {
-                $this->removeParam($key);
+                $this->clearParam($key);
             }
         }
 
         foreach ($post as $key => $value) {
-            $this->removeParam($key);
+            $this->clearParam($key);
         }
 
-        $this->removeParam('saveAndAdd' . $this->getGridId());
-        $this->removeParam('form_submit' . $this->getGridId());
-        $this->removeParam('zfg_form_edit' . $this->getGridId());
-        $this->removeParam('zfg_csrf' . $this->getGridId());
+        $this->clearParam('saveAndAdd' . $this->getGridId());
+        $this->clearParam('form_submit' . $this->getGridId());
+        $this->clearParam('zfg_form_edit' . $this->getGridId());
+        $this->clearParam('zfg_csrf' . $this->getGridId());
 
         return true;
     }

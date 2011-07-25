@@ -508,12 +508,12 @@ abstract class Bvb_Grid {
         }
 
         foreach (array('massActionsAll_', 'gridAction_', 'send_') as $value) {
-            $this->removeParam($value);
+            $this->clearParam($value);
         }
 
         foreach ($this->_ctrlParams as $key => $value) {
             if (is_array($value)) {
-                $this->removeParam($key);
+                $this->clearParam($key);
             }
         }
 
@@ -1334,7 +1334,6 @@ abstract class Bvb_Grid {
             $val = $this->getRequestParamClean($id);
             if ($val) {
                 call_user_func_array($callback, array($id, $val, $this->getSelect()));
-                // TODO not sure if $val could change in that $callback
                 $this->_filtersValues[$id] = $this->getRequestParamClean($id);
             }
         }
@@ -1446,7 +1445,7 @@ abstract class Bvb_Grid {
         $orderField = implode('_', $order1);
 
         if (!isset($this->_fieldsOrder[$orderField])) {
-            $this->removeParam('order');
+            $this->clearParam('order');
             $orderf = false;
         } else {
             $orderField = $this->_fieldsOrder[$orderField];
@@ -1572,7 +1571,7 @@ abstract class Bvb_Grid {
                         unset($params[rtrim($fl[0]) . '[' . $fl[1]]);
                         $fieldName = substr(rtrim($fl[0]), 0, strpos(rtrim($fl[0]), $this->getGridId()));
                         if(in_array($fieldName, $this->_fields))
-                        $this->removeParam($fieldName);
+                        $this->clearParam($fieldName);
                     }
                 }
             }
@@ -1589,7 +1588,7 @@ abstract class Bvb_Grid {
         unset($paramsClean['_zfgid']);
         unset($paramsClean['gridmod' . $this->getGridId()]);
 
-        $this->removeParam('gridmod');
+        $this->clearParam('gridmod');
 
 
         if (is_array($this->_filters)) {
@@ -3961,7 +3960,7 @@ abstract class Bvb_Grid {
      *
      * @return Bvb_Grid
      */
-    public function removeParam($param)
+    public function clearParam($param)
     {
         unset($this->_ctrlParams[$param]);
         return $this;
@@ -3972,7 +3971,7 @@ abstract class Bvb_Grid {
      *
      * @return Bvb_Grid
      */
-    public function removeAllParams()
+    public function clearParams()
     {
         $this->_ctrlParams = array();
         return $this;
