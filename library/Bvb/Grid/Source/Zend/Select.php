@@ -938,6 +938,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $op = strtolower($op);
 
+        // TODO $completeField should contain key ($grid->_data['fields'][$key]),
+        //      cleaner would be to pass key as parameter and provide access to field definition from grid class
         $explode = explode('.', $completeField['field']);
         $field = end($explode);
 
@@ -947,6 +949,8 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
 
         $columns = $this->getColumns();
 
+
+        // TODO it would be worth to rework this inefficient algorithm
         foreach ($columns as $value) {
             if ($field == $value[2]) {
                 if ($value[1] instanceof Zend_Db_Expr) {
@@ -962,9 +966,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             } elseif ($field == $value[0]) {
                 $field = $value[0] . '.' . $value[1];
                 break;
-            } elseif ($value[1] instanceof Zend_Db_Expr && $field == $value[1]->__toString()) {
+            } elseif ($value[1] instanceof Zend_Db_Expr && $completeField['field'] == $value[1]->__toString()) {
                 $sqlExpr = true;
-                $field = $completeField['alias'];
+                $field = $completeField['field'];
                 break;
             }
         }
@@ -983,15 +987,17 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
          * We can not quoteIdentifier this fields...
          *
          */
+        // TODO expressions should always be passed as Zend_Db_Expr, then this should be not needed
         if (!$sqlExpr && strpos($field, '(') !== false) {
             $field = $this->_getDb()->quoteIdentifier($field);
         }
 
         $func = 'where';
 
-        if ($sqlExpr || strpos($field, '(') !== false) {
+        // TODO having should be used only on fields declared in GROUP BY part
+        /*if ($sqlExpr || strpos($field, '(') !== false) {
             $func = 'having';
-        }
+        }*/
 
         switch ($op) {
             case 'sqlexp':
