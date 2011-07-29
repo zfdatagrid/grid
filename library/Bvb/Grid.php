@@ -1420,7 +1420,7 @@ abstract class Bvb_Grid {
         }
 
         if (isset($this->_data['fields'][$field]['searchTypeFixed'])
-                && $this->_data['fields'][$field]['searchTypeFixed'] === true
+                && $this->_data['fields'][$field]['searchTypeFixed'] == true
                 && $op != $this->_data['fields'][$field]['searchType']
         ) {
             $op = $this->_data['fields'][$field]['searchType'];
@@ -1611,7 +1611,7 @@ abstract class Bvb_Grid {
         $paramsClean = array_merge($paramsClean, (array) $extraParams);
 
         $ur = new Zend_View_Helper_Url();
-        $url = $ur->url($paramsClean, $this->getRouteName(), true);
+        $url = $ur->url($paramsClean, null);
 
         return str_replace("/zfghost/1", '', $url);
     }
