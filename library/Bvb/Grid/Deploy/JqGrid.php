@@ -126,6 +126,11 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
     private $_bvbParams = array();
 
     /**
+     * @var bool
+     */
+    protected $_dataWithColNames = false;
+
+    /**
      * Options to apply by navGrid
      * TODO maybe not needed
      * @var array
@@ -307,6 +312,21 @@ class Bvb_Grid_Deploy_JqGrid extends Bvb_Grid implements Bvb_Grid_Deploy_DeployI
     }
 
     /**
+     * @param bool $addColumnNames
+     * @return void
+     */
+    public function setBvbDataWithColNames($addColumnNames)
+    {
+        $this->_dataWithColNames = $addColumnNames;
+    }
+
+    public function getBvbDataWithColNames()
+    {
+        return $this->_dataWithColNames;
+    }
+
+
+    /**
      * Return value of parameter from Bvb_Grid_Deploy_JqGrid domain
      *
      * @param string $var     variable name
@@ -477,6 +497,11 @@ JS;
                 self::encodeJson($btn)
             );
         }
+
+        if ($this->_dataWithColNames) {
+            $this->_jqgParams['jsonReader'] = array("repeatitems"=>false);
+        }
+
         if (!$this->getBvbParam('firstDataAsLocal', true)) {
             // first data will be loaded via ajax call
             $data = array();
@@ -560,6 +585,7 @@ HTML;
                 );
             }
         }
+
         // build rows
         $data = new stdClass();
         $data->rows = array();
@@ -568,15 +594,25 @@ HTML;
             // collect data for cells
             $d = array();
             foreach ( $row as $key=>$val ) {
-                $d[] = $val['value'];
+                if ($this->_dataWithColNames) {
+                    // add column names to data
+                    $d[$val['field']] = $val['value'];
+                } else {
+                    // faster but you can't change order of columns
+                    $d[] = $val['value'];
+                }
             }
             if ($passPk) {
                 // set PK to row
                 // TODO works only if _buildGrid() results are in same order as $this->_result
                 $dataRow->id = $this->_result[$i][$pkName];
             }
-            $dataRow->cell = $d;
-            $data->rows[] = $dataRow;
+            if ($this->_dataWithColNames) {
+                $data->rows[] = $d;
+            } else {
+                $dataRow->cell = $d;
+                $data->rows[] = $dataRow;
+            }
         }
         // set some other information
         if ($limit>0) {
