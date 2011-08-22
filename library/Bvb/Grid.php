@@ -1521,16 +1521,16 @@ abstract class Bvb_Grid {
     /**
      * Returns the url, without the param(s) specified
      *
-     * @param mixed $situation   Array of params to be removed
+     * @param mixed $paramsToRemove   Array of params to be removed
      * @param array  $extraParams param to add to url
      *
      * @todo Use a view helper to build url
      *
      * @return string
      */
-    public function getUrl($situation = '', array $extraParams = array())
+    public function getUrl($paramsToRemove = '', array $extraParams = array())
     {
-        $situation = (array) $situation;
+        $paramsToRemove = (array) $paramsToRemove;
 
         //this array the a list of params that name changes
         //based on grid id. The id is prepended to the name
@@ -1555,7 +1555,7 @@ abstract class Bvb_Grid {
 
         $params = $this->getParams();
 
-        if (in_array('filters', $situation)) {
+        if (in_array('filters', $paramsToRemove)) {
             $fields = array_merge($this->getFields(), array_keys($this->_externalFilters));
 
             foreach(array_keys($this->_externalFilters) as $removeExternalFilter)
@@ -1584,7 +1584,7 @@ abstract class Bvb_Grid {
             }
         }
 
-        foreach ($situation as $value) {
+        foreach ($paramsToRemove as $value) {
             if (in_array($value, $paramsGet)) {
                 $value = $value . $this->getGridId();
             }
@@ -1618,7 +1618,7 @@ abstract class Bvb_Grid {
         $paramsClean = array_merge($paramsClean, (array) $extraParams);
 
         $ur = new Zend_View_Helper_Url();
-        $url = $ur->url($paramsClean, null);
+        $url = $ur->url($paramsClean, null, true);
 
         return str_replace("/zfghost/1", '', $url);
     }
