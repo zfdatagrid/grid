@@ -479,6 +479,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_gridSession->_noForm = 0;
                         $this->_gridSession->correct = 0;
 
+                        $this->getForm(1)->markAsError();
                         $this->getSource()->rollBack();
                         $this->_removeFormParams();
                         $this->_redirect($this->getUrl());
@@ -569,6 +570,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                         $this->_gridSession->correct = 0;
 
                         $this->getSource()->rollBack();
+                        $this->getForm(1)->markAsError();
 
                         $this->_removeFormParams();
                         $this->_redirect($this->getUrl());
