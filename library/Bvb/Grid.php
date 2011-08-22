@@ -467,6 +467,13 @@ abstract class Bvb_Grid {
     protected $_eventsPrefix = null;
 
     /**
+     * If we should translate coulmns titles
+     *
+     * @var type
+     */
+    protected $_translateColumnsTitles = true;
+
+    /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
@@ -1881,10 +1888,14 @@ abstract class Bvb_Grid {
 
                 $noOrder = $this->getInfo('noOrder') ? $this->getInfo('noOrder') : '';
 
-                if ($this->isTranslated($titles[$i]) === true) {
-                    $fieldTitle = $this->__($titles[$i]);
+                if ($this->getTranslateColumnsTitles()) {
+                    if ($this->isTranslated($titles[$i]) === true) {
+                        $fieldTitle = $this->__($titles[$i]);
+                    } else {
+                        $fieldTitle = $this->__($this->_titles[$titles[$i]]);
+                    }
                 } else {
-                    $fieldTitle = $this->__($this->_titles[$titles[$i]]);
+                    $fieldTitle = $titles[$i];
                 }
 
 
@@ -4676,6 +4687,29 @@ abstract class Bvb_Grid {
     protected function _deployNeedsData()
     {
         return true;
+    }
+
+    /**
+     * If we should translate columns titles
+     *
+     * @param bool $status
+     *
+     * @return Bvb_Grid
+     */
+    public function setTranslateColumnsTitles($status)
+    {
+        $this->_translateColumnsTitles = (bool)$status;
+        return $this;
+    }
+
+    /**
+     * Get current status about translating columns titles
+     *
+     * @return bool
+     */
+    public function getTranslateColumnsTitles()
+    {
+        return $this->_translateColumnsTitles;
     }
 
 }

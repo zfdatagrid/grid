@@ -3708,4 +3708,5 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
     {
         return $this->_willShow;
     }
+
 }
