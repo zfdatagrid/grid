@@ -1237,12 +1237,16 @@ abstract class Bvb_Grid {
 
                     //Check fi user has defined a transform option for the value
                     //The transform option is used to normalise vallues, like date, currency, etc
-                    if (isset($this->_filters[$key]['transform']) && is_callable($this->_filters[$key]['transform'])) {
+                    if (is_array($this->_filters[$key])
+                            && isset($this->_filters[$key]['transform'])
+                            && is_callable($this->_filters[$key]['transform'])) {
                         $filter = call_user_func($this->_filters[$key]['transform'], $filter);
                     }
 
                     //A callback is set? If yes, let's call it
-                    if (isset($this->_filters[$key]['callback']) && is_array($this->_filters[$key]['callback'])) {
+                    if (is_array($this->_filters[$key])
+                            && isset($this->_filters[$key]['callback'])
+                            && is_array($this->_filters[$key]['callback'])) {
                         if (!is_callable($this->_filters[$key]['callback']['function'])) {
                             throw new Bvb_Grid_Exception($this->_filters[$key]['callback']['function']
                                     . ' is not callable');
