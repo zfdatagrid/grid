@@ -308,7 +308,10 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                                 ->setValue($this->_gridSession->post[$i][$key]);
                                         }
                                     } else {
-                                            $this->getForm($i)->getElement($key)->setValue($value);
+                                        if ($this->getForm($i)->getElement($key)->isArray()) {
+                                            $value = explode(',', $value);
+                                        }
+                                        $this->getForm($i)->getElement($key)->setValue($value);
                                     }
                                 }
                             }
