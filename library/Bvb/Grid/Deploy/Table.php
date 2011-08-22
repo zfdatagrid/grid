@@ -2096,7 +2096,7 @@ var postMassIds_" . $this->getGridId() . " = new Array();
 
 function convertArrayToInput_" . $this->getGridId() . "()
 {
-    if(postMassIds_" . $this->getGridId() . ".length==0)
+    if(postMassIds_" . $this->getGridId() . ".length==0 || postMassIds_" . $this->getGridId() . "[0] == '')
     {
         tempArray_" . $this->getGridId() . " = new Array();
 
