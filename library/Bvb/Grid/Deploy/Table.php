@@ -499,6 +499,14 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                                 continue;
                             }
 
+                            $tableFields = $this->getSource()->getDescribeTable($this->_crudTable);
+
+                            foreach (array_keys($post[$key]) as $field) {
+                                if ($tableFields[$field]['NULLABLE'] == 1 && strlen($post[$key][$field]) == 0) {
+                                    $post[$key][$field] = new Zend_Db_Expr("NULL");
+                                }
+                            }
+
                             $pks = $this->getSource()
                                 ->getIdentifierColumns($this->_data['table'], $this->_data['schema']);
 
