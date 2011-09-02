@@ -725,7 +725,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $this->_createWhereConditions($qb, $where);
 
-        return reset($this->execute()); 
+        return reset($this->execute());
     }
 
     /**
@@ -1417,20 +1417,30 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _setEntityValues($entity, array $values)
     {
-        foreach($values as $key => $value) {
+        foreach ($values as $key => $value) {
             $method = 'set' . ucfirst($key);
             $type = $this->getFieldType($key);
 
             //if the column is from type date or datetime, create a DateTime object
-            if($type == Type::DATE || $type == Type::DATETIME) {
+            if ($type == Type::DATE || $type == Type::DATETIME) {
                 $value = new DateTime($value);
             }
 
-            if(method_exists($entity, $method)) {
+
+            if (method_exists($entity, $method)) {
                 $entity->$method($value);
+            } else {
+                $method = preg_replace_callback('/(_\w{1})/i', create_function(
+                                '$matches', 'return strtoupper($matches[0]);'
+                        ), $method);
+                $method = str_replace("_", "", $method);
+                if (method_exists($entity, $method)) {
+                    $entity->$method($value);
+                }
             }
         }
     }
+
 
     /**
      * Find the table for which a column belongs.
