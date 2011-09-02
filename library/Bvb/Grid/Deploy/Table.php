@@ -2310,7 +2310,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                         name = dijit.byId(fieldsArray[i]).get('name');
                      }
 
-                    value = value.replace(/^\s+|\s+$/g,'').replace(/\//,'');
+                    value = value.replace(/^\s+|\s+$/g,'').replace(/\//,'%2F');
                     filtro += encodeString(name) + '/'+encodeString(value)+'/';
         	}
 

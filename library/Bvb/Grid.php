@@ -1222,6 +1222,8 @@ abstract class Bvb_Grid {
             //final check for allowed fields
             foreach ($filters as $key => $filter) {
 
+                $filter = urldecode($filter);
+
                 if (!is_array($filter) && (strlen($filter) == 0 || !in_array($key, $this->_fields))) {
 
                     unset($filters[$key]);
@@ -2918,7 +2920,8 @@ abstract class Bvb_Grid {
 
         $tpInfo = array('colspan' => $this->_colspan,
             'charEncoding' => $this->getCharEncoding(),
-            'name' => $template, 'dir' => $this->_templates[$output]->getClassPath($template),
+            'name' => $template,
+            'dir' => $this->_templates[$output]->getClassPath($template),
             'class' => $this->_templates[$output]->getClassName($template));
 
         $this->_temp[$output] = new $class();
