@@ -1624,7 +1624,7 @@ abstract class Bvb_Grid {
         $paramsClean = array_merge($paramsClean, (array) $extraParams);
 
         $ur = new Zend_View_Helper_Url();
-        $url = $ur->url($paramsClean, null, true);
+        $url = $ur->url($paramsClean, null, false, false);
 
         return str_replace("/zfghost/1", '', $url);
     }
