@@ -966,6 +966,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $metadata = $em->getClassMetadata($table);
         $select = $alias;
 
+        $qb->from($table, $alias);
+
         //create a query where all fields are contained, even the associations
         foreach($metadata->associationMappings as $column => $detail) {
             //skip relations where the type is many to many or this side is not the
@@ -976,16 +978,18 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
             $joinAlias = $this->_getNewAlias();
             $refColumn = $detail['joinColumns'][0]['referencedColumnName'];
+
             //join the table
             $qb->leftJoin($alias . '.' . $detail['fieldName'], $joinAlias);
+
 
             //append primary key from the joined table to the select
             //and use the defined column "AS" the name
             $select .= ', ' . $joinAlias . '.' . $refColumn . ' AS ' . $column;
         }
 
-        $qb->from($table, $alias)
-                ->select($select);
+        $qb->select($select);
+
 
 
         $this->_createWhereConditions($qb, $newCondition);
