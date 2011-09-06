@@ -729,7 +729,12 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $this->_createWhereConditions($qb, $where);
 
-        return reset($this->execute());
+        $results = $this->execute();
+        if(is_array($results)){
+            return $results[0];
+        }else{
+            return false;
+        }
     }
 
     /**
