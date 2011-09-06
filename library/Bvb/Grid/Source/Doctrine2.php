@@ -1,13 +1,13 @@
 <?php
 
-use \Doctrine\ORM\EntityRepository,
-    \Doctrine\ORM\QueryBuilder,
-    \Doctrine\ORM\EntityManager,
-    \Doctrine\ORM\Query,
+use Doctrine\ORM\EntityRepository,
+    Doctrine\ORM\QueryBuilder,
+    Doctrine\ORM\EntityManager,
+    Doctrine\ORM\Query,
     Doctrine\ORM\Query\AST,
-    \Doctrine\DBAL\Types\Type,
-    \Doctrine\ORM\Mapping\ClassMetadata;
-
+    Doctrine\DBAL\Types\Type,
+    Doctrine\ORM\Mapping\ClassMetadata,
+    Doctrine\ORM\NonUniqueResultException;
 
 /**
  * Provides you the ability to use Doctrine as a source
@@ -16,35 +16,40 @@ use \Doctrine\ORM\EntityRepository,
  * @package   Bvb_Grid
  * @author Martin Parsiegla <martin.parsiegla@speanet.info>
  */
-
 class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements Bvb_Grid_Source_SourceInterface
 {
+
     /**
      * @var QueryBuilder
      */
     private $qb;
+
     /**
      * @var EntityManager
      */
     private $entityManager;
+
     /**
      * An array containing title, type and fieldname from the query fields.
      *
      * @var array
      */
     private $fields;
+
     /**
      * Array with all defined where conditions.
      *
      * @var array
      */
     private $whereConditions = array();
+
     /**
      * Ascii coded alias (97 = 'a').
      *
      * @var integer
      */
     private $alias = 97;
+
     /**
      * The parameter number to use.
      *
@@ -83,15 +88,15 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function setEntityManager($entityManager = null)
     {
-        if(is_null($entityManager)) {
-            if(Zend_Registry::isRegistered('doctrine')) {
+        if (is_null($entityManager)) {
+            if (Zend_Registry::isRegistered('doctrine')) {
                 $entityManager = Zend_Registry::get('doctrine')->getEntityManager();
-            } elseif(Zend_Registry::isRegistered('EntityManager')) {
+            } elseif (Zend_Registry::isRegistered('EntityManager')) {
                 $entityManager = Zend_Registry::get('EntityManager');
             } else {
                 throw new Bvb_Grid_Source_Doctrine2_Exception('No suitable EntityManager found in registry, please set a specific one.');
             }
-        } elseif(!($entityManager instanceof EntityManager)) {
+        } elseif (!($entityManager instanceof EntityManager)) {
             throw new Bvb_Grid_Source_Doctrine2_Exception('Parameter must be an instance of \Doctrine\ORM\EntityManager');
         }
 
@@ -118,17 +123,17 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         //if the value is a string, check if the entity class
         //exists and create the query builder
-        if(is_string($value)) {
+        if (is_string($value)) {
             $em = $this->getEntityManager();
             //check if the class exists, surpress any warnings
-            if(!@class_exists($value, true)) {
+            if (!@class_exists($value, true)) {
                 throw new Bvb_Grid_Source_Doctrine2_Exception('Entity with name ' . $value . ' does not exist.');
             }
 
             $qb = $em->getRepository($value)->createQueryBuilder('d');
-        } elseif($value instanceof EntityRepository) {
+        } elseif ($value instanceof EntityRepository) {
             $qb = $value->createQueryBuilder('d');
-        } elseif(!($value instanceof QueryBuilder)) {
+        } elseif (!($value instanceof QueryBuilder)) {
             throw new Bvb_Grid_Source_Doctrine2_Exception('Parameter must be an instance of \Doctrine\ORM\EntityRepository or \Doctrine\ORM\QueryBuilder.');
         } else {
             $qb = $value;
@@ -179,19 +184,19 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $pnUse = '?' . $pn;
 
         $func = 'where';
-        if(strpos($field, '(') !== false) {
+        if (strpos($field, '(') !== false) {
             $func = 'having';
         }
 
         $havingPart = $qb->getDQLPart('having');
         $wherePart = $qb->getDQLPart('where');
-        if($func == 'having' && !empty($havingPart)) {
+        if ($func == 'having' && !empty($havingPart)) {
             $func = 'andHaving';
-        } elseif($func == 'where' && !empty($wherePart)) {
+        } elseif ($func == 'where' && !empty($wherePart)) {
             $func = 'andWhere';
         }
 
-        switch(strtolower($op)) {
+        switch (strtolower($op)) {
             case 'sqlexp':
                 $qb->$func($filter);
                 break;
@@ -319,19 +324,19 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function buildFields()
     {
-        if(empty($fields)) {
+        if (empty($fields)) {
             $ast = $this->getQueryBuilder()->getQuery()->getAST();
 
             //used for expressions without an identification variable
             $fieldNumber = 1;
             $returnFields = array();
-            foreach($ast->selectClause->selectExpressions as $selectExpression) {
+            foreach ($ast->selectClause->selectExpressions as $selectExpression) {
                 $expression = $selectExpression->expression;
 
                 //if the expression is a string, there is an alias used to get all fields
                 //to get all fields from the alias, we fetch the entity class and retrieve
                 //the metadata from it, so we can set the fields correctly
-                if(is_string($expression)) {
+                if (is_string($expression)) {
                     //the expression itself is a pathexpression, where we can directly
                     //fetch the title and field
 
@@ -339,16 +344,16 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                     $tableName = $this->_getModelFromAlias($alias);
                     $metadata = $this->getEntityManager()->getClassMetadata($tableName);
 
-                    foreach($metadata->fieldMappings as $key => $details) {
+                    foreach ($metadata->fieldMappings as $key => $details) {
                         $returnFields[$key]['title'] = ucwords(str_replace('_', ' ', $key));
                         $returnFields[$key]['field'] = $alias . '.' . $key;
                         $returnFields[$key]['type'] = $details['type'];
                     }
-                } elseif($expression instanceof AST\PathExpression) {
+                } elseif ($expression instanceof AST\PathExpression) {
                     $field = ($selectExpression->fieldIdentificationVariable != null) ? $selectExpression->fieldIdentificationVariable : $expression->field;
                     $returnFields[$field]['title'] = ucwords(str_replace('_', ' ', $field));
                     $returnFields[$field]['field'] = $expression->identificationVariable . '.' . $expression->field;
-                } elseif($expression instanceof AST\Subselect) {
+                } elseif ($expression instanceof AST\Subselect) {
                     //handle subselects. we only need the identification variable for the field
                     $field = $selectExpression->fieldIdentificationVariable;
 
@@ -362,7 +367,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                     //doctrine uses numeric keys for expressions which got no
                     //identification variable, so the key will be set to the
                     //current counter $i
-                    if($field === null) {
+                    if ($field === null) {
                         $field = $this->_getNameForExpression($expression);
                         $key = $fieldNumber;
                         $fieldNumber++;
@@ -378,7 +383,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             }
 
             $this->fields = $returnFields;
-
         }
 
         return $this->fields;
@@ -394,28 +398,28 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         $str = '';
 
-        foreach($expression as $key => $sub) {
-            if($sub instanceof AST\PathExpression) {
+        foreach ($expression as $key => $sub) {
+            if ($sub instanceof AST\PathExpression) {
                 $str .= $sub->identificationVariable . '.' . $sub->field;
-                if($expression instanceof AST\Functions\FunctionNode) {
+                if ($expression instanceof AST\Functions\FunctionNode) {
                     $str = $expression->name . '(' . $str . ')';
-                } elseif($expression instanceof AST\AggregateExpression) {
+                } elseif ($expression instanceof AST\AggregateExpression) {
                     $str = $expression->functionName . '(' . $str . ')';
                 }
                 //when we got another array, we will call the method recursive and add
                 //brackets for readability.
-            } elseif(is_array($sub)) {
+            } elseif (is_array($sub)) {
                 $str .= '(' . $this->_getNameForExpression($sub) . ')';
                 //call the method recursive to get all names.
-            } elseif(is_object($sub)) {
+            } elseif (is_object($sub)) {
                 $str .= $this->_getNameForExpression($sub);
                 //key is numeric and value is a string, we probably got an
                 //arithmetic identifier (like "-" or "/")
-            } elseif(is_numeric($key) && is_string($sub)) {
+            } elseif (is_numeric($key) && is_string($sub)) {
                 $str .= ' ' . $sub . ' ';
                 //we got a string value for example in an arithmetic expression
                 //(a.value - 1) the "1" here is the value we append to the string here
-            } elseif($key == 'value') {
+            } elseif ($key == 'value') {
                 $str .= $sub;
             }
         }
@@ -455,14 +459,14 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $form = array();
         $em = $this->getEntityManager();
 
-        foreach($cols as $column => $detail) {
+        foreach ($cols as $column => $detail) {
 
-            if(isset($detail['id']) && $detail['id']) {
+            if (isset($detail['id']) && $detail['id']) {
                 continue;
             }
 
             $label = ucwords(str_replace('_', ' ', $column));
-            switch($detail['type']) {
+            switch ($detail['type']) {
                 case Type::STRING:
                     $length = (is_null($detail['length'])) ? 255 : $detail['length'];
                     $return[$column] = array('type' => 'smallText',
@@ -526,10 +530,10 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             }
         }
 
-        if(count($info->associationMappings > 0)) {
-            foreach($info->associationMappings as $column => $detail) {
+        if (count($info->associationMappings > 0)) {
+            foreach ($info->associationMappings as $column => $detail) {
                 //many to many relations are not supported
-                if($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
+                if ($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
                     continue;
                 }
 
@@ -541,7 +545,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                 //check if the entity class got a __toString method
                 //if the class got one, we use this for the value in the select field
                 //otherwise use fetch an array and search for a display column.
-                if(method_exists($dummy, '__toString')) {
+                if (method_exists($dummy, '__toString')) {
                     $hydrate = Query::HYDRATE_OBJECT;
                 } else {
                     $hydrate = Query::HYDRATE_ARRAY;
@@ -557,8 +561,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
                 $displayField = null;
                 //seach for a field with the type string and use this value of the field for the select
-                foreach($metadata->fieldMappings as $fieldMapping) {
-                    if($fieldMapping['type'] == Type::STRING) {
+                foreach ($metadata->fieldMappings as $fieldMapping) {
+                    if ($fieldMapping['type'] == Type::STRING) {
                         $displayField = $fieldMapping['fieldName'];
                     }
                 }
@@ -569,15 +573,15 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
                 $displayField = (is_null($displayField)) ? $primaryColumn : $displayField;
 
                 $isNullable = $detail['joinColumns'][0]['nullable'];
-                if($isNullable) {
+                if ($isNullable) {
                     $final['values'][$column][""] = "-- Empty --";
                 }
 
 
-                foreach($assoc as $field) {
-                    if(is_object($field)) {
+                foreach ($assoc as $field) {
+                    if (is_object($field)) {
                         $method = 'get' . ucfirst($primaryColumn);
-                        if(!method_exists($field, $method)) {
+                        if (!method_exists($field, $method)) {
                             throw new Bvb_Grid_Source_Doctrine2_Exception('No getter method for the primary field found (used name: ' . $method . ').');
                         }
                         $final['values'][$column][$field->$method()] = $field->__toString();
@@ -594,7 +598,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $form = $this->buildFormElementsFromArray($return);
 
-        foreach($inputsType as $field => $type) {
+        foreach ($inputsType as $field => $type) {
             $form['elements'][$field][0] = strtolower($type);
         }
 
@@ -610,7 +614,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function buildQueryLimit($start, $offset)
     {
-        if($start == 0 && $offset == 0) {
+        if ($start == 0 && $offset == 0) {
             $this->resetLimit();
         } else {
             $this->getQueryBuilder()->setMaxResults($start)->setFirstResult($offset);
@@ -638,7 +642,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $fieldName = $this->_getFieldName($field);
 
         $qb = $this->getQueryBuilder();
-        if($reset) {
+        if ($reset) {
             $qb->resetDQLPart('orderBy');
         }
 
@@ -667,7 +671,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $qbDelete->delete($table, $alias);
 
         $first = true;
-        foreach($condition as $column => $value) {
+        foreach ($condition as $column => $value) {
             //remove alias and prepend own one
             $column = $this->_removeAlias($column);
             $column = $alias . '.' . $column;
@@ -692,7 +696,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         try {
             $result = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        } catch(Query\QueryException $e) {
+        } catch (Query\QueryException $e) {
             Zend_Debug::dump($e);
         }
 
@@ -745,14 +749,14 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $fieldMappings = $metadata->fieldMappings;
 
         $return = array();
-        foreach($fieldMappings as $key => $fields) {
+        foreach ($fieldMappings as $key => $fields) {
             $return[$key] = $fields;
             $return[$key]['NULLABLE'] = ($fields['nullable']) ? 1 : 0;
         }
 
         $associationMappings = $metadata->associationMappings;
-        foreach($associationMappings as $key => $detail) {
-            if($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
+        foreach ($associationMappings as $key => $detail) {
+            if ($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
                 continue;
             }
 
@@ -792,7 +796,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $result = $newQuery->getQuery()->getResult(Query::HYDRATE_ARRAY);
 
-        foreach($result as $value) {
+        foreach ($result as $value) {
             $return[$value['field']] = $value['value'];
         }
 
@@ -813,7 +817,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     public function getFieldType($field)
     {
         //check if the type was already fetched
-        if(!isset($this->fields[$field]['type'])) {
+        if (!isset($this->fields[$field]['type'])) {
             //get the field with the alias
             $fieldName = $this->_getFieldName($field);
             //remove an existing alias
@@ -823,14 +827,14 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
             //fetch data type from metadata
             try {
-                if($tableModel !== null) {
+                if ($tableModel !== null) {
                     $metadata = $this->getEntityManager()->getClassMetadata($tableModel);
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $this->fields[$field]['type'] = Type::STRING;
             }
 
-            if(isset($metadata->fieldMappings[$field]['type'])) {
+            if (isset($metadata->fieldMappings[$field]['type'])) {
                 $this->fields[$field]['type'] = $metadata->fieldMappings[$field]['type'];
             } else {
                 $this->fields[$field]['type'] = Type::STRING;
@@ -868,7 +872,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     public function getIdentifierColumns($table = null)
     {
         $return = array();
-        if(is_null($table)) {
+        if (is_null($table)) {
             $mainTable = $this->getMainTable();
             $table = $mainTable['table'];
         }
@@ -879,7 +883,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $fromPart = $this->getQueryBuilder()->getDQLPart('from');
         $alias = $fromPart[0]->getAlias();
 
-        foreach($identifier as $id) {
+        foreach ($identifier as $id) {
             $return[] = $alias . '.' . $id;
         }
 
@@ -908,7 +912,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         $qb = new QueryBuilder($this->getEntityManager());
 
-        if(count($fields) == 0) {
+        if (count($fields) == 0) {
             $metadata = $this->getEntityManager()->getClassMetadata($table);
             $pks = $metadata->identifier;
         } else {
@@ -919,7 +923,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $alias = 'm';
         $qb->from($table, 'm');
 
-        foreach($pks as $key => $pk) {
+        foreach ($pks as $key => $pk) {
             //remove any existing alias and add the one used in this query
             $pk = $this->_removeAlias($pk);
             $pks[$key] = $alias . '.' . $pk;
@@ -929,12 +933,12 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         try {
             $result = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        } catch(Query\QueryException $e) {
+        } catch (Query\QueryException $e) {
             return array();
         }
 
         $return = array();
-        foreach($result as $value) {
+        foreach ($result as $value) {
             $return[] = implode($separator, $value);
         }
 
@@ -957,7 +961,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $alias = $this->_getNewAlias();
         $newCondition = array();
         //remove alias and set the one used for this query
-        foreach($condition as $fieldName => $value) {
+        foreach ($condition as $fieldName => $value) {
             $field = $this->_removeAlias($fieldName);
             $field = $alias . '.' . $field;
             $newCondition[$field] = $value;
@@ -969,10 +973,10 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $qb->from($table, $alias);
 
         //create a query where all fields are contained, even the associations
-        foreach($metadata->associationMappings as $column => $detail) {
+        foreach ($metadata->associationMappings as $column => $detail) {
             //skip relations where the type is many to many or this side is not the
             //owning side
-            if($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
+            if ($detail['type'] == ClassMetadata::MANY_TO_MANY || $detail['isOwningSide'] == false) {
                 continue;
             }
 
@@ -997,7 +1001,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         try {
             $result = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
             $result = $this->_cleanQueryResults($result);
-        } catch(Query\QueryException $e) {
+        } catch (Query\QueryException $e) {
             $result[0] = array();
             Zend_Debug::dump($e);
         }
@@ -1038,7 +1042,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $qb = $this->getQueryBuilder();
         $orderBy = $qb->getDqlPart('orderBy');
 
-        if(empty($orderBy)) {
+        if (empty($orderBy)) {
             return array();
         }
 
@@ -1047,7 +1051,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $orderByItem = $orderByClause->orderByItems[0];
 
-        if(is_string($orderByItem->expression)) {
+        if (is_string($orderByItem->expression)) {
             //the expressin is a string, use the value directly
             $return[0] = $orderByItem->expression;
         } else {
@@ -1097,8 +1101,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $qb = $this->getQueryBuilder();
         $qb = clone $qb;
 
-        foreach(array_reverse($value['functions']) as $key => $func) {
-            if($key == 0) {
+        foreach (array_reverse($value['functions']) as $key => $func) {
+            if ($key == 0) {
                 $exp = $func . '(' . $value['value'] . ')';
             } else {
                 $exp = $func . '(' . $exp . ')';
@@ -1136,13 +1140,13 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $AST = $qb->getQuery()->getAST();
 
         $hasExpr = false;
-        foreach($AST->selectClause->selectExpressions as $selectExpressions) {
-            if($selectExpressions->expression instanceof Query\AST\AggregateExpression) {
+        foreach ($AST->selectClause->selectExpressions as $selectExpressions) {
+            if ($selectExpressions->expression instanceof Query\AST\AggregateExpression) {
                 $hasExpr = true;
             }
         }
 
-        if($hasExpr) {
+        if ($hasExpr) {
             $result = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
             return count($result);
         }
@@ -1151,7 +1155,17 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $fromPart = $qb->getDQLPart('from');
         $qb->select('COUNT(DISTINCT ' . $fromPart[0]->getAlias() . ')');
 
-        return $qb->getQuery()->getSingleScalarResult();
+        try {
+            $count = $qb->getQuery()->getSingleScalarResult();
+        } catch (NonUniqueResultException $e) {
+            //when the result is non unique its most likely that a group by was used
+            //if so, we just get the complete result and count the number of results
+            //fixes issue #745
+            $result = $qb->getQuery()->getResult();
+            $count = count($result);
+        }
+        
+        return $count;
     }
 
     /**
@@ -1193,7 +1207,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $em->persist($entity);
 
         $em->flush();
-
     }
 
     /**
@@ -1240,7 +1253,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function setCache($cache)
     {
-
+        
     }
 
     /**
@@ -1260,7 +1273,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         $em = $this->getEntityManager();
         $newCondition = array();
-        foreach($condition as $fieldName => $value) {
+        foreach ($condition as $fieldName => $value) {
             $field = $this->_removeAlias($fieldName);
             $newCondition[$field] = $value;
         }
@@ -1288,9 +1301,9 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $em = $this->getEntityManager();
         $metadata = $em->getClassMetadata($table);
 
-        foreach($post as $fieldName => $value) {
-            if(isset($metadata->associationMappings[$fieldName])) {
-                if(empty($value)) {
+        foreach ($post as $fieldName => $value) {
+            if (isset($metadata->associationMappings[$fieldName])) {
+                if (empty($value)) {
                     $post[$fieldName] = NULL;
                 } else {
                     $targetEntity = $metadata->associationMappings[$fieldName]['targetEntity'];
@@ -1311,8 +1324,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         //clear where part and bound parameters
         $qb->resetDQLPart('where');
         $qb->setParameters(array());
-        foreach($this->whereConditions as $key => $detail) {
-            if($key != $fieldName) {
+        foreach ($this->whereConditions as $key => $detail) {
+            if ($key != $fieldName) {
                 $this->_addCondition($qb, $key, $detail['op'], $detail['filter']);
             }
         }
@@ -1328,7 +1341,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $result = $this->_cleanQueryResults($result);
 
         $json = array();
-        foreach($result as $row) {
+        foreach ($result as $row) {
             $json[] = $specialKey . $row[$field];
         }
 
@@ -1358,10 +1371,10 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     private function _cleanQueryResults(array $result)
     {
         $newResult = array();
-        foreach($result as $key => $values) {
-            foreach($values as $name => $value) {
-                if(is_array($value)) {
-                    foreach($value as $k => $v) {
+        foreach ($result as $key => $values) {
+            foreach ($values as $name => $value) {
+                if (is_array($value)) {
+                    foreach ($value as $k => $v) {
                         $newResult[$key][$k] = $this->_convertResult($k, $v);
                     }
                 } else {
@@ -1395,16 +1408,16 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _convertResult($field, $value)
     {
-        if($value instanceof DateTime) {
+        if ($value instanceof DateTime) {
             $type = $this->getFieldType($field);
 
             //format the field depending on the field type
-            if($type == Type::DATE) {
+            if ($type == Type::DATE) {
                 return $value->format('Y-m-d');
-            } elseif($type == Type::DATETIME) {
+            } elseif ($type == Type::DATETIME) {
                 return $value->format('Y-m-d H:i');
             }
-        } elseif(is_bool($value)) {
+        } elseif (is_bool($value)) {
             //convert boolean types to integer, so the default value is correctly set
             //in the form element
             return ($value) ? 1 : 0;
@@ -1445,7 +1458,6 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         }
     }
 
-
     /**
      * Find the table for which a column belongs.
      *
@@ -1454,13 +1466,13 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _getModelFromColumn($column)
     {
-        if(!is_string($column)) {
+        if (!is_string($column)) {
             $type = gettype($column);
             require_once 'Bvb/Grid/Source/Doctrine/Exception.php';
             throw new Bvb_Grid_Source_Doctrine2_Exception('The $column param needs to be a string, ' . $type . ' provided');
         }
 
-        if(strpos($column, '.') === false) {
+        if (strpos($column, '.') === false) {
             return null;
         }
 
@@ -1481,8 +1493,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $fromParts = $qb->getDQLPart('from');
 
         //first try to get the model from the from part
-        foreach($fromParts as $fromPart) {
-            if($fromPart->getAlias() == $alias) {
+        foreach ($fromParts as $fromPart) {
+            if ($fromPart->getAlias() == $alias) {
                 return $fromPart->getFrom();
             }
         }
@@ -1492,23 +1504,23 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         $AST = $qb->getQuery()->getAST();
 
         $field = null;
-        foreach($AST->fromClause->identificationVariableDeclarations[0]->joinVariableDeclarations as $joinVariable) {
-            if($alias == $joinVariable->join->aliasIdentificationVariable) {
+        foreach ($AST->fromClause->identificationVariableDeclarations[0]->joinVariableDeclarations as $joinVariable) {
+            if ($alias == $joinVariable->join->aliasIdentificationVariable) {
                 $field = $joinVariable->join->joinAssociationPathExpression->associationField;
                 break;
             }
         }
-        if(is_null($field)) {
+        if (is_null($field)) {
             throw new Bvb_Grid_Source_Doctrine2_Exception("No field found.");
         }
 
         //iterate over the fromparts, get the metadata from it and
         //iterate then over the association mappings to find the specific
         //model for the alias
-        foreach($fromParts as $fromPart) {
+        foreach ($fromParts as $fromPart) {
             $metadata = $this->getEntityManager()->getClassMetadata($fromPart->getFrom());
-            foreach($metadata->associationMappings as $mapping) {
-                if($mapping['fieldName'] == $field) {
+            foreach ($metadata->associationMappings as $mapping) {
+                if ($mapping['fieldName'] == $field) {
                     return $mapping['targetEntity'];
                 }
             }
@@ -1526,7 +1538,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _createWhereConditions(QueryBuilder $qb, array $where)
     {
-        foreach($where as $column => $value) {
+        foreach ($where as $column => $value) {
             $this->_addCondition($qb, $column, '=', $value);
         }
 
@@ -1541,7 +1553,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _removeAlias($field)
     {
-        if(strpos($field, '.') !== false) {
+        if (strpos($field, '.') !== false) {
             list($alias, $column) = explode('.', $field);
         } else {
             $column = $field;
@@ -1558,14 +1570,14 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     private function _getFieldName($field)
     {
-        if(strpos($field, '.') === false) {
-            if(!isset($this->fields[$field]['field'])) {
+        if (strpos($field, '.') === false) {
+            if (!isset($this->fields[$field]['field'])) {
                 $ids = $this->getIdentifierColumns();
                 list($alias, $field) = explode('.', $ids[0]);
 
                 //no matching field was found in the fields array
                 //so we append the default alias to the field
-                return $alias .'.'. $field;
+                return $alias . '.' . $field;
             }
             return $this->fields[$field]['field'];
         }
@@ -1575,7 +1587,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
     public function beginTransaction()
     {
-       return false;
+        return false;
     }
 
     public function commit()
@@ -1592,4 +1604,5 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
     {
         return 0;
     }
+
 }

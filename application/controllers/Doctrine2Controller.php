@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Doctrine2 Controller.
  *
@@ -21,6 +20,8 @@ class Doctrine2Controller extends Zend_Controller_Action
      */
     public function init()
     {
+        Zend_Dojo::enableView($this->view);
+        
         $this->view->url = Zend_Registry::get('config')->site->url;
         $this->view->action = $this->getRequest()->getActionName();
         header('Content-Type: text/html; charset=ISO-8859-1');
