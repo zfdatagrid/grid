@@ -474,6 +474,13 @@ abstract class Bvb_Grid {
     protected $_translateColumnsTitles = true;
 
     /**
+     * Holds filter render objects
+     *
+     * @var type
+     */
+    protected $_filtersObjects = array();
+
+    /**
      * The __construct function receives the db adapter. All information related to the
      * URL is also processed here
      *
@@ -4141,31 +4148,36 @@ abstract class Bvb_Grid {
             $toRender = $render;
         }
 
+        if (isset($this->_filtersObjects[ucfirst($toRender)])) {
 
-        $renderExists = $this->_filtersRenders->getPaths();
-
-
-        $renderInfo = 'Bvb_Grid_Render_' . ucfirst($this->_deployName) . '_' . ucfirst($toRender);
-        if (!array_key_exists($renderInfo, $renderExists)) {
-            $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/Table', 'Bvb_Grid_Filters_Render_Table');
-        }
-
-        $classname = $this->_filtersRenders->load(ucfirst($toRender));
-
-
-        if (is_array($render)) {
-            $class = new $classname($render[$toRender]);
+            return $this->_filtersObjects[ucfirst($toRender)];
         } else {
-            $class = new $classname();
+
+            $renderExists = $this->_filtersRenders->getPaths();
+
+
+            $renderInfo = 'Bvb_Grid_Render_' . ucfirst($this->_deployName) . '_' . ucfirst($toRender);
+            if (!array_key_exists($renderInfo, $renderExists)) {
+                $this->addFiltersRenderDir('Bvb/Grid/Filters/Render/Table', 'Bvb_Grid_Filters_Render_Table');
+            }
+
+            $classname = $this->_filtersRenders->load(ucfirst($toRender));
+
+            if (is_array($render)) {
+                $class = new $classname($render[$toRender]);
+            } else {
+                $class = new $classname();
+            }
+
+            if (!$class instanceof Bvb_Grid_Filters_Render_RenderInterface) {
+                throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
+            }
+
+            $class->setGridId($this->getGridId());
+            $this->_filtersObjects[ucfirst($toRender)]= $class;
+
+            return $class;
         }
-
-        if (!$class instanceof Bvb_Grid_Filters_Render_RenderInterface) {
-            throw new Bvb_Grid_Exception("$classname must implement Bvb_Grid_Filters_Render_RenderInterface");
-        }
-
-        $class->setGridId($this->getGridId());
-
-        return $class;
     }
 
     /**
