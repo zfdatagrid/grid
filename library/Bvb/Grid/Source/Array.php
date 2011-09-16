@@ -162,7 +162,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
     public function buildQueryLimit($offset, $start)
     {
         $this->_offset = $offset;
-        $this->_start = ($this->_totalRecords != 0) ? 0 : $start;
+        $this->_start = ($this->_totalRecords != 0) ? $start : 0;
         return true;
     }
 
