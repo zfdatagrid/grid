@@ -59,12 +59,14 @@ class Bvb_Grid_Event_Dispatcher {
     /**
      * Regists a new observer
      *
-     * @param string  $event    Event name
-     * @param calable $callback Callback to be called
+     * @param string   $event    Event name
+     * @param array    $params   Extra params to send to callback
+     * @param int      $priority Priority execution
+     * @param callable $callback Callback to be called
      *
      * @return Bvb_Grid
      */
-    public function connect($event, $callback, $priority = 10)
+    public function connect($event, $callback, array $params = array(), $priority = 10)
     {
 
         if (!is_callable($callback)) {
@@ -75,7 +77,7 @@ class Bvb_Grid_Event_Dispatcher {
             $this->_listeners[$event] = array();
         }
 
-        $this->_listeners[$event][] = array('callback' => $callback, 'priority' => $priority);
+        $this->_listeners[$event][] = array('callback' => $callback, 'params' => $params, 'priority' => $priority);
 
         return $this;
     }
@@ -121,11 +123,15 @@ class Bvb_Grid_Event_Dispatcher {
             array_multisort($priority, SORT_ASC, $code);
 
             foreach ($code as $callback) {
+
+                $eventParams = array_merge_recursive($event->getParams(), $callback['params']);
+                $event->setParams($eventParams);
+
                 call_user_func($callback['callback'], $event);
             }
         }
     }
-    
+
     /**
      * Protect from instantiation
      *

@@ -4580,13 +4580,14 @@ abstract class Bvb_Grid {
      *
      * @param string  $event    Event name
      * @param int     $event    Priority Number
+     * @param array   $params   Extra params to send to callback
      * @param calable $callback Callback to be called
      *
      * @return Bvb_Grid
      */
-    public function listenEvent($event, $callback, $priority = 10)
+    public function listenEvent($event, $callback, array $params = array(), $priority = 10)
     {
-        Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback, $priority);
+        Bvb_Grid_Event_Dispatcher::getInstance()->connect($event, $callback, $params, $priority);
 
         return $this;
     }
