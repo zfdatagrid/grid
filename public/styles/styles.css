@@ -69,7 +69,7 @@ form label {
 .paginationNumbers {
 	float: left;
 	text-align: center;
-	width: 750px;
+	width: 740px;
 }
 
 .massActions {
@@ -110,6 +110,7 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 	width: 90% !important;
 	border: 1px solid #aaa;
 	min-width: 20px;
+	padding:4px;
 	margin: 2px;
 }
 
@@ -121,10 +122,12 @@ td div input[type='text'],td div input[type='password'],.subtitulo input[type='t
 	margin-left: 5px;
 	margin-right: 5px;
 	background: #FFF url(../images/bg_helper_button.jpg);
+	padding:4px;
 	cursor: pointer;
 }
 
 .querySupport {
+    padding:2px;
 	background: #FFF url(../images/bg_helper.jpg);
 }
 
@@ -161,7 +164,7 @@ td input[type='checkbox'],td input[type='radio'],td textarea:focus {
 }
 
 table.borders {
-	border: 2px solid #FFa500;
+	border: 1px solid #FFa500;
 	border-collapse: collapse;
 	width: 98%;
 }
@@ -240,9 +243,8 @@ td.esquerda {
 }
 
 td {
-	border: 1px solid #ffa500;
 	text-indent: 5px;
-	padding: 4px 0px 4px 0px;
+	padding: 8px ;
 	color: #333;
 }
 
@@ -371,13 +373,14 @@ th a {
 	color: #FFF;
 }
 
-th,.elementLabel {
-	font: 11px Verdana, Arial, Helvetica, sans-serif;
+th, .elementLabel {
+	font: 12px  Helvetica, sans-serif;
 	color: #FFFFFF;
 	border-right: 1px solid #ffa500;
-	border-bottom: 2px solid #ffa500;
+	border-bottom: 1px solid #ffa500;
 	text-align: left;
-	padding: 3px 6px;
+	letter-spacing:1px;
+	padding: 6px;
 	background: #2e3130 url(../images/grid/bg_header.jpg);
 }
 
