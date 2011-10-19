@@ -324,7 +324,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      */
     public function buildFields()
     {
-        if (empty($fields)) {
+        if (empty($this->fields)) {
             $ast = $this->getQueryBuilder()->getQuery()->getAST();
 
             //used for expressions without an identification variable
