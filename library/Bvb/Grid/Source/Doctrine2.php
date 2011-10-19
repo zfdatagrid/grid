@@ -23,6 +23,13 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      * @var QueryBuilder
      */
     private $qb;
+    
+    /**
+     * QueryBuilder for auto complete.
+     * 
+     * @var QueryBuilder
+     */
+    private $autoQb;
 
     /**
      * @var EntityManager
@@ -140,6 +147,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
         }
 
         $this->qb = $qb;
+        $this->autoQb = clone $qb;
 
         return $this;
     }
@@ -1322,8 +1330,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
     public function getAutoCompleteForFilter($term, $field, $specialKey = '', $output = 'json')
     {
-        $qb = $this->getQueryBuilder();
-        $qb = clone $qb;
+        $qb = $this->autoQb;
 
         $fieldName = $this->_getFieldName($field);
         //clear where part and bound parameters
@@ -1341,7 +1348,8 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
 
         $qb->select('DISTINCT ' . $fieldName);
 
-        $result = $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $query = $qb->getQuery();
+        $result = $query->getResult(Query::HYDRATE_ARRAY);
 
         $result = $this->_cleanQueryResults($result);
 

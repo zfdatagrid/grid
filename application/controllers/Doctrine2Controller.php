@@ -62,7 +62,7 @@ class Doctrine2Controller extends Zend_Controller_Action
         $em = $this->em;
         $grid = $this->grid();
         $qb = $em->getRepository('\My\Entity\Account')->createQueryBuilder('c');
-        $qb->select('c.name', 'SIZE(c.bugsToReview)');
+        $qb->select('c.name', 'SIZE(c.bugsToReview) AS bugsToReview');
 
         $grid->setUseKeyEventsOnFilters(true);
 
