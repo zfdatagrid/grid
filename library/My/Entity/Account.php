@@ -18,7 +18,12 @@ class Account
      * @Column(name="account_name")
      */
     private $name;
-
+    
+    /**
+     * @OneToMany(targetEntity="Bug", mappedBy="assignedTo")
+     */
+    private $bugsToReview;
+    
     public function getId()
     {
         return $this->Id;
@@ -37,5 +42,15 @@ class Account
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function getBugsToReview()
+    {
+        return $this->bugsToReview;
+    }
+
+    public function setBugsToReview($bugsToReview)
+    {
+        $this->bugsToReview = $bugsToReview;
     }
 }
