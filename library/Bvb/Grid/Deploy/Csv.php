@@ -60,9 +60,6 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
 
         parent::__construct($options);
 
-        // default pagination, should be adjusted based on data processed to improve speed
-        $this->setForceRecordsPerPage(5000);
-
         // fix configuration options
         $deploy = $this->getDeployOption($this->_deployName, array());
         $defaults = array(
@@ -220,6 +217,14 @@ class Bvb_Grid_Deploy_Csv extends Bvb_Grid implements Bvb_Grid_Deploy_DeployInte
      */
     public function deploy()
     {
+        // default pagination, should be adjusted based on data processed to improve speed
+        $recordsPerLoop=5000;
+        $exportData = $this->getExport();
+        if (array_key_exists("csv", $exportData) && array_key_exists("recordsPerLoop", $exportData["csv"])) {
+            $recordsPerLoop = $exportData["csv"]['recordsPerLoop'];
+        }
+        $this->setForceRecordsPerPage($recordsPerLoop);
+
         // prepare data
         $this->_prepareOptions();
         parent::deploy();
