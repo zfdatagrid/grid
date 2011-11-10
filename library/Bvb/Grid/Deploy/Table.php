@@ -2357,7 +2357,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $formElements = array();
         }
 
-        $this->emitEvent('crud.elements_loaded', array('elements'=>&$form));
+        $this->emitEvent('crud.elements_loaded', array('elements'=>&$formElements));
 
 
         if ($this->getParam('add')) {

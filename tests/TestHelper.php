@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework
  *
@@ -52,11 +53,11 @@ set_include_path(implode(PATH_SEPARATOR, $path));
 
 require_once 'Zend/Loader/Autoloader.php';
 
-$autoloader = Zend_Loader_Autoloader::getInstance ();
-$autoloader->setFallbackAutoloader ( true );
-$autoloader->suppressNotFoundWarnings ( true );
+$autoloader = Zend_Loader_Autoloader::getInstance();
+$autoloader->setFallbackAutoloader(true);
+$autoloader->suppressNotFoundWarnings(true);
 
-define('APPLICATION_PATH', $zfRoot.'/application');
+define('APPLICATION_PATH', $zfRoot . '/application');
 
 $c = Zend_Controller_Front::getInstance();
 $c->setRequest(new Zend_Controller_Request_Http());
@@ -64,48 +65,49 @@ $c->setResponse(new Zend_Controller_Response_Cli());
 
 unset($zfRoot, $zfCoreLibrary, $zfCoreTests, $path);
 
-class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase
-{
+class Bvb_GridTestHelper extends Zend_Test_PHPUnit_ControllerTestCase {
 
     /**
      *
      * @var Bvb_Grid
      */
+    public $bootstrap;
     protected $grid;
     protected $controller;
     protected $db;
-
     protected $_temp;
 
     public function setUp()
     {
         date_default_timezone_set('Europe/Lisbon');
 
-        $this->_temp = realpath(APPLICATION_PATH.'/../tests/_temp/').'/';
+        $this->_temp = realpath(APPLICATION_PATH . '/../tests/_temp/') . '/';
 
-        include_once APPLICATION_PATH.'/models/Model.php';
+        include_once APPLICATION_PATH . '/models/Model.php';
         // Assign and instantiate in one step:
         $this->bootstrap = new Zend_Application(
-                'general',
-                APPLICATION_PATH . '/config.ini'
+                        'general',
+                        APPLICATION_PATH . '/config.ini'
         );
 
+        $this->bootstrap->bootstrap();
         $this->controller = Zend_Controller_Front::getInstance();
         $this->db = $this->bootstrap->getBootstrap()->getPluginResource('db')->getDbAdapter();
 
+        $router = $this->controller->getRouter();
+        $router->addDefaultRoutes();
+        
         $this->controller->setControllerDirectory(APPLICATION_PATH . '/application/controllers');
-        $this->controller->setDefaultModule('defualt');
+        $this->controller->setDefaultModule('default');
         $this->controller->setDefaultControllerName('site');
 
-
         $this->grid = Bvb_Grid::factory('Table');
+        $this->grid->setController($this->controller);
         $this->grid->setParam('module', 'default');
         $this->grid->setParam('controller', 'site');
         $this->grid->setView(new Zend_View(array()));
-
         parent::setUp();
     }
-
 
     public function deployGrid($select = null)
     {

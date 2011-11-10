@@ -568,7 +568,12 @@ class SiteController extends Zend_Controller_Action
     public function arrayAction ()
     {
         $grid = $this->grid();
-        $array = array(array('Alex', '12', 'M'), array('David', '1', 'M'), array('David', '2', 'M'), array('David', '3', 'M'), array('Richard', '3', 'M'), array('Lucas', '3', 'M'));
+        $array = array( array('Alex', '12', 'M'),
+                        array('David', '1', 'M'),
+                        array('Jack', '2', 'M'),
+                        array('Romeo', '3', 'M'),
+                        array('Richard', '3', 'M'),
+                        array('Lucas', '3', 'M'));
 
         $source = new Bvb_Grid_Source_Array($array, array('name', 'age', 'sex'));
         $source->setPrimaryKey(array('age'));
