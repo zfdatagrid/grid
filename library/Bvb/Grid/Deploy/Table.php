@@ -1762,7 +1762,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 }
             } else {
-                $this->_actionsUrls['delete'] = "$url/delete/" . $urlFinal;
+                $this->_actionsUrls['delete'] = "$url/delete" . $this->getGridId() . "/" . $urlFinal;
 
                 if ($this->_crud->getDeleteColumn() !== false)
                 {
