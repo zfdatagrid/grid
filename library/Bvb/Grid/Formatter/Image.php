@@ -17,9 +17,11 @@
  * @version   $Id$
  * @link      http://zfdatagrid.com
  */
+class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface {
 
-class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
-{
+    protected $_options;
+    protected $_urlPrefix = '';
+
     /**
      * Constructor
      *
@@ -27,30 +29,34 @@ class Bvb_Grid_Formatter_Image implements Bvb_Grid_Formatter_FormatterInterface
      *
      * @return void
      */
-    public function __construct ( $options = array())
-    {
+    public function __construct($options = array()) {
         $this->_options = $options;
 
         return;
     }
-
 
     /**
      * Formats a given value
      *
      * @see library/Bvb/Grid/Formatter/Bvb_Grid_Formatter_FormatterInterface::format()
      */
-    public function format ($value)
-    {
+    public function format($value) {
         $attrs = '';
-        if ( count($this->_options) > 0 ) {
+        if (count($this->_options) > 0) {
 
-            foreach ( $this->_options as $key => $name ) {
-                $attrs .= "{$key}=\"$name\" ";
+            if (isset($this->_options['urlPrefix'])) {
+                $this->_urlPrefix = $this->_options['urlPrefix'];
+                unset($this->_options['urlPrefix']);
             }
 
+            foreach ($this->_options as $key => $name) {
+                $attrs .= "{$key}=\"$name\" ";
+            }
         }
+
+        $value = $this->_urlPrefix . $value;
 
         return "<img src=\"$value\" $attrs>";
     }
+
 }
