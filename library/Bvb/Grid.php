@@ -1215,6 +1215,19 @@ abstract class Bvb_Grid {
         }
 
         if (count($filters) > 0) {
+            /*
+             * If we already made a search for some field and want to clear this 
+             * field from session params we should check both arrays 
+             * (session filters and current set filters) and remove from session 
+             * those who not exist
+             */
+            $diffSearchFields = array_diff(array_keys($this->_sessionParams->filters), array_keys($filters));
+            if (!empty($diffSearchFields)) {
+                foreach ($diffSearchFields as  $diffValue)
+                {
+                    unset($this->_sessionParams->filters[$diffValue]);
+                }
+            }
 
             //let's set the range filters as an array
             foreach ($filters as $key => $value) {
@@ -1229,7 +1242,10 @@ abstract class Bvb_Grid {
             //final check for allowed fields
             foreach ($filters as $key => $filter) {
 
-                $filter = urldecode($filter);
+                if(is_scalar($filter))
+                {
+                    $filter = urldecode($filter);
+                }
 
                 if (!is_array($filter) && (strlen($filter) == 0 || !in_array($key, $this->_fields))) {
 
@@ -1246,14 +1262,14 @@ abstract class Bvb_Grid {
 
                     //Check fi user has defined a transform option for the value
                     //The transform option is used to normalise vallues, like date, currency, etc
-                    if (is_array($this->_filters[$key])
+                    if (isset($this->_filters[$key]) && is_array($this->_filters[$key])
                             && isset($this->_filters[$key]['transform'])
                             && is_callable($this->_filters[$key]['transform'])) {
                         $filter = call_user_func($this->_filters[$key]['transform'], $filter);
                     }
 
                     //A callback is set? If yes, let's call it
-                    if (is_array($this->_filters[$key])
+                    if (isset($this->_filters[$key]) && is_array($this->_filters[$key])
                             && isset($this->_filters[$key]['callback'])
                             && is_array($this->_filters[$key]['callback'])) {
                         if (!is_callable($this->_filters[$key]['callback']['function'])) {
