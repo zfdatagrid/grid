@@ -4546,17 +4546,23 @@ abstract class Bvb_Grid {
             throw new Bvb_Grid_Exception('No primary key defined in table. Mass actions not available');
         }
 
+        $pk = '';
         if (count($this->getMassActions()->getFields()) == 0) {
-            $pk = '';
             foreach ($fieldIdentifier as $value) {
                 $aux = explode('.', $value);
-                $pk .= end($aux) . '-';
+                $pk .= end($aux) . $this->getMassActions()->getMultipleFieldsSeparator();
             }
-
-            $pk = rtrim($pk, $this->getMassActions()->getMultipleFieldsSeparator());
-
-            $pk = explode($this->getMassActions()->getMultipleFieldsSeparator(), $pk);
+        } else {
+            foreach ($this->getMassActions()->getFields() as $value) {
+                //$aux = explode('.', $value);
+                //$pk .= end($aux) . $this->getMassActions()->getMultipleFieldsSeparator();
+                $pk .= $value . $this->getMassActions()->getMultipleFieldsSeparator();
+            }
         }
+        
+        $pk = rtrim($pk, $this->getMassActions()->getMultipleFieldsSeparator());
+
+        $pk = explode($this->getMassActions()->getMultipleFieldsSeparator(), $pk);
 
         $pk = "{{" . implode('}}' . $this->getMassActions()->getMultipleFieldsSeparator() . '{{', $pk) . "}}";
 
