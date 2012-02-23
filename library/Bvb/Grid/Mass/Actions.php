@@ -80,14 +80,15 @@ class Bvb_Grid_Mass_Actions {
      * Defines mass actions, overriden any previous
      *
      * @param array $options Options to be made available to user
+     * @param type $fields  Fields to be used
      *
      * @return Bvb_Grid
      */
-    public function setMassActions(array $options)
+    public function setMassActions(array $options, $fields = null)
     {
         $this->clearMassActions();
 
-        $this->addMassActions($options);
+        $this->addMassActions($options, $fields);
 
         return $this;
     }
@@ -109,7 +110,6 @@ class Bvb_Grid_Mass_Actions {
      * @param type $url     Url to post the results
      * @param type $caption Caption for the select option
      * @param type $confirm Confirmation message when submiting
-     * @param type $fields  Fields to be used
      *
      * @return Bvb_Grid
      */
@@ -144,16 +144,21 @@ class Bvb_Grid_Mass_Actions {
      * Adds a new mass action option
      *
      * @param array $options Options to be made available to user
+     * @param type $fields  Fields to be used
      *
      * @return Bvb_Grid
      */
-    public function addMassActions(array $options)
+    public function addMassActions(array $options, $fields = null)
     {
 
         foreach ($options as $value) {
             if (!isset($value['url']) || !isset($value['caption'])) {
                 throw new Bvb_Grid_Exception('Options url and caption are required for each action');
             }
+        }
+        
+        if(isset($fields)) {
+            $this->setFields($fields);
         }
 
         $this->_massActions = array_merge($options, $this->_massActions);
