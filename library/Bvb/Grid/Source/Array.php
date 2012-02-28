@@ -208,13 +208,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
      */
     protected function _applySearchType($fieldValue, $valueNeeded, $op)
     {
-        switch ($op) {
+        switch (strtolower($op)) {
             case 'equal':
             case '=':
                 if ($valueNeeded == $fieldValue)
                     return true;
                 break;
-            case 'REGEXP':
+            case 'regex':
                 if (preg_match($valueNeeded, $fieldValue))
                     return true;
                 break;
@@ -246,6 +246,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
             case '<':
                 if ($fieldValue < $valueNeeded)
                     return true;
+                break;
+            case 'in':
+                $filters = explode(',', $valueNeeded);
+                foreach($filters as $value) {
+                    if(strcasecmp($value, $fieldValue) == 0)
+                        return true;
+                }
                 break;
             default:
                 $enc = stripos((string) $fieldValue, $valueNeeded);
