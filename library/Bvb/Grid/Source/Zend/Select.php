@@ -1016,7 +1016,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             case '=':
                 $this->_select->$func($field . ' = ?', $filter);
                 break;
-            case 'rege':
+            case 'regex':
                 $this->_select->$func($field . " REGEXP " . $this->_getDb()->quote($filter));
                 break;
             case 'rlike':
