@@ -268,7 +268,11 @@ class Bvb_Grid_Template_Table {
             $blank = $export['newWindow'] == false ? '' : "target='_blank'";
 
             if (strlen($images) > 1) {
-                $export['img'] = $images . $export['caption'] . '.gif';
+                if(isset($export['img'])) {
+                    $export['img'] = $images . $export['img'] . '.gif';
+                } else {
+                    $export['img'] = $images . $export['caption'] . '.gif';
+                }
             }
 
             if (isset($export['img'])) {
