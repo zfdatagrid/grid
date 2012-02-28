@@ -258,7 +258,7 @@ class Bvb_Grid_Template_Table {
     public function export($exportDeploy, $images, $url, $gridId)
     {
         $exp = '';
-        foreach ($exportDeploy as $export) {
+        foreach ($exportDeploy as $format => $export) {
             $caption = sprintf(Bvb_Grid_Translator::getInstance()->__('Export to %s format'), $export['caption']);
 
 
@@ -271,15 +271,15 @@ class Bvb_Grid_Template_Table {
                 if(isset($export['img'])) {
                     $export['img'] = $images . $export['img'] . '.gif';
                 } else {
-                    $export['img'] = $images . $export['caption'] . '.gif';
+                    $export['img'] = $images . $format . '.gif';
                 }
             }
 
             if (isset($export['img'])) {
-                $exp .= "<a title='$caption' $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>
+                $exp .= "<a title='$caption' $class $blank href='$url/_exportTo$gridId/{$format}'>
                         <img alt='{$export['caption']}' src='{$export ['img']}' border='0'></a>";
             } else {
-                $exp .= "<a title='$caption'  $class $blank href='$url/_exportTo$gridId/{$export['caption']}'>" . 
+                $exp .= "<a title='$caption'  $class $blank href='$url/_exportTo$gridId/{$format}'>" . 
                       $export['caption'] . "</a>";
             }
         }
