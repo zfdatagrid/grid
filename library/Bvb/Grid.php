@@ -4217,7 +4217,12 @@ abstract class Bvb_Grid {
      */
     public function isExport()
     {
-        return in_array($this->getParam('_exportTo'), $this->_export);
+        if(in_array($this->getParam('_exportTo'), $this->_export) || 
+                array_key_exists($this->getParam('_exportTo'), $this->_export)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
