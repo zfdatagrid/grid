@@ -1221,7 +1221,11 @@ abstract class Bvb_Grid {
              * (session filters and current set filters) and remove from session 
              * those who not exist
              */
-            $diffSearchFields = array_diff(array_keys($this->_sessionParams->filters), array_keys($filters));
+            if (isset($this->_sessionParams->filters) && is_array($this->_sessionParams->filters)) {
+                $diffSearchFields = array_diff(array_keys($this->_sessionParams->filters), array_keys($filters));
+            } else {
+                $diffSearchFields = array();
+            }
             if (!empty($diffSearchFields)) {
                 foreach ($diffSearchFields as  $diffValue)
                 {
