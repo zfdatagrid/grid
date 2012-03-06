@@ -1409,7 +1409,7 @@ abstract class Bvb_Grid {
             if ($sqlQuote === false) {
                 $filter = str_replace('{{value}}', $this->getSource()->quoteValue($filter), $sqlExp);
             } else {
-                $filter = str_replace('{{value}}', trim(subtr($filter, 1, -1)), $sqlExp);
+                $filter = str_replace('{{value}}', trim(substr($filter, 1, -1)), $sqlExp);
             }
         } elseif (substr(strtolower($filter), 0, 6) == ':empty') {
             $op = 'empty';
