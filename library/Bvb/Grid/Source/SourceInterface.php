@@ -363,9 +363,8 @@ interface Bvb_Grid_Source_SourceInterface
      * @param string $table     table to get records from
      * @param array  $fields    Fields to fetch
      * @param string $separator Separator for multiple PK's
-     * @param string $recordSeparator Separator for multiple records
      */
-    public function getMassActionsIds ($table, $fields, $separator = '-', $recordSeparator = ',');
+    public function getMassActionsIds ($table, $fields, $separator = '-');
 
 
     /**

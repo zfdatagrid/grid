@@ -643,14 +643,13 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
     /**
      * Returns mass actions id's
      *
-     * @param string $table     table to get records from
-     * @param array  $fields    Fields to fetch
-     * @param string $separator Separator for multiple PK's
-     * @param string $recordSeparator Separator for multiple records
+     * @param string $table
+     * @param array  $fields
+     * @param string $separator
      *
-     * @return string
+     * @return type
      */
-    public function getMassActionsIds($table, $fields, $separator = '-', $recordSeparator = ',')
+    public function getMassActionsIds($table, $fields, $separator = '-')
     {
         if (empty($fields)) {
             if (!$pk = $this->getIdentifierColumns($table)) {
@@ -675,7 +674,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
             $return[] = substr($id, 0, -1);
         }
 
-        return implode($recordSeparator, $return);
+        return implode(',', $return);
     }
 
     /**

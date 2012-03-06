@@ -475,11 +475,10 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      * @param string $table     table to get records from
      * @param array  $fields    Fields to fetch
      * @param string $separator Separator for multiple PK's
-     * @param string $recordSeparator Separator for multiple records
      *
      * @return string
      */
-    public function getMassActionsIds($table, $fields, $separator = '-', $recordSeparator = ',')
+    public function getMassActionsIds($table, $fields, $separator = '-')
     {
         $select = clone $this->_select;
 
@@ -507,7 +506,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
             $return[] = substr($id, 0, -1);
         }
 
-        return implode($recordSeparator, $return);
+        return implode(',', $return);
     }
 
     /**

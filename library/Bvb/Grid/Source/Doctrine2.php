@@ -921,7 +921,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
      * This is necessary for mass actions
      * @param $table
      */
-    public function getMassActionsIds($table, $fields, $separator = '-', $recordSeparator = ',')
+    public function getMassActionsIds($table, $fields, $separator = '-')
     {
         $qb = new QueryBuilder($this->getEntityManager());
 
@@ -955,7 +955,7 @@ class Bvb_Grid_Source_Doctrine2 extends Bvb_Grid_Source_Db_DbAbstract implements
             $return[] = implode($separator, $value);
         }
 
-        return implode($recordSeparator, $return);
+        return implode(',', $return);
     }
 
     /**
