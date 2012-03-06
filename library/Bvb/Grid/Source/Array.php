@@ -651,11 +651,30 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
      */
     public function getMassActionsIds($table, $fields, $separator = '-')
     {
-        if (!$pk = $this->getIdentifierColumns($table)) {
-            throw new Bvb_Grid_Exception('No primary key found');
+        if (empty($fields)) {
+            if (!$pk = $this->getIdentifierColumns($table)) {
+                throw new Bvb_Grid_Exception('No primary key found');
+            }
+        } else {
+            $pk = $fields;
         }
 
-        return $this->getIdentifierColumns($table);
+        $result = array();
+        $keys_map = array_fill_keys($pk, true);
+        foreach ($this->_rawResult as $row) {
+            array_push($result, array_intersect_key($row, $keys_map));
+        }
+
+        $return = array();
+        foreach ($result as $tab) {
+            $id = null;
+            foreach ($tab as $key => $value) {
+                $id .= $value . $separator;
+            }
+            $return[] = substr($id, 0, -1);
+        }
+
+        return implode(',', $return);
     }
 
     /**
