@@ -269,7 +269,7 @@ class Bvb_Grid_Template_Table {
 
             if (strlen($images) > 1) {
                 if(isset($export['img'])) {
-                    $export['img'] = $images . $export['img'] . '.gif';
+                    $export['img'] = $images . $export['img'];
                 } else {
                     $export['img'] = $images . $format . '.gif';
                 }
