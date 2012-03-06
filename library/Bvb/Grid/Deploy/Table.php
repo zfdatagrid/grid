@@ -3467,7 +3467,8 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
         $ids = $this->getSource()->getMassActionsIds(
                 $this->_data['table'],
                 $this->getMassActions()->getFields(),
-                $this->getMassActions()->getMultipleFieldsSeparator());
+                $this->getMassActions()->getMultipleFieldsSeparator(),
+                $this->getMassActions()->getMassActionsSeparator());
 
 
         $cssClasses = $this->getTemplateParams();

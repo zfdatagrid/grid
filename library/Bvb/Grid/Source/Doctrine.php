@@ -1219,7 +1219,7 @@ class Bvb_Grid_Source_Doctrine
      * @todo Implement
      * @see library/Bvb/Grid/Source/Bvb_Grid_Source_SourceInterface::getMassActionsIds()
      */
-    public function getMassActionsIds ($table, $fields, $separator = '-')
+    public function getMassActionsIds ($table, $fields, $separator = '-', $recordSeparator = ',')
     {
         $q= clone $this->_query;
         $alias = $this->_queryParts['from']['alias'];
@@ -1262,7 +1262,7 @@ class Bvb_Grid_Source_Doctrine
             $return[] = current($value);
         }
 
-        return implode(',', $return);
+        return implode($recordSeparator, $return);
     }
 
 
