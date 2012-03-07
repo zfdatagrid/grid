@@ -1533,7 +1533,7 @@ abstract class Bvb_Grid {
     {
         $perPage = (int) $this->getParam('perPage', 0);
 
-        if ($this->_paramsInSession === true && $this->getParam('perPage') === false) {
+        if ($this->_paramsInSession === true && ($this->getParam('perPage') === false || $this->getParam('perPage') === null)) {
             $perPage = (int) $this->_sessionParams->perPage;
             $this->setParam('perPage' . $this->getGridId(), $perPage);
         }
