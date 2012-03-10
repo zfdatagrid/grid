@@ -360,6 +360,7 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         }
 
         // Obtain a list of columns
+        $result = array();
         foreach ($this->_rawResult as $key => $row) {
             if (isset($row[$field])) {
                 $result[$key] = $row[$field];
