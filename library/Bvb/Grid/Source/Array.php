@@ -663,7 +663,21 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
         $result = array();
         $keys_map = array_fill_keys($pk, true);
         foreach ($this->_rawResult as $row) {
-            array_push($result, array_intersect_key($row, $keys_map));
+            $result[] = array_intersect_key($row, $keys_map);
+        }
+        
+        if(!empty($result)
+                && count(array_diff_assoc($pk, array_values(array_flip($result[0])))) > 0
+        ) {
+            $resultNew = array();
+            foreach($result as $row) {
+                $rowNew = array();
+                foreach($pk as $value) {
+                    $rowNew[$value] = $row[$value];
+                }
+                $resultNew[] = $rowNew;
+            }
+            $result = $resultNew;
         }
 
         $return = array();
