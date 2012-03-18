@@ -1733,6 +1733,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 $this->addExtraColumn(array(
                     'position' => $this->getCrudColumnsPosition(),
                     'name' => 'E',
+                    'class'=>'gridEditColumn',
                     'decorator' => "<a href=\"" . $this->_actionsUrls['edit'] . "\" > " . $images['edit'] . "</a>",
                     'edit' => true,
                     'order' => -2,
