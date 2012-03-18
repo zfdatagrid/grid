@@ -622,8 +622,10 @@ class Bvb_Grid_Source_Doctrine
                 break;
             case '||':
                 $this->_query->orWhere($field . " LIKE ?", "%" . $filter . "%");
-                break;case 'like':
+                break;
+            case 'like':
             default:
+                $filter = implode('%', explode('*', $filter));
                 $this->_query->$func($field . " LIKE ?", "%" . $filter . "%");
                 break;
         }

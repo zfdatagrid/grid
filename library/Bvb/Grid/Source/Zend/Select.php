@@ -1064,6 +1064,7 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
                 break;
             case 'like':
             default:
+                $filter = implode('%', explode('*', $filter));
                 $this->_select->$func($field . " LIKE " . $this->_getDb()->quote("%" . $filter . "%"));
                 break;
         }
