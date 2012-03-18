@@ -254,11 +254,19 @@ class Bvb_Grid_Source_Array implements Bvb_Grid_Source_SourceInterface {
                         return true;
                 }
                 break;
+            case 'like':
             default:
-                $enc = stripos((string) $fieldValue, $valueNeeded);
-                if ($enc !== false) {
-                    return true;
+                $filters = explode('*', $valueNeeded);
+                foreach($filters as $value) {
+                    $enc = stripos((string) $fieldValue, $value);
+                    if ($enc !== false) {
+                        $fieldValue = substr($fieldValue, $enc + strlen($value));
+                        continue;
+                    } else {
+                        return false;
+                    }
                 }
+                return true;
                 break;
         }
 
