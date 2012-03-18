@@ -1286,12 +1286,20 @@ abstract class Bvb_Grid {
                         ) {
                             $this->_filters[$key]['callback']['params'] = array();
                         }
-
-                        $this->_filters[$key]['callback']['params'] = array_merge(
-                                $this->_filters[$key]['callback']['params'], array('field' => $key,
-                            'value' => $filter,
-                            'select' => $this->getSource()->getSelectObject())
-                        );
+                        
+                        if($this->getSource()->getSourceName() == 'array') {
+                            $this->_filters[$key]['callback']['params'] = array_merge(
+                                    $this->_filters[$key]['callback']['params'], array('field' => $key,
+                                'value' => $filter,
+                                'select' => $this->getSource())
+                            );
+                        } else {
+                            $this->_filters[$key]['callback']['params'] = array_merge(
+                                    $this->_filters[$key]['callback']['params'], array('field' => $key,
+                                'value' => $filter,
+                                'select' => $this->getSource()->getSelectObject())
+                            );
+                        }
 
                         $result = call_user_func($this->_filters[$key]['callback']['function'], $this->_filters[$key]['callback']['params']
                         );
