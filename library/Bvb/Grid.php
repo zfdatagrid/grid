@@ -3727,6 +3727,16 @@ abstract class Bvb_Grid {
                 $this->addFormatterDir($temp, $formatter);
             }
         }
+        
+        if (isset($this->_options['grid']['filtersRender'])) {
+            $this->_options['grid']['filtersRender'] = (array) $this->_options['grid']['filtersRender'];
+
+            foreach ($this->_options['grid']['filtersRender'] as $filter) {
+                $temp = $filter;
+                $temp = str_replace('_', '/', $temp);
+                $this->addFiltersRenderDir($temp, $filter);
+            }
+        }
 
         if (isset($this->_options['grid']['eventsPrefix'])) {
             $this->setEventsPrefix($this->_options['grid']['eventsPrefix']);
@@ -3734,6 +3744,16 @@ abstract class Bvb_Grid {
 
         if (isset($this->_options['grid']['recordsPerPage'])) {
             $this->setRecordsPerPage($this->_options['grid']['recordsPerPage']);
+        }
+        
+        if (isset($this->_options['grid']['charEncoding'])) {
+            $this->setcharEncoding($this->_options['grid']['charEncoding']);
+        }
+        
+        if (isset($this->_options['grid']['export'])) {
+            $this->_options['grid']['export'] = (array) $this->_options['grid']['export'];
+            
+            $this->setExport($this->_options['grid']['export']);
         }
 
         if (isset($this->_options['grid']['modRewrite'])) {
