@@ -42,7 +42,7 @@ class Bvb_Grid_Formatter_Number implements Bvb_Grid_Formatter_FormatterInterface
                 $locale = new Zend_Locale();
             }
 
-            $this->_options = array('locale' => $locale);
+            $this->_options['locale'] = $locale;
         }
     }
 
