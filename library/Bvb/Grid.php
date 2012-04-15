@@ -2290,9 +2290,14 @@ abstract class Bvb_Grid {
                     $newValue = $this->_applyFieldCallback(
                                     $newValue, $this->_data['fields'][$field]['callback'], $search, $replace, $field
                     );
-                    $replace[$field] = $newValue;
 
-                    $search[] = '{{callback}}';
+                    if (isset($this->_data['fields'][$field]['decorator'])) {
+                        $this->_data['fields'][$field]['decorator'] = str_replace(
+                                '{{callback}}', '{{' . $field . '.callback}}', $this->_data['fields'][$field]['decorator']
+                        );
+                    }
+                    
+                    $search[] = '{{' . $field . '.callback}}';
                     $replace[] = $newValue;
                 }
 
@@ -2300,9 +2305,14 @@ abstract class Bvb_Grid {
                     $newValue = $this->_applyFieldFormat(
                                     $newValue, $this->_data['fields'][$field]['format'], $search, $replace
                     );
-                    $replace[$field] = $newValue;
-
-                    $search[] = '{{format}}';
+                    
+                    if (isset($this->_data['fields'][$field]['decorator'])) {
+                        $this->_data['fields'][$field]['decorator'] = str_replace(
+                                '{{format}}', '{{' . $field . '.format}}', $this->_data['fields'][$field]['decorator']
+                        );
+                    }
+                    
+                    $search[] = '{{' . $field . '.format}}';
                     $replace[] = $newValue;
                 }
 
@@ -2310,9 +2320,16 @@ abstract class Bvb_Grid {
                     $newValue = $this->_applyFieldHelper(
                                     $newValue, $this->_data['fields'][$field]['helper'], $search, $replace
                     );
-                    $replace[$field] = $newValue;
+                    
+                    if (isset($this->_data['fields'][$field]['decorator'])) {
+                        $this->_data['fields'][$field]['decorator'] = str_replace(
+                                '{{helper}}', '{{' . $field . '.helper}}', $this->_data['fields'][$field]['decorator']
+                        );
 
-                    $search[] = '{{helper}}';
+                        
+                    }
+                    
+                    $search[] = '{{' . $field . '.helper}}';
                     $replace[] = $newValue;
                 }
 
