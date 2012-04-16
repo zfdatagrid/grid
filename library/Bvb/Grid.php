@@ -2452,15 +2452,15 @@ abstract class Bvb_Grid {
         $field = array_merge($originalArray, $field);
 
         $value = '';
-        if (isset($field['format'])) {
-            $value = $this->_applyFieldFormat($value, $field['format'], $search, $replace);
-            $search[] = '{{format}}';
-            $replace[] = $value;
-        }
-
         if (isset($field['callback'])) {
             $value = $this->_applyFieldCallback($value, $field['callback'], $search, $replace, $field);
             $search[] = '{{callback}}';
+            $replace[] = $value;
+        }
+        
+        if (isset($field['format'])) {
+            $value = $this->_applyFieldFormat($value, $field['format'], $search, $replace);
+            $search[] = '{{format}}';
             $replace[] = $value;
         }
 
