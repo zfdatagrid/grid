@@ -2890,6 +2890,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             $attr['onChange'] = "_" . $this->getGridId() . "gridChangeFilters(1);";
         }
         $attr['onKeyUp'] = "_" . $this->getGridId() . "gridChangeFilters(event);";
+        $attr['onKeyPress'] =  "javascript:if(event.keyCode == '13'){return false;}else{this.blur;return true;}";
 
         $opcoes = $this->_filters[$field];
 
