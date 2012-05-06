@@ -1948,8 +1948,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
             $gridId = 'grid';
         }
 
-        if (($this->getParam('gridmod') == 'ajax' && $this->getInfo("ajax") !== false )
-            || $this->getRequest()->isXmlHttpRequest()) {
+        if ($this->getParam('gridmod') == 'ajax' && $this->getInfo("ajax") !== false ){
             $layout = Zend_Layout::getMvcInstance();
             if ($layout instanceof Zend_Layout) {
                 $layout->disableLayout();
