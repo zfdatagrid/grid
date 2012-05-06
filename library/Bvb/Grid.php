@@ -1661,7 +1661,7 @@ abstract class Bvb_Grid {
                 if (stripos($key, '[') !== false) {
                     $fl = explode('[', $key);
 
-                    if (in_array(rtrim($fl[0], $this->getGridId()), $fields)) {
+                    if (in_array(preg_replace("/(.*)" . $this->getGridId() . "$/", "$1", $fl[0]), $fields)) {
                         unset($params[rtrim($fl[0]) . '[' . $fl[1]]);
                         $fieldName = substr(rtrim($fl[0]), 0, strpos(rtrim($fl[0]), $this->getGridId()));
                         if (in_array($fieldName, $this->_fields))
