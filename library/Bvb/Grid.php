@@ -1923,7 +1923,7 @@ abstract class Bvb_Grid {
         if (!$this->getParam('noOrder')) {
             $selectOrder = $this->getSource()->getSelectOrder();
 
-            if (count($selectOrder) == 1) {
+            if (is_array($selectOrder) && count($selectOrder) == 1) {
                 $this->setParam('order' . $this->getGridId(), $selectOrder[0] . '_' . strtoupper($selectOrder[1]));
             }
         }
