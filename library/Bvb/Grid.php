@@ -4448,6 +4448,9 @@ abstract class Bvb_Grid {
         if (!in_array($this->_deployName, $this->_export) && !array_key_exists($this->_deployName, $this->_export)) {
             throw new Bvb_Grid_Exception($this->__("You don't have permission to export the results to this format"));
         }
+
+        //Very lame fix...
+        $this->setParam('perPage', null);
     }
 
     /**
