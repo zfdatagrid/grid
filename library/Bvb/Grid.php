@@ -1216,9 +1216,9 @@ abstract class Bvb_Grid {
 
         if (count($filters) > 0) {
             /*
-             * If we already made a search for some field and want to clear this 
-             * field from session params we should check both arrays 
-             * (session filters and current set filters) and remove from session 
+             * If we already made a search for some field and want to clear this
+             * field from session params we should check both arrays
+             * (session filters and current set filters) and remove from session
              * those who not exist
              */
             if (isset($this->_sessionParams->filters) && is_array($this->_sessionParams->filters)) {
@@ -1286,7 +1286,7 @@ abstract class Bvb_Grid {
                         ) {
                             $this->_filters[$key]['callback']['params'] = array();
                         }
-                        
+
                         if($this->getSource()->getSourceName() == 'array') {
                             $this->_filters[$key]['callback']['params'] = array_merge(
                                     $this->_filters[$key]['callback']['params'], array('field' => $key,
@@ -1861,14 +1861,8 @@ abstract class Bvb_Grid {
             $value['rowspan'] = !isset($value['rowspan']) ? null : $value['rowspan'];
             $value['colspan'] = !isset($value['colspan']) ? null : $value['colspan'];
 
-            if ($this->__(isset($value['title']))) {
-                $fieldValue = $value['title'];
-            } else {
-                $fieldValue = $value['name'];
-            }
-
             $return[$index . '-' . $key] = array('type' => 'extraField',
-                'value' => $fieldValue,
+                'value' => $this->__(isset($value['title']) ? $value['title'] : $value['name']),
                 'position' => 'left',
                 'newrow' => $value['newrow'],
                 'rowspan' => $value['rowspan'],
@@ -2296,7 +2290,7 @@ abstract class Bvb_Grid {
                                 '{{callback}}', '{{' . $field . '.callback}}', $this->_data['fields'][$field]['decorator']
                         );
                     }
-                    
+
                     $search[] = '{{' . $field . '.callback}}';
                     $replace[] = $newValue;
                 }
@@ -2305,13 +2299,13 @@ abstract class Bvb_Grid {
                     $newValue = $this->_applyFieldFormat(
                                     $newValue, $this->_data['fields'][$field]['format'], $search, $replace
                     );
-                    
+
                     if (isset($this->_data['fields'][$field]['decorator'])) {
                         $this->_data['fields'][$field]['decorator'] = str_replace(
                                 '{{format}}', '{{' . $field . '.format}}', $this->_data['fields'][$field]['decorator']
                         );
                     }
-                    
+
                     $search[] = '{{' . $field . '.format}}';
                     $replace[] = $newValue;
                 }
@@ -2320,15 +2314,15 @@ abstract class Bvb_Grid {
                     $newValue = $this->_applyFieldHelper(
                                     $newValue, $this->_data['fields'][$field]['helper'], $search, $replace
                     );
-                    
+
                     if (isset($this->_data['fields'][$field]['decorator'])) {
                         $this->_data['fields'][$field]['decorator'] = str_replace(
                                 '{{helper}}', '{{' . $field . '.helper}}', $this->_data['fields'][$field]['decorator']
                         );
 
-                        
+
                     }
-                    
+
                     $search[] = '{{' . $field . '.helper}}';
                     $replace[] = $newValue;
                 }
@@ -2457,7 +2451,7 @@ abstract class Bvb_Grid {
             $search[] = '{{callback}}';
             $replace[] = $value;
         }
-        
+
         if (isset($field['format'])) {
             $value = $this->_applyFieldFormat($value, $field['format'], $search, $replace);
             $search[] = '{{format}}';
@@ -3727,7 +3721,7 @@ abstract class Bvb_Grid {
                 $this->addFormatterDir($temp, $formatter);
             }
         }
-        
+
         if (isset($this->_options['grid']['filtersRender'])) {
             $this->_options['grid']['filtersRender'] = (array) $this->_options['grid']['filtersRender'];
 
@@ -3745,14 +3739,14 @@ abstract class Bvb_Grid {
         if (isset($this->_options['grid']['recordsPerPage'])) {
             $this->setRecordsPerPage($this->_options['grid']['recordsPerPage']);
         }
-        
+
         if (isset($this->_options['grid']['charEncoding'])) {
             $this->setcharEncoding($this->_options['grid']['charEncoding']);
         }
-        
+
         if (isset($this->_options['grid']['export'])) {
             $this->_options['grid']['export'] = (array) $this->_options['grid']['export'];
-            
+
             $this->setExport($this->_options['grid']['export']);
         }
 
@@ -4266,7 +4260,7 @@ abstract class Bvb_Grid {
      */
     public function isExport()
     {
-        if(in_array($this->getParam('_exportTo'), $this->_export) || 
+        if(in_array($this->getParam('_exportTo'), $this->_export) ||
                 array_key_exists($this->getParam('_exportTo'), $this->_export)) {
             return true;
         } else {
@@ -4603,13 +4597,13 @@ abstract class Bvb_Grid {
         if (count($this->getMassActions()->getFields()) > 0) {
             $fieldIdentifier = $this->getMassActions()->getFields();
         }
-        
+
         $pk = '';
         foreach ($fieldIdentifier as $value) {
             $aux = explode('.', $value);
             $pk .= end($aux) . $this->getMassActions()->getMultipleFieldsSeparator();
         }
-        
+
         $pk = rtrim($pk, $this->getMassActions()->getMultipleFieldsSeparator());
 
         $pk = explode($this->getMassActions()->getMultipleFieldsSeparator(), $pk);
