@@ -31,6 +31,12 @@ class Bvb_Grid_Mass_Actions {
      * @var array
      */
     protected $_fields = array();
+
+    /**
+     * Selected Values Mass Actions
+     * @var type
+     */
+    protected $_preSelectedValues = array();
     /**
      * The defaulf separator for mass actions post values
      * @var string
@@ -156,7 +162,7 @@ class Bvb_Grid_Mass_Actions {
                 throw new Bvb_Grid_Exception('Options url and caption are required for each action');
             }
         }
-        
+
         if(isset($fields)) {
             $this->setFields($fields);
         }
@@ -176,6 +182,22 @@ class Bvb_Grid_Mass_Actions {
         $this->_fields = (array) $fields;
 
         return $this;
+    }
+
+    /**
+     * Set's the pre-selected values
+     * @param array $values
+     * @return \Bvb_Grid_Mass_Actions
+     */
+    public function setPreSelectedValues(array $values = array())
+    {
+        $this->_preSelectedValues = $values;
+        return $this;
+    }
+
+    public function getPreSelectedValues()
+    {
+        return $this->_preSelectedValues;
     }
 
     /**
@@ -270,7 +292,7 @@ class Bvb_Grid_Mass_Actions {
     /**
      * Returns current separator
      *
-     * @return string 
+     * @return string
      */
     public function getRecordSeparator()
     {
@@ -280,9 +302,9 @@ class Bvb_Grid_Mass_Actions {
     /**
      * Defines attributes to be applyied to submit input for mass actions
      *
-     * @param array $attributes 
-     * 
-     * @return Bvb_Grid_Mass_Actions 
+     * @param array $attributes
+     *
+     * @return Bvb_Grid_Mass_Actions
      */
     public function setSubmitAttributes(array $attributes)
     {

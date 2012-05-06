@@ -2177,6 +2177,30 @@ function observeCheckBox_" . $this->getGridId() . "(box)
     updateRecords_" . $this->getGridId() . "();
 }
 
+function iniMassActions_" . $this->getGridId() . "()
+{
+    preSelectedValues = ['".implode("','",$this->getMassActions()->getPreSelectedValues())."'];
+
+   var campos = document.getElementsByTagName('input');
+
+    for (i=0; i < campos.length; i++)
+    {
+        if (campos[i].type == 'checkbox' && preSelectedValues.indexOf(campos[i].value)!== -1 && campos[i].id == 'massCheckBox_" . $this->getGridId() . "')
+        {
+            campos[i].checked = true;
+            observeCheckBox_" . $this->getGridId() . "(campos[i]);
+        }
+    }
+
+}
+
+if (document.addEventListener){
+  document.addEventListener('DOMContentLoaded', iniMassActions_" . $this->getGridId() . ", false);
+} else if (document.attachEvent){
+  document.attachEvent('DOMContentLoaded', iniMassActions_" . $this->getGridId() . ", false);
+}
+
+
 function checkAll_" . $this->getGridId() . "(field,total,all)
     {
        var tempArray_" . $this->getGridId() . " = new Array();
