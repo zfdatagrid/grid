@@ -2256,15 +2256,11 @@ function encodeString(str)
 
         encoding = encoding.toLowerCase();
 
-        if(encoding.indexOf('iso-8859')!=-1)
-        {
-            str = escape(str);
-        }else{
-            str = encodeURIComponent(str);
-        }
+        str = encodeURIComponent(str);
 
         return str;
     }
+
 
 function _" . $this->getGridId() . "gridChangeFilters(event)
     {
@@ -2406,7 +2402,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
             if ($formsCount > 1)
                 $arr[0]->addElement('checkbox', 'ZFIGNORE', array('label' => $this->__('Ignore'), 'order' => 0));
                 $arr[0]->setElementDecorators($crud->getSubformElementTitle());
-				
+
 			foreach ($this->_data['fields'] as $key => $title) {
 				if ($arr[0]->getElement($key)) {
 					$arr[0]->getElement($key)->setLabel($title['title']);
