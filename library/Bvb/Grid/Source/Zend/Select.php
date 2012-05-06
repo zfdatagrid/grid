@@ -1411,9 +1411,9 @@ class Bvb_Grid_Source_Zend_Select extends Bvb_Grid_Source_Db_DbAbstract implemen
      *
      * @return array
      */
-    public function getIdentifierColumns($table)
+    public function getIdentifierColumns($table, $schema = null)
     {
-        $pk = $this->getDescribeTable($table);
+        $pk = $this->getDescribeTable($table, $schema);
         $tb = $this->getTableList();
 
         $keys = array();
