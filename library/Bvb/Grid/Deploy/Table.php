@@ -2302,7 +2302,7 @@ function _" . $this->getGridId() . "gridChangeFilters(event)
                 if ( value.length > 0 )
                 {
                     name = document.getElementById(fieldsArray[i]).name;
-                    if ( name == '' || typeof(name) == 'undefined' ) {
+                    if (name == '' || typeof(name) == 'undefined' || name == 'undefined'){
                         name = dijit.byId(fieldsArray[i]).get('name');
                      }
 
