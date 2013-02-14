@@ -94,7 +94,7 @@ class Bvb_Grid_Template_Table {
         
         if($this->buildAbstract)
                 return;
-        return  "    <th " . $this->buildAttr('colspna', $colspan) . ">$title</th>" . PHP_EOL;
+        return  "    <th " . $this->buildAttr('colspan', $colspan) . ">$title</th>" . PHP_EOL;
     }
 
     public function filtersStart()
