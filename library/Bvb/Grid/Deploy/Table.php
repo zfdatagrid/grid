@@ -787,7 +787,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && !$this->getParam('add')
                 && !$this->getParam('edit')
             ) {
-                $addButton = "<button class='addRecord' onclick=\"window.location='"
+                $addButton = "<button type='button' class='addRecord' onclick=\"window.location='"
                         . $this->_actionsUrls['add'] . "';\">"
                         . $this->__($this->getBvbForm()->getAddButtonLabel()) . "</button>";
             } else {
@@ -822,15 +822,15 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
             //Filters and order
             if ($this->getParam('order') && !$this->getParam('noOrder') && count($this->_filtersValues) > 0) {
-                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">"
+                    $final1 = "<button type='button' id='remove_filters' onclick=\"window.location='$url'\">"
                         . $this->__('Clear Filters')
-                            . "</button><button id='remove_order' onclick=\"window.location='$url2'\">"
+                            . "</button><button type='button' id='remove_order' onclick=\"window.location='$url2'\">"
                         . $this->__('Clear Order')
-                            . "</button><button id='remove_filters_order' onclick=\"window.location='$url3'\">"
+                            . "</button><button type='button' id='remove_filters_order' onclick=\"window.location='$url3'\">"
                         . $this->__('Clear Filters and Order') . "</button>";
                 //Only filters
             } elseif ((!$this->getParam('order') || $this->getParam('noOrder')) && count($this->_filtersValues) > 0) {
-                    $final1 = "<button id='remove_filters' onclick=\"window.location='$url'\">"
+                    $final1 = "<button type='button' id='remove_filters' onclick=\"window.location='$url'\">"
                         . $this->__('Clear Filters') . "</button>";
 
                 //Only order
@@ -839,7 +839,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
                 && !$this->getParam('noOrder')
                 && $this->getInfo('noOrder') != 1)
             ) {
-                    $final1 = "<button id='remove_order' onclick=\"window.location='$url2'\">"
+                    $final1 = "<button type='button' id='remove_order' onclick=\"window.location='$url2'\">"
                         . $this->__('Clear Order') . "</button>";
             }
 
@@ -850,7 +850,7 @@ class Bvb_Grid_Deploy_Table extends Bvb_Grid implements Bvb_Grid_Deploy_DeployIn
 
                 if (strlen($final1) > 5 || $this->getUseKeyEventsOnFilters() == false || $addButton) {
                     if ($this->getUseKeyEventsOnFilters() === false && $this->getInfo('noFilters') != 1) {
-                        $final1 .= "<button id='apply_filters' onclick=\"_" . $this->getGridId()
+                        $final1 .= "<button type='button' id='apply_filters' onclick=\"_" . $this->getGridId()
                                 . "gridChangeFilters(1)\">"
                                 . $this->__('Apply Filter') . "</button>";
                     }
