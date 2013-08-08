@@ -647,7 +647,7 @@ HTML;
     {
         $id = $this->getId();
         // build URL where to receive data from
-        $url = $this->getView()->serverUrl(true) . "?q=$id";
+        $url = $this->getView()->serverUrl(true) . (count($_GET) ? "&" : "?") . "q=$id";	       
 
         // initialize table with default options
         $this->_jqgParams += $this->_jqgDefaultParams;
